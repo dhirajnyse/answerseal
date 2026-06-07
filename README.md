@@ -1,0 +1,55 @@
+# AnswerSeal
+
+![AnswerSeal 3D brand mark](assets/answerseal-3d-logo.png)
+
+AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
+
+## Brand
+
+- **Name:** AnswerSeal
+- **Positioning:** security questionnaire answers sealed to approved evidence
+- **Tagline:** Seal every answer to evidence.
+- **Promise:** no source, no answer
+- **Personality:** calm, precise, enterprise-ready, quietly confident
+- **Primary colors:** deep teal, white, graphite
+- **Accent colors:** electric blue for evidence links, amber for weak proof, green for approved answers
+
+## Product Wedge
+
+Security questionnaires slow down enterprise deals because answers are scattered across policies, SOC reports, contracts, old spreadsheets, and internal memory. AnswerSeal starts with one narrow promise:
+
+> Every answer must be tied to a source before it leaves the team.
+
+## MVP Features
+
+- Source-backed questionnaire queue with status filters and search
+- Draft answer workspace with confidence scoring, review notes, and citations
+- Evidence vault with freshness signals and selected-source detail
+- Manual question intake plus TXT, CSV, or Markdown imports
+- Evidence import for TXT, CSV, or Markdown files
+- Approval trail for reviewer handoff
+- CSV export and Word-compatible review pack export
+
+## Project Files
+
+- `index.html` - App shell and workspace markup
+- `styles.css` - Product UI, layout, and responsive behavior
+- `app.js` - Demo data, drafting logic, imports, review actions, and exports
+- `assets/answerseal-logo.svg` - App logo and favicon
+- `assets/answerseal-3d-logo.png` - 3D corporate brand mark
+
+## Run Locally
+
+Open `index.html` in a browser. No dependency install or build step is required.
+
+## Next Phase
+
+- Add real document parsing for PDF, DOCX, and XLSX questionnaires
+- Add private workspace storage and user accounts
+- Add AI drafting against a retrieval index with per-claim citations
+- Add answer-library learning from approved responses
+- Add portal copy mode for browser-based buyer questionnaires
+
+## License
+
+MIT
