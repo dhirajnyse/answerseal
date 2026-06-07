@@ -142,8 +142,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.10 Alpha</strong>
-          <span>Secure Workspace Accounts</span>
+          <strong>v0.11 Alpha</strong>
+          <span>Evidence Retrieval AI</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -155,7 +155,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.10 Alpha</span>
+            <span class="label">Security questionnaire | v0.11 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -283,6 +283,47 @@
             </div>
 
             <div class="answer-review-scroll">
+              <section class="retrieval-section" aria-label="Evidence retrieval AI">
+                <div class="section-heading">
+                  <span class="label">Evidence Retrieval AI</span>
+                  <span id="retrievalVerdict">Ready</span>
+                </div>
+                <div class="retrieval-metrics" aria-label="Retrieval metrics">
+                  <article>
+                    <span class="label">Match</span>
+                    <strong id="retrievalMatch">0%</strong>
+                  </article>
+                  <article>
+                    <span class="label">Selected</span>
+                    <strong id="retrievalSelected">0 sources</strong>
+                  </article>
+                  <article>
+                    <span class="label">Duplicate</span>
+                    <strong id="retrievalDuplicate">None</strong>
+                  </article>
+                  <article>
+                    <span class="label">Gate</span>
+                    <strong id="retrievalGate">Review</strong>
+                  </article>
+                </div>
+                <div class="retrieval-insight" id="retrievalInsight"></div>
+                <div class="retrieval-list" id="retrievalList"></div>
+                <div class="retrieval-actions">
+                  <button class="secondary-button" id="runRetrievalButton" type="button">
+                    <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+                    <span>Run Retrieval</span>
+                  </button>
+                  <button class="primary-button" id="applyRetrievalButton" type="button">
+                    <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+                    <span>Apply Sources</span>
+                  </button>
+                  <button class="secondary-button" id="copyRetrievalButton" type="button">
+                    <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span>Copy Rationale</span>
+                  </button>
+                </div>
+              </section>
+
               <section class="claim-trace-section" aria-label="Claim trace">
                 <div class="section-heading">
                   <span class="label">Claim Trace</span>

@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.10 Alpha
+**Current version:** v0.11 Alpha
 
-**Current phase:** Secure Workspace Accounts
+**Current phase:** Evidence Retrieval AI
 
 ## Brand
 
@@ -47,6 +47,10 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Claim Trace Engine that maps every answer sentence to a ranked source excerpt
 - Conflict detection for stale, legacy, or unsafe source language before approval
 - Answer diff signal showing whether a response is original, edited, or newly drafted
+- Evidence Retrieval AI panel with ranked source candidates before draft approval
+- Retrieval rationale explaining text match, source authority, freshness, and weak-match risk
+- Duplicate question memory for spotting reusable approved answers
+- Weak-match refusal gate that blocks drafts when no defensible evidence is found
 - Secure workspace accounts drawer with current session, role switching, team invites, and invite acceptance status
 - Organization vault checkpointing for evidence, approved answers, claim traces, and local pilot sync state
 - Access audit copy for reviewer decisions, role changes, invites, exports, and source changes
@@ -54,7 +58,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v6 export with workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v7 export with retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -72,15 +76,15 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.11 Alpha - Evidence Retrieval AI
+## Next Phase: v0.12 Alpha - Buyer Portal Autofill
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
 - Add private cloud workspace storage for evidence, answers, traces, and activity
 - Add organization-level evidence vaults and reusable answer libraries
-- Add evidence retrieval against a lightweight source index
-- Add draft rationale for why each source was selected
-- Add duplicate question detection against approved library answers
-- Add weak-match refusal before AI drafts a buyer-facing answer
+- Add buyer portal field mapping for prompts, answers, and citations
+- Add paste sequencing for long portal submissions
+- Add pre-submission checks for unanswered fields, stale citations, and reviewer blocks
+- Add buyer-ready packet export for exact portal copy and approval trail
 
 ## License
 

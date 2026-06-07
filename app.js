@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.10 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v10";
+const BUILD_VERSION = "v0.11 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v11";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v10",
   "answerseal.workspace.v09",
   "answerseal.workspace.v08",
   "answerseal.workspace.v07",
@@ -707,6 +708,16 @@ const elements = {
   sealGrade: document.querySelector("#sealGrade"),
   sealCoverage: document.querySelector("#sealCoverage"),
   sealFreshness: document.querySelector("#sealFreshness"),
+  retrievalVerdict: document.querySelector("#retrievalVerdict"),
+  retrievalMatch: document.querySelector("#retrievalMatch"),
+  retrievalSelected: document.querySelector("#retrievalSelected"),
+  retrievalDuplicate: document.querySelector("#retrievalDuplicate"),
+  retrievalGate: document.querySelector("#retrievalGate"),
+  retrievalInsight: document.querySelector("#retrievalInsight"),
+  retrievalList: document.querySelector("#retrievalList"),
+  runRetrievalButton: document.querySelector("#runRetrievalButton"),
+  applyRetrievalButton: document.querySelector("#applyRetrievalButton"),
+  copyRetrievalButton: document.querySelector("#copyRetrievalButton"),
   traceBound: document.querySelector("#traceBound"),
   traceConflicts: document.querySelector("#traceConflicts"),
   traceRank: document.querySelector("#traceRank"),
@@ -882,6 +893,7 @@ function bindEvents() {
     renderQuestionList();
     renderActiveStatus(question);
     renderSealSummary(question);
+    renderRetrieval(question);
     renderClaimTrace(question);
     renderIntake();
     renderWorkspace();
@@ -894,6 +906,9 @@ function bindEvents() {
   elements.approveButton.addEventListener("click", approveActiveQuestion);
   elements.needsEvidenceButton.addEventListener("click", markActiveNeedsEvidence);
   elements.routeOwnerButton.addEventListener("click", routeActiveQuestion);
+  elements.runRetrievalButton.addEventListener("click", runEvidenceRetrieval);
+  elements.applyRetrievalButton.addEventListener("click", applyRetrievalSources);
+  elements.copyRetrievalButton.addEventListener("click", copyRetrievalRationale);
   elements.copyButton.addEventListener("click", copyActiveAnswer);
   elements.copyTraceButton.addEventListener("click", copyClaimTrace);
   elements.portalCopyButton.addEventListener("click", openPortalCopy);
@@ -1069,6 +1084,13 @@ function renderActiveQuestion() {
     elements.traceDiff.textContent = "Draft";
     elements.claimTraceCount.textContent = "0 claims";
     elements.claimTraceList.innerHTML = "";
+    elements.retrievalVerdict.textContent = "Ready";
+    elements.retrievalMatch.textContent = "0%";
+    elements.retrievalSelected.textContent = "0 sources";
+    elements.retrievalDuplicate.textContent = "None";
+    elements.retrievalGate.textContent = "Review";
+    elements.retrievalInsight.innerHTML = "";
+    elements.retrievalList.innerHTML = "";
     return;
   }
 
@@ -1080,6 +1102,7 @@ function renderActiveQuestion() {
   renderActiveStatus(question);
   renderConfidence(question);
   renderSealSummary(question);
+  renderRetrieval(question);
   renderClaimTrace(question);
   renderRisks(question);
   renderSources(question);
@@ -1105,6 +1128,252 @@ function renderSealSummary(question) {
   elements.sealGrade.textContent = sealGradeLabel(question, confidence, hasRisks, sources.length);
   elements.sealCoverage.textContent = `${sources.length} ${sources.length === 1 ? "source" : "sources"}`;
   elements.sealFreshness.textContent = sourceFreshnessSummary(sources);
+}
+
+function renderRetrieval(question) {
+  const retrieval = retrievalSnapshot(question);
+
+  elements.retrievalVerdict.textContent = retrieval.verdictLabel;
+  elements.retrievalMatch.textContent = `${retrieval.topScore}%`;
+  elements.retrievalSelected.textContent = `${retrieval.selected.length} ${retrieval.selected.length === 1 ? "source" : "sources"}`;
+  elements.retrievalDuplicate.textContent = retrieval.duplicate ? `${retrieval.duplicate.score}%` : "None";
+  elements.retrievalGate.textContent = retrieval.gateLabel;
+  elements.retrievalInsight.className = `retrieval-insight is-${retrieval.verdict}`;
+  elements.retrievalInsight.innerHTML = `
+    <strong>${escapeHtml(retrieval.headline)}</strong>
+    <p>${escapeHtml(retrieval.reason)}</p>
+  `;
+
+  elements.retrievalList.innerHTML = "";
+  if (retrieval.matches.length === 0) {
+    elements.retrievalList.append(emptyState("No source candidates found"));
+  }
+
+  retrieval.matches.forEach((match) => {
+    const card = document.createElement("article");
+    card.className = `retrieval-card is-${match.tone}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(match.doc.title)}</strong>
+        <span>${match.score}%</span>
+      </header>
+      <div class="retrieval-score-row">
+        <span>${match.match}% text match</span>
+        <span>${match.authority}% authority</span>
+        <span>${match.freshness}% fresh</span>
+      </div>
+      <p>${escapeHtml(match.reason)}</p>
+      <blockquote>${escapeHtml(match.excerpt)}</blockquote>
+    `;
+    card.addEventListener("click", () => {
+      state.activeDocId = match.doc.id;
+      renderEvidence();
+      schedulePersist();
+    });
+    elements.retrievalList.append(card);
+  });
+
+  if (retrieval.duplicate) {
+    const duplicate = document.createElement("article");
+    duplicate.className = "retrieval-duplicate-card";
+    duplicate.innerHTML = `
+      <span class="label">Approved Memory</span>
+      <strong>${escapeHtml(retrieval.duplicate.question.text)}</strong>
+      <p>${escapeHtml(retrieval.duplicate.question.answer)}</p>
+    `;
+    elements.retrievalList.append(duplicate);
+  }
+}
+
+function retrievalSnapshot(question) {
+  const terms = retrievalTerms(question);
+  const preferred = new Set(question.sources ?? []);
+  const matches = state.evidence
+    .map((doc) => retrievalMatch(question, doc, terms, preferred))
+    .filter((match) => match.score >= 32 || preferred.has(match.doc.id))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+  const selected = matches.filter((match) => match.score >= 58).slice(0, 3);
+  const topScore = matches[0]?.score ?? 0;
+  const duplicate = duplicateQuestionMatch(question);
+  const verdict = retrievalVerdict(topScore, selected.length, duplicate);
+
+  return {
+    terms,
+    matches,
+    selected,
+    topScore,
+    duplicate,
+    verdict,
+    verdictLabel: retrievalVerdictLabel(verdict),
+    gateLabel: retrievalGateLabel(verdict),
+    ...retrievalCopy(verdict, topScore, selected, duplicate),
+  };
+}
+
+function retrievalMatch(question, doc, terms, preferred) {
+  const haystack = `${doc.title} ${doc.type} ${doc.owner} ${doc.tags.join(" ")} ${doc.excerpts.join(" ")}`.toLowerCase();
+  const hits = terms.filter((term) => haystack.includes(term));
+  const match = terms.length === 0 ? 0 : Math.round((hits.length / terms.length) * 100);
+  const authority = sourceAuthorityScore(doc);
+  const freshness = sourceFreshnessScore(doc.updated);
+  const preferredBoost = preferred.has(doc.id) ? 8 : 0;
+  const legacyPenalty = doc.type === "Legacy" ? 26 : 0;
+  const score = Math.max(0, Math.min(99, Math.round(match * 0.54 + authority * 0.24 + freshness * 0.16 + preferredBoost - legacyPenalty)));
+  const tone = score >= 72 ? "ready" : score >= 56 ? "weak" : "blocked";
+
+  return {
+    doc,
+    score,
+    match,
+    authority,
+    freshness,
+    tone,
+    excerpt: bestExcerptForQuestion(doc, question.text),
+    reason: retrievalReason(doc, hits, score),
+  };
+}
+
+function retrievalTerms(question) {
+  const rawTerms = keywordTerms(`${question.text} ${question.category} ${question.owner}`.toLowerCase())
+    .map((term) => term.toLowerCase())
+    .filter((term) => term.length > 2);
+  return [...new Set(rawTerms)].slice(0, 12);
+}
+
+function retrievalReason(doc, hits, score) {
+  const hitText = hits.slice(0, 4).join(", ");
+  if (score >= 72) return `Strong candidate because it matches ${hitText || doc.type} and has current ${doc.type} authority.`;
+  if (score >= 56) return `Possible supporting source, but the match is partial: ${hitText || "few direct terms"}.`;
+  return "Weak match. Keep it visible for context, but do not draft from it without a stronger source.";
+}
+
+function duplicateQuestionMatch(question) {
+  const currentTerms = new Set(retrievalTerms(question));
+  if (currentTerms.size === 0) return null;
+
+  const candidates = state.questions
+    .filter((candidate) => candidate.id !== question.id && candidate.answer)
+    .map((candidate) => {
+      const candidateTerms = new Set(retrievalTerms(candidate));
+      const shared = [...currentTerms].filter((term) => candidateTerms.has(term)).length;
+      const union = new Set([...currentTerms, ...candidateTerms]).size;
+      const score = union === 0 ? 0 : Math.round((shared / union) * 100);
+      return { question: candidate, score };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  const best = candidates[0];
+  return best?.score >= 48 ? best : null;
+}
+
+function retrievalVerdict(topScore, selectedCount, duplicate) {
+  if (topScore < 58 || selectedCount === 0) return "refuse";
+  if (duplicate?.score >= 72) return "reuse";
+  if (topScore < 72) return "review";
+  return "ready";
+}
+
+function retrievalVerdictLabel(verdict) {
+  const labels = {
+    ready: "Evidence Ready",
+    reuse: "Reuse Candidate",
+    review: "Needs Review",
+    refuse: "Refuse Draft",
+  };
+  return labels[verdict] ?? "Review";
+}
+
+function retrievalGateLabel(verdict) {
+  if (verdict === "refuse") return "Blocked";
+  if (verdict === "review") return "Human review";
+  if (verdict === "reuse") return "Reuse check";
+  return "Draft allowed";
+}
+
+function retrievalCopy(verdict, topScore, selected, duplicate) {
+  if (verdict === "refuse") {
+    return {
+      headline: "No defensible source yet.",
+      reason: "AnswerSeal should not draft this answer until stronger evidence is uploaded or an owner approves a source.",
+    };
+  }
+
+  if (verdict === "reuse") {
+    return {
+      headline: "Approved memory may answer this faster.",
+      reason: `A similar question is ${duplicate.score}% matched. Reuse only after confirming the same source evidence still applies.`,
+    };
+  }
+
+  if (verdict === "review") {
+    return {
+      headline: "Evidence is partial.",
+      reason: `Top source scored ${topScore}%. Route to the owner or attach another source before approval.`,
+    };
+  }
+
+  return {
+    headline: "Strong evidence found.",
+    reason: `${selected.length} source${selected.length === 1 ? "" : "s"} can be applied to the draft with traceable rationale.`,
+  };
+}
+
+function runEvidenceRetrieval() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  const retrieval = retrievalSnapshot(question);
+  addAudit("Evidence retrieval run", `${shorten(question.text, 58)} returned ${retrieval.topScore}% top match and ${retrieval.gateLabel.toLowerCase()} gate.`);
+  renderActiveQuestion();
+  renderAudit();
+  showToast("Retrieval rationale refreshed.");
+}
+
+function applyRetrievalSources() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  const retrieval = retrievalSnapshot(question);
+
+  if (retrieval.verdict === "refuse") {
+    question.status = "needs-evidence";
+    question.routeStatus = "Needs owner";
+    question.risks = [...new Set([...(question.risks ?? []), "Retrieval gate refused draft: no strong source match."])];
+    addAudit("Retrieval gate blocked", `${shorten(question.text, 58)} needs stronger evidence before drafting.`);
+    render();
+    showToast("Retrieval blocked the draft.");
+    return;
+  }
+
+  question.sources = [...new Set(retrieval.selected.map((match) => match.doc.id))];
+  question.confidence = Math.max(question.confidence, Math.min(97, retrieval.topScore));
+  if (question.status === "needs-evidence") question.status = "draft";
+  question.routeStatus = retrieval.verdict === "review" ? "Owner review" : "Assigned";
+  addAudit("Retrieval sources applied", `${retrieval.selected.length} source${retrieval.selected.length === 1 ? "" : "s"} applied to ${shorten(question.text, 54)}.`);
+  render();
+  showToast("Sources applied.");
+}
+
+function copyRetrievalRationale() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  copyText(retrievalRationaleText(question), "Retrieval rationale copied.");
+}
+
+function retrievalRationaleText(question) {
+  const retrieval = retrievalSnapshot(question);
+  const sourceLines = retrieval.matches
+    .map((match, index) => `${index + 1}. ${match.doc.title} | ${match.score}% | ${match.reason}\n   ${match.excerpt}`)
+    .join("\n");
+  return [
+    `AnswerSeal Evidence Retrieval - ${workspaceAccount.company}`,
+    `Build: ${BUILD_VERSION}`,
+    `Question: ${question.text}`,
+    `Verdict: ${retrieval.verdictLabel} | Gate: ${retrieval.gateLabel} | Top match: ${retrieval.topScore}%`,
+    retrieval.duplicate ? `Duplicate memory: ${retrieval.duplicate.score}% | ${retrieval.duplicate.question.text}` : "Duplicate memory: none",
+    "",
+    "Sources:",
+    sourceLines || "No relevant sources found.",
+  ].join("\n");
 }
 
 function renderClaimTrace(question) {
@@ -2893,9 +3162,24 @@ function refreshDrafts(showMessage = true) {
 }
 
 function exportCsv() {
-  const header = ["Question", "Status", "Owner", "Assignee", "Route Status", "Confidence", "Trace", "Answer", "Sources", "Risks"];
+  const header = [
+    "Question",
+    "Status",
+    "Owner",
+    "Assignee",
+    "Route Status",
+    "Confidence",
+    "Retrieval Gate",
+    "Retrieval Match",
+    "Retrieval Sources",
+    "Trace",
+    "Answer",
+    "Sources",
+    "Risks",
+  ];
   const rows = state.questions.map((question) => {
     const trace = claimTraceSnapshot(question);
+    const retrieval = retrievalSnapshot(question);
     return [
       question.text,
       formatStatus(question.status),
@@ -2903,6 +3187,9 @@ function exportCsv() {
       memberForQuestion(question).name,
       routeStatusLabel(question.routeStatus),
       `${question.confidence}%`,
+      retrieval.gateLabel,
+      `${retrieval.topScore}%`,
+      retrieval.selected.map((match) => match.doc.title).join("; "),
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -2939,7 +3226,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v6</h1>
+        <h1>AnswerSeal Review Pack v7</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -3123,6 +3410,36 @@ function exportReviewPack() {
               .join("")}
           </tbody>
         </table>
+        <h2>Evidence Retrieval AI</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Verdict</th>
+              <th>Top Match</th>
+              <th>Selected Sources</th>
+              <th>Duplicate Memory</th>
+              <th>Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.questions
+              .map((question) => {
+                const retrieval = retrievalSnapshot(question);
+                return `
+                  <tr>
+                    <td>${escapeHtml(question.text)}</td>
+                    <td class="${retrieval.verdict === "refuse" || retrieval.verdict === "review" ? "risk" : "ok"}">${escapeHtml(retrieval.verdictLabel)}</td>
+                    <td>${retrieval.topScore}%</td>
+                    <td>${escapeHtml(retrieval.selected.map((match) => match.doc.title).join("; ") || "None")}</td>
+                    <td>${escapeHtml(retrieval.duplicate ? `${retrieval.duplicate.score}% | ${retrieval.duplicate.question.text}` : "None")}</td>
+                    <td>${escapeHtml(`${retrieval.headline} ${retrieval.reason}`)}</td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+        </table>
         <h2>Questionnaire Responses</h2>
         <table>
           <thead>
@@ -3196,11 +3513,11 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v6 created with secure workspace accounts, claim trace, and data room status.");
+  addAudit("Review pack exported", "Review Pack v7 created with evidence retrieval rationale, secure access, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
-  showToast("Review Pack v6 exported.");
+  showToast("Review Pack v7 exported.");
 }
 
 function toCsv(rows) {

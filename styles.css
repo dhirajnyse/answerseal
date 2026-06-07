@@ -703,6 +703,183 @@ svg {
   border-bottom: 1px solid var(--line);
 }
 
+.retrieval-section {
+  display: grid;
+  gap: 10px;
+  min-height: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(234, 244, 255, 0.86) 0%, rgba(255, 255, 255, 0.98) 100%),
+    #ffffff;
+}
+
+.retrieval-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.retrieval-metrics article {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  min-height: 50px;
+  padding: 9px 10px;
+  background: #ffffff;
+}
+
+.retrieval-metrics strong {
+  color: var(--accent-dark);
+  font-size: 0.94rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.retrieval-insight {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 1px solid rgba(20, 121, 255, 0.22);
+  border-radius: 8px;
+  background: #f3f8ff;
+}
+
+.retrieval-insight.is-ready {
+  border-color: rgba(0, 168, 137, 0.28);
+  background: #effff9;
+}
+
+.retrieval-insight.is-refuse {
+  border-color: rgba(180, 35, 24, 0.24);
+  background: #fff5f3;
+}
+
+.retrieval-insight.is-review,
+.retrieval-insight.is-reuse {
+  border-color: rgba(154, 103, 0, 0.24);
+  background: #fffaf0;
+}
+
+.retrieval-insight strong {
+  line-height: 1.25;
+}
+
+.retrieval-insight p,
+.retrieval-card p,
+.retrieval-card blockquote,
+.retrieval-score-row span,
+.retrieval-duplicate-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.42;
+}
+
+.retrieval-list {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.retrieval-card,
+.retrieval-duplicate-card {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.retrieval-card.is-ready {
+  border-left-color: var(--green);
+}
+
+.retrieval-card.is-weak {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.retrieval-card.is-blocked {
+  border-left-color: var(--red);
+  background: #fff7f5;
+}
+
+.retrieval-card header,
+.retrieval-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.retrieval-card header strong,
+.retrieval-duplicate-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.retrieval-card header span {
+  color: var(--accent-dark);
+  font-size: 0.8rem;
+  font-weight: 950;
+}
+
+.retrieval-score-row {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.retrieval-score-row span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 23px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-weight: 850;
+}
+
+.retrieval-card blockquote {
+  display: -webkit-box;
+  overflow: hidden;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.retrieval-duplicate-card {
+  border-left-color: var(--violet);
+  background: #fbf8ff;
+}
+
+.retrieval-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, auto));
+  justify-content: start;
+  gap: 8px;
+}
+
+.retrieval-actions .primary-button,
+.retrieval-actions .secondary-button {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
 .claim-trace-section {
   display: grid;
   gap: 10px;
@@ -3217,11 +3394,13 @@ svg {
   .topbar-actions,
   .toolbar,
   .confidence-row,
+  .retrieval-actions,
   .answer-actions {
     grid-template-columns: 1fr;
   }
 
   .topbar-actions,
+  .retrieval-actions,
   .answer-actions {
     display: grid;
   }
@@ -3236,6 +3415,7 @@ svg {
   }
 
   .seal-summary,
+  .retrieval-metrics,
   .trace-metrics,
   .pilot-terms,
   .seal-path-track,
@@ -3264,6 +3444,7 @@ svg {
   }
 
   .question-footer,
+  .retrieval-card header,
   .source-card header,
   .evidence-item header {
     display: grid;

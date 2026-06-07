@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.11 Alpha - Evidence Retrieval AI
+
+Phase: Evidence Retrieval AI
+
+- Added an Evidence Retrieval AI panel inside the review desk.
+- Added ranked source candidates with match, authority, freshness, excerpt, and rationale.
+- Added duplicate-question memory to surface reusable approved answers.
+- Added a weak-match refusal gate that blocks drafts when no defensible evidence is found.
+- Added source application and copyable retrieval rationale actions.
+- Added retrieval gate, match, and source details to CSV exports.
+- Upgraded review pack export to Review Pack v7 with retrieval rationale.
+- Updated the build phases page with the v0.12 Buyer Portal Autofill plan.
+
 ## v0.10 Alpha - Secure Workspace Accounts
 
 Phase: Secure Workspace Accounts
