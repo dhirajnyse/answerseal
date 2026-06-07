@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.10 Alpha - Secure Workspace Accounts
+
+Phase: Secure Workspace Accounts
+
+- Added an Access drawer with current session, role-aware reviewer switching, and invite-only workspace controls.
+- Added team invite tracking with local accepted/invited status for pilot reviewer coordination.
+- Added an organization vault checkpoint for evidence files, approved answers, and claim trace coverage.
+- Added access audit copy for role switches, invites, exports, and review activity.
+- Upgraded review pack export to Review Pack v6 with secure workspace account details.
+- Updated the build phases page with the v0.11 Evidence Retrieval AI plan.
+
 ## v0.9 Alpha - Claim Trace Engine
 
 Phase: Claim Trace Engine

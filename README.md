@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.9 Alpha
+**Current version:** v0.10 Alpha
 
-**Current phase:** Claim Trace Engine
+**Current phase:** Secure Workspace Accounts
 
 ## Brand
 
@@ -47,11 +47,14 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Claim Trace Engine that maps every answer sentence to a ranked source excerpt
 - Conflict detection for stale, legacy, or unsafe source language before approval
 - Answer diff signal showing whether a response is original, edited, or newly drafted
+- Secure workspace accounts drawer with current session, role switching, team invites, and invite acceptance status
+- Organization vault checkpointing for evidence, approved answers, claim traces, and local pilot sync state
+- Access audit copy for reviewer decisions, role changes, invites, exports, and source changes
 - Evidence vault with freshness signals and selected-source detail
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v5 export with workspace routing, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v6 export with workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -69,15 +72,15 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.10 Alpha - Secure Workspace Accounts
+## Next Phase: v0.11 Alpha - Evidence Retrieval AI
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
-- Add secure workspace login and role-aware access
-- Add team invitations for security, legal, AI governance, sales, and leadership reviewers
 - Add private cloud workspace storage for evidence, answers, traces, and activity
 - Add organization-level evidence vaults and reusable answer libraries
-- Add audit exports for reviewer decisions and source changes
-- Add AI drafting against a retrieval index with per-claim citations
+- Add evidence retrieval against a lightweight source index
+- Add draft rationale for why each source was selected
+- Add duplicate question detection against approved library answers
+- Add weak-match refusal before AI drafts a buyer-facing answer
 
 ## License
 

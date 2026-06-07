@@ -1406,6 +1406,208 @@ svg {
   gap: 8px;
 }
 
+.access-drawer {
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: min(620px, 100vw);
+}
+
+.access-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.access-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(241, 255, 251, 0.72) 0%, rgba(255, 255, 255, 0.96) 42%),
+    #ffffff;
+}
+
+.access-section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.access-role-list,
+.access-invite-list,
+.access-audit-list {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+
+.access-role-card,
+.access-invite-card {
+  display: grid;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: inherit;
+  background: #fbfcfb;
+}
+
+.access-role-card {
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  padding: 11px;
+  text-align: left;
+}
+
+.access-role-card.is-active {
+  border-color: rgba(0, 168, 137, 0.3);
+  background: #eafff8;
+}
+
+.access-role-card div:last-child,
+.access-invite-card div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.access-role-card strong,
+.access-invite-card strong,
+.access-cloud-row strong,
+.access-audit-list strong {
+  color: var(--ink);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.access-role-card span,
+.access-invite-card span,
+.access-audit-list span,
+.access-audit-list p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.access-invite-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(124px, 0.4fr) minmax(126px, 0.42fr);
+  gap: 8px;
+}
+
+.access-invite-form input,
+.access-invite-form select {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  outline: 0;
+}
+
+.access-invite-form input {
+  padding: 0 12px;
+}
+
+.access-invite-form select {
+  padding: 0 10px;
+}
+
+.access-invite-card {
+  grid-template-columns: minmax(0, 1fr) minmax(132px, auto);
+  gap: 10px;
+  padding: 11px;
+}
+
+.access-invite-card .secondary-button,
+.compact-button {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.access-vault-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.access-vault-summary div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 68px;
+  padding: 11px;
+  background: #fbfcfb;
+}
+
+.access-vault-summary strong {
+  color: var(--accent-dark);
+  font-size: 0.98rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.access-cloud-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-alt);
+}
+
+.access-cloud-row svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--accent-dark);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+
+.access-cloud-row div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.access-audit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.access-audit-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.access-audit-list li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.access-audit-list p {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
 .data-room-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(640px, 100vw);
@@ -3137,14 +3339,19 @@ svg {
   }
 
   .workspace-metrics,
+  .access-metrics,
   .data-room-metrics,
   .account-grid,
+  .access-vault-summary,
   .data-room-folder-grid,
+  .access-invite-form,
   .handoff-actions {
     grid-template-columns: 1fr;
   }
 
   .owner-route-card,
+  .access-role-card,
+  .access-invite-card,
   .data-room-folder,
   .checklist-item,
   .owner-route-card header,

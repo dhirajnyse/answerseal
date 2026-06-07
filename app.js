@@ -1,6 +1,12 @@
-const BUILD_VERSION = "v0.9 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v09";
-const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v08", "answerseal.workspace.v07", "answerseal.workspace.v06", "answerseal.workspace.v04"];
+const BUILD_VERSION = "v0.10 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v10";
+const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v09",
+  "answerseal.workspace.v08",
+  "answerseal.workspace.v07",
+  "answerseal.workspace.v06",
+  "answerseal.workspace.v04",
+];
 const MEMORY_READY_LABEL = "Saved locally";
 
 const workspaceAccount = {
@@ -418,6 +424,8 @@ function createInitialState() {
     intakeOpen: false,
     dataRoomOpen: false,
     dataRoom: createInitialDataRoom(),
+    accessOpen: false,
+    access: createInitialAccessState(),
     workspaceOpen: false,
     portalOpen: false,
     handoff: createInitialHandoff(),
@@ -444,6 +452,40 @@ function createInitialDataRoom() {
   return {
     notes: Object.fromEntries(evidenceDocs.map((doc) => [doc.id, createDataRoomNote(doc)])),
     checklist: closeChecklistSeeds.map((item) => ({ ...item })),
+  };
+}
+
+function createInitialAccessState() {
+  return {
+    session: {
+      currentMemberId: "owner-security",
+      method: "SSO + MFA",
+      status: "Verified",
+      lastVerifiedAt: new Date().toISOString(),
+    },
+    cloud: {
+      status: "Local pilot",
+      checkpoint: "Awaiting secure sync",
+      lastSyncedAt: null,
+    },
+    invites: [
+      {
+        id: "invite-legal",
+        email: "legal@asterhealth.example",
+        team: "Legal",
+        role: "Approver",
+        status: "Accepted",
+        sentAt: "2026-06-07T08:30:00.000Z",
+      },
+      {
+        id: "invite-sales",
+        email: "sales-engineering@asterhealth.example",
+        team: "Sales Engineering",
+        role: "Viewer",
+        status: "Invited",
+        sentAt: "2026-06-07T09:10:00.000Z",
+      },
+    ],
   };
 }
 
@@ -480,12 +522,14 @@ function loadWorkspaceState() {
       audit: Array.isArray(workspace.audit) ? workspace.audit.map(normalizeAuditEntry) : fresh.audit,
       handoff: normalizeHandoff(workspace.handoff ?? fresh.handoff),
       dataRoom: normalizeDataRoom(workspace.dataRoom ?? fresh.dataRoom),
+      access: normalizeAccess(workspace.access ?? fresh.access),
       search: "",
       filter: "all",
       librarySearch: "",
       libraryOpen: false,
       intakeOpen: false,
       dataRoomOpen: false,
+      accessOpen: false,
       workspaceOpen: false,
       portalOpen: false,
     };
@@ -601,12 +645,42 @@ function normalizeChecklistItem(item, fallback) {
   };
 }
 
+function normalizeAccess(access) {
+  const fresh = createInitialAccessState();
+  return {
+    session: {
+      currentMemberId: String(access?.session?.currentMemberId ?? fresh.session.currentMemberId),
+      method: String(access?.session?.method ?? fresh.session.method),
+      status: String(access?.session?.status ?? fresh.session.status),
+      lastVerifiedAt: access?.session?.lastVerifiedAt ?? fresh.session.lastVerifiedAt,
+    },
+    cloud: {
+      status: String(access?.cloud?.status ?? fresh.cloud.status),
+      checkpoint: String(access?.cloud?.checkpoint ?? fresh.cloud.checkpoint),
+      lastSyncedAt: access?.cloud?.lastSyncedAt ?? fresh.cloud.lastSyncedAt,
+    },
+    invites: Array.isArray(access?.invites) ? access.invites.map(normalizeAccessInvite) : fresh.invites,
+  };
+}
+
+function normalizeAccessInvite(invite) {
+  return {
+    id: String(invite?.id ?? `invite-${Date.now()}`),
+    email: String(invite?.email ?? "reviewer@example.com"),
+    team: String(invite?.team ?? "Reviewer"),
+    role: String(invite?.role ?? "Viewer"),
+    status: String(invite?.status ?? "Invited"),
+    sentAt: invite?.sentAt ?? new Date().toISOString(),
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
+  accessNavButton: document.querySelector("#accessNavButton"),
   dataRoomNavButton: document.querySelector("#dataRoomNavButton"),
   intakeNavButton: document.querySelector("#intakeNavButton"),
   evidenceNavButton: document.querySelector("#evidenceNavButton"),
@@ -690,6 +764,28 @@ const elements = {
   prepareHandoffButton: document.querySelector("#prepareHandoffButton"),
   copyHandoffLinkButton: document.querySelector("#copyHandoffLinkButton"),
   copyHandoffSummaryButton: document.querySelector("#copyHandoffSummaryButton"),
+  accessBackdrop: document.querySelector("#accessBackdrop"),
+  accessDrawer: document.querySelector("#accessDrawer"),
+  closeAccessButton: document.querySelector("#closeAccessButton"),
+  accessSessionStatus: document.querySelector("#accessSessionStatus"),
+  accessMemberCount: document.querySelector("#accessMemberCount"),
+  accessVaultStatus: document.querySelector("#accessVaultStatus"),
+  accessAuditCount: document.querySelector("#accessAuditCount"),
+  accessCurrentUser: document.querySelector("#accessCurrentUser"),
+  accessCurrentRole: document.querySelector("#accessCurrentRole"),
+  accessMethod: document.querySelector("#accessMethod"),
+  accessVerifiedAt: document.querySelector("#accessVerifiedAt"),
+  accessRoleList: document.querySelector("#accessRoleList"),
+  accessInviteForm: document.querySelector("#accessInviteForm"),
+  accessInviteEmail: document.querySelector("#accessInviteEmail"),
+  accessInviteRole: document.querySelector("#accessInviteRole"),
+  accessInviteList: document.querySelector("#accessInviteList"),
+  accessVaultSummary: document.querySelector("#accessVaultSummary"),
+  accessCloudStatus: document.querySelector("#accessCloudStatus"),
+  accessCloudCheckpoint: document.querySelector("#accessCloudCheckpoint"),
+  syncCheckpointButton: document.querySelector("#syncCheckpointButton"),
+  copyAuditButton: document.querySelector("#copyAuditButton"),
+  accessAuditPreview: document.querySelector("#accessAuditPreview"),
   dataRoomBackdrop: document.querySelector("#dataRoomBackdrop"),
   dataRoomDrawer: document.querySelector("#dataRoomDrawer"),
   closeDataRoomButton: document.querySelector("#closeDataRoomButton"),
@@ -752,6 +848,7 @@ function init() {
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
+  elements.accessNavButton.addEventListener("click", openAccess);
   elements.dataRoomNavButton.addEventListener("click", openDataRoom);
   elements.intakeNavButton.addEventListener("click", openIntake);
   elements.evidenceNavButton.addEventListener("click", () => activateWorkspaceNav("evidence"));
@@ -788,6 +885,7 @@ function bindEvents() {
     renderClaimTrace(question);
     renderIntake();
     renderWorkspace();
+    renderAccess();
     renderLibrary();
     renderPortalCopy();
     schedulePersist();
@@ -804,6 +902,11 @@ function bindEvents() {
   elements.prepareHandoffButton.addEventListener("click", prepareHandoff);
   elements.copyHandoffLinkButton.addEventListener("click", copyHandoffLink);
   elements.copyHandoffSummaryButton.addEventListener("click", copyHandoffSummary);
+  elements.closeAccessButton.addEventListener("click", closeAccess);
+  elements.accessBackdrop.addEventListener("click", closeAccess);
+  elements.accessInviteForm.addEventListener("submit", addAccessInvite);
+  elements.syncCheckpointButton.addEventListener("click", syncAccessCheckpoint);
+  elements.copyAuditButton.addEventListener("click", copyAccessAudit);
   elements.closeDataRoomButton.addEventListener("click", closeDataRoom);
   elements.dataRoomBackdrop.addEventListener("click", closeDataRoom);
   elements.copyDataRoomBriefButton.addEventListener("click", copyDataRoomBrief);
@@ -836,6 +939,7 @@ function bindEvents() {
     if (state.libraryOpen) closeLibrary();
     if (state.intakeOpen) closeIntake();
     if (state.dataRoomOpen) closeDataRoom();
+    if (state.accessOpen) closeAccess();
     if (state.workspaceOpen) closeWorkspace();
     if (state.portalOpen) closePortal();
   });
@@ -846,6 +950,7 @@ function bindEvents() {
 function applyInitialHash() {
   const hash = window.location.hash.replace("#", "").toLowerCase();
   if (hash === "workspace") openWorkspace();
+  if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
   if (hash === "intake") openIntake();
   if (hash === "library") openLibrary();
@@ -868,6 +973,7 @@ function render() {
   renderAudit();
   renderIntake();
   renderWorkspace();
+  renderAccess();
   renderDataRoom();
   renderLibrary();
   renderPortalCopy();
@@ -1305,6 +1411,7 @@ function renderAudit() {
 
 function activateWorkspaceNav(target) {
   closeWorkspace(false);
+  closeAccess(false);
   closeLibrary(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1324,6 +1431,7 @@ function setActiveNav(activeButton) {
   [
     elements.reviewNavButton,
     elements.workspaceNavButton,
+    elements.accessNavButton,
     elements.dataRoomNavButton,
     elements.intakeNavButton,
     elements.evidenceNavButton,
@@ -1334,6 +1442,7 @@ function setActiveNav(activeButton) {
 }
 
 function openWorkspace() {
+  closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
   closeLibrary(false);
@@ -1355,8 +1464,32 @@ function closeWorkspace(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openAccess() {
+  closeWorkspace(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.accessOpen = true;
+  setActiveNav(elements.accessNavButton);
+  elements.accessBackdrop.hidden = false;
+  elements.accessDrawer.classList.add("is-open");
+  elements.accessDrawer.setAttribute("aria-hidden", "false");
+  renderAccess();
+}
+
+function closeAccess(activateReview = true) {
+  if (!state.accessOpen && elements.accessDrawer.getAttribute("aria-hidden") === "true") return;
+  state.accessOpen = false;
+  elements.accessDrawer.classList.remove("is-open");
+  elements.accessDrawer.setAttribute("aria-hidden", "true");
+  elements.accessBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openIntake() {
   closeWorkspace(false);
+  closeAccess(false);
   closeDataRoom(false);
   closeLibrary(false);
   closePortal(false);
@@ -1379,6 +1512,7 @@ function closeIntake(activateReview = true) {
 
 function openDataRoom() {
   closeWorkspace(false);
+  closeAccess(false);
   closeIntake(false);
   closeLibrary(false);
   closePortal(false);
@@ -1401,6 +1535,7 @@ function closeDataRoom(activateReview = true) {
 
 function openLibrary() {
   closeWorkspace(false);
+  closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
   closePortal(false);
@@ -1424,6 +1559,7 @@ function closeLibrary(activateReview = true) {
 
 function openPortalCopy() {
   closeWorkspace(false);
+  closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
   closeLibrary(false);
@@ -1487,6 +1623,228 @@ function renderWorkspaceOwners(groups) {
     `;
     elements.workspaceOwnerList.append(card);
   });
+}
+
+function renderAccess() {
+  const snapshot = accessSnapshot();
+  const current = snapshot.currentMember;
+
+  elements.accessSessionStatus.textContent = state.access.session.status;
+  elements.accessMemberCount.textContent = snapshot.memberCount;
+  elements.accessVaultStatus.textContent = state.access.cloud.status;
+  elements.accessAuditCount.textContent = snapshot.auditCount;
+  elements.accessCurrentUser.textContent = current.name;
+  elements.accessCurrentRole.textContent = `${current.team} | ${current.role}`;
+  elements.accessMethod.textContent = state.access.session.method;
+  elements.accessVerifiedAt.textContent = formatAccessDate(state.access.session.lastVerifiedAt);
+  elements.accessCloudStatus.textContent = state.access.cloud.status;
+  elements.accessCloudCheckpoint.textContent = state.access.cloud.lastSyncedAt
+    ? `${state.access.cloud.checkpoint} | ${formatAccessDate(state.access.cloud.lastSyncedAt)}`
+    : state.access.cloud.checkpoint;
+  elements.accessVaultSummary.innerHTML = `
+    <div>
+      <span class="label">Evidence Vault</span>
+      <strong>${state.evidence.length} files</strong>
+    </div>
+    <div>
+      <span class="label">Approved Answers</span>
+      <strong>${snapshot.approvedAnswers}</strong>
+    </div>
+    <div>
+      <span class="label">Claim Trace</span>
+      <strong>${snapshot.claimCount} claims</strong>
+    </div>
+    <div>
+      <span class="label">Invite Status</span>
+      <strong>${snapshot.acceptedInvites}/${state.access.invites.length} accepted</strong>
+    </div>
+  `;
+
+  renderAccessRoles(current.id);
+  renderAccessInvites();
+  renderAccessAuditPreview();
+}
+
+function renderAccessRoles(currentMemberId) {
+  elements.accessRoleList.innerHTML = "";
+
+  workspaceAccount.members.forEach((member) => {
+    const button = document.createElement("button");
+    button.className = `access-role-card${member.id === currentMemberId ? " is-active" : ""}`;
+    button.type = "button";
+    button.innerHTML = `
+      <div class="role-avatar" aria-hidden="true">${escapeHtml(initials(member.name))}</div>
+      <div>
+        <strong>${escapeHtml(member.name)}</strong>
+        <span>${escapeHtml(member.team)} | ${escapeHtml(member.role)}</span>
+      </div>
+    `;
+    button.addEventListener("click", () => switchAccessRole(member.id));
+    elements.accessRoleList.append(button);
+  });
+}
+
+function renderAccessInvites() {
+  elements.accessInviteList.innerHTML = "";
+
+  if (state.access.invites.length === 0) {
+    elements.accessInviteList.append(emptyState("No invited teammates"));
+    return;
+  }
+
+  state.access.invites.forEach((invite) => {
+    const card = document.createElement("article");
+    card.className = "access-invite-card";
+    card.innerHTML = `
+      <div>
+        <strong>${escapeHtml(invite.email)}</strong>
+        <span>${escapeHtml(invite.team)} | ${escapeHtml(invite.role)} | Sent ${escapeHtml(formatShortDate(invite.sentAt))}</span>
+      </div>
+      <button class="secondary-button" type="button" data-invite-toggle>
+        <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+        <span>${invite.status === "Accepted" ? "Accepted" : "Mark Accepted"}</span>
+      </button>
+    `;
+    card.querySelector("[data-invite-toggle]").addEventListener("click", () => toggleAccessInvite(invite.id));
+    elements.accessInviteList.append(card);
+  });
+}
+
+function renderAccessAuditPreview() {
+  elements.accessAuditPreview.innerHTML = "";
+  state.audit.slice(-5).reverse().forEach((entry) => {
+    const item = document.createElement("li");
+    item.innerHTML = `<strong>${escapeHtml(entry.action)}</strong><span>${escapeHtml(formatAuditTime(entry.at))}</span><p>${escapeHtml(entry.detail)}</p>`;
+    elements.accessAuditPreview.append(item);
+  });
+}
+
+function accessSnapshot() {
+  const currentMember = currentAccessMember();
+  const acceptedInvites = state.access.invites.filter((invite) => invite.status === "Accepted").length;
+  const approvedAnswers = state.questions.filter((question) => question.status === "approved").length;
+  const claimCount = state.questions.reduce((sum, question) => sum + claimTraceSnapshot(question).claims.length, 0);
+
+  return {
+    currentMember,
+    memberCount: workspaceAccount.members.length + state.access.invites.length,
+    acceptedInvites,
+    approvedAnswers,
+    claimCount,
+    auditCount: state.audit.length,
+  };
+}
+
+function currentAccessMember() {
+  return (
+    workspaceAccount.members.find((member) => member.id === state.access.session.currentMemberId)
+    ?? workspaceAccount.members[0]
+  );
+}
+
+function switchAccessRole(memberId) {
+  const member = workspaceAccount.members.find((item) => item.id === memberId);
+  if (!member) return;
+
+  state.access.session.currentMemberId = member.id;
+  state.access.session.status = "Verified";
+  state.access.session.lastVerifiedAt = new Date().toISOString();
+  addAudit("Session role switched", `Workspace viewed as ${member.name} (${member.role}).`);
+  renderAccess();
+  renderAudit();
+  renderDataRoom();
+  showToast(`Viewing as ${member.name}.`);
+}
+
+function addAccessInvite(event) {
+  event.preventDefault();
+  const email = elements.accessInviteEmail.value.trim();
+  const role = elements.accessInviteRole.value;
+  if (!email) return;
+
+  const exists = state.access.invites.some((invite) => invite.email.toLowerCase() === email.toLowerCase());
+  if (exists) {
+    showToast("Invite already exists.");
+    return;
+  }
+
+  state.access.invites.unshift({
+    id: `invite-${Date.now()}`,
+    email,
+    team: accessTeamForRole(role),
+    role,
+    status: "Invited",
+    sentAt: new Date().toISOString(),
+  });
+  elements.accessInviteEmail.value = "";
+  addAudit("Workspace invite queued", `${email} invited as ${role}.`);
+  renderAccess();
+  renderAudit();
+  renderDataRoom();
+  showToast("Invite added.");
+}
+
+function toggleAccessInvite(inviteId) {
+  const invite = state.access.invites.find((item) => item.id === inviteId);
+  if (!invite || invite.status === "Accepted") return;
+
+  invite.status = "Accepted";
+  addAudit("Workspace invite accepted", `${invite.email} accepted ${invite.role} access.`);
+  renderAccess();
+  renderAudit();
+  renderDataRoom();
+  showToast("Invite marked accepted.");
+}
+
+function syncAccessCheckpoint() {
+  const snapshot = accessSnapshot();
+  state.access.cloud.status = "Synced";
+  state.access.cloud.lastSyncedAt = new Date().toISOString();
+  state.access.cloud.checkpoint = `${state.evidence.length} files, ${snapshot.approvedAnswers} approved answers, ${snapshot.claimCount} traced claims`;
+  addAudit("Vault checkpoint synced", "Secure workspace checkpoint captured for pilot handoff.");
+  renderAccess();
+  renderAudit();
+  renderDataRoom();
+  showToast("Checkpoint synced.");
+}
+
+function copyAccessAudit() {
+  copyText(accessAuditText(), "Access audit copied.");
+}
+
+function accessAuditText() {
+  const snapshot = accessSnapshot();
+  const inviteLines = state.access.invites
+    .map((invite) => `- ${invite.email}: ${invite.role} | ${invite.team} | ${invite.status}`)
+    .join("\n");
+  const auditLines = state.audit
+    .slice(-10)
+    .reverse()
+    .map((entry) => `- ${formatAccessDate(entry.at)} | ${entry.action}: ${entry.detail}`)
+    .join("\n");
+
+  return [
+    `${workspaceAccount.company} - AnswerSeal Secure Workspace Accounts`,
+    `Build: ${BUILD_VERSION}`,
+    `Workspace ID: ${workspaceAccount.workspaceId}`,
+    `Session: ${state.access.session.status} via ${state.access.session.method}`,
+    `Current role: ${snapshot.currentMember.name} (${snapshot.currentMember.role})`,
+    `Members and invites: ${snapshot.memberCount}`,
+    `Vault checkpoint: ${state.access.cloud.status} | ${state.access.cloud.checkpoint}`,
+    "",
+    "Invites:",
+    inviteLines || "No pending invites.",
+    "",
+    "Latest audit:",
+    auditLines || "No audit events yet.",
+  ].join("\n");
+}
+
+function accessTeamForRole(role) {
+  if (role === "Admin") return "Security";
+  if (role === "Approver") return "Legal";
+  if (role === "Reviewer") return "AI Governance";
+  return "Read Only";
 }
 
 function renderDataRoom() {
@@ -1733,6 +2091,7 @@ function copyDataRoomBrief() {
 
 function dataRoomBriefText() {
   const snapshot = dataRoomSnapshot();
+  const access = accessSnapshot();
   const folderLines = snapshot.folders.map((folder) => `- ${folder.label}: ${folder.count} | ${folder.status}`).join("\n");
   const noteLines = state.evidence
     .slice(0, 5)
@@ -1749,6 +2108,7 @@ function dataRoomBriefText() {
     `${workspaceAccount.company} - AnswerSeal Pilot Data Room`,
     `Build: ${BUILD_VERSION}`,
     `Workspace ID: ${workspaceAccount.workspaceId}`,
+    `Access: ${state.access.cloud.status} | ${access.memberCount} members and invites`,
     `Close progress: ${snapshot.closeProgress}%`,
     "",
     "Folders:",
@@ -2561,6 +2921,7 @@ function exportReviewPack() {
   const routing = ownerRoutingSnapshot();
   const handoff = handoffReadinessSnapshot();
   const dataRoom = dataRoomSnapshot();
+  const access = accessSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -2578,11 +2939,64 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v5</h1>
+        <h1>AnswerSeal Review Pack v6</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Secure Workspace Accounts</h2>
+        <p>Session: ${escapeHtml(state.access.session.status)} via ${escapeHtml(state.access.session.method)} | Current role: ${escapeHtml(access.currentMember.name)} | Vault: ${escapeHtml(state.access.cloud.status)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Members and invites</td>
+              <td>${access.memberCount}</td>
+            </tr>
+            <tr>
+              <td>Accepted invites</td>
+              <td>${access.acceptedInvites}/${state.access.invites.length}</td>
+            </tr>
+            <tr>
+              <td>Vault checkpoint</td>
+              <td>${escapeHtml(state.access.cloud.checkpoint)}</td>
+            </tr>
+            <tr>
+              <td>Latest sync</td>
+              <td>${escapeHtml(formatAccessDate(state.access.cloud.lastSyncedAt))}</td>
+            </tr>
+          </tbody>
+        </table>
+        <h2>Workspace Invites</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Team</th>
+              <th>Role</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.access.invites
+              .map(
+                (invite) => `
+                  <tr>
+                    <td>${escapeHtml(invite.email)}</td>
+                    <td>${escapeHtml(invite.team)}</td>
+                    <td>${escapeHtml(invite.role)}</td>
+                    <td>${escapeHtml(invite.status)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
         <h2>Pilot Data Room</h2>
         <p>Close progress: ${dataRoom.closeProgress}% | Evidence notes: ${state.evidence.length} sources | Folders: ${dataRoom.folders.length}</p>
         <table>
@@ -2782,10 +3196,11 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v5 created with claim trace, source ranking, and conflict checks.");
+  addAudit("Review pack exported", "Review Pack v6 created with secure workspace accounts, claim trace, and data room status.");
   renderAudit();
+  renderAccess();
   renderDataRoom();
-  showToast("Review Pack v5 exported.");
+  showToast("Review Pack v6 exported.");
 }
 
 function toCsv(rows) {
@@ -2833,6 +3248,7 @@ function serializeWorkspace() {
     evidence: state.evidence,
     intake: state.intake,
     dataRoom: state.dataRoom,
+    access: state.access,
     handoff: state.handoff,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
@@ -2853,6 +3269,7 @@ function resetWorkspace() {
   elements.librarySearch.value = "";
   closeIntake(false);
   closeDataRoom(false);
+  closeAccess(false);
   closePortal(false);
   closeWorkspace(false);
   closeLibrary();
@@ -2941,6 +3358,16 @@ function formatShortDate(value) {
 
 function formatAuditTime(value) {
   return new Intl.DateTimeFormat("en", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function formatAccessDate(value) {
+  if (!value) return "Not synced";
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));

@@ -104,6 +104,10 @@
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
           </button>
+          <button class="nav-item" id="accessNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+            <span>Access</span>
+          </button>
           <button class="nav-item" id="dataRoomNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
             <span>Data Room</span>
@@ -138,8 +142,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.9 Alpha</strong>
-          <span>Claim Trace Engine</span>
+          <strong>v0.10 Alpha</strong>
+          <span>Secure Workspace Accounts</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -151,7 +155,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.9 Alpha</span>
+            <span class="label">Security questionnaire | v0.10 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -472,6 +476,117 @@
               <span>Summary</span>
             </button>
           </div>
+        </section>
+      </section>
+    </aside>
+
+    <div class="access-backdrop drawer-backdrop" id="accessBackdrop" hidden></div>
+    <aside class="workspace-drawer access-drawer" id="accessDrawer" aria-label="Secure workspace accounts" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Secure Workspace Accounts</span>
+          <h2>Aster Health access control</h2>
+        </div>
+        <button class="icon-button" id="closeAccessButton" type="button" aria-label="Close access" title="Close access">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip access-metrics" aria-label="Access status">
+        <article>
+          <span class="label">Session</span>
+          <strong id="accessSessionStatus">Verified</strong>
+        </article>
+        <article>
+          <span class="label">Members</span>
+          <strong id="accessMemberCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Vault</span>
+          <strong id="accessVaultStatus">Local pilot</strong>
+        </article>
+        <article>
+          <span class="label">Audit</span>
+          <strong id="accessAuditCount">0</strong>
+        </article>
+      </section>
+
+      <section class="access-body">
+        <section class="access-section" aria-label="Current session">
+          <div class="section-heading">
+            <span class="label">Current Session</span>
+            <span id="accessMethod">SSO + MFA</span>
+          </div>
+          <div class="account-grid">
+            <div>
+              <span class="label">User</span>
+              <strong id="accessCurrentUser">Maya Shah</strong>
+            </div>
+            <div>
+              <span class="label">Role</span>
+              <strong id="accessCurrentRole">Security | Approver</strong>
+            </div>
+            <div>
+              <span class="label">Workspace</span>
+              <strong>AS-PRV-2407</strong>
+            </div>
+            <div>
+              <span class="label">Verified</span>
+              <strong id="accessVerifiedAt">Now</strong>
+            </div>
+          </div>
+          <div class="access-role-list" id="accessRoleList"></div>
+        </section>
+
+        <section class="access-section" aria-label="Team invites">
+          <div class="section-heading">
+            <span class="label">Team Invites</span>
+            <span>Invite-only pilot</span>
+          </div>
+          <form class="access-invite-form" id="accessInviteForm">
+            <input id="accessInviteEmail" type="email" placeholder="reviewer@company.com" aria-label="Reviewer email" required />
+            <select id="accessInviteRole" aria-label="Reviewer role">
+              <option>Viewer</option>
+              <option>Reviewer</option>
+              <option>Approver</option>
+              <option>Admin</option>
+            </select>
+            <button class="primary-button" type="submit">
+              <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+              <span>Add Invite</span>
+            </button>
+          </form>
+          <div class="access-invite-list" id="accessInviteList"></div>
+        </section>
+
+        <section class="access-section" aria-label="Organization vault">
+          <div class="section-heading">
+            <span class="label">Organization Vault</span>
+            <span id="accessCloudStatus">Local pilot</span>
+          </div>
+          <div class="access-vault-summary" id="accessVaultSummary"></div>
+          <div class="access-cloud-row">
+            <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+            <div>
+              <span class="label">Checkpoint</span>
+              <strong id="accessCloudCheckpoint">Awaiting secure sync</strong>
+            </div>
+          </div>
+          <button class="secondary-button" id="syncCheckpointButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Sync Checkpoint</span>
+          </button>
+        </section>
+
+        <section class="access-section" aria-label="Access audit">
+          <div class="section-heading">
+            <span class="label">Access Audit</span>
+            <button class="secondary-button compact-button" id="copyAuditButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy Audit</span>
+            </button>
+          </div>
+          <ol class="access-audit-list" id="accessAuditPreview"></ol>
         </section>
       </section>
     </aside>
