@@ -1,4 +1,4 @@
-const BUILD_VERSION = "v0.4 Alpha";
+const BUILD_VERSION = "v0.5 Alpha";
 const STORAGE_KEY = "answerseal.workspace.v04";
 const MEMORY_READY_LABEL = "Saved locally";
 

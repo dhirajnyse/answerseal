@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.4 Alpha
+**Current version:** v0.5 Alpha
 
-**Current phase:** Demo Memory
+**Current phase:** Build Phases
 
 ## Brand
 
@@ -30,6 +30,8 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Draft answer workspace with confidence scoring, review notes, and citations
 - Seal Summary for answer grade, evidence coverage, and source freshness
 - Seal Path landing narrative from buyer question to approved evidence
+- Top version badge linked to a build phases page
+- Build phases page with shipped releases and the next-version roadmap
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -42,6 +44,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 ## Project Files
 
 - `index.html` - Landing page and private pilot conversion
+- `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -54,13 +57,15 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase
+## Next Phase: v0.6 Alpha - Evidence Intake
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
-- Add real document parsing for PDF, DOCX, and XLSX questionnaires
+- Add document intake previews for PDF, DOCX, XLSX, TXT, CSV, and Markdown files
+- Add an evidence coverage map for ready, weak, missing, and stale categories
+- Add portal copy mode for compact buyer portal workflows
+- Add Review Pack v2 with answer-library references and evidence freshness
 - Add private cloud workspace storage and user accounts
 - Add AI drafting against a retrieval index with per-claim citations
-- Add portal copy mode for browser-based buyer questionnaires
 
 ## License
 

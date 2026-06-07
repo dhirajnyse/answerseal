@@ -1,5 +1,14 @@
 # AnswerSeal Releases
 
+## v0.5 Alpha - Build Phases
+
+Phase: Build Phases
+
+- Added a top version badge linking to the build phases page.
+- Added `versions.html` with current build details, release history, and the next-version roadmap.
+- Added the v0.6 Alpha feature plan for evidence intake, coverage mapping, portal copy mode, and Review Pack v2.
+- Updated visible build labels across the landing page, demo, pilot request flow, and repository docs.
+
 ## v0.4 Alpha - Demo Memory
 
 Phase: Demo Memory
