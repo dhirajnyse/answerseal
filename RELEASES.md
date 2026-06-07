@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.15 Alpha - Buyer Trust Rooms
+
+Phase: Buyer Trust Rooms
+
+- Added a Buyer Trust Room drawer with scoped room link, status, score, expiry, and buyer receipt metrics.
+- Added buyer-safe answer packet cards for approved and approval-gated answers.
+- Added source-safe evidence excerpt cards that expose citations and safe summaries instead of raw internal files.
+- Added access policy cards for approved-only sharing, scoped link visibility, expiry, and evidence visibility.
+- Added room receipt trail for buyer views, copied links, copied packets, and published room activity.
+- Added copy actions for room link, buyer packet, buyer-safe answers, source-safe excerpts, and room digest.
+- Added trust room status, shared answer count, and view count to CSV exports.
+- Upgraded review pack export to Review Pack v11 with buyer trust room, access policy, safe evidence excerpts, and receipt trail.
+- Updated the build phases page with the v0.16 Buyer Follow-Up Inbox plan.
+
 ## v0.14 Alpha - Multi-Buyer Pipeline
 
 Phase: Multi-Buyer Pipeline

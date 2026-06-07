@@ -108,6 +108,10 @@
             <svg aria-hidden="true"><use href="#icon-link"></use></svg>
             <span>Pipeline</span>
           </button>
+          <button class="nav-item" id="trustRoomNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+            <span>Trust Room</span>
+          </button>
           <button class="nav-item" id="analyticsNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
             <span>Analytics</span>
@@ -150,8 +154,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.14 Alpha</strong>
-          <span>Multi-Buyer Pipeline</span>
+          <strong>v0.15 Alpha</strong>
+          <span>Buyer Trust Rooms</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -163,7 +167,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.14 Alpha</span>
+            <span class="label">Security questionnaire | v0.15 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -594,6 +598,110 @@
             </button>
           </div>
           <pre class="pipeline-digest" id="pipelineDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="trust-room-backdrop drawer-backdrop" id="trustRoomBackdrop" hidden></div>
+    <aside class="workspace-drawer trust-room-drawer" id="trustRoomDrawer" aria-label="Buyer trust room" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Buyer Trust Room</span>
+          <h2>Scoped proof packet for the buyer</h2>
+        </div>
+        <button class="icon-button" id="closeTrustRoomButton" type="button" aria-label="Close trust room" title="Close trust room">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip trust-room-metrics" aria-label="Trust room status">
+        <article>
+          <span class="label">Status</span>
+          <strong id="trustRoomStatus">Draft</strong>
+        </article>
+        <article>
+          <span class="label">Score</span>
+          <strong id="trustRoomScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Shared</span>
+          <strong id="trustRoomShared">0/0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="trustRoomReceipts">0 views</strong>
+        </article>
+        <article>
+          <span class="label">Expires</span>
+          <strong id="trustRoomExpiry">0d</strong>
+        </article>
+      </section>
+
+      <section class="trust-room-body">
+        <section class="trust-room-section" aria-label="Scoped room link">
+          <div class="section-heading">
+            <span class="label">Scoped Room</span>
+            <span>Buyer-safe handoff</span>
+          </div>
+          <code class="trust-room-link" id="trustRoomLink">https://answerseal.app/room/AS-TRUST-2407</code>
+          <div class="trust-room-actions">
+            <button class="primary-button compact-button" id="prepareTrustRoomButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+              <span>Prepare</span>
+            </button>
+            <button class="secondary-button compact-button" id="copyTrustRoomLinkButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Link</span>
+            </button>
+            <button class="secondary-button compact-button" id="copyTrustRoomPacketButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Packet</span>
+            </button>
+            <button class="secondary-button compact-button" id="recordTrustRoomViewButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+              <span>Viewed</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="trust-room-section" aria-label="Access policy">
+          <div class="section-heading">
+            <span class="label">Access Policy</span>
+            <span>What the buyer can see</span>
+          </div>
+          <div class="trust-policy-list" id="trustRoomPolicyList"></div>
+        </section>
+
+        <section class="trust-room-section" aria-label="Buyer-safe answer packet">
+          <div class="section-heading">
+            <span class="label">Answer Packet</span>
+            <span>Approved and approval-gated answers</span>
+          </div>
+          <div class="trust-answer-list" id="trustRoomAnswerList"></div>
+        </section>
+
+        <section class="trust-room-section" aria-label="Source-safe evidence">
+          <div class="section-heading">
+            <span class="label">Source-Safe Evidence</span>
+            <span>Excerpts, not raw files</span>
+          </div>
+          <div class="trust-evidence-list" id="trustRoomEvidenceList"></div>
+        </section>
+
+        <section class="trust-room-section" aria-label="Buyer receipt trail">
+          <div class="section-heading">
+            <span class="label">Receipt Trail</span>
+            <span>Buyer activity</span>
+          </div>
+          <div class="trust-receipt-list" id="trustRoomReceiptList"></div>
+        </section>
+
+        <section class="trust-room-section" aria-label="Trust room digest">
+          <div class="section-heading">
+            <span class="label">Room Digest</span>
+            <span>Copy into sales handoff</span>
+          </div>
+          <pre class="trust-room-digest" id="trustRoomDigest"></pre>
         </section>
       </section>
     </aside>

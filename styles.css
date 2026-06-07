@@ -1775,6 +1775,182 @@ svg {
   white-space: pre-wrap;
 }
 
+.trust-room-drawer {
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: min(780px, 100vw);
+}
+
+.trust-room-metrics {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.trust-room-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(238, 248, 255, 0.7) 0%, rgba(255, 255, 255, 0.96) 42%),
+    #ffffff;
+}
+
+.trust-room-section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.trust-room-link {
+  display: block;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(0, 168, 137, 0.24);
+  border-radius: 8px;
+  color: var(--accent-dark);
+  background: #f1fffb;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.trust-room-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.trust-policy-list,
+.trust-answer-list,
+.trust-evidence-list,
+.trust-receipt-list {
+  display: grid;
+  gap: 8px;
+}
+
+.trust-policy-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.trust-policy-card,
+.trust-answer-card,
+.trust-evidence-card,
+.trust-receipt-row {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.trust-policy-card {
+  align-content: start;
+  min-height: 112px;
+}
+
+.trust-policy-card strong,
+.trust-answer-card strong,
+.trust-evidence-card strong,
+.trust-receipt-row strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.trust-policy-card p,
+.trust-answer-card p,
+.trust-evidence-card p,
+.trust-receipt-row p,
+.trust-answer-card footer span,
+.trust-evidence-card footer span,
+.trust-receipt-row span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.42;
+}
+
+.trust-answer-card {
+  border-left: 4px solid var(--blue);
+}
+
+.trust-answer-card.is-shared {
+  border-left-color: var(--green);
+  background: #f6fffb;
+}
+
+.trust-answer-card.is-gated {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.trust-answer-card header,
+.trust-answer-card footer,
+.trust-evidence-card header,
+.trust-evidence-card footer,
+.trust-receipt-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.trust-answer-card header div,
+.trust-evidence-card header div,
+.trust-receipt-row div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.trust-answer-card footer,
+.trust-evidence-card footer {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.trust-answer-card footer .compact-button,
+.trust-evidence-card footer .compact-button {
+  width: auto;
+  min-width: 96px;
+  margin-left: auto;
+}
+
+.trust-evidence-card {
+  border-color: rgba(31, 41, 38, 0.1);
+}
+
+.trust-receipt-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: #ffffff;
+}
+
+.trust-room-digest {
+  min-height: 250px;
+  max-height: 360px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -3923,6 +4099,9 @@ svg {
     .portal-metrics,
     .pipeline-metrics,
     .pipeline-account-meta,
+    .trust-room-metrics,
+    .trust-room-actions,
+    .trust-policy-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -3958,6 +4137,11 @@ svg {
     .pipeline-sla-row,
     .pipeline-account-card header,
     .pipeline-account-card footer,
+    .trust-answer-card header,
+    .trust-answer-card footer,
+    .trust-evidence-card header,
+    .trust-evidence-card footer,
+    .trust-receipt-row,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -4040,6 +4224,9 @@ svg {
     .workspace-metrics,
     .pipeline-metrics,
     .pipeline-account-meta,
+    .trust-room-metrics,
+    .trust-room-actions,
+    .trust-policy-list,
     .analytics-metrics,
     .access-metrics,
     .data-room-metrics,
@@ -4054,6 +4241,11 @@ svg {
     .owner-route-card,
     .pipeline-reuse-card,
     .pipeline-sla-row,
+    .trust-answer-card header,
+    .trust-answer-card footer,
+    .trust-evidence-card header,
+    .trust-evidence-card footer,
+    .trust-receipt-row,
     .analytics-roi-card,
     .analytics-time-row,
     .access-role-card,

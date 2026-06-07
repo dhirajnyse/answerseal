@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.14 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v14";
+const BUILD_VERSION = "v0.15 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v15";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v14",
   "answerseal.workspace.v13",
   "answerseal.workspace.v12",
   "answerseal.workspace.v11",
@@ -21,6 +22,7 @@ const workspaceAccount = {
   region: "Browser demo",
   currentRole: "Trust Lead",
   handoffUrl: "https://answerseal.app/secure/AS-HANDOFF-2407",
+  trustRoomUrl: "https://answerseal.app/room/AS-TRUST-2407",
   expires: "June 14, 2026",
   members: [
     {
@@ -463,6 +465,30 @@ const buyerPipelineSeeds = [
   },
 ];
 
+const trustRoomReceiptSeeds = [
+  {
+    id: "receipt-created",
+    actor: "Maya Shah",
+    action: "Room drafted",
+    detail: "Buyer-safe answer packet assembled from approved sources.",
+    at: "2026-06-08T06:30:00.000Z",
+  },
+  {
+    id: "receipt-opened",
+    actor: "Aster Health security",
+    action: "Buyer opened",
+    detail: "Scoped room viewed with watermark and source-safe excerpts.",
+    at: "2026-06-08T07:20:00.000Z",
+  },
+  {
+    id: "receipt-copied",
+    actor: "Aster Health security",
+    action: "Answer copied",
+    detail: "AI governance answer copied with citation note attached.",
+    at: "2026-06-08T07:24:00.000Z",
+  },
+];
+
 function createSeedIntake() {
   return evidenceDocs.map((doc) => ({
     id: `seed-${doc.id}`,
@@ -503,6 +529,8 @@ function createInitialState() {
     access: createInitialAccessState(),
     workspaceOpen: false,
     pipelineOpen: false,
+    trustRoomOpen: false,
+    trustRoom: createInitialTrustRoom(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -523,6 +551,19 @@ function createInitialHandoff() {
     url: workspaceAccount.handoffUrl,
     expires: workspaceAccount.expires,
     preparedAt: null,
+  };
+}
+
+function createInitialTrustRoom() {
+  return {
+    status: "Draft",
+    buyer: "Aster Health security team",
+    url: workspaceAccount.trustRoomUrl,
+    expires: "2026-06-21",
+    preparedAt: null,
+    views: 1,
+    copies: 1,
+    receipts: trustRoomReceiptSeeds.map((event) => ({ ...event })),
   };
 }
 
@@ -609,6 +650,7 @@ function loadWorkspaceState() {
       dataRoom: normalizeDataRoom(workspace.dataRoom ?? fresh.dataRoom),
       access: normalizeAccess(workspace.access ?? fresh.access),
       portal: normalizePortal(workspace.portal ?? fresh.portal),
+      trustRoom: normalizeTrustRoom(workspace.trustRoom ?? fresh.trustRoom),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -618,6 +660,7 @@ function loadWorkspaceState() {
       accessOpen: false,
       workspaceOpen: false,
       pipelineOpen: false,
+      trustRoomOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -770,6 +813,31 @@ function normalizePortal(portal) {
   };
 }
 
+function normalizeTrustRoom(trustRoom) {
+  const fresh = createInitialTrustRoom();
+  const receipts = Array.isArray(trustRoom?.receipts) ? trustRoom.receipts.map(normalizeTrustRoomReceipt) : fresh.receipts;
+  return {
+    status: String(trustRoom?.status ?? fresh.status),
+    buyer: String(trustRoom?.buyer ?? fresh.buyer),
+    url: String(trustRoom?.url ?? fresh.url),
+    expires: String(trustRoom?.expires ?? fresh.expires),
+    preparedAt: trustRoom?.preparedAt ?? null,
+    views: Number.isFinite(Number(trustRoom?.views)) ? Number(trustRoom.views) : fresh.views,
+    copies: Number.isFinite(Number(trustRoom?.copies)) ? Number(trustRoom.copies) : fresh.copies,
+    receipts,
+  };
+}
+
+function normalizeTrustRoomReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `receipt-${Date.now()}`),
+    actor: String(receipt?.actor ?? "Buyer"),
+    action: String(receipt?.action ?? "Room activity"),
+    detail: String(receipt?.detail ?? "Buyer trust room activity recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
@@ -777,6 +845,7 @@ const elements = {
   reviewNavButton: document.querySelector("#reviewNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
+  trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
   analyticsNavButton: document.querySelector("#analyticsNavButton"),
   accessNavButton: document.querySelector("#accessNavButton"),
   dataRoomNavButton: document.querySelector("#dataRoomNavButton"),
@@ -884,6 +953,24 @@ const elements = {
   pipelineSlaList: document.querySelector("#pipelineSlaList"),
   pipelineDigest: document.querySelector("#pipelineDigest"),
   copyPipelineDigestButton: document.querySelector("#copyPipelineDigestButton"),
+  trustRoomBackdrop: document.querySelector("#trustRoomBackdrop"),
+  trustRoomDrawer: document.querySelector("#trustRoomDrawer"),
+  closeTrustRoomButton: document.querySelector("#closeTrustRoomButton"),
+  trustRoomStatus: document.querySelector("#trustRoomStatus"),
+  trustRoomScore: document.querySelector("#trustRoomScore"),
+  trustRoomShared: document.querySelector("#trustRoomShared"),
+  trustRoomReceipts: document.querySelector("#trustRoomReceipts"),
+  trustRoomExpiry: document.querySelector("#trustRoomExpiry"),
+  trustRoomLink: document.querySelector("#trustRoomLink"),
+  trustRoomPolicyList: document.querySelector("#trustRoomPolicyList"),
+  trustRoomAnswerList: document.querySelector("#trustRoomAnswerList"),
+  trustRoomEvidenceList: document.querySelector("#trustRoomEvidenceList"),
+  trustRoomReceiptList: document.querySelector("#trustRoomReceiptList"),
+  trustRoomDigest: document.querySelector("#trustRoomDigest"),
+  prepareTrustRoomButton: document.querySelector("#prepareTrustRoomButton"),
+  copyTrustRoomLinkButton: document.querySelector("#copyTrustRoomLinkButton"),
+  copyTrustRoomPacketButton: document.querySelector("#copyTrustRoomPacketButton"),
+  recordTrustRoomViewButton: document.querySelector("#recordTrustRoomViewButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -988,6 +1075,7 @@ function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
+  elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
   elements.analyticsNavButton.addEventListener("click", openAnalytics);
   elements.accessNavButton.addEventListener("click", openAccess);
   elements.dataRoomNavButton.addEventListener("click", openDataRoom);
@@ -1028,6 +1116,7 @@ function bindEvents() {
     renderIntake();
     renderWorkspace();
     renderPipeline();
+    renderTrustRoom();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1052,6 +1141,12 @@ function bindEvents() {
   elements.closePipelineButton.addEventListener("click", closePipeline);
   elements.pipelineBackdrop.addEventListener("click", closePipeline);
   elements.copyPipelineDigestButton.addEventListener("click", copyPipelineDigest);
+  elements.closeTrustRoomButton.addEventListener("click", closeTrustRoom);
+  elements.trustRoomBackdrop.addEventListener("click", closeTrustRoom);
+  elements.prepareTrustRoomButton.addEventListener("click", prepareTrustRoom);
+  elements.copyTrustRoomLinkButton.addEventListener("click", copyTrustRoomLink);
+  elements.copyTrustRoomPacketButton.addEventListener("click", copyTrustRoomPacket);
+  elements.recordTrustRoomViewButton.addEventListener("click", recordTrustRoomView);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1096,6 +1191,7 @@ function bindEvents() {
     if (state.accessOpen) closeAccess();
     if (state.workspaceOpen) closeWorkspace();
     if (state.pipelineOpen) closePipeline();
+    if (state.trustRoomOpen) closeTrustRoom();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1107,6 +1203,7 @@ function applyInitialHash() {
   const hash = window.location.hash.replace("#", "").toLowerCase();
   if (hash === "workspace") openWorkspace();
   if (hash === "pipeline" || hash === "buyers") openPipeline();
+  if (hash === "trust-room" || hash === "room" || hash === "rooms") openTrustRoom();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1132,6 +1229,7 @@ function render() {
   renderIntake();
   renderWorkspace();
   renderPipeline();
+  renderTrustRoom();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1202,6 +1300,7 @@ function renderQuestionList() {
       renderEvidence();
       renderPortalCopy();
       renderPipeline();
+      renderTrustRoom();
       renderAnalytics();
       schedulePersist();
     });
@@ -1828,6 +1927,7 @@ function renderAudit() {
 function activateWorkspaceNav(target) {
   closeWorkspace(false);
   closePipeline(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeAccess(false);
   closeLibrary(false);
@@ -1850,6 +1950,7 @@ function setActiveNav(activeButton) {
     elements.reviewNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
+    elements.trustRoomNavButton,
     elements.analyticsNavButton,
     elements.accessNavButton,
     elements.dataRoomNavButton,
@@ -1863,6 +1964,7 @@ function setActiveNav(activeButton) {
 
 function openWorkspace() {
   closePipeline(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -1888,6 +1990,7 @@ function closeWorkspace(activateReview = true) {
 
 function openPipeline() {
   closeWorkspace(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -1912,9 +2015,37 @@ function closePipeline(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openTrustRoom() {
+  closeWorkspace(false);
+  closePipeline(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.trustRoomOpen = true;
+  setActiveNav(elements.trustRoomNavButton);
+  elements.trustRoomBackdrop.hidden = false;
+  elements.trustRoomDrawer.classList.add("is-open");
+  elements.trustRoomDrawer.setAttribute("aria-hidden", "false");
+  renderTrustRoom();
+  elements.copyTrustRoomLinkButton.focus();
+}
+
+function closeTrustRoom(activateReview = true) {
+  if (!state.trustRoomOpen && elements.trustRoomDrawer.getAttribute("aria-hidden") === "true") return;
+  state.trustRoomOpen = false;
+  elements.trustRoomDrawer.classList.remove("is-open");
+  elements.trustRoomDrawer.setAttribute("aria-hidden", "true");
+  elements.trustRoomBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeWorkspace(false);
   closePipeline(false);
+  closeTrustRoom(false);
   closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1941,6 +2072,7 @@ function closeAnalytics(activateReview = true) {
 function openAccess() {
   closeWorkspace(false);
   closePipeline(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1966,6 +2098,7 @@ function closeAccess(activateReview = true) {
 function openIntake() {
   closeWorkspace(false);
   closePipeline(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeAccess(false);
   closeDataRoom(false);
@@ -1991,6 +2124,7 @@ function closeIntake(activateReview = true) {
 function openDataRoom() {
   closeWorkspace(false);
   closePipeline(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2016,6 +2150,7 @@ function closeDataRoom(activateReview = true) {
 function openLibrary() {
   closeWorkspace(false);
   closePipeline(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2042,6 +2177,7 @@ function closeLibrary(activateReview = true) {
 function openPortalCopy() {
   closeWorkspace(false);
   closePipeline(false);
+  closeTrustRoom(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2281,6 +2417,343 @@ function pipelineAccountBrief(account) {
 
 function copyPipelineDigest() {
   copyText(pipelineDigestText(), "Pipeline digest copied.");
+}
+
+function renderTrustRoom() {
+  const room = trustRoomSnapshot();
+
+  elements.trustRoomStatus.textContent = room.status;
+  elements.trustRoomScore.textContent = `${room.score}%`;
+  elements.trustRoomShared.textContent = `${room.sharedCount}/${room.answers.length}`;
+  elements.trustRoomReceipts.textContent = `${room.views} views`;
+  elements.trustRoomExpiry.textContent = room.expiryLabel;
+  elements.trustRoomLink.textContent = room.url;
+  elements.trustRoomDigest.textContent = trustRoomDigestText(room);
+
+  elements.trustRoomPolicyList.innerHTML = "";
+  room.policies.forEach((policy) => {
+    const card = document.createElement("article");
+    card.className = "trust-policy-card";
+    card.innerHTML = `
+      <span class="label">${escapeHtml(policy.label)}</span>
+      <strong>${escapeHtml(policy.value)}</strong>
+      <p>${escapeHtml(policy.detail)}</p>
+    `;
+    elements.trustRoomPolicyList.append(card);
+  });
+
+  elements.trustRoomAnswerList.innerHTML = "";
+  if (room.answers.length === 0) {
+    elements.trustRoomAnswerList.append(emptyState("No source-safe answers yet"));
+  } else {
+    room.answers.forEach((item) => {
+      const card = document.createElement("article");
+      card.className = `trust-answer-card${item.shared ? " is-shared" : " is-gated"}`;
+      card.innerHTML = `
+        <header>
+          <div>
+            <span class="label">${escapeHtml(item.question.category)}</span>
+            <strong>${escapeHtml(item.question.text)}</strong>
+          </div>
+          <span class="route-status ${item.shared ? "is-assigned" : "is-needed"}">${escapeHtml(item.gate)}</span>
+        </header>
+        <p>${escapeHtml(shorten(item.question.answer, 260))}</p>
+        <footer>
+          <span>${item.docs.length} source${item.docs.length === 1 ? "" : "s"} | ${item.question.confidence}% confidence</span>
+          <button class="secondary-button compact-button" type="button" data-trust-answer="${escapeHtml(item.question.id)}">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Answer</span>
+          </button>
+        </footer>
+      `;
+      card.querySelector("[data-trust-answer]")?.addEventListener("click", () => copyText(trustRoomAnswerText(item), "Buyer-safe answer copied."));
+      elements.trustRoomAnswerList.append(card);
+    });
+  }
+
+  elements.trustRoomEvidenceList.innerHTML = "";
+  if (room.evidencePackets.length === 0) {
+    elements.trustRoomEvidenceList.append(emptyState("No source-safe excerpts yet"));
+  } else {
+    room.evidencePackets.forEach((packet) => {
+      const card = document.createElement("article");
+      card.className = "trust-evidence-card";
+      card.innerHTML = `
+        <header>
+          <div>
+            <span class="label">${escapeHtml(packet.doc.type)} | ${escapeHtml(packet.visibility)}</span>
+            <strong>${escapeHtml(packet.doc.title)}</strong>
+          </div>
+          <span class="freshness ${freshnessClass(packet.doc.updated)}">${escapeHtml(freshnessLabel(packet.doc.updated))}</span>
+        </header>
+        <p>${escapeHtml(packet.excerpt)}</p>
+        <footer>
+          <span>${packet.uses} answer${packet.uses === 1 ? "" : "s"} | ${escapeHtml(packet.doc.owner)}</span>
+          <button class="secondary-button compact-button" type="button" data-trust-evidence="${escapeHtml(packet.doc.id)}">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Excerpt</span>
+          </button>
+        </footer>
+      `;
+      card.querySelector("[data-trust-evidence]")?.addEventListener("click", () => copyText(trustRoomEvidenceText(packet), "Source-safe excerpt copied."));
+      elements.trustRoomEvidenceList.append(card);
+    });
+  }
+
+  elements.trustRoomReceiptList.innerHTML = "";
+  room.receipts.slice(0, 7).forEach((receipt) => {
+    const item = document.createElement("article");
+    item.className = "trust-receipt-row";
+    item.innerHTML = `
+      <div>
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.actor)} | ${escapeHtml(formatAccessDate(receipt.at))}</span>
+      </div>
+      <p>${escapeHtml(receipt.detail)}</p>
+    `;
+    elements.trustRoomReceiptList.append(item);
+  });
+}
+
+function trustRoomSnapshot() {
+  const handoff = handoffReadinessSnapshot();
+  const candidates = state.questions
+    .map(trustRoomAnswerCandidate)
+    .filter((item) => item.sourceSafe)
+    .sort((a, b) => Number(b.shared) - Number(a.shared) || b.question.confidence - a.question.confidence || a.question.text.localeCompare(b.question.text));
+  const shared = candidates.filter((item) => item.shared);
+  const queued = candidates.filter((item) => !item.shared);
+  const answers = [...shared, ...queued].slice(0, 6);
+  const evidencePackets = trustRoomEvidencePackets(answers);
+  const blockedCount = state.questions.length - candidates.length;
+  const daysLeft = daysUntil(state.trustRoom.expires);
+  const coverageBoost = Math.min(15, evidencePackets.length * 3);
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(handoff.ready * 0.45 + (candidates.length / Math.max(1, state.questions.length)) * 25 + coverageBoost + (state.trustRoom.status === "Live" ? 15 : 6)),
+    ),
+  );
+  const status = state.trustRoom.status === "Live" ? "Live" : shared.length > 0 ? "Ready" : "Draft";
+  const receipts = [...state.trustRoom.receipts].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+
+  return {
+    status,
+    score,
+    buyer: state.trustRoom.buyer,
+    url: state.trustRoom.url,
+    expires: state.trustRoom.expires,
+    expiryLabel: daysLeft <= 0 ? "Expired" : `${daysLeft}d`,
+    views: state.trustRoom.views,
+    copies: state.trustRoom.copies,
+    answers,
+    sharedCount: shared.length,
+    approvalReadyCount: queued.length,
+    blockedCount,
+    evidencePackets,
+    receipts,
+    policies: trustRoomPolicies(status, daysLeft, evidencePackets.length),
+  };
+}
+
+function trustRoomAnswerCandidate(question) {
+  const docs = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+  const trace = claimTraceSnapshot(question);
+  const sourceSafe = docs.length > 0 && Number(question.confidence) >= 70 && trace.conflicts === 0;
+  const shared = question.status === "approved" && sourceSafe;
+  return {
+    question,
+    docs,
+    trace,
+    sourceSafe,
+    shared,
+    gate: shared ? "Shared" : sourceSafe ? "Approval gate" : "Blocked",
+  };
+}
+
+function trustRoomEvidencePackets(answers) {
+  const packets = new Map();
+  answers.forEach((item) => {
+    item.docs.forEach((doc) => {
+      const existing = packets.get(doc.id) ?? {
+        doc,
+        uses: 0,
+        questions: [],
+        excerpt: sourceSafeExcerpt(doc, item.question.text),
+        visibility: doc.id === "pilot-terms-2025" ? "Blocked legacy" : "Source-safe",
+      };
+      existing.uses += 1;
+      existing.questions.push(item.question.text);
+      packets.set(doc.id, existing);
+    });
+  });
+
+  return [...packets.values()].sort((a, b) => b.uses - a.uses || a.doc.title.localeCompare(b.doc.title));
+}
+
+function trustRoomPolicies(status, daysLeft, evidenceCount) {
+  return [
+    {
+      label: "Scope",
+      value: "Approved answers only",
+      detail: "Draft, weak, stale, or conflicting claims stay hidden from the buyer packet.",
+    },
+    {
+      label: "Access",
+      value: status === "Live" ? "Scoped link active" : "Draft link",
+      detail: "Room access is represented as a buyer-specific URL with watermark and receipt trail.",
+    },
+    {
+      label: "Expiry",
+      value: daysLeft <= 0 ? "Expired" : `${daysLeft} days left`,
+      detail: "The buyer room is time boxed so old proof does not drift into future reviews.",
+    },
+    {
+      label: "Evidence",
+      value: `${evidenceCount} source-safe excerpts`,
+      detail: "Buyers see excerpts and citation titles, not raw internal notes or legacy files.",
+    },
+  ];
+}
+
+function sourceSafeExcerpt(doc, questionText) {
+  if (doc.id === "pilot-terms-2025") {
+    return "Legacy pilot language is blocked from buyer-facing trust rooms.";
+  }
+  const excerpt = bestExcerptForQuestion(doc, questionText);
+  return excerpt.replace(/customer data/gi, "customer data").replace(/foundation models/gi, "foundation models");
+}
+
+function trustRoomDigestText(room = trustRoomSnapshot()) {
+  const answerLines = room.answers
+    .slice(0, 5)
+    .map((item, index) => `${index + 1}. ${item.question.category}: ${item.gate} | ${item.docs.length} sources | ${item.question.confidence}% confidence`)
+    .join("\n");
+  const evidenceLines = room.evidencePackets
+    .slice(0, 5)
+    .map((packet, index) => `${index + 1}. ${packet.doc.title}: ${packet.uses} linked answers | ${packet.visibility}`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Buyer Trust Room",
+    `Build: ${BUILD_VERSION}`,
+    `Buyer: ${room.buyer}`,
+    `Status: ${room.status}`,
+    `Room score: ${room.score}%`,
+    `Scoped link: ${room.url}`,
+    `Expires: ${formatShortDate(room.expires)} (${room.expiryLabel})`,
+    `Shared answers: ${room.sharedCount}`,
+    `Approval-ready answers: ${room.approvalReadyCount}`,
+    `Blocked claims: ${room.blockedCount}`,
+    `Buyer activity: ${room.views} views, ${room.copies} copies, ${room.receipts.length} receipts`,
+    "",
+    "Answer packet:",
+    answerLines || "No source-safe answers yet.",
+    "",
+    "Source-safe evidence:",
+    evidenceLines || "No buyer-safe evidence excerpts yet.",
+    "",
+    "Access policy:",
+    "- Share approved answers only.",
+    "- Show citations and safe excerpts, not internal source files.",
+    "- Track buyer opens, copies, and packet handoff receipts.",
+  ].join("\n");
+}
+
+function trustRoomAnswerText(item) {
+  const sources = item.docs.map((doc) => `${doc.title} (${formatShortDate(doc.updated)})`).join("; ");
+  return [
+    `${workspaceAccount.company} - Buyer-safe answer`,
+    `Build: ${BUILD_VERSION}`,
+    `Gate: ${item.gate}`,
+    `Question: ${item.question.text}`,
+    `Answer: ${item.question.answer}`,
+    `Sources: ${sources}`,
+  ].join("\n");
+}
+
+function trustRoomEvidenceText(packet) {
+  return [
+    `${packet.doc.title} - Source-safe excerpt`,
+    `Type: ${packet.doc.type}`,
+    `Owner: ${packet.doc.owner}`,
+    `Updated: ${formatShortDate(packet.doc.updated)}`,
+    `Visibility: ${packet.visibility}`,
+    `Excerpt: ${packet.excerpt}`,
+  ].join("\n");
+}
+
+function prepareTrustRoom() {
+  state.trustRoom.status = "Live";
+  state.trustRoom.preparedAt = new Date().toISOString();
+  addTrustRoomReceipt("Room published", workspaceAccount.currentRole, "Scoped buyer trust room prepared with source-safe answer packet.");
+  addAudit("Trust room prepared", "Buyer-facing room prepared with scoped link, source-safe excerpts, and receipt trail.");
+  renderTrustRoom();
+  renderWorkspace();
+  showToast("Buyer Trust Room prepared.");
+}
+
+function copyTrustRoomLink() {
+  const room = trustRoomSnapshot();
+  state.trustRoom.copies += 1;
+  addTrustRoomReceipt("Link copied", workspaceAccount.currentRole, "Scoped trust room link copied for buyer handoff.");
+  renderTrustRoom();
+  copyText(room.url, "Trust Room link copied.");
+}
+
+function copyTrustRoomPacket() {
+  const room = trustRoomSnapshot();
+  state.trustRoom.copies += 1;
+  addTrustRoomReceipt("Packet copied", workspaceAccount.currentRole, "Buyer-safe packet copied with answers, citations, and access policy.");
+  renderTrustRoom();
+  copyText(trustRoomPacketText(room), "Buyer Trust Room packet copied.");
+}
+
+function recordTrustRoomView() {
+  state.trustRoom.views += 1;
+  addTrustRoomReceipt("Buyer viewed", state.trustRoom.buyer, "Buyer opened the scoped room and viewed source-safe excerpts.");
+  renderTrustRoom();
+  showToast("Buyer view recorded.");
+}
+
+function addTrustRoomReceipt(action, actor, detail) {
+  state.trustRoom.receipts.unshift({
+    id: `receipt-${Date.now()}`,
+    actor,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  schedulePersist();
+}
+
+function trustRoomPacketText(room = trustRoomSnapshot()) {
+  const answers = room.answers
+    .map((item, index) => {
+      const sources = item.docs.map((doc) => `${doc.title} (${formatShortDate(doc.updated)})`).join("; ");
+      return [`${index + 1}. ${item.question.text}`, `Gate: ${item.gate}`, `Answer: ${item.question.answer}`, `Sources: ${sources}`].join("\n");
+    })
+    .join("\n\n");
+  const evidence = room.evidencePackets
+    .map((packet, index) => `${index + 1}. ${packet.doc.title}: ${packet.excerpt}`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Buyer Trust Room Packet",
+    `Build: ${BUILD_VERSION}`,
+    `Buyer: ${room.buyer}`,
+    `Scoped link: ${room.url}`,
+    `Expires: ${formatShortDate(room.expires)}`,
+    "",
+    "Answers:",
+    answers || "No source-safe answers yet.",
+    "",
+    "Source-safe evidence excerpts:",
+    evidence || "No source-safe evidence excerpts yet.",
+    "",
+    "Policy: Only approved answers should be shared externally. Approval-gated answers remain internal until reviewer approval.",
+  ].join("\n");
 }
 
 function renderAnalytics() {
@@ -3907,6 +4380,7 @@ function selectNextOpenQuestion() {
   renderEvidence();
   renderWorkspace();
   renderAnalytics();
+  renderTrustRoom();
   renderPortalCopy();
   schedulePersist();
 }
@@ -4155,6 +4629,9 @@ function exportCsv() {
     "Deal Next Owner",
     "Pipeline Reviews",
     "Pipeline SLA Risk",
+    "Trust Room",
+    "Trust Shared",
+    "Trust Views",
     "Trace",
     "Answer",
     "Sources",
@@ -4166,6 +4643,7 @@ function exportCsv() {
     const portal = portalSnapshot(question);
     const analytics = dealAnalyticsSnapshot();
     const pipeline = pipelineSnapshot();
+    const trustRoom = trustRoomSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -4182,6 +4660,9 @@ function exportCsv() {
       analytics.nextOwner.name,
       pipeline.accounts.length,
       pipeline.slaRiskCount,
+      trustRoom.status,
+      `${trustRoom.sharedCount}/${trustRoom.answers.length}`,
+      trustRoom.views,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -4203,6 +4684,7 @@ function exportReviewPack() {
   const access = accessSnapshot();
   const deal = dealAnalyticsSnapshot();
   const pipeline = pipelineSnapshot();
+  const trustRoom = trustRoomSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -4220,7 +4702,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v10</h1>
+        <h1>AnswerSeal Review Pack v11</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -4283,6 +4765,86 @@ function exportReviewPack() {
         </table>
         <h2>Pipeline Digest</h2>
         <pre>${escapeHtml(pipelineDigestText(pipeline))}</pre>
+        <h2>Buyer Trust Room</h2>
+        <p>Status: ${escapeHtml(trustRoom.status)} | Room score: ${trustRoom.score}% | Shared answers: ${trustRoom.sharedCount} | Approval-ready: ${trustRoom.approvalReadyCount} | Buyer views: ${trustRoom.views}</p>
+        <p>Scoped link: ${escapeHtml(trustRoom.url)} | Expires: ${escapeHtml(formatShortDate(trustRoom.expires))}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Answer</th>
+              <th>Gate</th>
+              <th>Sources</th>
+              <th>Confidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trustRoom.answers
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.question.text)}</td>
+                    <td>${escapeHtml(item.gate)}</td>
+                    <td>${escapeHtml(item.docs.map((doc) => doc.title).join("; "))}</td>
+                    <td>${item.question.confidence}%</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Trust Room Evidence</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Evidence</th>
+              <th>Visibility</th>
+              <th>Safe Excerpt</th>
+              <th>Uses</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trustRoom.evidencePackets
+              .map(
+                (packet) => `
+                  <tr>
+                    <td>${escapeHtml(packet.doc.title)}</td>
+                    <td>${escapeHtml(packet.visibility)}</td>
+                    <td>${escapeHtml(packet.excerpt)}</td>
+                    <td>${packet.uses}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Trust Room Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Actor</th>
+              <th>Time</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trustRoom.receipts
+              .slice(0, 7)
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.actor)}</td>
+                    <td>${escapeHtml(formatAccessDate(receipt.at))}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Trust Room Digest</h2>
+        <pre>${escapeHtml(trustRoomDigestText(trustRoom))}</pre>
         <h2>Deal Desk Analytics</h2>
         <p>Deal risk: ${escapeHtml(deal.riskLabel)} ${deal.riskScore}/100 | Time saved estimate: ${deal.timeSavedHours} hours | Next owner: ${escapeHtml(deal.nextOwner.name)}</p>
         <table>
@@ -4671,13 +5233,14 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v10 created with multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v11 created with buyer trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
   renderPipeline();
+  renderTrustRoom();
   renderAnalytics();
-  showToast("Review Pack v10 exported.");
+  showToast("Review Pack v11 exported.");
 }
 
 function toCsv(rows) {
@@ -4728,6 +5291,7 @@ function serializeWorkspace() {
     access: state.access,
     portal: state.portal,
     handoff: state.handoff,
+    trustRoom: state.trustRoom,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -4749,6 +5313,7 @@ function resetWorkspace() {
   closeDataRoom(false);
   closeAccess(false);
   closePortal(false);
+  closeTrustRoom(false);
   closeWorkspace(false);
   closeLibrary();
   render();
