@@ -279,6 +279,9 @@ const elements = {
   answerDraft: document.querySelector("#answerDraft"),
   confidenceScore: document.querySelector("#confidenceScore"),
   confidenceFill: document.querySelector("#confidenceFill"),
+  sealGrade: document.querySelector("#sealGrade"),
+  sealCoverage: document.querySelector("#sealCoverage"),
+  sealFreshness: document.querySelector("#sealFreshness"),
   approveButton: document.querySelector("#approveButton"),
   needsEvidenceButton: document.querySelector("#needsEvidenceButton"),
   copyButton: document.querySelector("#copyButton"),
@@ -341,6 +344,7 @@ function bindEvents() {
     renderMetrics();
     renderQuestionList();
     renderActiveStatus(question);
+    renderSealSummary(question);
   });
 
   elements.approveButton.addEventListener("click", approveActiveQuestion);
@@ -456,6 +460,7 @@ function renderActiveQuestion() {
   elements.answerDraft.value = question.answer ?? "";
   renderActiveStatus(question);
   renderConfidence(question);
+  renderSealSummary(question);
   renderRisks(question);
   renderSources(question);
 }
@@ -470,6 +475,16 @@ function renderConfidence(question) {
   elements.confidenceScore.textContent = `${confidence}%`;
   elements.confidenceFill.style.width = `${Math.max(0, Math.min(100, confidence))}%`;
   elements.confidenceFill.className = confidenceClass(confidence);
+}
+
+function renderSealSummary(question) {
+  const sources = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+  const hasRisks = (question.risks ?? []).length > 0;
+  const confidence = Number(question.confidence || 0);
+
+  elements.sealGrade.textContent = sealGradeLabel(question, confidence, hasRisks, sources.length);
+  elements.sealCoverage.textContent = `${sources.length} ${sources.length === 1 ? "source" : "sources"}`;
+  elements.sealFreshness.textContent = sourceFreshnessSummary(sources);
 }
 
 function renderRisks(question) {
@@ -503,6 +518,7 @@ function renderSources(question) {
   }
 
   sources.forEach((source) => {
+    const matchScore = sourceMatchScore(source, question.text);
     const card = document.createElement("article");
     card.className = "source-card";
     card.innerHTML = `
@@ -510,6 +526,10 @@ function renderSources(question) {
         <strong>${escapeHtml(source.title)}</strong>
         <span class="source-type">${escapeHtml(source.type)}</span>
       </header>
+      <div class="source-meta-row">
+        <span>${matchScore}% claim match</span>
+        <span>${freshnessLabel(source.updated)}</span>
+      </div>
       <p>${escapeHtml(bestExcerptForQuestion(source, question.text))}</p>
     `;
     card.addEventListener("click", () => {
@@ -699,6 +719,22 @@ function calculateConfidence(lower, sources) {
   const hasLegacy = sources.includes("pilot-terms-2025");
   const aiPenalty = (lower.includes("ai") || lower.includes("training")) && hasLegacy ? 10 : 0;
   return Math.max(40, Math.min(96, base + (hasRecent ? 8 : 0) - aiPenalty));
+}
+
+function sealGradeLabel(question, confidence, hasRisks, sourceCount) {
+  if (sourceCount === 0) return "Open";
+  if (question.status === "approved") return "Sealed";
+  if (confidence < 70) return "Blocked";
+  if (hasRisks || confidence < 85) return "Review";
+  return "Ready";
+}
+
+function sourceFreshnessSummary(sources) {
+  if (sources.length === 0) return "Unknown";
+  const ages = sources.map((source) => daysSince(source.updated));
+  if (ages.every((age) => age < 90)) return "Fresh";
+  if (ages.some((age) => age >= 365)) return "Stale";
+  return "Current";
 }
 
 function composeGenericAnswer(text, sourceIds, category) {
@@ -979,6 +1015,15 @@ function bestExcerptForQuestion(doc, questionText) {
     .sort((a, b) => b.score - a.score);
 
   return ranked[0]?.excerpt ?? doc.excerpts[0] ?? "";
+}
+
+function sourceMatchScore(doc, questionText) {
+  const terms = keywordTerms(questionText.toLowerCase());
+  if (terms.length === 0) return 60;
+
+  const haystack = `${doc.title} ${doc.type} ${doc.tags.join(" ")} ${doc.excerpts.join(" ")}`.toLowerCase();
+  const matches = terms.filter((term) => haystack.includes(term)).length;
+  return Math.max(55, Math.min(98, Math.round((matches / terms.length) * 100)));
 }
 
 function emptyState(text) {

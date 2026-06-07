@@ -24,6 +24,8 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 - Source-backed questionnaire queue with status filters and search
 - Draft answer workspace with confidence scoring, review notes, and citations
+- Seal Summary for answer grade, evidence coverage, and source freshness
+- Seal Path landing narrative from buyer question to approved evidence
 - Evidence vault with freshness signals and selected-source detail
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, or Markdown files
