@@ -278,6 +278,37 @@
               </article>
             </div>
 
+            <div class="answer-review-scroll">
+              <section class="claim-trace-section" aria-label="Claim trace">
+                <div class="section-heading">
+                  <span class="label">Claim Trace</span>
+                  <span id="claimTraceCount">0 claims</span>
+                </div>
+                <div class="trace-metrics" aria-label="Claim trace metrics">
+                  <article>
+                    <span class="label">Bound</span>
+                    <strong id="traceBound">0/0</strong>
+                  </article>
+                  <article>
+                    <span class="label">Conflicts</span>
+                    <strong id="traceConflicts">0</strong>
+                  </article>
+                  <article>
+                    <span class="label">Source Rank</span>
+                    <strong id="traceRank">0%</strong>
+                  </article>
+                  <article>
+                    <span class="label">Answer Diff</span>
+                    <strong id="traceDiff">Draft</strong>
+                  </article>
+                </div>
+                <div class="claim-trace-list" id="claimTraceList"></div>
+                <button class="secondary-button" id="copyTraceButton" type="button">
+                  <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+                  <span>Copy Trace</span>
+                </button>
+              </section>
+
             <label class="answer-editor" for="answerDraft">
               <span>Draft answer</span>
               <textarea id="answerDraft" rows="12"></textarea>
@@ -305,36 +336,6 @@
               </button>
             </div>
 
-            <section class="claim-trace-section" aria-label="Claim trace">
-              <div class="section-heading">
-                <span class="label">Claim Trace</span>
-                <span id="claimTraceCount">0 claims</span>
-              </div>
-              <div class="trace-metrics" aria-label="Claim trace metrics">
-                <article>
-                  <span class="label">Bound</span>
-                  <strong id="traceBound">0/0</strong>
-                </article>
-                <article>
-                  <span class="label">Conflicts</span>
-                  <strong id="traceConflicts">0</strong>
-                </article>
-                <article>
-                  <span class="label">Source Rank</span>
-                  <strong id="traceRank">0%</strong>
-                </article>
-                <article>
-                  <span class="label">Answer Diff</span>
-                  <strong id="traceDiff">Draft</strong>
-                </article>
-              </div>
-              <div class="claim-trace-list" id="claimTraceList"></div>
-              <button class="secondary-button" id="copyTraceButton" type="button">
-                <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
-                <span>Copy Trace</span>
-              </button>
-            </section>
-
             <section class="risk-section" aria-label="Review warnings">
               <div class="section-heading">
                 <span class="label">Review Notes</span>
@@ -349,6 +350,7 @@
               </div>
               <div id="sourceList" class="source-list"></div>
             </section>
+            </div>
           </section>
 
           <section class="panel evidence-panel" aria-label="Evidence vault">
