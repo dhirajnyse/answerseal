@@ -4,6 +4,10 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
+**Current version:** v0.3 Alpha
+
+**Current phase:** Private Pilot Conversion
+
 ## Brand
 
 - **Name:** AnswerSeal
@@ -26,6 +30,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Draft answer workspace with confidence scoring, review notes, and citations
 - Seal Summary for answer grade, evidence coverage, and source freshness
 - Seal Path landing narrative from buyer question to approved evidence
+- Private pilot conversion section with a static email request flow
 - Evidence vault with freshness signals and selected-source detail
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, or Markdown files
@@ -34,12 +39,14 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 ## Project Files
 
-- `index.html` - App shell and workspace markup
+- `index.html` - Landing page and private pilot conversion
 - `styles.css` - Product UI, layout, and responsive behavior
+- `landing.js` - Private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
 - `assets/answerseal-logo.svg` - App logo and favicon
 - `assets/answerseal-3d-logo-bright.png` - Brighter 3D corporate brand mark
 - `demo.html` - Working product demo
+- `RELEASES.md` - Build phases and release notes
 
 ## Run Locally
 
@@ -47,6 +54,7 @@ Open `index.html` in a browser for the landing page, or `demo.html` for the work
 
 ## Next Phase
 
+- Validate private pilot requests from SaaS founders, CTOs, and sales engineers
 - Add real document parsing for PDF, DOCX, and XLSX questionnaires
 - Add private workspace storage and user accounts
 - Add AI drafting against a retrieval index with per-claim citations

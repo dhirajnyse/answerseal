@@ -29,6 +29,7 @@
         <a href="#seal-path">Seal Path</a>
         <a href="#workflow">Workflow</a>
         <a href="#proof">Proof</a>
+        <a href="#pilot">Pilot</a>
         <a class="nav-demo-link" href="demo.html">Open Demo</a>
       </nav>
     </header>
@@ -45,8 +46,8 @@
           </p>
 
           <div class="hero-actions">
-            <a class="hero-primary" href="demo.html">Open Live Demo</a>
-            <a class="hero-secondary" href="#workflow">See Workflow</a>
+            <a class="hero-primary" href="#pilot">Join Private Pilot</a>
+            <a class="hero-secondary" href="demo.html">Open Live Demo</a>
           </div>
 
           <dl class="hero-metrics" aria-label="Product signals">
@@ -158,12 +159,60 @@
           </div>
         </div>
       </section>
+
+      <section class="pilot-section" id="pilot" aria-label="Private pilot">
+        <div class="pilot-copy">
+          <span class="hero-kicker">Private pilot</span>
+          <h2>Bring one messy questionnaire. We will prove the seal.</h2>
+          <p>
+            The v0.3 pilot is for B2B SaaS teams that lose time on enterprise security reviews and want a faster, source-backed response workflow.
+          </p>
+
+          <dl class="pilot-terms" aria-label="Pilot terms">
+            <div>
+              <dt>2 weeks</dt>
+              <dd>pilot window</dd>
+            </div>
+            <div>
+              <dt>1 review</dt>
+              <dd>buyer questionnaire</dd>
+            </div>
+            <div>
+              <dt>3 assets</dt>
+              <dd>policies or reports</dd>
+            </div>
+          </dl>
+        </div>
+
+        <form class="pilot-form" id="pilotForm">
+          <label>
+            <span>Name</span>
+            <input id="pilotName" name="name" autocomplete="name" required />
+          </label>
+          <label>
+            <span>Work email</span>
+            <input id="pilotEmail" name="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            <span>Company</span>
+            <input id="pilotCompany" name="company" autocomplete="organization" required />
+          </label>
+          <label>
+            <span>Questionnaire pain</span>
+            <textarea id="pilotPain" name="pain" rows="4" placeholder="Example: SOC 2 questionnaire blocks enterprise deals every month."></textarea>
+          </label>
+          <button class="hero-primary" type="submit">Start Pilot Request</button>
+          <p class="pilot-note" id="pilotStatus">AnswerSeal v0.3 Alpha - Private Pilot Conversion</p>
+        </form>
+      </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal</span>
+      <span>AnswerSeal v0.3 Alpha</span>
       <a href="demo.html">Live Demo</a>
+      <a href="#pilot">Private Pilot</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>
     </footer>
+    <script src="landing.js"></script>
   </body>
 </html>
