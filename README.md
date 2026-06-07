@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.12 Alpha
+**Current version:** v0.13 Alpha
 
-**Current phase:** Buyer Portal Autofill
+**Current phase:** Deal Desk Analytics
 
 ## Brand
 
@@ -42,6 +42,10 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Paste sequencing with copied-field memory per buyer question
 - Submission checks for drafted answer, citations, retrieval gate, claim trace, source freshness, blockers, and approval
 - Buyer-ready packet copy for portal handoff
+- Deal Desk Analytics drawer with deal risk, next owner, top evidence, and time saved
+- Blocker heatmap across trust category, owner routing, portal stage, and claim trace
+- Evidence ROI ranking for documents that answer the most buyer questions
+- Copyable executive digest for founders, sales, security, and legal handoff
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -62,7 +66,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v8 export with portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v9 export with deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -80,15 +84,15 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.13 Alpha - Deal Desk Analytics
+## Next Phase: v0.14 Alpha - Multi-Buyer Pipeline
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
 - Add private cloud workspace storage for evidence, answers, traces, and activity
 - Add organization-level evidence vaults and reusable answer libraries
-- Add blocker heatmaps across trust category, source, owner, and portal stage
-- Add response-time saved estimates for retrieval, reuse, and portal sequencing
-- Add evidence ROI scoring for documents that answer the most buyer questions
-- Add executive digest for deal risk, proof gaps, and next action
+- Add multi-buyer account pipeline for active questionnaires and due dates
+- Add proof reuse graph across buyers, evidence, and approved answers
+- Add SLA risk view for overdue owners and buyer portal blockers
+- Add revenue impact signals that connect review readiness to pipeline movement
 
 ## License
 

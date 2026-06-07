@@ -22,7 +22,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.12 Alpha - Buyer Portal Autofill",
+      "Pilot phase: AnswerSeal v0.13 Alpha - Deal Desk Analytics",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

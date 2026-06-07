@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.12 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v12";
+const BUILD_VERSION = "v0.13 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v13";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v12",
   "answerseal.workspace.v11",
   "answerseal.workspace.v10",
   "answerseal.workspace.v09",
@@ -429,6 +430,7 @@ function createInitialState() {
     accessOpen: false,
     access: createInitialAccessState(),
     workspaceOpen: false,
+    analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
     handoff: createInitialHandoff(),
@@ -542,6 +544,7 @@ function loadWorkspaceState() {
       dataRoomOpen: false,
       accessOpen: false,
       workspaceOpen: false,
+      analyticsOpen: false,
       portalOpen: false,
     };
   } catch {
@@ -699,6 +702,7 @@ const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
+  analyticsNavButton: document.querySelector("#analyticsNavButton"),
   accessNavButton: document.querySelector("#accessNavButton"),
   dataRoomNavButton: document.querySelector("#dataRoomNavButton"),
   intakeNavButton: document.querySelector("#intakeNavButton"),
@@ -793,6 +797,18 @@ const elements = {
   prepareHandoffButton: document.querySelector("#prepareHandoffButton"),
   copyHandoffLinkButton: document.querySelector("#copyHandoffLinkButton"),
   copyHandoffSummaryButton: document.querySelector("#copyHandoffSummaryButton"),
+  analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
+  analyticsDrawer: document.querySelector("#analyticsDrawer"),
+  closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
+  analyticsDealRisk: document.querySelector("#analyticsDealRisk"),
+  analyticsTimeSaved: document.querySelector("#analyticsTimeSaved"),
+  analyticsEvidenceRoi: document.querySelector("#analyticsEvidenceRoi"),
+  analyticsNextOwner: document.querySelector("#analyticsNextOwner"),
+  analyticsBlockers: document.querySelector("#analyticsBlockers"),
+  analyticsEvidenceRoiList: document.querySelector("#analyticsEvidenceRoiList"),
+  analyticsTimeSavedList: document.querySelector("#analyticsTimeSavedList"),
+  analyticsDigest: document.querySelector("#analyticsDigest"),
+  copyAnalyticsDigestButton: document.querySelector("#copyAnalyticsDigestButton"),
   accessBackdrop: document.querySelector("#accessBackdrop"),
   accessDrawer: document.querySelector("#accessDrawer"),
   closeAccessButton: document.querySelector("#closeAccessButton"),
@@ -884,6 +900,7 @@ function init() {
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
+  elements.analyticsNavButton.addEventListener("click", openAnalytics);
   elements.accessNavButton.addEventListener("click", openAccess);
   elements.dataRoomNavButton.addEventListener("click", openDataRoom);
   elements.intakeNavButton.addEventListener("click", openIntake);
@@ -942,6 +959,9 @@ function bindEvents() {
   elements.prepareHandoffButton.addEventListener("click", prepareHandoff);
   elements.copyHandoffLinkButton.addEventListener("click", copyHandoffLink);
   elements.copyHandoffSummaryButton.addEventListener("click", copyHandoffSummary);
+  elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
+  elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
+  elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
   elements.closeAccessButton.addEventListener("click", closeAccess);
   elements.accessBackdrop.addEventListener("click", closeAccess);
   elements.accessInviteForm.addEventListener("submit", addAccessInvite);
@@ -982,6 +1002,7 @@ function bindEvents() {
     if (state.dataRoomOpen) closeDataRoom();
     if (state.accessOpen) closeAccess();
     if (state.workspaceOpen) closeWorkspace();
+    if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
 
@@ -991,6 +1012,7 @@ function bindEvents() {
 function applyInitialHash() {
   const hash = window.location.hash.replace("#", "").toLowerCase();
   if (hash === "workspace") openWorkspace();
+  if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
   if (hash === "intake") openIntake();
@@ -1014,6 +1036,7 @@ function render() {
   renderAudit();
   renderIntake();
   renderWorkspace();
+  renderAnalytics();
   renderAccess();
   renderDataRoom();
   renderLibrary();
@@ -1082,6 +1105,7 @@ function renderQuestionList() {
       renderActiveQuestion();
       renderEvidence();
       renderPortalCopy();
+      renderAnalytics();
       schedulePersist();
     });
     elements.questionList.append(button);
@@ -1706,6 +1730,7 @@ function renderAudit() {
 
 function activateWorkspaceNav(target) {
   closeWorkspace(false);
+  closeAnalytics(false);
   closeAccess(false);
   closeLibrary(false);
   closeIntake(false);
@@ -1726,6 +1751,7 @@ function setActiveNav(activeButton) {
   [
     elements.reviewNavButton,
     elements.workspaceNavButton,
+    elements.analyticsNavButton,
     elements.accessNavButton,
     elements.dataRoomNavButton,
     elements.intakeNavButton,
@@ -1737,6 +1763,7 @@ function setActiveNav(activeButton) {
 }
 
 function openWorkspace() {
+  closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1759,8 +1786,34 @@ function closeWorkspace(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openAnalytics() {
+  closeWorkspace(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.analyticsOpen = true;
+  setActiveNav(elements.analyticsNavButton);
+  elements.analyticsBackdrop.hidden = false;
+  elements.analyticsDrawer.classList.add("is-open");
+  elements.analyticsDrawer.setAttribute("aria-hidden", "false");
+  renderAnalytics();
+  elements.copyAnalyticsDigestButton.focus();
+}
+
+function closeAnalytics(activateReview = true) {
+  if (!state.analyticsOpen && elements.analyticsDrawer.getAttribute("aria-hidden") === "true") return;
+  state.analyticsOpen = false;
+  elements.analyticsDrawer.classList.remove("is-open");
+  elements.analyticsDrawer.setAttribute("aria-hidden", "true");
+  elements.analyticsBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAccess() {
   closeWorkspace(false);
+  closeAnalytics(false);
   closeIntake(false);
   closeDataRoom(false);
   closeLibrary(false);
@@ -1784,6 +1837,7 @@ function closeAccess(activateReview = true) {
 
 function openIntake() {
   closeWorkspace(false);
+  closeAnalytics(false);
   closeAccess(false);
   closeDataRoom(false);
   closeLibrary(false);
@@ -1807,6 +1861,7 @@ function closeIntake(activateReview = true) {
 
 function openDataRoom() {
   closeWorkspace(false);
+  closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
   closeLibrary(false);
@@ -1830,6 +1885,7 @@ function closeDataRoom(activateReview = true) {
 
 function openLibrary() {
   closeWorkspace(false);
+  closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1854,6 +1910,7 @@ function closeLibrary(activateReview = true) {
 
 function openPortalCopy() {
   closeWorkspace(false);
+  closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1873,6 +1930,293 @@ function closePortal(activateReview = true) {
   elements.portalDrawer.setAttribute("aria-hidden", "true");
   elements.portalBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderAnalytics() {
+  const analytics = dealAnalyticsSnapshot();
+
+  elements.analyticsDealRisk.textContent = `${analytics.riskLabel} ${analytics.riskScore}`;
+  elements.analyticsTimeSaved.textContent = `${analytics.timeSavedHours}h`;
+  elements.analyticsEvidenceRoi.textContent = analytics.evidenceRoi[0]?.doc.title ?? "No evidence";
+  elements.analyticsNextOwner.textContent = analytics.nextOwner.name;
+  elements.analyticsDigest.textContent = dealDigestText(analytics);
+
+  elements.analyticsBlockers.innerHTML = "";
+  analytics.blockers.forEach((blocker) => {
+    const card = document.createElement("article");
+    card.className = `analytics-card is-${blocker.level}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapeHtml(blocker.label)}</span>
+        <strong>${escapeHtml(blocker.value)}</strong>
+      </header>
+      <p>${escapeHtml(blocker.detail)}</p>
+    `;
+    elements.analyticsBlockers.append(card);
+  });
+
+  elements.analyticsEvidenceRoiList.innerHTML = "";
+  analytics.evidenceRoi.slice(0, 5).forEach((item, index) => {
+    const card = document.createElement("article");
+    card.className = "analytics-roi-card";
+    card.innerHTML = `
+      <span class="field-index">${String(index + 1).padStart(2, "0")}</span>
+      <div>
+        <header>
+          <strong>${escapeHtml(item.doc.title)}</strong>
+          <span>${item.impactScore} impact</span>
+        </header>
+        <p>${item.directUses} selected answers | ${item.retrievalHits} retrieval hits | ${item.claimHits} traced claims</p>
+        <small>${escapeHtml(item.categories.join(", ") || item.doc.owner)} | Updated ${escapeHtml(formatShortDate(item.doc.updated))}</small>
+      </div>
+    `;
+    elements.analyticsEvidenceRoiList.append(card);
+  });
+
+  elements.analyticsTimeSavedList.innerHTML = "";
+  analytics.timeSavedBreakdown.forEach((item) => {
+    const row = document.createElement("article");
+    row.className = "analytics-time-row";
+    row.innerHTML = `
+      <div>
+        <strong>${escapeHtml(item.label)}</strong>
+        <span>${escapeHtml(item.detail)}</span>
+      </div>
+      <b>${formatHours(item.hours)}h</b>
+    `;
+    elements.analyticsTimeSavedList.append(row);
+  });
+}
+
+function dealAnalyticsSnapshot() {
+  const total = Math.max(1, state.questions.length);
+  const coverage = coverageSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const handoff = handoffReadinessSnapshot();
+  const portalItems = state.questions.map((question) => ({ question, snapshot: portalSnapshot(question) }));
+  const traceItems = state.questions.map((question) => ({ question, trace: claimTraceSnapshot(question) }));
+  const retrievalItems = state.questions.map((question) => ({ question, retrieval: retrievalSnapshot(question) }));
+
+  const approved = state.questions.filter((question) => question.status === "approved").length;
+  const needsEvidence = state.questions.filter((question) => question.status === "needs-evidence").length;
+  const unresolved = state.questions.length - approved;
+  const portalBlocked = portalItems.filter((item) => !item.snapshot.readyForSubmit).length;
+  const conflictClaims = traceItems.reduce((sum, item) => sum + item.trace.conflicts, 0);
+  const weakClaims = traceItems.reduce(
+    (sum, item) => sum + item.trace.claims.filter((claim) => ["open", "weak", "conflict"].includes(claim.status)).length,
+    0,
+  );
+  const weakCoverage = coverage.items.filter((item) => item.status !== "ready").length;
+  const riskScore = Math.min(
+    100,
+    Math.round(
+      (needsEvidence / total) * 32
+        + (routing.openRisks / total) * 22
+        + (portalBlocked / total) * 18
+        + ((100 - coverage.score) * 0.22)
+        + conflictClaims * 5
+        + (unresolved / total) * 12,
+    ),
+  );
+
+  const ownerRanking = [...routing.groups].sort((a, b) => {
+    const left = b.openRisks - a.openRisks;
+    if (left !== 0) return left;
+    const needs = b.needsOwner - a.needsOwner;
+    if (needs !== 0) return needs;
+    return b.total - a.total;
+  });
+  const nextQuestion =
+    state.questions.find((question) => question.status === "needs-evidence")
+    ?? state.questions.find((question) => question.status === "draft")
+    ?? state.questions.find((question) => question.status !== "approved")
+    ?? state.questions[0];
+  const nextOwner = nextQuestion ? memberForQuestion(nextQuestion) : ownerRanking[0]?.member ?? workspaceAccount.members[0];
+  const evidenceRoi = evidenceRoiSnapshot(retrievalItems, traceItems);
+  const timeSavedBreakdown = timeSavedSnapshot(portalItems, retrievalItems);
+  const blockers = dealBlockerSnapshot({
+    coverage,
+    routing,
+    handoff,
+    portalBlocked,
+    conflictClaims,
+    weakClaims,
+    weakCoverage,
+    nextQuestion,
+  });
+
+  return {
+    approved,
+    needsEvidence,
+    unresolved,
+    total,
+    coverage,
+    routing,
+    handoff,
+    portalBlocked,
+    conflictClaims,
+    weakClaims,
+    weakCoverage,
+    riskScore,
+    riskLabel: dealRiskLabel(riskScore),
+    nextQuestion,
+    nextOwner,
+    nextAction: nextQuestion ? nextActionLabel(nextQuestion) : "Export approved pack",
+    blockers,
+    evidenceRoi,
+    timeSavedBreakdown,
+    timeSavedHours: formatHours(timeSavedBreakdown.reduce((sum, item) => sum + item.hours, 0)),
+  };
+}
+
+function dealBlockerSnapshot({ coverage, routing, handoff, portalBlocked, conflictClaims, weakClaims, weakCoverage, nextQuestion }) {
+  const categoryBlockers = coverage.items.map((item) => ({
+    label: item.category,
+    value: formatCoverageStatus(item.status),
+    detail: `${item.sources} sources, ${item.openRisks} open risks, ${item.score}% coverage contribution.`,
+    weight: (item.status === "ready" ? 0 : 18) + item.openRisks * 9 + (100 - item.score) * 0.14,
+  }));
+
+  const ownerBlockers = routing.groups
+    .filter((group) => group.total > 0)
+    .map((group) => ({
+      label: group.member.name,
+      value: `${group.openRisks} open`,
+      detail: `${group.member.team} owns ${group.total} questions and ${group.needsOwner} owner-review routes.`,
+      weight: group.openRisks * 13 + group.needsOwner * 8,
+    }));
+
+  return [
+    ...categoryBlockers,
+    ...ownerBlockers,
+    {
+      label: "Portal handoff",
+      value: `${portalBlocked} blocked`,
+      detail: `${handoff.ready}% handoff readiness. Copy sequence must be complete before buyer submission.`,
+      weight: portalBlocked * 8,
+    },
+    {
+      label: "Claim trace",
+      value: `${weakClaims} weak`,
+      detail: `${conflictClaims} conflicts and ${weakCoverage} weak coverage areas are visible before approval.`,
+      weight: weakClaims * 6 + conflictClaims * 14,
+    },
+    {
+      label: "Next action",
+      value: nextQuestion ? memberForQuestion(nextQuestion).name : "Ready",
+      detail: nextQuestion ? nextActionLabel(nextQuestion) : "All buyer questions are ready for final export.",
+      weight: nextQuestion ? 22 : 0,
+    },
+  ]
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 6)
+    .map((item) => ({
+      ...item,
+      level: item.weight >= 44 ? "high" : item.weight >= 22 ? "medium" : "low",
+    }));
+}
+
+function evidenceRoiSnapshot(retrievalItems, traceItems) {
+  return state.evidence
+    .map((doc) => {
+      const directUses = state.questions.filter((question) => (question.sources ?? []).includes(doc.id)).length;
+      const retrievalHits = retrievalItems.filter((item) => item.retrieval.matches.some((match) => match.doc.id === doc.id && match.score >= 58)).length;
+      const claimHits = traceItems.reduce(
+        (sum, item) => sum + item.trace.claims.filter((claim) => claim.sourceId === doc.id && claim.status !== "open").length,
+        0,
+      );
+      const categories = [...new Set(state.questions.filter((question) => (question.sources ?? []).includes(doc.id)).map((question) => question.category))];
+      const freshnessBoost = sourceFreshnessScore(doc.updated) >= 88 ? 8 : 0;
+      const impactScore = directUses * 28 + retrievalHits * 16 + claimHits * 10 + freshnessBoost + sourceAuthorityScore(doc) * 0.12;
+      return {
+        doc,
+        directUses,
+        retrievalHits,
+        claimHits,
+        categories,
+        impactScore: Math.round(impactScore),
+      };
+    })
+    .sort((a, b) => b.impactScore - a.impactScore || a.doc.title.localeCompare(b.doc.title));
+}
+
+function timeSavedSnapshot(portalItems, retrievalItems) {
+  const drafted = state.questions.filter((question) => question.answer).length;
+  const retrievalReady = retrievalItems.filter((item) => item.retrieval.verdict !== "refuse").length;
+  const duplicateMemory = retrievalItems.filter((item) => item.retrieval.duplicate).length;
+  const portalFields = portalItems.reduce((sum, item) => sum + item.snapshot.fields.length, 0);
+  const portalReady = portalItems.reduce((sum, item) => sum + item.snapshot.readyFields, 0);
+
+  return [
+    {
+      label: "First drafts",
+      hours: drafted * 0.38,
+      detail: `${drafted} answers generated from reusable evidence language.`,
+    },
+    {
+      label: "Evidence retrieval",
+      hours: retrievalReady * 0.22,
+      detail: `${retrievalReady} questions have source-ranking context before review.`,
+    },
+    {
+      label: "Approved memory",
+      hours: duplicateMemory * 0.35,
+      detail: `${duplicateMemory} similar approved answers surfaced for reuse checks.`,
+    },
+    {
+      label: "Portal sequencing",
+      hours: portalFields * 0.04 + portalReady * 0.02,
+      detail: `${portalReady}/${portalFields} buyer portal fields are ready to paste.`,
+    },
+  ];
+}
+
+function dealRiskLabel(score) {
+  if (score >= 68) return "High";
+  if (score >= 36) return "Medium";
+  return "Low";
+}
+
+function formatHours(value) {
+  return Number(value).toFixed(1);
+}
+
+function dealDigestText(analytics = dealAnalyticsSnapshot()) {
+  const topBlockers = analytics.blockers
+    .slice(0, 3)
+    .map((blocker, index) => `${index + 1}. ${blocker.label}: ${blocker.value} - ${blocker.detail}`)
+    .join("\n");
+  const topEvidence = analytics.evidenceRoi
+    .slice(0, 3)
+    .map((item, index) => `${index + 1}. ${item.doc.title}: ${item.impactScore} impact, ${item.directUses} selected answers, ${item.retrievalHits} retrieval hits`)
+    .join("\n");
+
+  return [
+    `${workspaceAccount.company} - AnswerSeal Deal Desk Analytics`,
+    `Build: ${BUILD_VERSION}`,
+    `Deal risk: ${analytics.riskLabel} (${analytics.riskScore}/100)`,
+    `Estimated time saved: ${analytics.timeSavedHours} hours`,
+    `Evidence coverage: ${analytics.coverage.score}%`,
+    `Approved answers: ${analytics.approved}/${analytics.total}`,
+    `Portal blockers: ${analytics.portalBlocked}`,
+    `Next owner: ${analytics.nextOwner.name}`,
+    `Next action: ${analytics.nextAction}`,
+    "",
+    "Top blockers:",
+    topBlockers || "No active blockers.",
+    "",
+    "Evidence ROI:",
+    topEvidence || "No evidence impact yet.",
+    "",
+    "Recommended motion:",
+    "- Resolve the highest-risk blocker before sending buyer-facing answers.",
+    "- Reuse the top evidence documents in the next questionnaire first.",
+    "- Send the Review Pack only after claim trace and portal checks are clean.",
+  ].join("\n");
+}
+
+function copyAnalyticsDigest() {
+  copyText(dealDigestText(), "Deal desk digest copied.");
 }
 
 function renderWorkspace() {
@@ -3211,6 +3555,7 @@ function selectNextOpenQuestion() {
   renderActiveQuestion();
   renderEvidence();
   renderWorkspace();
+  renderAnalytics();
   renderPortalCopy();
   schedulePersist();
 }
@@ -3455,6 +3800,8 @@ function exportCsv() {
     "Retrieval Sources",
     "Portal Ready",
     "Portal Fields",
+    "Deal Risk",
+    "Deal Next Owner",
     "Trace",
     "Answer",
     "Sources",
@@ -3464,6 +3811,7 @@ function exportCsv() {
     const trace = claimTraceSnapshot(question);
     const retrieval = retrievalSnapshot(question);
     const portal = portalSnapshot(question);
+    const analytics = dealAnalyticsSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -3476,6 +3824,8 @@ function exportCsv() {
       retrieval.selected.map((match) => match.doc.title).join("; "),
       portal.readyForSubmit ? "Ready" : "Review required",
       `${portal.readyFields}/${portal.fields.length} ready, ${portal.copiedFields} copied`,
+      `${analytics.riskLabel} ${analytics.riskScore}/100`,
+      analytics.nextOwner.name,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -3495,6 +3845,7 @@ function exportReviewPack() {
   const handoff = handoffReadinessSnapshot();
   const dataRoom = dataRoomSnapshot();
   const access = accessSnapshot();
+  const deal = dealAnalyticsSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -3512,11 +3863,88 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v8</h1>
+        <h1>AnswerSeal Review Pack v9</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Deal Desk Analytics</h2>
+        <p>Deal risk: ${escapeHtml(deal.riskLabel)} ${deal.riskScore}/100 | Time saved estimate: ${deal.timeSavedHours} hours | Next owner: ${escapeHtml(deal.nextOwner.name)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Blocker</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${deal.blockers
+              .map(
+                (blocker) => `
+                  <tr>
+                    <td>${escapeHtml(blocker.label)}</td>
+                    <td class="${blocker.level === "high" ? "risk" : "ok"}">${escapeHtml(blocker.value)}</td>
+                    <td>${escapeHtml(blocker.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evidence ROI</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Evidence</th>
+              <th>Impact</th>
+              <th>Selected Answers</th>
+              <th>Retrieval Hits</th>
+              <th>Claim Hits</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${deal.evidenceRoi
+              .slice(0, 6)
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.doc.title)}</td>
+                    <td>${item.impactScore}</td>
+                    <td>${item.directUses}</td>
+                    <td>${item.retrievalHits}</td>
+                    <td>${item.claimHits}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Time Saved Estimate</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Motion</th>
+              <th>Hours</th>
+              <th>Evidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${deal.timeSavedBreakdown
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.label)}</td>
+                    <td>${formatHours(item.hours)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Executive Digest</h2>
+        <pre>${escapeHtml(dealDigestText(deal))}</pre>
         <h2>Secure Workspace Accounts</h2>
         <p>Session: ${escapeHtml(state.access.session.status)} via ${escapeHtml(state.access.session.method)} | Current role: ${escapeHtml(access.currentMember.name)} | Vault: ${escapeHtml(state.access.cloud.status)}</p>
         <table>
@@ -3828,11 +4256,12 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v8 created with buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v9 created with deal desk analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
-  showToast("Review Pack v8 exported.");
+  renderAnalytics();
+  showToast("Review Pack v9 exported.");
 }
 
 function toCsv(rows) {

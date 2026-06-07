@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.13 Alpha - Deal Desk Analytics
+
+Phase: Deal Desk Analytics
+
+- Added a Deal Desk Analytics drawer with deal risk, time saved, top evidence, and next owner metrics.
+- Added a blocker heatmap across trust category, owner routing, portal readiness, and claim trace.
+- Added Evidence ROI ranking for documents that support selected answers, retrieval hits, and traced claims.
+- Added a time-saved estimate across first drafts, evidence retrieval, approved memory, and portal sequencing.
+- Added a copyable executive digest for founder, sales, security, and legal handoff.
+- Added deal risk and next-owner fields to CSV exports.
+- Upgraded review pack export to Review Pack v9 with deal analytics, Evidence ROI, time saved, and executive digest.
+- Updated the build phases page with the v0.14 Multi-Buyer Pipeline plan.
+
 ## v0.12 Alpha - Buyer Portal Autofill
 
 Phase: Buyer Portal Autofill

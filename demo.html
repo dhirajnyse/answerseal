@@ -104,6 +104,10 @@
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
           </button>
+          <button class="nav-item" id="analyticsNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+            <span>Analytics</span>
+          </button>
           <button class="nav-item" id="accessNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
             <span>Access</span>
@@ -142,8 +146,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.12 Alpha</strong>
-          <span>Buyer Portal Autofill</span>
+          <strong>v0.13 Alpha</strong>
+          <span>Deal Desk Analytics</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -155,7 +159,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.12 Alpha</span>
+            <span class="label">Security questionnaire | v0.13 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -517,6 +521,75 @@
               <span>Summary</span>
             </button>
           </div>
+        </section>
+      </section>
+    </aside>
+
+    <div class="analytics-backdrop drawer-backdrop" id="analyticsBackdrop" hidden></div>
+    <aside class="workspace-drawer analytics-drawer" id="analyticsDrawer" aria-label="Deal desk analytics" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Deal Desk Analytics</span>
+          <h2>Aster Health deal risk</h2>
+        </div>
+        <button class="icon-button" id="closeAnalyticsButton" type="button" aria-label="Close analytics" title="Close analytics">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip analytics-metrics" aria-label="Deal analytics status">
+        <article>
+          <span class="label">Deal Risk</span>
+          <strong id="analyticsDealRisk">Medium 0</strong>
+        </article>
+        <article>
+          <span class="label">Time Saved</span>
+          <strong id="analyticsTimeSaved">0.0h</strong>
+        </article>
+        <article>
+          <span class="label">Top Evidence</span>
+          <strong id="analyticsEvidenceRoi">No evidence</strong>
+        </article>
+        <article>
+          <span class="label">Next Owner</span>
+          <strong id="analyticsNextOwner">Maya Shah</strong>
+        </article>
+      </section>
+
+      <section class="analytics-body">
+        <section class="analytics-section" aria-label="Blocker heatmap">
+          <div class="section-heading">
+            <span class="label">Blocker Heatmap</span>
+            <span>Deal motion</span>
+          </div>
+          <div class="analytics-grid" id="analyticsBlockers"></div>
+        </section>
+
+        <section class="analytics-section" aria-label="Evidence ROI">
+          <div class="section-heading">
+            <span class="label">Evidence ROI</span>
+            <span>Proof impact</span>
+          </div>
+          <div class="analytics-roi-list" id="analyticsEvidenceRoiList"></div>
+        </section>
+
+        <section class="analytics-section" aria-label="Time saved">
+          <div class="section-heading">
+            <span class="label">Time Saved</span>
+            <span>Manual work avoided</span>
+          </div>
+          <div class="analytics-time-list" id="analyticsTimeSavedList"></div>
+        </section>
+
+        <section class="analytics-section" aria-label="Executive digest">
+          <div class="section-heading">
+            <span class="label">Executive Digest</span>
+            <button class="secondary-button compact-button" id="copyAnalyticsDigestButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="analytics-digest" id="analyticsDigest"></pre>
         </section>
       </section>
     </aside>
