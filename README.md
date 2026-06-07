@@ -1,6 +1,6 @@
 # AnswerSeal
 
-![AnswerSeal 3D brand mark](assets/answerseal-3d-logo.png)
+![AnswerSeal 3D brand mark](assets/answerseal-3d-logo-bright.png)
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
@@ -11,8 +11,8 @@ AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It hel
 - **Tagline:** Seal every answer to evidence.
 - **Promise:** no source, no answer
 - **Personality:** calm, precise, enterprise-ready, quietly confident
-- **Primary colors:** deep teal, white, graphite
-- **Accent colors:** electric blue for evidence links, amber for weak proof, green for approved answers
+- **Primary colors:** vivid teal, white, graphite
+- **Accent colors:** bright cyan for evidence links, electric blue for calls to action, amber for weak proof, green for approved answers
 
 ## Product Wedge
 
@@ -36,11 +36,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - `styles.css` - Product UI, layout, and responsive behavior
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
 - `assets/answerseal-logo.svg` - App logo and favicon
-- `assets/answerseal-3d-logo.png` - 3D corporate brand mark
+- `assets/answerseal-3d-logo-bright.png` - Brighter 3D corporate brand mark
+- `demo.html` - Working product demo
 
 ## Run Locally
 
-Open `index.html` in a browser. No dependency install or build step is required.
+Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
 ## Next Phase
 

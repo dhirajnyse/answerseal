@@ -3,281 +3,136 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Security Questionnaire Copilot</title>
+    <title>AnswerSeal | Seal Security Answers To Evidence</title>
     <meta
       name="description"
-      content="AnswerSeal is a security questionnaire copilot for B2B SaaS teams that drafts answers from approved evidence and seals every claim to a source."
+      content="AnswerSeal helps B2B SaaS teams answer enterprise security questionnaires faster by sealing every response to approved evidence."
     />
-    <meta name="theme-color" content="#0f766e" />
+    <meta name="theme-color" content="#00a889" />
     <meta property="og:title" content="AnswerSeal" />
-    <meta property="og:description" content="Source-backed security questionnaire review workspace." />
+    <meta property="og:description" content="Security questionnaire answers sealed to approved evidence." />
     <meta property="og:type" content="website" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <svg class="icon-sprite" aria-hidden="true">
-      <symbol id="icon-check" viewBox="0 0 24 24">
-        <path d="M20 6 9 17l-5-5" />
-      </symbol>
-      <symbol id="icon-copy" viewBox="0 0 24 24">
-        <rect x="9" y="9" width="11" height="11" rx="2" />
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-      </symbol>
-      <symbol id="icon-download" viewBox="0 0 24 24">
-        <path d="M12 3v12" />
-        <path d="m7 10 5 5 5-5" />
-        <path d="M5 21h14" />
-      </symbol>
-      <symbol id="icon-file" viewBox="0 0 24 24">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
-        <path d="M14 2v6h6" />
-      </symbol>
-      <symbol id="icon-filter" viewBox="0 0 24 24">
-        <path d="M3 5h18" />
-        <path d="M7 12h10" />
-        <path d="M10 19h4" />
-      </symbol>
-      <symbol id="icon-plus" viewBox="0 0 24 24">
-        <path d="M12 5v14" />
-        <path d="M5 12h14" />
-      </symbol>
-      <symbol id="icon-refresh" viewBox="0 0 24 24">
-        <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
-        <path d="M3 21v-5h5" />
-        <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-        <path d="M21 3v5h-5" />
-      </symbol>
-      <symbol id="icon-search" viewBox="0 0 24 24">
-        <path d="m21 21-4.3-4.3" />
-        <circle cx="11" cy="11" r="7" />
-      </symbol>
-      <symbol id="icon-shield" viewBox="0 0 24 24">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
-      </symbol>
-      <symbol id="icon-upload" viewBox="0 0 24 24">
-        <path d="M12 16V4" />
-        <path d="m7 9 5-5 5 5" />
-        <path d="M20 16v4H4v-4" />
-      </symbol>
-      <symbol id="icon-warning" viewBox="0 0 24 24">
-        <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
-        <path d="M12 9v4" />
-        <path d="M12 17h.01" />
-      </symbol>
-    </svg>
+  <body class="landing-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Evidence-backed trust answers</small>
+        </span>
+      </a>
 
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Primary navigation">
-        <a class="brand" href="#review-desk" aria-label="AnswerSeal home">
-          <img src="assets/answerseal-logo.svg" alt="" />
-          <span>
-            <strong>AnswerSeal</strong>
-            <small>Trust desk</small>
-          </span>
-        </a>
+      <nav aria-label="Primary">
+        <a href="#workflow">Workflow</a>
+        <a href="#proof">Proof</a>
+        <a class="nav-demo-link" href="demo.html">Open Demo</a>
+      </nav>
+    </header>
 
-        <nav class="nav-list" aria-label="Workspace">
-          <button class="nav-item is-active" type="button">
-            <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
-            <span>Review Desk</span>
-          </button>
-          <button class="nav-item" type="button">
-            <svg aria-hidden="true"><use href="#icon-file"></use></svg>
-            <span>Evidence</span>
-          </button>
-          <button class="nav-item" type="button">
-            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
-            <span>Library</span>
-          </button>
-        </nav>
+    <main>
+      <section class="landing-hero">
+        <div class="hero-copy">
+          <span class="hero-kicker">Security questionnaire copilot</span>
+          <h1>AnswerSeal</h1>
+          <p class="hero-lede">
+            <span>Draft answers from approved evidence.</span>
+            <span>Show citations instantly.</span>
+            <span>Block weak claims before submission.</span>
+          </p>
 
-        <section class="sidebar-section" aria-label="Pilot account">
-          <span class="label">Pilot Account</span>
-          <strong>Aster Health</strong>
-          <span id="todayLabel">June 7, 2026</span>
-        </section>
-
-        <section class="sidebar-section compact" aria-label="Workspace rules">
-          <span class="label">Rule</span>
-          <strong>Seal every answer to evidence.</strong>
-        </section>
-      </aside>
-
-      <main class="workspace" id="review-desk">
-        <header class="topbar">
-          <div class="title-block">
-            <span class="label">Security questionnaire</span>
-            <h1>Aster Health vendor review</h1>
+          <div class="hero-actions">
+            <a class="hero-primary" href="demo.html">Open Live Demo</a>
+            <a class="hero-secondary" href="#workflow">See Workflow</a>
           </div>
 
-          <div class="topbar-actions">
-            <button class="secondary-button" id="refreshDraftsButton" type="button">
-              <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
-              <span>Refresh Drafts</span>
-            </button>
-            <button class="secondary-button" id="exportCsvButton" type="button">
-              <svg aria-hidden="true"><use href="#icon-download"></use></svg>
-              <span>CSV</span>
-            </button>
-            <button class="primary-button" id="exportDocButton" type="button">
-              <svg aria-hidden="true"><use href="#icon-download"></use></svg>
-              <span>Review Pack</span>
-            </button>
+          <dl class="hero-metrics" aria-label="Product signals">
+            <div>
+              <dt>5x</dt>
+              <dd>faster first draft</dd>
+            </div>
+            <div>
+              <dt>0</dt>
+              <dd>unsourced answers</dd>
+            </div>
+            <div>
+              <dt>SOC 2</dt>
+              <dd>evidence-ready</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero-visual" aria-label="AnswerSeal brand mark and product preview">
+          <img class="hero-logo" src="assets/answerseal-3d-logo-bright.png" alt="AnswerSeal shield, document, checkmark, and citation link" />
+          <div class="hero-preview" aria-hidden="true">
+            <div class="preview-topline">
+              <span>Needs Evidence</span>
+              <strong>78%</strong>
+            </div>
+            <p>Do you use customer data to train AI models?</p>
+            <div class="preview-answer">No. Customer content is not used to train foundation models or shared model providers.</div>
+            <div class="preview-source">AI Usage Standard · May 16</div>
           </div>
-        </header>
+        </div>
+      </section>
 
-        <section class="status-strip" aria-label="Review status">
+      <section class="landing-band" id="workflow" aria-label="Workflow">
+        <div class="band-heading">
+          <span class="hero-kicker">Simple by design</span>
+          <h2>One review desk for every buyer question.</h2>
+        </div>
+
+        <div class="workflow-grid">
           <article>
-            <span class="metric-value" id="metricReceived">0</span>
-            <span class="metric-label">Questions</span>
+            <span>01</span>
+            <h3>Upload the questionnaire</h3>
+            <p>Paste questions or import spreadsheet text from the buyer portal.</p>
           </article>
           <article>
-            <span class="metric-value" id="metricApproved">0</span>
-            <span class="metric-label">Approved</span>
+            <span>02</span>
+            <h3>Draft with citations</h3>
+            <p>Answers are generated from policies, SOC reports, DPAs, and approved past responses.</p>
           </article>
           <article>
-            <span class="metric-value" id="metricNeedsEvidence">0</span>
-            <span class="metric-label">Needs Evidence</span>
+            <span>03</span>
+            <h3>Seal or block</h3>
+            <p>Reviewers approve sourced answers and route weak evidence before the deal slows down.</p>
           </article>
-          <article>
-            <span class="metric-value" id="metricConfidence">0%</span>
-            <span class="metric-label">Source Confidence</span>
-          </article>
-          <article class="next-action" id="nextAction">
-            <span class="metric-label">Next Action</span>
-            <strong>Review flagged answers</strong>
-          </article>
-        </section>
+        </div>
+      </section>
 
-        <section class="work-grid">
-          <section class="panel queue-panel" aria-label="Question queue">
-            <div class="panel-header">
-              <div>
-                <span class="label">Queue</span>
-                <h2 id="questionCount">0 questions</h2>
-              </div>
-              <button class="icon-button" id="uploadQuestionnaireButton" type="button" aria-label="Import questionnaire" title="Import questionnaire">
-                <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
-              </button>
-              <input id="questionnaireInput" type="file" accept=".txt,.csv,.md" multiple hidden />
-            </div>
+      <section class="proof-section" id="proof" aria-label="Why AnswerSeal">
+        <div class="proof-copy">
+          <span class="hero-kicker">Why it wins</span>
+          <h2>Built around the moment sales, security, and legal all care about.</h2>
+          <p>
+            AnswerSeal is not another generic AI text box. It is a source-bound approval surface for B2B SaaS teams selling into enterprise accounts.
+          </p>
+        </div>
 
-            <div class="toolbar">
-              <label class="search-box" aria-label="Search questions">
-                <svg aria-hidden="true"><use href="#icon-search"></use></svg>
-                <input id="questionSearch" type="search" placeholder="Search questions" />
-              </label>
-              <label class="select-box" aria-label="Filter status">
-                <svg aria-hidden="true"><use href="#icon-filter"></use></svg>
-                <select id="statusFilter">
-                  <option value="all">All</option>
-                  <option value="draft">Draft</option>
-                  <option value="needs-evidence">Needs evidence</option>
-                  <option value="approved">Approved</option>
-                  <option value="risk">Risk</option>
-                </select>
-              </label>
-            </div>
+        <div class="proof-list">
+          <div>
+            <strong>No source, no answer</strong>
+            <span>Every response shows the evidence behind it.</span>
+          </div>
+          <div>
+            <strong>Evidence gap radar</strong>
+            <span>Weak, stale, or conflicting claims are visible before submission.</span>
+          </div>
+          <div>
+            <strong>Reusable answer memory</strong>
+            <span>Approved language becomes a stronger library over time.</span>
+          </div>
+        </div>
+      </section>
+    </main>
 
-            <div class="question-list" id="questionList"></div>
-
-            <form class="add-question" id="addQuestionForm">
-              <label for="newQuestion">Add question</label>
-              <textarea id="newQuestion" rows="3" placeholder="Paste a buyer question"></textarea>
-              <button class="secondary-button" type="submit">
-                <svg aria-hidden="true"><use href="#icon-plus"></use></svg>
-                <span>Add To Queue</span>
-              </button>
-            </form>
-          </section>
-
-          <section class="panel answer-panel" aria-label="Answer review">
-            <div class="panel-header answer-header">
-              <div>
-                <span class="label" id="activeQuestionMeta">Question</span>
-                <h2 id="activeQuestionTitle">Select a question</h2>
-              </div>
-              <span class="status-pill" id="activeStatus">Draft</span>
-            </div>
-
-            <div class="confidence-row">
-              <div>
-                <span class="label">Source Confidence</span>
-                <strong id="confidenceScore">0%</strong>
-              </div>
-              <div class="confidence-track" aria-hidden="true">
-                <span id="confidenceFill"></span>
-              </div>
-            </div>
-
-            <label class="answer-editor" for="answerDraft">
-              <span>Draft answer</span>
-              <textarea id="answerDraft" rows="12"></textarea>
-            </label>
-
-            <div class="answer-actions">
-              <button class="primary-button" id="approveButton" type="button">
-                <svg aria-hidden="true"><use href="#icon-check"></use></svg>
-                <span>Approve</span>
-              </button>
-              <button class="secondary-button" id="needsEvidenceButton" type="button">
-                <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
-                <span>Needs Evidence</span>
-              </button>
-              <button class="icon-button" id="copyButton" type="button" aria-label="Copy answer" title="Copy answer">
-                <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
-              </button>
-            </div>
-
-            <section class="risk-section" aria-label="Review warnings">
-              <div class="section-heading">
-                <span class="label">Review Notes</span>
-              </div>
-              <div id="riskList" class="risk-list"></div>
-            </section>
-
-            <section class="source-section" aria-label="Citations">
-              <div class="section-heading">
-                <span class="label">Citations</span>
-                <span id="sourceCount">0 sources</span>
-              </div>
-              <div id="sourceList" class="source-list"></div>
-            </section>
-          </section>
-
-          <section class="panel evidence-panel" aria-label="Evidence vault">
-            <div class="panel-header">
-              <div>
-                <span class="label">Evidence Vault</span>
-                <h2 id="evidenceCount">0 files</h2>
-              </div>
-              <button class="icon-button" id="uploadEvidenceButton" type="button" aria-label="Upload evidence" title="Upload evidence">
-                <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
-              </button>
-              <input id="evidenceInput" type="file" accept=".txt,.md,.csv" multiple hidden />
-            </div>
-
-            <div class="evidence-list" id="evidenceList"></div>
-
-            <section class="evidence-detail" aria-label="Evidence detail">
-              <span class="label">Selected Source</span>
-              <div id="evidenceDetail"></div>
-            </section>
-
-            <section class="audit-section" aria-label="Approval trail">
-              <div class="section-heading">
-                <span class="label">Approval Trail</span>
-              </div>
-              <ol id="auditTrail" class="audit-list"></ol>
-            </section>
-          </section>
-        </section>
-      </main>
-    </div>
-
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-    <script src="app.js"></script>
+    <footer class="landing-footer">
+      <span>AnswerSeal</span>
+      <a href="demo.html">Live Demo</a>
+      <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>
+    </footer>
   </body>
 </html>

@@ -1,0 +1,7 @@
+.DS_Store
+Thumbs.db
+*.log
+qa-*.png
+.edge-*
+node_modules/
+dist/
