@@ -142,8 +142,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.11 Alpha</strong>
-          <span>Evidence Retrieval AI</span>
+          <strong>v0.12 Alpha</strong>
+          <span>Buyer Portal Autofill</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -155,7 +155,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.11 Alpha</span>
+            <span class="label">Security questionnaire | v0.12 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -788,18 +788,18 @@
     </aside>
 
     <div class="portal-backdrop drawer-backdrop" id="portalBackdrop" hidden></div>
-    <aside class="workspace-drawer portal-drawer" id="portalDrawer" aria-label="Portal copy mode" aria-hidden="true">
+    <aside class="workspace-drawer portal-drawer" id="portalDrawer" aria-label="Buyer portal autofill" aria-hidden="true">
       <header class="drawer-header">
         <div>
-          <span class="label">Portal Copy Mode</span>
-          <h2>Ready for buyer portals</h2>
+          <span class="label">Buyer Portal Autofill</span>
+          <h2>Portal-ready response sequence</h2>
         </div>
         <button class="icon-button" id="closePortalButton" type="button" aria-label="Close portal copy" title="Close portal copy">
           <svg aria-hidden="true"><use href="#icon-x"></use></svg>
         </button>
       </header>
 
-      <section class="memory-strip" aria-label="Portal copy status">
+      <section class="memory-strip portal-metrics" aria-label="Portal copy status">
         <article>
           <span class="label">Status</span>
           <strong id="portalStatus">Draft</strong>
@@ -808,6 +808,14 @@
           <span class="label">Confidence</span>
           <strong id="portalConfidence">0%</strong>
         </article>
+        <article>
+          <span class="label">Fields</span>
+          <strong id="portalFieldCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Ready</span>
+          <strong id="portalReadyCount">0/0</strong>
+        </article>
       </section>
 
       <section class="portal-copy-body">
@@ -815,6 +823,14 @@
           <span class="label">Question</span>
           <strong id="portalQuestion">Select a question</strong>
         </div>
+
+        <section class="portal-map" aria-label="Portal field mapping">
+          <div class="section-heading">
+            <span class="label">Field Mapping</span>
+            <span id="portalSequenceStatus">0 copied</span>
+          </div>
+          <div class="portal-field-list" id="portalFieldList"></div>
+        </section>
 
         <label class="portal-answer" for="portalAnswer">
           <span class="label">Answer</span>
@@ -830,11 +846,19 @@
         </section>
 
         <section class="portal-risk" aria-label="Portal risk status">
-          <span class="label">Risk Status</span>
+          <div class="section-heading">
+            <span class="label">Submission Checks</span>
+            <span id="portalCheckStatus">Review</span>
+          </div>
           <div id="portalRiskStatus"></div>
+          <div class="portal-checklist" id="portalChecklist"></div>
         </section>
 
         <div class="portal-actions">
+          <button class="primary-button" id="copyPortalNextButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Next Field</span>
+          </button>
           <button class="primary-button" id="copyPortalAnswerButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
             <span>Answer</span>
@@ -845,7 +869,7 @@
           </button>
           <button class="secondary-button" id="copyPortalFullButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
-            <span>Full</span>
+            <span>Packet</span>
           </button>
         </div>
       </section>

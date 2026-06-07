@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.11 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v11";
+const BUILD_VERSION = "v0.12 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v12";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v11",
   "answerseal.workspace.v10",
   "answerseal.workspace.v09",
   "answerseal.workspace.v08",
@@ -429,6 +430,7 @@ function createInitialState() {
     access: createInitialAccessState(),
     workspaceOpen: false,
     portalOpen: false,
+    portal: createInitialPortalState(),
     handoff: createInitialHandoff(),
     audit: [
       {
@@ -453,6 +455,13 @@ function createInitialDataRoom() {
   return {
     notes: Object.fromEntries(evidenceDocs.map((doc) => [doc.id, createDataRoomNote(doc)])),
     checklist: closeChecklistSeeds.map((item) => ({ ...item })),
+  };
+}
+
+function createInitialPortalState() {
+  return {
+    copied: {},
+    packetPreparedAt: null,
   };
 }
 
@@ -524,6 +533,7 @@ function loadWorkspaceState() {
       handoff: normalizeHandoff(workspace.handoff ?? fresh.handoff),
       dataRoom: normalizeDataRoom(workspace.dataRoom ?? fresh.dataRoom),
       access: normalizeAccess(workspace.access ?? fresh.access),
+      portal: normalizePortal(workspace.portal ?? fresh.portal),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -675,6 +685,14 @@ function normalizeAccessInvite(invite) {
   };
 }
 
+function normalizePortal(portal) {
+  const copied = portal?.copied && typeof portal.copied === "object" ? portal.copied : {};
+  return {
+    copied,
+    packetPreparedAt: portal?.packetPreparedAt ?? null,
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
@@ -821,11 +839,18 @@ const elements = {
   closePortalButton: document.querySelector("#closePortalButton"),
   portalStatus: document.querySelector("#portalStatus"),
   portalConfidence: document.querySelector("#portalConfidence"),
+  portalFieldCount: document.querySelector("#portalFieldCount"),
+  portalReadyCount: document.querySelector("#portalReadyCount"),
   portalQuestion: document.querySelector("#portalQuestion"),
+  portalSequenceStatus: document.querySelector("#portalSequenceStatus"),
+  portalFieldList: document.querySelector("#portalFieldList"),
   portalAnswer: document.querySelector("#portalAnswer"),
   portalSourceCount: document.querySelector("#portalSourceCount"),
   portalCitations: document.querySelector("#portalCitations"),
+  portalCheckStatus: document.querySelector("#portalCheckStatus"),
   portalRiskStatus: document.querySelector("#portalRiskStatus"),
+  portalChecklist: document.querySelector("#portalChecklist"),
+  copyPortalNextButton: document.querySelector("#copyPortalNextButton"),
   copyPortalAnswerButton: document.querySelector("#copyPortalAnswerButton"),
   copyPortalCitationsButton: document.querySelector("#copyPortalCitationsButton"),
   copyPortalFullButton: document.querySelector("#copyPortalFullButton"),
@@ -938,6 +963,7 @@ function bindEvents() {
   elements.resetWorkspaceButton.addEventListener("click", resetWorkspace);
   elements.closePortalButton.addEventListener("click", closePortal);
   elements.portalBackdrop.addEventListener("click", closePortal);
+  elements.copyPortalNextButton.addEventListener("click", copyNextPortalField);
   elements.copyPortalAnswerButton.addEventListener("click", copyPortalAnswer);
   elements.copyPortalCitationsButton.addEventListener("click", copyPortalCitations);
   elements.copyPortalFullButton.addEventListener("click", copyPortalFull);
@@ -2529,11 +2555,18 @@ function renderPortalCopy() {
   if (!question) return;
 
   const sources = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+  const snapshot = portalSnapshot(question);
   elements.portalStatus.textContent = formatStatus(question.status);
   elements.portalConfidence.textContent = `${question.confidence ?? 0}%`;
+  elements.portalFieldCount.textContent = snapshot.fields.length;
+  elements.portalReadyCount.textContent = `${snapshot.readyFields}/${snapshot.fields.length}`;
   elements.portalQuestion.textContent = question.text;
+  elements.portalSequenceStatus.textContent = `${snapshot.copiedFields}/${snapshot.fields.length} copied`;
   elements.portalAnswer.value = question.answer ?? "";
   elements.portalSourceCount.textContent = `${sources.length} ${sources.length === 1 ? "source" : "sources"}`;
+  elements.portalCheckStatus.textContent = snapshot.readyForSubmit ? "Ready" : "Review";
+  renderPortalFields(question, snapshot.fields);
+  renderPortalChecklist(snapshot.checks);
   elements.portalCitations.innerHTML = "";
 
   if (sources.length === 0) {
@@ -2557,22 +2590,234 @@ function renderPortalCopy() {
     : '<div class="empty-state compact">No review notes</div>';
 }
 
+function renderPortalFields(question, fields) {
+  elements.portalFieldList.innerHTML = "";
+
+  fields.forEach((field, index) => {
+    const card = document.createElement("button");
+    card.className = `portal-field-card is-${field.status.toLowerCase()}${field.copied ? " is-copied" : ""}`;
+    card.type = "button";
+    card.innerHTML = `
+      <span class="field-index">${String(index + 1).padStart(2, "0")}</span>
+      <div>
+        <header>
+          <strong>${escapeHtml(field.label)}</strong>
+          <span>${escapeHtml(field.statusLabel)}</span>
+        </header>
+        <p>${escapeHtml(field.target)}</p>
+        <small>${escapeHtml(field.preview)}</small>
+      </div>
+    `;
+    card.addEventListener("click", () => copyPortalField(question, field));
+    elements.portalFieldList.append(card);
+  });
+}
+
+function renderPortalChecklist(checks) {
+  elements.portalChecklist.innerHTML = "";
+
+  checks.forEach((check) => {
+    const item = document.createElement("div");
+    item.className = `portal-check is-${check.status}`;
+    item.innerHTML = `
+      <svg aria-hidden="true"><use href="#${check.status === "ready" ? "icon-check" : "icon-warning"}"></use></svg>
+      <div>
+        <strong>${escapeHtml(check.label)}</strong>
+        <span>${escapeHtml(check.detail)}</span>
+      </div>
+    `;
+    elements.portalChecklist.append(item);
+  });
+}
+
+function portalSnapshot(question) {
+  const fields = portalFields(question);
+  const checks = portalChecks(question);
+  const readyFields = fields.filter((field) => field.status === "ready").length;
+  const copiedFields = fields.filter((field) => field.copied).length;
+
+  return {
+    fields,
+    checks,
+    readyFields,
+    copiedFields,
+    readyForSubmit: checks.every((check) => check.status === "ready"),
+  };
+}
+
+function portalFields(question) {
+  const copied = state.portal.copied[question.id] ?? {};
+  const citations = portalCitationsText(question);
+  const retrieval = retrievalSnapshot(question);
+  const risks = question.risks ?? [];
+  const isBlocked = question.status === "needs-evidence" || question.status === "blocked" || retrieval.verdict === "refuse" || risks.length > 0;
+  const answerStatus = question.answer && !isBlocked ? "ready" : "blocked";
+  const citationStatus = citations ? "ready" : "blocked";
+  const approvalStatus = question.status === "approved" ? "ready" : "review";
+  const packetStatus = answerStatus === "ready" && citationStatus === "ready" && approvalStatus !== "blocked" ? "ready" : "review";
+  const fields = [
+    {
+      id: "prompt",
+      label: "Buyer prompt",
+      target: `${question.portal} > Question text`,
+      content: question.text,
+      status: "ready",
+      preview: question.text,
+    },
+    {
+      id: "answer",
+      label: "Answer field",
+      target: `${question.portal} > Response`,
+      content: question.answer ?? "",
+      status: answerStatus,
+      preview: question.answer || "No answer drafted yet.",
+    },
+    {
+      id: "citations",
+      label: "Evidence notes",
+      target: `${question.portal} > Supporting evidence`,
+      content: citations,
+      status: citationStatus,
+      preview: citations || "No citations attached.",
+    },
+    {
+      id: "approval",
+      label: "Reviewer note",
+      target: `${question.portal} > Internal note`,
+      content: portalReviewerNote(question, retrieval),
+      status: approvalStatus,
+      preview: portalReviewerNote(question, retrieval),
+    },
+    {
+      id: "packet",
+      label: "Buyer-ready packet",
+      target: `${question.portal} > Final handoff`,
+      content: portalPacketSummaryText(question),
+      status: packetStatus,
+      preview: `${formatStatus(question.status)} | ${question.confidence ?? 0}% confidence | ${retrieval.gateLabel}`,
+    },
+  ];
+
+  return fields.map((field) => ({
+    ...field,
+    copied: Boolean(copied[field.id]),
+    statusLabel: portalFieldStatusLabel(field.status, Boolean(copied[field.id])),
+    preview: shorten(String(field.preview ?? ""), 120),
+  }));
+}
+
+function portalChecks(question) {
+  const sources = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+  const risks = question.risks ?? [];
+  const retrieval = retrievalSnapshot(question);
+  const trace = claimTraceSnapshot(question);
+  const staleSources = sources.filter((source) => daysSince(source.updated) >= 365);
+
+  return [
+    {
+      label: "Answer drafted",
+      status: question.answer ? "ready" : "blocked",
+      detail: question.answer ? "Response text is available for portal paste." : "Draft an answer before portal handoff.",
+    },
+    {
+      label: "Citations attached",
+      status: sources.length > 0 ? "ready" : "blocked",
+      detail: sources.length > 0 ? `${sources.length} source${sources.length === 1 ? "" : "s"} attached.` : "Attach at least one evidence source.",
+    },
+    {
+      label: "Retrieval gate",
+      status: retrieval.verdict === "refuse" ? "blocked" : "ready",
+      detail: `${retrieval.verdictLabel} | ${retrieval.topScore}% top match.`,
+    },
+    {
+      label: "Claim trace",
+      status: trace.conflicts === 0 ? "ready" : "blocked",
+      detail: trace.conflicts === 0 ? `${trace.bound}/${trace.claims.length} claims bound.` : `${trace.conflicts} conflict${trace.conflicts === 1 ? "" : "s"} must be reviewed.`,
+    },
+    {
+      label: "Fresh sources",
+      status: staleSources.length === 0 ? "ready" : "blocked",
+      detail: staleSources.length === 0 ? "No stale source attached." : `${staleSources.length} stale source${staleSources.length === 1 ? "" : "s"} attached.`,
+    },
+    {
+      label: "Reviewer blockers",
+      status: risks.length === 0 ? "ready" : "blocked",
+      detail: risks.length === 0 ? "No open review notes." : `${risks.length} blocker${risks.length === 1 ? "" : "s"} visible.`,
+    },
+    {
+      label: "Reviewer approval",
+      status: question.status === "approved" ? "ready" : "blocked",
+      detail: question.status === "approved" ? "Answer is approved for buyer handoff." : "Approve before final buyer submission.",
+    },
+  ];
+}
+
+function portalFieldStatusLabel(status, copied) {
+  if (copied) return "Copied";
+  if (status === "ready") return "Ready";
+  if (status === "review") return "Review";
+  return "Blocked";
+}
+
 function copyPortalAnswer() {
   const question = getActiveQuestion();
   if (!question) return;
-  copyText(question.answer ?? "", "Portal answer copied.");
+  const field = portalFields(question).find((item) => item.id === "answer");
+  if (!field) return;
+  copyPortalField(question, field);
+}
+
+function copyNextPortalField() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  const fields = portalFields(question);
+  const next = fields.find((field) => field.status === "ready" && !field.copied)
+    ?? fields.find((field) => field.status === "review" && !field.copied)
+    ?? fields.find((field) => field.status === "ready")
+    ?? fields[0];
+  if (!next) return;
+  copyPortalField(question, next);
+}
+
+function copyPortalField(question, field) {
+  if (field.status === "blocked") {
+    showToast("Resolve blocker before copying.");
+    return;
+  }
+
+  if (!field.content) {
+    showToast("No portal content to copy.");
+    return;
+  }
+
+  state.portal.copied[question.id] = {
+    ...(state.portal.copied[question.id] ?? {}),
+    [field.id]: new Date().toISOString(),
+  };
+  copyText(field.content, `${field.label} copied.`);
+  addAudit("Portal field copied", `${field.label} copied for ${shorten(question.text, 58)}.`);
+  renderPortalCopy();
 }
 
 function copyPortalCitations() {
   const question = getActiveQuestion();
   if (!question) return;
-  copyText(portalCitationsText(question), "Portal citations copied.");
+  const field = portalFields(question).find((item) => item.id === "citations");
+  if (!field) return;
+  copyPortalField(question, field);
 }
 
 function copyPortalFull() {
   const question = getActiveQuestion();
   if (!question) return;
-  copyText(portalFullText(question), "Full portal response copied.");
+  state.portal.copied[question.id] = {
+    ...(state.portal.copied[question.id] ?? {}),
+    packet: new Date().toISOString(),
+  };
+  state.portal.packetPreparedAt = new Date().toISOString();
+  copyText(portalFullText(question), "Buyer portal packet copied.");
+  addAudit("Portal packet prepared", `${shorten(question.text, 58)} portal packet prepared for buyer handoff.`);
+  renderPortalCopy();
 }
 
 function portalCitationsText(question) {
@@ -2583,12 +2828,48 @@ function portalCitationsText(question) {
 }
 
 function portalFullText(question) {
+  const snapshot = portalSnapshot(question);
   const risks = (question.risks ?? []).join("; ") || "No review notes";
+  const fields = snapshot.fields.map((field) => `- ${field.label}: ${field.statusLabel} | ${field.target}`).join("\n");
+  const checks = snapshot.checks.map((check) => `- ${check.status === "ready" ? "Ready" : "Blocked"} | ${check.label}: ${check.detail}`).join("\n");
   return [
+    `${workspaceAccount.company} - AnswerSeal Buyer Portal Autofill`,
+    `Build: ${BUILD_VERSION}`,
+    `Portal: ${question.portal}`,
+    `Submit readiness: ${snapshot.readyForSubmit ? "Ready" : "Review required"} | ${snapshot.readyFields}/${snapshot.fields.length} fields ready`,
+    "",
+    "Field sequence:",
+    fields,
+    "",
     `Question: ${question.text}`,
     `Answer: ${question.answer ?? ""}`,
     `Citations:\n${portalCitationsText(question) || "No citations attached"}`,
     `Review status: ${formatStatus(question.status)} | Confidence: ${question.confidence ?? 0}% | ${risks}`,
+    "",
+    "Submission checks:",
+    checks,
+  ].join("\n\n");
+}
+
+function portalReviewerNote(question, retrieval) {
+  const trace = claimTraceSnapshot(question);
+  return [
+    `${formatStatus(question.status)} by AnswerSeal`,
+    `Confidence: ${question.confidence ?? 0}%`,
+    `Retrieval: ${retrieval.verdictLabel} (${retrieval.topScore}% top match)`,
+    `Claim trace: ${trace.bound}/${trace.claims.length} bound`,
+  ].join(" | ");
+}
+
+function portalPacketSummaryText(question) {
+  const retrieval = retrievalSnapshot(question);
+  const trace = claimTraceSnapshot(question);
+  return [
+    `Question: ${question.text}`,
+    `Answer: ${question.answer ?? ""}`,
+    `Citations: ${portalCitationsText(question) || "No citations attached"}`,
+    `Retrieval: ${retrieval.verdictLabel} | ${retrieval.topScore}% top match`,
+    `Claim trace: ${trace.bound}/${trace.claims.length} bound | ${trace.conflicts} conflicts`,
   ].join("\n\n");
 }
 
@@ -3172,6 +3453,8 @@ function exportCsv() {
     "Retrieval Gate",
     "Retrieval Match",
     "Retrieval Sources",
+    "Portal Ready",
+    "Portal Fields",
     "Trace",
     "Answer",
     "Sources",
@@ -3180,6 +3463,7 @@ function exportCsv() {
   const rows = state.questions.map((question) => {
     const trace = claimTraceSnapshot(question);
     const retrieval = retrievalSnapshot(question);
+    const portal = portalSnapshot(question);
     return [
       question.text,
       formatStatus(question.status),
@@ -3190,6 +3474,8 @@ function exportCsv() {
       retrieval.gateLabel,
       `${retrieval.topScore}%`,
       retrieval.selected.map((match) => match.doc.title).join("; "),
+      portal.readyForSubmit ? "Ready" : "Review required",
+      `${portal.readyFields}/${portal.fields.length} ready, ${portal.copiedFields} copied`,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -3226,7 +3512,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v7</h1>
+        <h1>AnswerSeal Review Pack v8</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -3440,6 +3726,35 @@ function exportReviewPack() {
               .join("")}
           </tbody>
         </table>
+        <h2>Buyer Portal Autofill</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Portal</th>
+              <th>Readiness</th>
+              <th>Fields</th>
+              <th>Submission Checks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.questions
+              .map((question) => {
+                const portal = portalSnapshot(question);
+                const checks = portal.checks.map((check) => `${check.label}: ${check.status === "ready" ? "Ready" : "Blocked"}`).join("; ");
+                return `
+                  <tr>
+                    <td>${escapeHtml(question.text)}</td>
+                    <td>${escapeHtml(question.portal)}</td>
+                    <td class="${portal.readyForSubmit ? "ok" : "risk"}">${portal.readyForSubmit ? "Ready" : "Review required"}</td>
+                    <td>${portal.readyFields}/${portal.fields.length} ready | ${portal.copiedFields} copied</td>
+                    <td>${escapeHtml(checks)}</td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+        </table>
         <h2>Questionnaire Responses</h2>
         <table>
           <thead>
@@ -3513,11 +3828,11 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v7 created with evidence retrieval rationale, secure access, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v8 created with buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
-  showToast("Review Pack v7 exported.");
+  showToast("Review Pack v8 exported.");
 }
 
 function toCsv(rows) {
@@ -3566,6 +3881,7 @@ function serializeWorkspace() {
     intake: state.intake,
     dataRoom: state.dataRoom,
     access: state.access,
+    portal: state.portal,
     handoff: state.handoff,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,

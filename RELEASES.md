@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.12 Alpha - Buyer Portal Autofill
+
+Phase: Buyer Portal Autofill
+
+- Added portal field mapping for buyer prompt, answer, citations, reviewer note, and buyer packet.
+- Added paste sequencing with copied-field memory per buyer question.
+- Added submission checks for answer readiness, citations, retrieval gate, claim trace, source freshness, blockers, and reviewer approval.
+- Added a buyer-ready portal packet copy action.
+- Added portal readiness and field sequence status to CSV exports.
+- Upgraded review pack export to Review Pack v8 with buyer portal autofill status.
+- Updated the build phases page with the v0.13 Deal Desk Analytics plan.
+
 ## v0.11 Alpha - Evidence Retrieval AI
 
 Phase: Evidence Retrieval AI

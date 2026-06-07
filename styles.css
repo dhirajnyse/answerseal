@@ -2137,6 +2137,11 @@ svg {
 
 .portal-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
+  width: min(620px, 100vw);
+}
+
+.portal-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .intake-actions,
@@ -2273,12 +2278,13 @@ svg {
 }
 
 .portal-copy-body {
-  grid-template-rows: auto auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto auto;
   overflow: auto;
 }
 
 .portal-question,
-.portal-answer {
+.portal-answer,
+.portal-map {
   display: grid;
   gap: 8px;
 }
@@ -2305,6 +2311,149 @@ svg {
 .portal-risk {
   display: grid;
   gap: 8px;
+}
+
+.portal-field-list {
+  display: grid;
+  gap: 8px;
+}
+
+.portal-field-card {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--amber);
+  border-radius: 8px;
+  color: inherit;
+  background: #fffaf0;
+  text-align: left;
+}
+
+.portal-field-card.is-ready {
+  border-left-color: var(--green);
+  background: #f3fff8;
+}
+
+.portal-field-card.is-blocked {
+  border-left-color: var(--red);
+  background: #fff7f5;
+}
+
+.portal-field-card.is-copied {
+  border-color: rgba(20, 121, 255, 0.26);
+  border-left-color: var(--blue);
+  background: #f3f8ff;
+}
+
+.field-index {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.portal-field-card div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.portal-field-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.portal-field-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.portal-field-card header span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-size: 0.72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.portal-field-card p,
+.portal-field-card small {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.83rem;
+  line-height: 1.4;
+}
+
+.portal-checklist {
+  display: grid;
+  gap: 8px;
+}
+
+.portal-check {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(180, 35, 24, 0.18);
+  border-radius: 8px;
+  background: #fff7f5;
+}
+
+.portal-check.is-ready {
+  border-color: rgba(0, 168, 137, 0.24);
+  background: #f1fff7;
+}
+
+.portal-check svg {
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  background: #ffffff;
+}
+
+.portal-check.is-ready svg {
+  stroke: var(--green);
+}
+
+.portal-check div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.portal-check strong {
+  line-height: 1.25;
+}
+
+.portal-check span {
+  color: var(--muted);
+  font-size: 0.83rem;
+  line-height: 1.4;
 }
 
 .portal-citations {
@@ -2334,7 +2483,7 @@ svg {
 }
 
 .portal-actions {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   padding: 0;
   border-bottom: 0;
 }
@@ -3417,6 +3566,7 @@ svg {
   .seal-summary,
   .retrieval-metrics,
   .trace-metrics,
+  .portal-metrics,
   .pilot-terms,
   .seal-path-track,
   .phase-list,
@@ -3445,6 +3595,8 @@ svg {
 
   .question-footer,
   .retrieval-card header,
+  .portal-field-card,
+  .portal-field-card header,
   .source-card header,
   .evidence-item header {
     display: grid;
