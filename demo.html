@@ -104,6 +104,10 @@
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
           </button>
+          <button class="nav-item" id="pipelineNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Pipeline</span>
+          </button>
           <button class="nav-item" id="analyticsNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
             <span>Analytics</span>
@@ -146,8 +150,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.13 Alpha</strong>
-          <span>Deal Desk Analytics</span>
+          <strong>v0.14 Alpha</strong>
+          <span>Multi-Buyer Pipeline</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -159,7 +163,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.13 Alpha</span>
+            <span class="label">Security questionnaire | v0.14 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -521,6 +525,75 @@
               <span>Summary</span>
             </button>
           </div>
+        </section>
+      </section>
+    </aside>
+
+    <div class="pipeline-backdrop drawer-backdrop" id="pipelineBackdrop" hidden></div>
+    <aside class="workspace-drawer pipeline-drawer" id="pipelineDrawer" aria-label="Multi-buyer pipeline" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Multi-Buyer Pipeline</span>
+          <h2>Revenue reviews protected by proof</h2>
+        </div>
+        <button class="icon-button" id="closePipelineButton" type="button" aria-label="Close pipeline" title="Close pipeline">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip pipeline-metrics" aria-label="Pipeline status">
+        <article>
+          <span class="label">Pipeline</span>
+          <strong id="pipelineValue">$0</strong>
+        </article>
+        <article>
+          <span class="label">Reviews</span>
+          <strong id="pipelineActive">0</strong>
+        </article>
+        <article>
+          <span class="label">SLA Risk</span>
+          <strong id="pipelineSlaRisk">0</strong>
+        </article>
+        <article>
+          <span class="label">Reuse</span>
+          <strong id="pipelineReuse">0%</strong>
+        </article>
+      </section>
+
+      <section class="pipeline-body">
+        <section class="pipeline-section" aria-label="Buyer pipeline">
+          <div class="section-heading">
+            <span class="label">Buyer Pipeline</span>
+            <span>Active reviews</span>
+          </div>
+          <div class="pipeline-account-list" id="pipelineAccountList"></div>
+        </section>
+
+        <section class="pipeline-section" aria-label="Proof reuse graph">
+          <div class="section-heading">
+            <span class="label">Proof Reuse Graph</span>
+            <span>Evidence across buyers</span>
+          </div>
+          <div class="pipeline-reuse-list" id="pipelineReuseGraph"></div>
+        </section>
+
+        <section class="pipeline-section" aria-label="SLA risk">
+          <div class="section-heading">
+            <span class="label">SLA Risk</span>
+            <span>Nearest handoffs</span>
+          </div>
+          <div class="pipeline-sla-list" id="pipelineSlaList"></div>
+        </section>
+
+        <section class="pipeline-section" aria-label="Pipeline digest">
+          <div class="section-heading">
+            <span class="label">Pipeline Digest</span>
+            <button class="secondary-button compact-button" id="copyPipelineDigestButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="pipeline-digest" id="pipelineDigest"></pre>
         </section>
       </section>
     </aside>

@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.14 Alpha - Multi-Buyer Pipeline
+
+Phase: Multi-Buyer Pipeline
+
+- Added a Multi-Buyer Pipeline drawer for active reviews, pipeline value, due dates, readiness, blockers, and owners.
+- Added a proof reuse graph that ranks evidence reused across buyer reviews and influenced pipeline value.
+- Added an SLA risk list to surface the reviews most likely to slow revenue.
+- Added copyable buyer briefs and a portfolio pipeline digest for sales/security handoff.
+- Added pipeline review count and SLA risk context to CSV exports.
+- Upgraded review pack export to Review Pack v10 with multi-buyer pipeline, proof reuse graph, SLA risk, and pipeline digest.
+- Updated the build phases page with the v0.15 Buyer Trust Rooms plan.
+
 ## v0.13 Alpha - Deal Desk Analytics
 
 Phase: Deal Desk Analytics

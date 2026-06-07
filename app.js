@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.13 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v13";
+const BUILD_VERSION = "v0.14 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v14";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v13",
   "answerseal.workspace.v12",
   "answerseal.workspace.v11",
   "answerseal.workspace.v10",
@@ -391,6 +392,77 @@ const closeChecklistSeeds = [
   },
 ];
 
+const buyerPipelineSeeds = [
+  {
+    id: "northstar-payments",
+    company: "Northstar Payments",
+    buyer: "Fintech procurement",
+    stage: "Legal security review",
+    value: 72000,
+    due: "2026-06-16",
+    owner: "Nina Patel",
+    status: "Legal review",
+    readiness: 74,
+    questions: 14,
+    approved: 8,
+    blockers: 3,
+    reuse: ["dpa", "soc2", "security-policy"],
+    nextAction: "Confirm subprocessor notice language before legal handoff.",
+    portal: "Zip",
+  },
+  {
+    id: "terra-logistics",
+    company: "Terra Logistics",
+    buyer: "Operations vendor desk",
+    stage: "Security questionnaire",
+    value: 56000,
+    due: "2026-06-12",
+    owner: "Leo Morgan",
+    status: "SLA risk",
+    readiness: 61,
+    questions: 22,
+    approved: 9,
+    blockers: 6,
+    reuse: ["bcp", "soc2", "security-policy"],
+    nextAction: "Attach continuity test evidence and backup integrity proof.",
+    portal: "Excel",
+  },
+  {
+    id: "meridian-cloud",
+    company: "Meridian Cloud",
+    buyer: "Enterprise security",
+    stage: "Final buyer portal",
+    value: 94000,
+    due: "2026-06-20",
+    owner: "Maya Shah",
+    status: "Ready soon",
+    readiness: 88,
+    questions: 18,
+    approved: 15,
+    blockers: 1,
+    reuse: ["soc2", "ai-standard", "security-policy"],
+    nextAction: "Copy approved AI and access answers into final portal sequence.",
+    portal: "OneTrust",
+  },
+  {
+    id: "brightpath-ai",
+    company: "BrightPath AI",
+    buyer: "AI governance team",
+    stage: "Model-risk review",
+    value: 64000,
+    due: "2026-06-18",
+    owner: "Omar Khan",
+    status: "Evidence gap",
+    readiness: 69,
+    questions: 12,
+    approved: 7,
+    blockers: 4,
+    reuse: ["ai-standard", "dpa", "pilot-terms-2025"],
+    nextAction: "Remove legacy pilot language and attach current AI Usage Standard.",
+    portal: "Buyer portal",
+  },
+];
+
 function createSeedIntake() {
   return evidenceDocs.map((doc) => ({
     id: `seed-${doc.id}`,
@@ -430,6 +502,7 @@ function createInitialState() {
     accessOpen: false,
     access: createInitialAccessState(),
     workspaceOpen: false,
+    pipelineOpen: false,
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -544,6 +617,7 @@ function loadWorkspaceState() {
       dataRoomOpen: false,
       accessOpen: false,
       workspaceOpen: false,
+      pipelineOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -702,6 +776,7 @@ const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
+  pipelineNavButton: document.querySelector("#pipelineNavButton"),
   analyticsNavButton: document.querySelector("#analyticsNavButton"),
   accessNavButton: document.querySelector("#accessNavButton"),
   dataRoomNavButton: document.querySelector("#dataRoomNavButton"),
@@ -797,6 +872,18 @@ const elements = {
   prepareHandoffButton: document.querySelector("#prepareHandoffButton"),
   copyHandoffLinkButton: document.querySelector("#copyHandoffLinkButton"),
   copyHandoffSummaryButton: document.querySelector("#copyHandoffSummaryButton"),
+  pipelineBackdrop: document.querySelector("#pipelineBackdrop"),
+  pipelineDrawer: document.querySelector("#pipelineDrawer"),
+  closePipelineButton: document.querySelector("#closePipelineButton"),
+  pipelineValue: document.querySelector("#pipelineValue"),
+  pipelineActive: document.querySelector("#pipelineActive"),
+  pipelineSlaRisk: document.querySelector("#pipelineSlaRisk"),
+  pipelineReuse: document.querySelector("#pipelineReuse"),
+  pipelineAccountList: document.querySelector("#pipelineAccountList"),
+  pipelineReuseGraph: document.querySelector("#pipelineReuseGraph"),
+  pipelineSlaList: document.querySelector("#pipelineSlaList"),
+  pipelineDigest: document.querySelector("#pipelineDigest"),
+  copyPipelineDigestButton: document.querySelector("#copyPipelineDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -900,6 +987,7 @@ function init() {
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
+  elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.analyticsNavButton.addEventListener("click", openAnalytics);
   elements.accessNavButton.addEventListener("click", openAccess);
   elements.dataRoomNavButton.addEventListener("click", openDataRoom);
@@ -939,6 +1027,8 @@ function bindEvents() {
     renderClaimTrace(question);
     renderIntake();
     renderWorkspace();
+    renderPipeline();
+    renderAnalytics();
     renderAccess();
     renderLibrary();
     renderPortalCopy();
@@ -959,6 +1049,9 @@ function bindEvents() {
   elements.prepareHandoffButton.addEventListener("click", prepareHandoff);
   elements.copyHandoffLinkButton.addEventListener("click", copyHandoffLink);
   elements.copyHandoffSummaryButton.addEventListener("click", copyHandoffSummary);
+  elements.closePipelineButton.addEventListener("click", closePipeline);
+  elements.pipelineBackdrop.addEventListener("click", closePipeline);
+  elements.copyPipelineDigestButton.addEventListener("click", copyPipelineDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1002,6 +1095,7 @@ function bindEvents() {
     if (state.dataRoomOpen) closeDataRoom();
     if (state.accessOpen) closeAccess();
     if (state.workspaceOpen) closeWorkspace();
+    if (state.pipelineOpen) closePipeline();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1012,6 +1106,7 @@ function bindEvents() {
 function applyInitialHash() {
   const hash = window.location.hash.replace("#", "").toLowerCase();
   if (hash === "workspace") openWorkspace();
+  if (hash === "pipeline" || hash === "buyers") openPipeline();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1036,6 +1131,7 @@ function render() {
   renderAudit();
   renderIntake();
   renderWorkspace();
+  renderPipeline();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1105,6 +1201,7 @@ function renderQuestionList() {
       renderActiveQuestion();
       renderEvidence();
       renderPortalCopy();
+      renderPipeline();
       renderAnalytics();
       schedulePersist();
     });
@@ -1730,6 +1827,7 @@ function renderAudit() {
 
 function activateWorkspaceNav(target) {
   closeWorkspace(false);
+  closePipeline(false);
   closeAnalytics(false);
   closeAccess(false);
   closeLibrary(false);
@@ -1751,6 +1849,7 @@ function setActiveNav(activeButton) {
   [
     elements.reviewNavButton,
     elements.workspaceNavButton,
+    elements.pipelineNavButton,
     elements.analyticsNavButton,
     elements.accessNavButton,
     elements.dataRoomNavButton,
@@ -1763,6 +1862,7 @@ function setActiveNav(activeButton) {
 }
 
 function openWorkspace() {
+  closePipeline(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -1786,8 +1886,35 @@ function closeWorkspace(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openPipeline() {
+  closeWorkspace(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.pipelineOpen = true;
+  setActiveNav(elements.pipelineNavButton);
+  elements.pipelineBackdrop.hidden = false;
+  elements.pipelineDrawer.classList.add("is-open");
+  elements.pipelineDrawer.setAttribute("aria-hidden", "false");
+  renderPipeline();
+  elements.copyPipelineDigestButton.focus();
+}
+
+function closePipeline(activateReview = true) {
+  if (!state.pipelineOpen && elements.pipelineDrawer.getAttribute("aria-hidden") === "true") return;
+  state.pipelineOpen = false;
+  elements.pipelineDrawer.classList.remove("is-open");
+  elements.pipelineDrawer.setAttribute("aria-hidden", "true");
+  elements.pipelineBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeWorkspace(false);
+  closePipeline(false);
   closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1813,6 +1940,7 @@ function closeAnalytics(activateReview = true) {
 
 function openAccess() {
   closeWorkspace(false);
+  closePipeline(false);
   closeAnalytics(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -1837,6 +1965,7 @@ function closeAccess(activateReview = true) {
 
 function openIntake() {
   closeWorkspace(false);
+  closePipeline(false);
   closeAnalytics(false);
   closeAccess(false);
   closeDataRoom(false);
@@ -1861,6 +1990,7 @@ function closeIntake(activateReview = true) {
 
 function openDataRoom() {
   closeWorkspace(false);
+  closePipeline(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -1885,6 +2015,7 @@ function closeDataRoom(activateReview = true) {
 
 function openLibrary() {
   closeWorkspace(false);
+  closePipeline(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -1910,6 +2041,7 @@ function closeLibrary(activateReview = true) {
 
 function openPortalCopy() {
   closeWorkspace(false);
+  closePipeline(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -1930,6 +2062,225 @@ function closePortal(activateReview = true) {
   elements.portalDrawer.setAttribute("aria-hidden", "true");
   elements.portalBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderPipeline() {
+  const pipeline = pipelineSnapshot();
+
+  elements.pipelineValue.textContent = formatMoney(pipeline.totalValue);
+  elements.pipelineActive.textContent = pipeline.accounts.length;
+  elements.pipelineSlaRisk.textContent = pipeline.slaRiskCount;
+  elements.pipelineReuse.textContent = `${pipeline.reuseRate}%`;
+  elements.pipelineDigest.textContent = pipelineDigestText(pipeline);
+
+  elements.pipelineAccountList.innerHTML = "";
+  pipeline.accounts.forEach((account) => {
+    const card = document.createElement("article");
+    card.className = `pipeline-account-card${account.slaRisk ? " is-risk" : ""}${account.active ? " is-active-account" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(account.stage)}</span>
+          <strong>${escapeHtml(account.company)}</strong>
+        </div>
+        <b>${formatMoney(account.value)}</b>
+      </header>
+      <div class="pipeline-progress" aria-label="${escapeHtml(account.company)} readiness">
+        <span style="width: ${Math.max(0, Math.min(100, account.readiness))}%"></span>
+      </div>
+      <div class="pipeline-account-meta">
+        <span>${account.readiness}% ready</span>
+        <span>${account.approved}/${account.questions} approved</span>
+        <span>${account.blockers} blockers</span>
+        <span>${account.daysLeft}d left</span>
+      </div>
+      <p>${escapeHtml(account.nextAction)}</p>
+      <footer>
+        <span class="route-status ${account.slaRisk ? "is-needed" : "is-assigned"}">${escapeHtml(account.slaRisk ? "SLA risk" : account.status)}</span>
+        <span>${escapeHtml(account.owner)} | ${escapeHtml(account.portal)}</span>
+        <button class="secondary-button compact-button" type="button" data-pipeline-brief="${escapeHtml(account.id)}">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Brief</span>
+        </button>
+        ${
+          account.active
+            ? `<button class="primary-button compact-button" type="button" data-pipeline-open="${escapeHtml(account.id)}">
+                <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+                <span>Open</span>
+              </button>`
+            : ""
+        }
+      </footer>
+    `;
+    card.querySelector("[data-pipeline-brief]")?.addEventListener("click", () => copyText(pipelineAccountBrief(account), "Buyer pipeline brief copied."));
+    card.querySelector("[data-pipeline-open]")?.addEventListener("click", () => {
+      closePipeline(false);
+      activateWorkspaceNav("review");
+      showToast("Active buyer review opened.");
+    });
+    elements.pipelineAccountList.append(card);
+  });
+
+  elements.pipelineReuseGraph.innerHTML = "";
+  pipeline.reuseGraph.slice(0, 6).forEach((item, index) => {
+    const card = document.createElement("article");
+    card.className = "pipeline-reuse-card";
+    card.innerHTML = `
+      <span class="field-index">${String(index + 1).padStart(2, "0")}</span>
+      <div>
+        <header>
+          <strong>${escapeHtml(item.title)}</strong>
+          <span>${item.accounts} buyers</span>
+        </header>
+        <p>${formatMoney(item.value)} in influenced pipeline | ${escapeHtml(item.owner)}</p>
+      </div>
+    `;
+    elements.pipelineReuseGraph.append(card);
+  });
+
+  elements.pipelineSlaList.innerHTML = "";
+  pipeline.slaRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = `pipeline-sla-row${row.slaRisk ? " is-risk" : ""}`;
+    item.innerHTML = `
+      <div>
+        <strong>${escapeHtml(row.company)}</strong>
+        <span>${escapeHtml(row.owner)} | ${row.daysLeft}d left | ${row.readiness}% ready</span>
+      </div>
+      <b>${escapeHtml(row.slaRisk ? "Escalate" : "On track")}</b>
+    `;
+    elements.pipelineSlaList.append(item);
+  });
+}
+
+function pipelineSnapshot() {
+  const deal = dealAnalyticsSnapshot();
+  const handoff = handoffReadinessSnapshot();
+  const activeReuse = deal.evidenceRoi.slice(0, 3).map((item) => item.doc.id);
+  const currentAccount = {
+    id: "aster-health",
+    company: workspaceAccount.company,
+    buyer: "Healthcare vendor review",
+    stage: "Security questionnaire",
+    value: 48000,
+    due: "2026-06-14",
+    owner: deal.nextOwner.name,
+    status: deal.riskLabel === "High" ? "At risk" : deal.riskLabel === "Medium" ? "Active risk" : "On track",
+    readiness: handoff.ready,
+    questions: state.questions.length,
+    approved: deal.approved,
+    blockers: deal.needsEvidence + deal.portalBlocked + deal.conflictClaims,
+    reuse: activeReuse.length > 0 ? activeReuse : ["soc2", "security-policy", "ai-standard"],
+    nextAction: deal.nextAction,
+    portal: "Aster Portal",
+    active: true,
+  };
+  const accounts = [currentAccount, ...buyerPipelineSeeds].map((account) => normalizePipelineAccount(account));
+  const totalValue = accounts.reduce((sum, account) => sum + account.value, 0);
+  const slaRiskCount = accounts.filter((account) => account.slaRisk).length;
+  const reusedSlots = accounts.reduce((sum, account) => sum + account.reuse.filter((id) => getEvidenceById(id)).length, 0);
+  const reuseRate = Math.round((reusedSlots / Math.max(1, accounts.length * 3)) * 100);
+  const reuseGraph = pipelineReuseGraph(accounts);
+  const slaRows = [...accounts].sort((a, b) => {
+    if (a.slaRisk !== b.slaRisk) return a.slaRisk ? -1 : 1;
+    return a.daysLeft - b.daysLeft;
+  });
+
+  return {
+    accounts,
+    totalValue,
+    blockedValue: accounts.filter((account) => account.slaRisk).reduce((sum, account) => sum + account.value, 0),
+    slaRiskCount,
+    reuseRate,
+    reuseGraph,
+    slaRows,
+    topAccount: slaRows[0],
+  };
+}
+
+function normalizePipelineAccount(account) {
+  const daysLeft = daysUntil(account.due);
+  const slaRisk = account.readiness < 70 || account.blockers >= 4 || daysLeft <= 3;
+  return {
+    ...account,
+    value: Number(account.value) || 0,
+    readiness: Math.max(0, Math.min(100, Math.round(Number(account.readiness) || 0))),
+    questions: Number(account.questions) || 0,
+    approved: Number(account.approved) || 0,
+    blockers: Number(account.blockers) || 0,
+    reuse: Array.isArray(account.reuse) ? account.reuse : [],
+    daysLeft,
+    slaRisk,
+  };
+}
+
+function pipelineReuseGraph(accounts) {
+  return state.evidence
+    .map((doc) => {
+      const linked = accounts.filter((account) => account.reuse.includes(doc.id));
+      return {
+        id: doc.id,
+        title: doc.title,
+        owner: doc.owner,
+        accounts: linked.length,
+        value: linked.reduce((sum, account) => sum + account.value, 0),
+      };
+    })
+    .filter((item) => item.accounts > 0)
+    .sort((a, b) => b.accounts - a.accounts || b.value - a.value || a.title.localeCompare(b.title));
+}
+
+function pipelineDigestText(pipeline = pipelineSnapshot()) {
+  const riskLines = pipeline.slaRows
+    .slice(0, 4)
+    .map((account, index) => `${index + 1}. ${account.company}: ${account.readiness}% ready, ${account.daysLeft}d left, ${account.blockers} blockers, owner ${account.owner}`)
+    .join("\n");
+  const reuseLines = pipeline.reuseGraph
+    .slice(0, 4)
+    .map((item, index) => `${index + 1}. ${item.title}: ${item.accounts} buyers, ${formatMoney(item.value)} influenced`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Multi-Buyer Pipeline",
+    `Build: ${BUILD_VERSION}`,
+    `Active reviews: ${pipeline.accounts.length}`,
+    `Pipeline protected: ${formatMoney(pipeline.totalValue)}`,
+    `SLA risk: ${pipeline.slaRiskCount} reviews | ${formatMoney(pipeline.blockedValue)} exposed`,
+    `Proof reuse rate: ${pipeline.reuseRate}%`,
+    "",
+    "SLA priority:",
+    riskLines || "No SLA risk.",
+    "",
+    "Proof reuse graph:",
+    reuseLines || "No reusable proof yet.",
+    "",
+    "Recommended motion:",
+    "- Work the nearest SLA risk first.",
+    "- Reuse the highest-impact proof bundle before drafting new answers.",
+    "- Escalate any buyer review below 70% readiness inside the daily sales/security handoff.",
+  ].join("\n");
+}
+
+function pipelineAccountBrief(account) {
+  const sources = account.reuse.map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; ") || "No mapped proof yet";
+  return [
+    `${account.company} - AnswerSeal Buyer Pipeline Brief`,
+    `Build: ${BUILD_VERSION}`,
+    `Stage: ${account.stage}`,
+    `Pipeline value: ${formatMoney(account.value)}`,
+    `Due: ${formatShortDate(account.due)} (${account.daysLeft} days left)`,
+    `Readiness: ${account.readiness}%`,
+    `Approved answers: ${account.approved}/${account.questions}`,
+    `Blockers: ${account.blockers}`,
+    `Owner: ${account.owner}`,
+    `Portal: ${account.portal}`,
+    `Reusable proof: ${sources}`,
+    `Next action: ${account.nextAction}`,
+  ].join("\n");
+}
+
+function copyPipelineDigest() {
+  copyText(pipelineDigestText(), "Pipeline digest copied.");
 }
 
 function renderAnalytics() {
@@ -3802,6 +4153,8 @@ function exportCsv() {
     "Portal Fields",
     "Deal Risk",
     "Deal Next Owner",
+    "Pipeline Reviews",
+    "Pipeline SLA Risk",
     "Trace",
     "Answer",
     "Sources",
@@ -3812,6 +4165,7 @@ function exportCsv() {
     const retrieval = retrievalSnapshot(question);
     const portal = portalSnapshot(question);
     const analytics = dealAnalyticsSnapshot();
+    const pipeline = pipelineSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -3826,6 +4180,8 @@ function exportCsv() {
       `${portal.readyFields}/${portal.fields.length} ready, ${portal.copiedFields} copied`,
       `${analytics.riskLabel} ${analytics.riskScore}/100`,
       analytics.nextOwner.name,
+      pipeline.accounts.length,
+      pipeline.slaRiskCount,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -3846,6 +4202,7 @@ function exportReviewPack() {
   const dataRoom = dataRoomSnapshot();
   const access = accessSnapshot();
   const deal = dealAnalyticsSnapshot();
+  const pipeline = pipelineSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -3863,11 +4220,69 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v9</h1>
+        <h1>AnswerSeal Review Pack v10</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Multi-Buyer Pipeline</h2>
+        <p>Pipeline protected: ${formatMoney(pipeline.totalValue)} | Active reviews: ${pipeline.accounts.length} | SLA risk: ${pipeline.slaRiskCount} reviews | Proof reuse: ${pipeline.reuseRate}%</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Buyer</th>
+              <th>Stage</th>
+              <th>Value</th>
+              <th>Readiness</th>
+              <th>SLA</th>
+              <th>Next Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pipeline.accounts
+              .map(
+                (account) => `
+                  <tr>
+                    <td>${escapeHtml(account.company)}</td>
+                    <td>${escapeHtml(account.stage)}</td>
+                    <td>${formatMoney(account.value)}</td>
+                    <td>${account.readiness}%</td>
+                    <td class="${account.slaRisk ? "risk" : "ok"}">${account.daysLeft} days left | ${account.slaRisk ? "Escalate" : "On track"}</td>
+                    <td>${escapeHtml(account.nextAction)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Proof Reuse Graph</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Evidence</th>
+              <th>Buyer Reviews</th>
+              <th>Influenced Pipeline</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pipeline.reuseGraph
+              .slice(0, 6)
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${item.accounts}</td>
+                    <td>${formatMoney(item.value)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Pipeline Digest</h2>
+        <pre>${escapeHtml(pipelineDigestText(pipeline))}</pre>
         <h2>Deal Desk Analytics</h2>
         <p>Deal risk: ${escapeHtml(deal.riskLabel)} ${deal.riskScore}/100 | Time saved estimate: ${deal.timeSavedHours} hours | Next owner: ${escapeHtml(deal.nextOwner.name)}</p>
         <table>
@@ -4256,12 +4671,13 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v9 created with deal desk analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v10 created with multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
+  renderPipeline();
   renderAnalytics();
-  showToast("Review Pack v9 exported.");
+  showToast("Review Pack v10 exported.");
 }
 
 function toCsv(rows) {
@@ -4435,6 +4851,14 @@ function formatAccessDate(value) {
   }).format(new Date(value));
 }
 
+function formatMoney(value) {
+  return new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(Number(value) || 0);
+}
+
 function confidenceClass(confidence) {
   if (confidence < 70) return "is-low";
   if (confidence < 85) return "is-medium";
@@ -4469,6 +4893,12 @@ function daysSince(value) {
   if (!value) return 999;
   const diff = Date.now() - new Date(value).getTime();
   return Math.max(0, Math.round(diff / 86400000));
+}
+
+function daysUntil(value) {
+  if (!value) return 999;
+  const diff = new Date(value).getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / 86400000));
 }
 
 function shorten(text, maxLength) {
