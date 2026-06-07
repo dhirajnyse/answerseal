@@ -1,5 +1,14 @@
 # AnswerSeal Releases
 
+## v0.4 Alpha - Demo Memory
+
+Phase: Demo Memory
+
+- Added local browser workspace memory for demo edits, imports, approvals, and active review state.
+- Added an approved answer Library drawer with open and copy actions.
+- Preserved approved answers from draft refresh so reusable response memory stays trusted.
+- Updated visible build labels across the landing page, demo, and repository docs.
+
 ## v0.3 Alpha - Private Pilot Conversion
 
 Phase: Private Pilot Conversion

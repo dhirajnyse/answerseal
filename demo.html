@@ -65,6 +65,10 @@
         <path d="M12 9v4" />
         <path d="M12 17h.01" />
       </symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </symbol>
     </svg>
 
     <div class="app-shell">
@@ -78,15 +82,15 @@
         </a>
 
         <nav class="nav-list" aria-label="Workspace">
-          <button class="nav-item is-active" type="button">
+          <button class="nav-item is-active" id="reviewNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Review Desk</span>
           </button>
-          <button class="nav-item" type="button">
+          <button class="nav-item" id="evidenceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-file"></use></svg>
             <span>Evidence</span>
           </button>
-          <button class="nav-item" type="button">
+          <button class="nav-item" id="libraryNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-check"></use></svg>
             <span>Library</span>
           </button>
@@ -104,8 +108,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.3 Alpha</strong>
-          <span>Private Pilot</span>
+          <strong>v0.4 Alpha</strong>
+          <span>Demo Memory</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -117,7 +121,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.3 Alpha</span>
+            <span class="label">Security questionnaire | v0.4 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -176,7 +180,7 @@
             <div class="toolbar">
               <label class="search-box" aria-label="Search questions">
                 <svg aria-hidden="true"><use href="#icon-search"></use></svg>
-                <input id="questionSearch" type="search" placeholder="Search questions" />
+                <input id="questionSearch" type="search" placeholder="Search" />
               </label>
               <label class="select-box" aria-label="Filter status">
                 <svg aria-hidden="true"><use href="#icon-filter"></use></svg>
@@ -300,6 +304,44 @@
         </section>
       </main>
     </div>
+
+    <div class="library-backdrop" id="libraryBackdrop" hidden></div>
+    <aside class="library-drawer" id="libraryDrawer" aria-label="Approved answer library" aria-hidden="true">
+      <header class="library-header">
+        <div>
+          <span class="label">Answer Library</span>
+          <h2>Approved response memory</h2>
+        </div>
+        <button class="icon-button" id="closeLibraryButton" type="button" aria-label="Close library" title="Close library">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip" aria-label="Workspace memory">
+        <article>
+          <span class="label">Approved</span>
+          <strong id="libraryCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Workspace</span>
+          <strong id="memoryStatus">Saved locally</strong>
+        </article>
+      </section>
+
+      <label class="search-box library-search" aria-label="Search answer library">
+        <svg aria-hidden="true"><use href="#icon-search"></use></svg>
+        <input id="librarySearch" type="search" placeholder="Search approved answers" />
+      </label>
+
+      <div class="library-list" id="libraryList"></div>
+
+      <footer class="library-footer">
+        <button class="secondary-button" id="resetWorkspaceButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Reset Demo</span>
+        </button>
+      </footer>
+    </aside>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

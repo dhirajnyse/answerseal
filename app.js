@@ -1,3 +1,7 @@
+const BUILD_VERSION = "v0.4 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v04";
+const MEMORY_READY_LABEL = "Saved locally";
+
 const evidenceDocs = [
   {
     id: "soc2",
@@ -239,29 +243,102 @@ const draftLibrary = {
   },
 };
 
-const state = {
-  questions: questionSeeds.map((question) => ({
-    ...question,
-    ...draftLibrary[question.id],
-    custom: false,
-    approvedAt: null,
-  })),
-  evidence: [...evidenceDocs],
-  activeQuestionId: "q-ai-training",
-  activeDocId: "ai-standard",
-  filter: "all",
-  search: "",
-  audit: [
-    {
-      action: "Workspace created",
-      detail: "Aster Health questionnaire imported with seeded evidence.",
-      at: new Date().toISOString(),
-    },
-  ],
-};
+function createInitialState() {
+  return {
+    questions: questionSeeds.map((question) => ({
+      ...question,
+      ...draftLibrary[question.id],
+      custom: false,
+      approvedAt: null,
+    })),
+    evidence: evidenceDocs.map((doc) => ({ ...doc, tags: [...doc.tags], excerpts: [...doc.excerpts] })),
+    activeQuestionId: "q-ai-training",
+    activeDocId: "ai-standard",
+    filter: "all",
+    search: "",
+    librarySearch: "",
+    libraryOpen: false,
+    audit: [
+      {
+        action: "Workspace created",
+        detail: "Aster Health questionnaire imported with seeded evidence.",
+        at: new Date().toISOString(),
+      },
+    ],
+  };
+}
+
+function loadWorkspaceState() {
+  const fresh = createInitialState();
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return fresh;
+    const saved = JSON.parse(raw);
+    const workspace = saved?.workspace ?? saved;
+
+    return {
+      ...fresh,
+      questions: Array.isArray(workspace.questions) ? workspace.questions.map(normalizeQuestion) : fresh.questions,
+      evidence: Array.isArray(workspace.evidence) ? workspace.evidence.map(normalizeEvidence) : fresh.evidence,
+      activeQuestionId: workspace.activeQuestionId ?? fresh.activeQuestionId,
+      activeDocId: workspace.activeDocId ?? fresh.activeDocId,
+      audit: Array.isArray(workspace.audit) ? workspace.audit.map(normalizeAuditEntry) : fresh.audit,
+      search: "",
+      filter: "all",
+      librarySearch: "",
+      libraryOpen: false,
+    };
+  } catch {
+    return fresh;
+  }
+}
+
+function normalizeQuestion(question) {
+  return {
+    id: String(question.id ?? `q-saved-${Date.now()}`),
+    text: String(question.text ?? "Saved question"),
+    category: String(question.category ?? "Security"),
+    owner: String(question.owner ?? "Security"),
+    due: String(question.due ?? "2026-06-14"),
+    portal: String(question.portal ?? "Saved"),
+    priority: String(question.priority ?? "Medium"),
+    answer: String(question.answer ?? ""),
+    sources: Array.isArray(question.sources) ? question.sources.map(String) : [],
+    confidence: Number.isFinite(Number(question.confidence)) ? Number(question.confidence) : 0,
+    status: ["draft", "approved", "needs-evidence", "blocked"].includes(question.status) ? question.status : "draft",
+    risks: Array.isArray(question.risks) ? question.risks.map(String) : [],
+    custom: Boolean(question.custom),
+    approvedAt: question.approvedAt ?? null,
+  };
+}
+
+function normalizeEvidence(doc) {
+  return {
+    id: String(doc.id ?? `doc-saved-${Date.now()}`),
+    title: String(doc.title ?? "Saved evidence"),
+    type: String(doc.type ?? "File"),
+    updated: String(doc.updated ?? new Date().toISOString().slice(0, 10)),
+    owner: String(doc.owner ?? "Imported"),
+    tags: Array.isArray(doc.tags) ? doc.tags.map(String) : [],
+    excerpts: Array.isArray(doc.excerpts) ? doc.excerpts.map(String) : ["Saved evidence is available for reviewer validation."],
+  };
+}
+
+function normalizeAuditEntry(entry) {
+  return {
+    action: String(entry.action ?? "Workspace updated"),
+    detail: String(entry.detail ?? "Saved workspace state restored."),
+    at: entry.at ?? new Date().toISOString(),
+  };
+}
+
+const state = loadWorkspaceState();
 
 const elements = {
   todayLabel: document.querySelector("#todayLabel"),
+  reviewNavButton: document.querySelector("#reviewNavButton"),
+  evidenceNavButton: document.querySelector("#evidenceNavButton"),
+  libraryNavButton: document.querySelector("#libraryNavButton"),
   metricReceived: document.querySelector("#metricReceived"),
   metricApproved: document.querySelector("#metricApproved"),
   metricNeedsEvidence: document.querySelector("#metricNeedsEvidence"),
@@ -291,6 +368,7 @@ const elements = {
   evidenceCount: document.querySelector("#evidenceCount"),
   evidenceList: document.querySelector("#evidenceList"),
   evidenceDetail: document.querySelector("#evidenceDetail"),
+  evidencePanel: document.querySelector(".evidence-panel"),
   auditTrail: document.querySelector("#auditTrail"),
   uploadEvidenceButton: document.querySelector("#uploadEvidenceButton"),
   evidenceInput: document.querySelector("#evidenceInput"),
@@ -299,6 +377,14 @@ const elements = {
   refreshDraftsButton: document.querySelector("#refreshDraftsButton"),
   exportCsvButton: document.querySelector("#exportCsvButton"),
   exportDocButton: document.querySelector("#exportDocButton"),
+  libraryBackdrop: document.querySelector("#libraryBackdrop"),
+  libraryDrawer: document.querySelector("#libraryDrawer"),
+  closeLibraryButton: document.querySelector("#closeLibraryButton"),
+  librarySearch: document.querySelector("#librarySearch"),
+  libraryList: document.querySelector("#libraryList"),
+  libraryCount: document.querySelector("#libraryCount"),
+  memoryStatus: document.querySelector("#memoryStatus"),
+  resetWorkspaceButton: document.querySelector("#resetWorkspaceButton"),
   toast: document.querySelector("#toast"),
 };
 
@@ -312,11 +398,19 @@ function formatDate(value) {
 
 function init() {
   elements.todayLabel.textContent = formatDate(new Date());
+  elements.questionSearch.value = state.search;
+  elements.statusFilter.value = state.filter;
+  elements.librarySearch.value = state.librarySearch;
+  setMemoryStatus(MEMORY_READY_LABEL);
   bindEvents();
   render();
 }
 
 function bindEvents() {
+  elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
+  elements.evidenceNavButton.addEventListener("click", () => activateWorkspaceNav("evidence"));
+  elements.libraryNavButton.addEventListener("click", openLibrary);
+
   elements.questionSearch.addEventListener("input", (event) => {
     state.search = event.target.value.trim().toLowerCase();
     renderQuestionList();
@@ -345,11 +439,20 @@ function bindEvents() {
     renderQuestionList();
     renderActiveStatus(question);
     renderSealSummary(question);
+    renderLibrary();
+    schedulePersist();
   });
 
   elements.approveButton.addEventListener("click", approveActiveQuestion);
   elements.needsEvidenceButton.addEventListener("click", markActiveNeedsEvidence);
   elements.copyButton.addEventListener("click", copyActiveAnswer);
+  elements.closeLibraryButton.addEventListener("click", closeLibrary);
+  elements.libraryBackdrop.addEventListener("click", closeLibrary);
+  elements.librarySearch.addEventListener("input", (event) => {
+    state.librarySearch = event.target.value.trim().toLowerCase();
+    renderLibrary();
+  });
+  elements.resetWorkspaceButton.addEventListener("click", resetWorkspace);
   elements.uploadEvidenceButton.addEventListener("click", () => elements.evidenceInput.click());
   elements.uploadQuestionnaireButton.addEventListener("click", () => elements.questionnaireInput.click());
   elements.evidenceInput.addEventListener("change", importEvidenceFiles);
@@ -357,6 +460,10 @@ function bindEvents() {
   elements.refreshDraftsButton.addEventListener("click", refreshDrafts);
   elements.exportCsvButton.addEventListener("click", exportCsv);
   elements.exportDocButton.addEventListener("click", exportReviewPack);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && state.libraryOpen) closeLibrary();
+  });
 }
 
 function getActiveQuestion() {
@@ -373,6 +480,7 @@ function render() {
   renderActiveQuestion();
   renderEvidence();
   renderAudit();
+  renderLibrary();
 }
 
 function renderMetrics() {
@@ -430,6 +538,7 @@ function renderQuestionList() {
       renderQuestionList();
       renderActiveQuestion();
       renderEvidence();
+      schedulePersist();
     });
     elements.questionList.append(button);
   });
@@ -535,6 +644,7 @@ function renderSources(question) {
     card.addEventListener("click", () => {
       state.activeDocId = source.id;
       renderEvidence();
+      schedulePersist();
     });
     elements.sourceList.append(card);
   });
@@ -561,6 +671,7 @@ function renderEvidence() {
     button.addEventListener("click", () => {
       state.activeDocId = doc.id;
       renderEvidence();
+      schedulePersist();
     });
     elements.evidenceList.append(button);
   });
@@ -593,6 +704,100 @@ function renderAudit() {
     item.innerHTML = `<strong>${escapeHtml(entry.action)}:</strong> ${escapeHtml(entry.detail)} <span>${formatAuditTime(entry.at)}</span>`;
     elements.auditTrail.append(item);
   });
+}
+
+function activateWorkspaceNav(target) {
+  closeLibrary(false);
+  const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
+  setActiveNav(activeButton);
+
+  if (target === "evidence") {
+    elements.evidencePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  document.querySelector("#review-desk").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function setActiveNav(activeButton) {
+  [elements.reviewNavButton, elements.evidenceNavButton, elements.libraryNavButton].forEach((button) => {
+    button.classList.toggle("is-active", button === activeButton);
+  });
+}
+
+function openLibrary() {
+  state.libraryOpen = true;
+  setActiveNav(elements.libraryNavButton);
+  elements.libraryBackdrop.hidden = false;
+  elements.libraryDrawer.classList.add("is-open");
+  elements.libraryDrawer.setAttribute("aria-hidden", "false");
+  renderLibrary();
+  elements.librarySearch.focus();
+}
+
+function closeLibrary(activateReview = true) {
+  if (!state.libraryOpen && elements.libraryDrawer.getAttribute("aria-hidden") === "true") return;
+  state.libraryOpen = false;
+  elements.libraryDrawer.classList.remove("is-open");
+  elements.libraryDrawer.setAttribute("aria-hidden", "true");
+  elements.libraryBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderLibrary() {
+  const approved = state.questions.filter((question) => question.status === "approved");
+  const filtered = approved.filter((question) => {
+    const haystack = `${question.text} ${question.answer} ${question.category} ${question.owner}`.toLowerCase();
+    return !state.librarySearch || haystack.includes(state.librarySearch);
+  });
+
+  elements.libraryCount.textContent = approved.length;
+  elements.libraryList.innerHTML = "";
+
+  if (filtered.length === 0) {
+    elements.libraryList.append(emptyState(approved.length === 0 ? "No approved answers yet" : "No matching approved answers"));
+    return;
+  }
+
+  filtered
+    .sort((a, b) => new Date(b.approvedAt ?? 0).getTime() - new Date(a.approvedAt ?? 0).getTime())
+    .forEach((question) => {
+      const sources = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+      const item = document.createElement("article");
+      item.className = "library-item";
+      item.innerHTML = `
+        <header>
+          <span>${escapeHtml(question.category)}</span>
+          <span>${question.approvedAt ? escapeHtml(formatShortDate(question.approvedAt)) : "Seed"}</span>
+        </header>
+        <strong>${escapeHtml(question.text)}</strong>
+        <p>${escapeHtml(question.answer)}</p>
+        <footer>
+          <span class="library-chip">${sources.length} ${sources.length === 1 ? "source" : "sources"}</span>
+          <span class="library-chip">${escapeHtml(String(question.confidence))}% confidence</span>
+          <div class="library-item-actions">
+            <button class="secondary-button" type="button" data-action="open">Open</button>
+            <button class="primary-button" type="button" data-action="copy">Copy</button>
+          </div>
+        </footer>
+      `;
+
+      item.querySelector('[data-action="open"]').addEventListener("click", () => {
+        state.activeQuestionId = question.id;
+        state.activeDocId = question.sources?.[0] ?? state.evidence[0]?.id;
+        closeLibrary();
+        renderQuestionList();
+        renderActiveQuestion();
+        renderEvidence();
+        schedulePersist();
+      });
+
+      item.querySelector('[data-action="copy"]').addEventListener("click", () => {
+        copyText(question.answer, "Approved answer copied.");
+      });
+
+      elements.libraryList.append(item);
+    });
 }
 
 function addQuestion(rawText) {
@@ -773,7 +978,7 @@ function approveActiveQuestion() {
   addAudit("Answer approved", shorten(question.text, 72));
   render();
   selectNextOpenQuestion();
-  showToast("Answer approved and saved to the review pack.");
+  showToast("Answer approved, saved, and added to Library.");
 }
 
 function selectNextOpenQuestion() {
@@ -790,6 +995,7 @@ function markActiveNeedsEvidence() {
   const question = getActiveQuestion();
   if (!question) return;
   question.status = "needs-evidence";
+  question.approvedAt = null;
   if (!question.risks.includes("Reviewer marked this answer as needing stronger evidence.")) {
     question.risks.push("Reviewer marked this answer as needing stronger evidence.");
   }
@@ -801,14 +1007,19 @@ function markActiveNeedsEvidence() {
 async function copyActiveAnswer() {
   const question = getActiveQuestion();
   if (!question?.answer) return;
+  copyText(question.answer, "Answer copied.");
+}
 
+async function copyText(text, message) {
   try {
-    await navigator.clipboard.writeText(question.answer);
-    showToast("Answer copied.");
+    await navigator.clipboard.writeText(text);
+    showToast(message);
   } catch {
+    elements.answerDraft.value = text;
     elements.answerDraft.select();
     document.execCommand("copy");
-    showToast("Answer copied.");
+    renderActiveQuestion();
+    showToast(message);
   }
 }
 
@@ -898,9 +1109,11 @@ function parseQuestionLines(text) {
 
 function refreshDrafts(showMessage = true) {
   state.questions.forEach((question) => {
+    if (question.status === "approved") return;
     if (!question.custom && draftLibrary[question.id]) return;
     const draft = draftFromText(question.text);
     Object.assign(question, draft);
+    question.approvedAt = null;
   });
 
   addAudit("Drafts refreshed", "Custom questions were matched against the current evidence vault.");
@@ -997,12 +1210,66 @@ function downloadBlob(filename, content, type) {
   URL.revokeObjectURL(url);
 }
 
+let persistTimer;
+function schedulePersist(status = "Saving") {
+  setMemoryStatus(status);
+  clearTimeout(persistTimer);
+  persistTimer = setTimeout(persistWorkspace, 240);
+}
+
+function persistWorkspace() {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: BUILD_VERSION,
+        savedAt: new Date().toISOString(),
+        workspace: serializeWorkspace(),
+      }),
+    );
+    setMemoryStatus(MEMORY_READY_LABEL);
+  } catch {
+    setMemoryStatus("Save blocked");
+  }
+}
+
+function serializeWorkspace() {
+  return {
+    questions: state.questions,
+    evidence: state.evidence,
+    activeQuestionId: state.activeQuestionId,
+    activeDocId: state.activeDocId,
+    audit: state.audit,
+  };
+}
+
+function resetWorkspace() {
+  const shouldReset = window.confirm("Reset the demo workspace and clear saved approvals?");
+  if (!shouldReset) return;
+
+  const fresh = createInitialState();
+  Object.assign(state, fresh);
+  localStorage.removeItem(STORAGE_KEY);
+  elements.questionSearch.value = "";
+  elements.statusFilter.value = "all";
+  elements.librarySearch.value = "";
+  closeLibrary();
+  render();
+  setMemoryStatus("Reset");
+  showToast("Demo workspace reset.");
+}
+
+function setMemoryStatus(label) {
+  elements.memoryStatus.textContent = label;
+}
+
 function addAudit(action, detail) {
   state.audit.push({
     action,
     detail,
     at: new Date().toISOString(),
   });
+  schedulePersist();
 }
 
 function bestExcerptForQuestion(doc, questionText) {
