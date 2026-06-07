@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.8 Alpha - Pilot Data Room
+
+Phase: Pilot Data Room
+
+- Added a Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders.
+- Added editable evidence notes for reviewer-approved source context.
+- Added a data room activity timeline combining imports, routes, approvals, exports, and handoff events.
+- Added a pilot close checklist for conversion readiness.
+- Upgraded review pack export to Review Pack v4 with data room folders, notes, and close checklist.
+- Updated the build phases page with the v0.9 Claim Trace Engine plan.
+
 ## v0.7 Alpha - Private Workspace
 
 Phase: Private Workspace

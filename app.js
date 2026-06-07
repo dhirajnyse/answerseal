@@ -1,6 +1,6 @@
-const BUILD_VERSION = "v0.7 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v07";
-const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v06", "answerseal.workspace.v04"];
+const BUILD_VERSION = "v0.8 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v08";
+const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v07", "answerseal.workspace.v06", "answerseal.workspace.v04"];
 const MEMORY_READY_LABEL = "Saved locally";
 
 const workspaceAccount = {
@@ -43,6 +43,33 @@ const workspaceAccount = {
     },
   ],
 };
+
+const dataRoomFolders = [
+  {
+    id: "questionnaire",
+    label: "Questionnaire",
+    detail: "Buyer questions, owners, status, and portal handoff copy.",
+    action: "review",
+  },
+  {
+    id: "evidence-pack",
+    label: "Evidence Pack",
+    detail: "SOC reports, policies, standards, and reviewer notes.",
+    action: "evidence",
+  },
+  {
+    id: "contracts",
+    label: "Contracts",
+    detail: "DPA, subprocessor language, and legal-risk notes.",
+    action: "library",
+  },
+  {
+    id: "handoff",
+    label: "Exports",
+    detail: "Review Pack, portal copy, and secure workspace summary.",
+    action: "workspace",
+  },
+];
 
 const evidenceDocs = [
   {
@@ -295,6 +322,66 @@ const draftLibrary = {
   },
 };
 
+const evidenceNoteSeeds = {
+  soc2: {
+    reviewer: "Maya Shah",
+    status: "Buyer-ready",
+    summary: "Use for encryption, access, vulnerability, and incident controls. Do not attach the full report to public portals.",
+  },
+  "security-policy": {
+    reviewer: "Maya Shah",
+    status: "Buyer-ready",
+    summary: "Good primary source for SSO, MFA, least privilege, and administrative logging claims.",
+  },
+  bcp: {
+    reviewer: "Leo Morgan",
+    status: "Ready with context",
+    summary: "RTO and RPO are safe to cite. Customer notification language still needs contract-specific confirmation.",
+  },
+  dpa: {
+    reviewer: "Nina Patel",
+    status: "Legal-approved",
+    summary: "Use for deletion, export, subprocessors, and processing-purpose answers. Cite alongside the current trust center when requested.",
+  },
+  "ai-standard": {
+    reviewer: "Omar Khan",
+    status: "Buyer-ready",
+    summary: "Primary AI governance source. Use this instead of legacy pilot terms for model training and human-review claims.",
+  },
+  "pilot-terms-2025": {
+    reviewer: "Omar Khan",
+    status: "Archived",
+    summary: "Keep visible as conflict evidence only. Do not cite for current buyer answers unless asked about historical pilot terms.",
+  },
+};
+
+const closeChecklistSeeds = [
+  {
+    id: "intake-complete",
+    label: "Questionnaire and evidence intake reviewed",
+    owner: "Trust Lead",
+    completed: true,
+  },
+  {
+    id: "owners-routed",
+    label: "Open evidence gaps routed to named owners",
+    owner: "Security",
+    completed: true,
+  },
+  {
+    id: "buyer-pack",
+    label: "Buyer-facing Review Pack exported",
+    owner: "Trust Lead",
+    completed: false,
+  },
+  {
+    id: "pilot-decision",
+    label: "Pilot decision call scheduled",
+    owner: "Sales",
+    completed: false,
+  },
+];
+
 function createSeedIntake() {
   return evidenceDocs.map((doc) => ({
     id: `seed-${doc.id}`,
@@ -329,6 +416,8 @@ function createInitialState() {
     libraryOpen: false,
     intake: createSeedIntake(),
     intakeOpen: false,
+    dataRoomOpen: false,
+    dataRoom: createInitialDataRoom(),
     workspaceOpen: false,
     portalOpen: false,
     handoff: createInitialHandoff(),
@@ -351,6 +440,28 @@ function createInitialHandoff() {
   };
 }
 
+function createInitialDataRoom() {
+  return {
+    notes: Object.fromEntries(evidenceDocs.map((doc) => [doc.id, createDataRoomNote(doc)])),
+    checklist: closeChecklistSeeds.map((item) => ({ ...item })),
+  };
+}
+
+function createDataRoomNote(doc) {
+  const seed = evidenceNoteSeeds[doc.id] ?? {
+    reviewer: doc.owner || workspaceAccount.currentRole,
+    status: "Review",
+    summary: "Imported source is available for reviewer validation before buyer-facing reuse.",
+  };
+
+  return {
+    reviewer: seed.reviewer,
+    status: seed.status,
+    summary: seed.summary,
+    updatedAt: doc.updated,
+  };
+}
+
 function loadWorkspaceState() {
   const fresh = createInitialState();
   try {
@@ -368,11 +479,13 @@ function loadWorkspaceState() {
       activeDocId: workspace.activeDocId ?? fresh.activeDocId,
       audit: Array.isArray(workspace.audit) ? workspace.audit.map(normalizeAuditEntry) : fresh.audit,
       handoff: normalizeHandoff(workspace.handoff ?? fresh.handoff),
+      dataRoom: normalizeDataRoom(workspace.dataRoom ?? fresh.dataRoom),
       search: "",
       filter: "all",
       librarySearch: "",
       libraryOpen: false,
       intakeOpen: false,
+      dataRoomOpen: false,
       workspaceOpen: false,
       portalOpen: false,
     };
@@ -447,12 +560,54 @@ function normalizeHandoff(handoff) {
   };
 }
 
+function normalizeDataRoom(dataRoom) {
+  const fresh = createInitialDataRoom();
+  const savedNotes = dataRoom?.notes && typeof dataRoom.notes === "object" ? dataRoom.notes : {};
+  const notes = { ...fresh.notes };
+
+  Object.entries(savedNotes).forEach(([docId, note]) => {
+    notes[String(docId)] = normalizeDataRoomNote(note, notes[String(docId)]);
+  });
+
+  const savedChecklist = Array.isArray(dataRoom?.checklist) ? dataRoom.checklist : [];
+  const savedById = new Map(savedChecklist.map((item) => [String(item.id), item]));
+  const checklist = closeChecklistSeeds.map((item) => normalizeChecklistItem(savedById.get(item.id), item));
+
+  return { notes, checklist };
+}
+
+function normalizeDataRoomNote(note, fallback) {
+  const base = fallback ?? {
+    reviewer: workspaceAccount.currentRole,
+    status: "Review",
+    summary: "Source note is ready for reviewer validation.",
+    updatedAt: new Date().toISOString(),
+  };
+
+  return {
+    reviewer: String(note?.reviewer ?? base.reviewer),
+    status: String(note?.status ?? base.status),
+    summary: String(note?.summary ?? base.summary),
+    updatedAt: note?.updatedAt ?? base.updatedAt,
+  };
+}
+
+function normalizeChecklistItem(item, fallback) {
+  return {
+    id: String(item?.id ?? fallback.id),
+    label: String(item?.label ?? fallback.label),
+    owner: String(item?.owner ?? fallback.owner),
+    completed: Boolean(item?.completed ?? fallback.completed),
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
+  dataRoomNavButton: document.querySelector("#dataRoomNavButton"),
   intakeNavButton: document.querySelector("#intakeNavButton"),
   evidenceNavButton: document.querySelector("#evidenceNavButton"),
   libraryNavButton: document.querySelector("#libraryNavButton"),
@@ -528,6 +683,17 @@ const elements = {
   prepareHandoffButton: document.querySelector("#prepareHandoffButton"),
   copyHandoffLinkButton: document.querySelector("#copyHandoffLinkButton"),
   copyHandoffSummaryButton: document.querySelector("#copyHandoffSummaryButton"),
+  dataRoomBackdrop: document.querySelector("#dataRoomBackdrop"),
+  dataRoomDrawer: document.querySelector("#dataRoomDrawer"),
+  closeDataRoomButton: document.querySelector("#closeDataRoomButton"),
+  dataRoomFolderCount: document.querySelector("#dataRoomFolderCount"),
+  dataRoomNoteCount: document.querySelector("#dataRoomNoteCount"),
+  dataRoomCloseProgress: document.querySelector("#dataRoomCloseProgress"),
+  dataRoomFolders: document.querySelector("#dataRoomFolders"),
+  dataRoomNotes: document.querySelector("#dataRoomNotes"),
+  dataRoomTimeline: document.querySelector("#dataRoomTimeline"),
+  dataRoomChecklist: document.querySelector("#dataRoomChecklist"),
+  copyDataRoomBriefButton: document.querySelector("#copyDataRoomBriefButton"),
   libraryBackdrop: document.querySelector("#libraryBackdrop"),
   libraryDrawer: document.querySelector("#libraryDrawer"),
   closeLibraryButton: document.querySelector("#closeLibraryButton"),
@@ -579,6 +745,7 @@ function init() {
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
+  elements.dataRoomNavButton.addEventListener("click", openDataRoom);
   elements.intakeNavButton.addEventListener("click", openIntake);
   elements.evidenceNavButton.addEventListener("click", () => activateWorkspaceNav("evidence"));
   elements.libraryNavButton.addEventListener("click", openLibrary);
@@ -628,6 +795,9 @@ function bindEvents() {
   elements.prepareHandoffButton.addEventListener("click", prepareHandoff);
   elements.copyHandoffLinkButton.addEventListener("click", copyHandoffLink);
   elements.copyHandoffSummaryButton.addEventListener("click", copyHandoffSummary);
+  elements.closeDataRoomButton.addEventListener("click", closeDataRoom);
+  elements.dataRoomBackdrop.addEventListener("click", closeDataRoom);
+  elements.copyDataRoomBriefButton.addEventListener("click", copyDataRoomBrief);
   elements.closeIntakeButton.addEventListener("click", closeIntake);
   elements.intakeBackdrop.addEventListener("click", closeIntake);
   elements.intakeEvidenceButton.addEventListener("click", () => elements.evidenceInput.click());
@@ -656,6 +826,7 @@ function bindEvents() {
     if (event.key !== "Escape") return;
     if (state.libraryOpen) closeLibrary();
     if (state.intakeOpen) closeIntake();
+    if (state.dataRoomOpen) closeDataRoom();
     if (state.workspaceOpen) closeWorkspace();
     if (state.portalOpen) closePortal();
   });
@@ -666,6 +837,7 @@ function bindEvents() {
 function applyInitialHash() {
   const hash = window.location.hash.replace("#", "").toLowerCase();
   if (hash === "workspace") openWorkspace();
+  if (hash === "data-room" || hash === "dataroom") openDataRoom();
   if (hash === "intake") openIntake();
   if (hash === "library") openLibrary();
   if (hash === "portal") openPortalCopy();
@@ -687,6 +859,7 @@ function render() {
   renderAudit();
   renderIntake();
   renderWorkspace();
+  renderDataRoom();
   renderLibrary();
   renderPortalCopy();
 }
@@ -926,6 +1099,7 @@ function activateWorkspaceNav(target) {
   closeWorkspace(false);
   closeLibrary(false);
   closeIntake(false);
+  closeDataRoom(false);
   closePortal(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
@@ -939,13 +1113,21 @@ function activateWorkspaceNav(target) {
 }
 
 function setActiveNav(activeButton) {
-  [elements.reviewNavButton, elements.workspaceNavButton, elements.intakeNavButton, elements.evidenceNavButton, elements.libraryNavButton].forEach((button) => {
+  [
+    elements.reviewNavButton,
+    elements.workspaceNavButton,
+    elements.dataRoomNavButton,
+    elements.intakeNavButton,
+    elements.evidenceNavButton,
+    elements.libraryNavButton,
+  ].forEach((button) => {
     button.classList.toggle("is-active", button === activeButton);
   });
 }
 
 function openWorkspace() {
   closeIntake(false);
+  closeDataRoom(false);
   closeLibrary(false);
   closePortal(false);
   state.workspaceOpen = true;
@@ -967,6 +1149,7 @@ function closeWorkspace(activateReview = true) {
 
 function openIntake() {
   closeWorkspace(false);
+  closeDataRoom(false);
   closeLibrary(false);
   closePortal(false);
   state.intakeOpen = true;
@@ -986,9 +1169,32 @@ function closeIntake(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openDataRoom() {
+  closeWorkspace(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.dataRoomOpen = true;
+  setActiveNav(elements.dataRoomNavButton);
+  elements.dataRoomBackdrop.hidden = false;
+  elements.dataRoomDrawer.classList.add("is-open");
+  elements.dataRoomDrawer.setAttribute("aria-hidden", "false");
+  renderDataRoom();
+}
+
+function closeDataRoom(activateReview = true) {
+  if (!state.dataRoomOpen && elements.dataRoomDrawer.getAttribute("aria-hidden") === "true") return;
+  state.dataRoomOpen = false;
+  elements.dataRoomDrawer.classList.remove("is-open");
+  elements.dataRoomDrawer.setAttribute("aria-hidden", "true");
+  elements.dataRoomBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openLibrary() {
   closeWorkspace(false);
   closeIntake(false);
+  closeDataRoom(false);
   closePortal(false);
   state.libraryOpen = true;
   setActiveNav(elements.libraryNavButton);
@@ -1011,6 +1217,7 @@ function closeLibrary(activateReview = true) {
 function openPortalCopy() {
   closeWorkspace(false);
   closeIntake(false);
+  closeDataRoom(false);
   closeLibrary(false);
   state.portalOpen = true;
   elements.portalBackdrop.hidden = false;
@@ -1072,6 +1279,279 @@ function renderWorkspaceOwners(groups) {
     `;
     elements.workspaceOwnerList.append(card);
   });
+}
+
+function renderDataRoom() {
+  const snapshot = dataRoomSnapshot();
+  const noteCount = state.evidence.filter((doc) => Boolean(noteForEvidence(doc).summary.trim())).length;
+
+  elements.dataRoomFolderCount.textContent = snapshot.folders.length;
+  elements.dataRoomNoteCount.textContent = noteCount;
+  elements.dataRoomCloseProgress.textContent = `${snapshot.closeProgress}%`;
+  renderDataRoomFolders(snapshot.folders);
+  renderDataRoomNotes();
+  renderDataRoomTimeline(snapshot.timeline);
+  renderCloseChecklist();
+}
+
+function renderDataRoomFolders(folders) {
+  elements.dataRoomFolders.innerHTML = "";
+
+  folders.forEach((folder) => {
+    const card = document.createElement("button");
+    card.className = `data-room-folder is-${folder.tone}`;
+    card.type = "button";
+    card.innerHTML = `
+      <span class="folder-count">${escapeHtml(folder.count)}</span>
+      <div>
+        <strong>${escapeHtml(folder.label)}</strong>
+        <p>${escapeHtml(folder.detail)}</p>
+        <small>${escapeHtml(folder.status)}</small>
+      </div>
+    `;
+    card.addEventListener("click", () => openDataRoomTarget(folder.action));
+    elements.dataRoomFolders.append(card);
+  });
+}
+
+function renderDataRoomNotes() {
+  elements.dataRoomNotes.innerHTML = "";
+
+  state.evidence.slice(0, 6).forEach((doc) => {
+    const note = noteForEvidence(doc);
+    const card = document.createElement("article");
+    card.className = "data-note-card";
+    card.innerHTML = `
+      <header>
+        <div>
+          <strong>${escapeHtml(doc.title)}</strong>
+          <span>${escapeHtml(doc.type)} | ${escapeHtml(note.status)}</span>
+        </div>
+        <span class="source-type">${escapeHtml(doc.owner)}</span>
+      </header>
+      <label>
+        <span class="label">Reviewer note</span>
+        <textarea rows="3" data-note-input>${escapeHtml(note.summary)}</textarea>
+      </label>
+      <footer>
+        <span>By ${escapeHtml(note.reviewer)} | ${escapeHtml(formatShortDate(note.updatedAt))}</span>
+        <button class="secondary-button" type="button" data-note-save>Save</button>
+      </footer>
+    `;
+
+    card.querySelector("[data-note-save]").addEventListener("click", () => {
+      const value = card.querySelector("[data-note-input]").value.trim();
+      saveDataRoomNote(doc.id, value);
+    });
+
+    elements.dataRoomNotes.append(card);
+  });
+}
+
+function renderDataRoomTimeline(timeline) {
+  elements.dataRoomTimeline.innerHTML = "";
+
+  if (timeline.length === 0) {
+    elements.dataRoomTimeline.append(emptyState("No data room activity yet"));
+    return;
+  }
+
+  timeline.forEach((entry) => {
+    const item = document.createElement("li");
+    item.className = "timeline-item";
+    item.innerHTML = `
+      <span>${escapeHtml(entry.kind)}</span>
+      <strong>${escapeHtml(entry.title)}</strong>
+      <p>${escapeHtml(entry.detail)}</p>
+      <time>${escapeHtml(formatAuditTime(entry.at))}</time>
+    `;
+    elements.dataRoomTimeline.append(item);
+  });
+}
+
+function renderCloseChecklist() {
+  elements.dataRoomChecklist.innerHTML = "";
+
+  state.dataRoom.checklist.forEach((item) => {
+    const button = document.createElement("button");
+    button.className = `checklist-item${item.completed ? " is-done" : ""}`;
+    button.type = "button";
+    button.innerHTML = `
+      <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+      <div>
+        <strong>${escapeHtml(item.label)}</strong>
+        <span>${escapeHtml(item.owner)} | ${item.completed ? "Done" : "Open"}</span>
+      </div>
+    `;
+    button.addEventListener("click", () => toggleCloseChecklist(item.id));
+    elements.dataRoomChecklist.append(button);
+  });
+}
+
+function dataRoomSnapshot() {
+  const coverage = coverageSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const handoff = handoffReadinessSnapshot();
+  const approved = state.questions.filter((question) => question.status === "approved").length;
+  const needsEvidence = state.questions.filter((question) => question.status === "needs-evidence").length;
+  const legalDocs = state.evidence.filter((doc) => ["Legal", "DPA"].includes(doc.type) || doc.owner === "Legal").length;
+  const closeProgress = closeChecklistProgress();
+  const folders = dataRoomFolders.map((folder) => {
+    if (folder.id === "questionnaire") {
+      return {
+        ...folder,
+        count: String(state.questions.length),
+        status: `${approved}/${state.questions.length} sealed | ${needsEvidence} gaps`,
+        tone: needsEvidence > 0 ? "warning" : "ready",
+      };
+    }
+
+    if (folder.id === "evidence-pack") {
+      return {
+        ...folder,
+        count: String(state.evidence.length),
+        status: `${coverage.score}% coverage | ${coverage.ready}/${coverage.items.length} ready`,
+        tone: coverage.score >= 80 ? "ready" : "warning",
+      };
+    }
+
+    if (folder.id === "contracts") {
+      return {
+        ...folder,
+        count: String(legalDocs),
+        status: `${routing.openRisks} open risk${routing.openRisks === 1 ? "" : "s"}`,
+        tone: routing.openRisks > 0 ? "warning" : "ready",
+      };
+    }
+
+    return {
+      ...folder,
+      count: state.handoff.status === "Prepared" ? "Ready" : "Draft",
+      status: `${handoff.ready}% handoff | ${closeProgress}% close`,
+      tone: state.handoff.status === "Prepared" ? "ready" : "neutral",
+    };
+  });
+
+  return {
+    folders,
+    closeProgress,
+    timeline: dataRoomTimeline(),
+  };
+}
+
+function noteForEvidence(doc) {
+  if (!state.dataRoom.notes[doc.id]) {
+    state.dataRoom.notes[doc.id] = createDataRoomNote(doc);
+  }
+  return state.dataRoom.notes[doc.id];
+}
+
+function saveDataRoomNote(docId, summary) {
+  const doc = getEvidenceById(docId);
+  if (!doc) return;
+
+  const current = noteForEvidence(doc);
+  state.dataRoom.notes[docId] = {
+    ...current,
+    reviewer: workspaceAccount.currentRole,
+    status: summary ? "Reviewed" : current.status,
+    summary: summary || current.summary,
+    updatedAt: new Date().toISOString(),
+  };
+  addAudit("Evidence note saved", `${doc.title} reviewer note updated.`);
+  renderDataRoom();
+  showToast("Evidence note saved.");
+}
+
+function toggleCloseChecklist(id) {
+  const item = state.dataRoom.checklist.find((check) => check.id === id);
+  if (!item) return;
+
+  item.completed = !item.completed;
+  addAudit("Pilot close updated", `${item.label} marked ${item.completed ? "done" : "open"}.`);
+  renderDataRoom();
+  showToast(item.completed ? "Checklist item closed." : "Checklist item reopened.");
+}
+
+function closeChecklistProgress() {
+  const total = Math.max(1, state.dataRoom.checklist.length);
+  const completed = state.dataRoom.checklist.filter((item) => item.completed).length;
+  return Math.round((completed / total) * 100);
+}
+
+function dataRoomTimeline() {
+  const auditEvents = state.audit.map((entry) => ({
+    kind: "Review",
+    title: entry.action,
+    detail: entry.detail,
+    at: entry.at,
+  }));
+
+  const intakeEvents = state.intake.map((item) => ({
+    kind: item.kind,
+    title: `${item.name} added`,
+    detail: `${item.type} | ${item.status} | ${item.matches} ${item.kind === "Questionnaire" ? "questions" : "matches"}`,
+    at: item.addedAt,
+  }));
+
+  return [...auditEvents, ...intakeEvents]
+    .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+    .slice(0, 9);
+}
+
+function openDataRoomTarget(action) {
+  if (action === "evidence") {
+    closeDataRoom(false);
+    activateWorkspaceNav("evidence");
+    return;
+  }
+
+  if (action === "workspace") {
+    openWorkspace();
+    return;
+  }
+
+  if (action === "library") {
+    openLibrary();
+    return;
+  }
+
+  closeDataRoom();
+}
+
+function copyDataRoomBrief() {
+  copyText(dataRoomBriefText(), "Data room brief copied.");
+}
+
+function dataRoomBriefText() {
+  const snapshot = dataRoomSnapshot();
+  const folderLines = snapshot.folders.map((folder) => `- ${folder.label}: ${folder.count} | ${folder.status}`).join("\n");
+  const noteLines = state.evidence
+    .slice(0, 5)
+    .map((doc) => {
+      const note = noteForEvidence(doc);
+      return `- ${doc.title}: ${note.status} | ${note.summary}`;
+    })
+    .join("\n");
+  const checklistLines = state.dataRoom.checklist
+    .map((item) => `- ${item.completed ? "Done" : "Open"} | ${item.label} (${item.owner})`)
+    .join("\n");
+
+  return [
+    `${workspaceAccount.company} - AnswerSeal Pilot Data Room`,
+    `Build: ${BUILD_VERSION}`,
+    `Workspace ID: ${workspaceAccount.workspaceId}`,
+    `Close progress: ${snapshot.closeProgress}%`,
+    "",
+    "Folders:",
+    folderLines,
+    "",
+    "Evidence notes:",
+    noteLines,
+    "",
+    "Pilot close checklist:",
+    checklistLines,
+  ].join("\n");
 }
 
 function renderIntake() {
@@ -1637,6 +2117,7 @@ function prepareHandoff() {
   state.handoff.preparedAt = new Date().toISOString();
   addAudit("Handoff prepared", "Private workspace summary prepared for buyer-facing review.");
   renderWorkspace();
+  renderDataRoom();
   showToast("Private handoff prepared.");
 }
 
@@ -1676,6 +2157,7 @@ async function importEvidenceFiles(event) {
     const doc = createEvidenceFromFile(file.name, text);
     state.evidence.unshift(doc);
     state.activeDocId = doc.id;
+    state.dataRoom.notes[doc.id] = createDataRoomNote(doc);
     state.intake.unshift(createIntakeItem(file, "Evidence", text, doc.id, doc.tags.length));
   }
 
@@ -1824,6 +2306,7 @@ function exportReviewPack() {
   const coverage = coverageSnapshot();
   const routing = ownerRoutingSnapshot();
   const handoff = handoffReadinessSnapshot();
+  const dataRoom = dataRoomSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -1841,11 +2324,87 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v3</h1>
+        <h1>AnswerSeal Review Pack v4</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Pilot Data Room</h2>
+        <p>Close progress: ${dataRoom.closeProgress}% | Evidence notes: ${state.evidence.length} sources | Folders: ${dataRoom.folders.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Folder</th>
+              <th>Count</th>
+              <th>Status</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${dataRoom.folders
+              .map(
+                (folder) => `
+                  <tr>
+                    <td>${escapeHtml(folder.label)}</td>
+                    <td>${escapeHtml(folder.count)}</td>
+                    <td>${escapeHtml(folder.status)}</td>
+                    <td>${escapeHtml(folder.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evidence Notes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Reviewer</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.evidence
+              .map((doc) => {
+                const note = noteForEvidence(doc);
+                return `
+                  <tr>
+                    <td>${escapeHtml(doc.title)}</td>
+                    <td>${escapeHtml(note.status)}</td>
+                    <td>${escapeHtml(note.reviewer)}</td>
+                    <td>${escapeHtml(note.summary)}</td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Pilot Close Checklist</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Owner</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.dataRoom.checklist
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.label)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td class="${item.completed ? "ok" : "risk"}">${item.completed ? "Done" : "Open"}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Owner Routing</h2>
         <table>
           <thead>
             <tr>
@@ -1936,9 +2495,10 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v3 created with workspace routing and handoff readiness.");
+  addAudit("Review pack exported", "Review Pack v4 created with pilot data room, notes, and close checklist.");
   renderAudit();
-  showToast("Review Pack v3 exported.");
+  renderDataRoom();
+  showToast("Review Pack v4 exported.");
 }
 
 function toCsv(rows) {
@@ -1985,6 +2545,7 @@ function serializeWorkspace() {
     questions: state.questions,
     evidence: state.evidence,
     intake: state.intake,
+    dataRoom: state.dataRoom,
     handoff: state.handoff,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
@@ -2004,6 +2565,7 @@ function resetWorkspace() {
   elements.statusFilter.value = "all";
   elements.librarySearch.value = "";
   closeIntake(false);
+  closeDataRoom(false);
   closePortal(false);
   closeWorkspace(false);
   closeLibrary();

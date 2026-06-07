@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.7 Alpha
+**Current version:** v0.8 Alpha
 
-**Current phase:** Private Workspace
+**Current phase:** Pilot Data Room
 
 ## Brand
 
@@ -40,11 +40,15 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Portal copy mode for buyer portals, including answer, citations, and risk status
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
+- Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
+- Editable reviewer notes for evidence sources before buyer-facing reuse
+- Data room activity timeline for imports, routes, approvals, exports, and handoffs
+- Pilot close checklist for tracking conversion readiness
 - Evidence vault with freshness signals and selected-source detail
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v3 export with workspace routing
+- CSV export and Word-compatible Review Pack v4 export with workspace routing, data room folders, notes, and close checklist
 
 ## Project Files
 
@@ -62,13 +66,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.8 Alpha - Pilot Data Room
+## Next Phase: v0.9 Alpha - Claim Trace Engine
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
-- Add data room folders for questionnaires, policies, SOC reports, contracts, and exports
-- Add reviewer notes on evidence files before reuse
-- Add a workspace activity timeline for imports, routing, approvals, and handoffs
-- Add a pilot close checklist for conversion into paid workspaces
+- Add per-claim source mapping inside every answer
+- Add conflict detection for stale, legacy, or contradictory evidence
+- Add answer diff from AI draft to reviewer-approved reusable answer
+- Add source ranking by recency, authority, category fit, and buyer-safe status
 - Add private cloud workspace storage and user accounts after the pilot flow is proven
 - Add AI drafting against a retrieval index with per-claim citations
 
