@@ -1,6 +1,6 @@
-const BUILD_VERSION = "v0.8 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v08";
-const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v07", "answerseal.workspace.v06", "answerseal.workspace.v04"];
+const BUILD_VERSION = "v0.9 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v09";
+const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v08", "answerseal.workspace.v07", "answerseal.workspace.v06", "answerseal.workspace.v04"];
 const MEMORY_READY_LABEL = "Saved locally";
 
 const workspaceAccount = {
@@ -633,11 +633,18 @@ const elements = {
   sealGrade: document.querySelector("#sealGrade"),
   sealCoverage: document.querySelector("#sealCoverage"),
   sealFreshness: document.querySelector("#sealFreshness"),
+  traceBound: document.querySelector("#traceBound"),
+  traceConflicts: document.querySelector("#traceConflicts"),
+  traceRank: document.querySelector("#traceRank"),
+  traceDiff: document.querySelector("#traceDiff"),
+  claimTraceCount: document.querySelector("#claimTraceCount"),
+  claimTraceList: document.querySelector("#claimTraceList"),
   approveButton: document.querySelector("#approveButton"),
   needsEvidenceButton: document.querySelector("#needsEvidenceButton"),
   routeOwnerButton: document.querySelector("#routeOwnerButton"),
   copyButton: document.querySelector("#copyButton"),
   portalCopyButton: document.querySelector("#portalCopyButton"),
+  copyTraceButton: document.querySelector("#copyTraceButton"),
   riskList: document.querySelector("#riskList"),
   sourceList: document.querySelector("#sourceList"),
   sourceCount: document.querySelector("#sourceCount"),
@@ -778,6 +785,7 @@ function bindEvents() {
     renderQuestionList();
     renderActiveStatus(question);
     renderSealSummary(question);
+    renderClaimTrace(question);
     renderIntake();
     renderWorkspace();
     renderLibrary();
@@ -789,6 +797,7 @@ function bindEvents() {
   elements.needsEvidenceButton.addEventListener("click", markActiveNeedsEvidence);
   elements.routeOwnerButton.addEventListener("click", routeActiveQuestion);
   elements.copyButton.addEventListener("click", copyActiveAnswer);
+  elements.copyTraceButton.addEventListener("click", copyClaimTrace);
   elements.portalCopyButton.addEventListener("click", openPortalCopy);
   elements.closeWorkspaceButton.addEventListener("click", closeWorkspace);
   elements.workspaceBackdrop.addEventListener("click", closeWorkspace);
@@ -948,6 +957,12 @@ function renderActiveQuestion() {
   if (!question) {
     elements.activeQuestionTitle.textContent = "No question selected";
     elements.answerDraft.value = "";
+    elements.traceBound.textContent = "0/0";
+    elements.traceConflicts.textContent = "0";
+    elements.traceRank.textContent = "0%";
+    elements.traceDiff.textContent = "Draft";
+    elements.claimTraceCount.textContent = "0 claims";
+    elements.claimTraceList.innerHTML = "";
     return;
   }
 
@@ -959,6 +974,7 @@ function renderActiveQuestion() {
   renderActiveStatus(question);
   renderConfidence(question);
   renderSealSummary(question);
+  renderClaimTrace(question);
   renderRisks(question);
   renderSources(question);
 }
@@ -983,6 +999,198 @@ function renderSealSummary(question) {
   elements.sealGrade.textContent = sealGradeLabel(question, confidence, hasRisks, sources.length);
   elements.sealCoverage.textContent = `${sources.length} ${sources.length === 1 ? "source" : "sources"}`;
   elements.sealFreshness.textContent = sourceFreshnessSummary(sources);
+}
+
+function renderClaimTrace(question) {
+  const trace = claimTraceSnapshot(question);
+  elements.traceBound.textContent = `${trace.bound}/${trace.claims.length}`;
+  elements.traceConflicts.textContent = trace.conflicts;
+  elements.traceRank.textContent = `${trace.averageRank}%`;
+  elements.traceDiff.textContent = trace.answerDiff;
+  elements.claimTraceCount.textContent = `${trace.claims.length} ${trace.claims.length === 1 ? "claim" : "claims"}`;
+  elements.claimTraceList.innerHTML = "";
+
+  if (trace.claims.length === 0) {
+    elements.claimTraceList.append(emptyState("No answer claims to trace"));
+    return;
+  }
+
+  trace.claims.forEach((claim, index) => {
+    const card = document.createElement("article");
+    card.className = `claim-card is-${claim.status}`;
+    card.innerHTML = `
+      <header>
+        <span>${String(index + 1).padStart(2, "0")}</span>
+        <strong>${escapeHtml(formatClaimStatus(claim.status))}</strong>
+      </header>
+      <p>${escapeHtml(claim.text)}</p>
+      <div class="claim-source-row">
+        <span>${escapeHtml(claim.sourceTitle)}</span>
+        <span>${claim.rank}% source rank</span>
+      </div>
+      <blockquote>${escapeHtml(claim.excerpt)}</blockquote>
+      ${claim.conflict ? `<div class="claim-conflict"><svg aria-hidden="true"><use href="#icon-warning"></use></svg><span>${escapeHtml(claim.conflict)}</span></div>` : ""}
+    `;
+    card.addEventListener("click", () => {
+      if (!claim.sourceId) return;
+      state.activeDocId = claim.sourceId;
+      renderEvidence();
+      schedulePersist();
+    });
+    elements.claimTraceList.append(card);
+  });
+}
+
+function claimTraceSnapshot(question) {
+  const claims = splitAnswerClaims(question.answer ?? question.text).map((claimText) => traceClaim(question, claimText));
+  const bound = claims.filter((claim) => claim.status === "bound").length;
+  const conflicts = claims.filter((claim) => claim.status === "conflict").length;
+  const ranked = claims.filter((claim) => claim.rank > 0);
+  const averageRank = ranked.length === 0 ? 0 : Math.round(ranked.reduce((sum, claim) => sum + claim.rank, 0) / ranked.length);
+
+  return {
+    claims,
+    bound,
+    conflicts,
+    averageRank,
+    answerDiff: answerDiffLabel(question),
+  };
+}
+
+function traceClaim(question, claimText) {
+  const ranked = rankedSourcesForClaim(question, claimText);
+  const best = ranked[0];
+
+  if (!best) {
+    return {
+      text: claimText,
+      status: "open",
+      sourceId: null,
+      sourceTitle: "No source attached",
+      rank: 0,
+      excerpt: "Add a policy, report, contract clause, or reviewer-approved note before this claim can ship.",
+      conflict: "",
+    };
+  }
+
+  const conflict = conflictForClaim(claimText, best.doc, question);
+  const status = conflict ? "conflict" : best.rank < 68 ? "weak" : "bound";
+
+  return {
+    text: claimText,
+    status,
+    sourceId: best.doc.id,
+    sourceTitle: best.doc.title,
+    rank: best.rank,
+    excerpt: bestExcerptForQuestion(best.doc, claimText),
+    conflict,
+  };
+}
+
+function rankedSourcesForClaim(question, claimText) {
+  const preferred = new Set(question.sources ?? []);
+  const pool = state.evidence
+    .map((doc) => {
+      const match = sourceMatchScore(doc, claimText);
+      const authority = sourceAuthorityScore(doc);
+      const fresh = sourceFreshnessScore(doc.updated);
+      const preferredBoost = preferred.has(doc.id) ? 8 : 0;
+      const legacyPenalty = doc.type === "Legacy" ? 28 : 0;
+      const rank = Math.max(0, Math.min(99, Math.round(match * 0.5 + authority * 0.3 + fresh * 0.2 + preferredBoost - legacyPenalty)));
+      return { doc, rank };
+    })
+    .filter((item) => item.rank >= 46 || preferred.has(item.doc.id))
+    .sort((a, b) => b.rank - a.rank);
+
+  return pool;
+}
+
+function splitAnswerClaims(text) {
+  return String(text ?? "")
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .map((claim) => claim.trim())
+    .filter((claim) => claim.length > 22)
+    .slice(0, 6);
+}
+
+function conflictForClaim(claimText, source, question) {
+  const lower = claimText.toLowerCase();
+  const sourceText = `${source.title} ${source.type} ${source.excerpts.join(" ")}`.toLowerCase();
+  const activeSources = question.sources ?? [];
+
+  if ((lower.includes("not used") || lower.includes("no.")) && lower.includes("train")) {
+    const legacy = state.evidence.find((doc) => doc.type === "Legacy" && `${doc.tags.join(" ")} ${doc.excerpts.join(" ")}`.toLowerCase().includes("anonymized"));
+    if (legacy && activeSources.includes(legacy.id)) {
+      return `Legacy conflict: ${legacy.title} contains older service-improvement language. Use the current AI Usage Standard as the controlling source.`;
+    }
+  }
+
+  if (source.type === "Legacy") {
+    return "Legacy source selected. Treat as conflict evidence, not buyer-ready proof.";
+  }
+
+  if (sourceText.includes("should not be used")) {
+    return "Source contains a reuse warning. Route to owner before approval.";
+  }
+
+  if (daysSince(source.updated) >= 365) {
+    return "Source is stale. Confirm current source before shipping this claim.";
+  }
+
+  return "";
+}
+
+function sourceAuthorityScore(doc) {
+  const type = String(doc.type ?? "").toLowerCase();
+  if (type.includes("soc")) return 96;
+  if (type.includes("policy")) return 90;
+  if (type.includes("ai")) return 92;
+  if (type.includes("legal")) return 88;
+  if (type.includes("bcp")) return 84;
+  if (type.includes("legacy")) return 36;
+  return 72;
+}
+
+function sourceFreshnessScore(value) {
+  const age = daysSince(value);
+  if (age < 90) return 98;
+  if (age < 180) return 88;
+  if (age < 365) return 72;
+  return 38;
+}
+
+function answerDiffLabel(question) {
+  const baseline = draftLibrary[question.id]?.answer;
+  if (!baseline) return question.custom ? "New" : "Seed";
+  const baselineWords = wordSet(baseline);
+  const currentWords = wordSet(question.answer ?? "");
+  if (baselineWords.size === 0 || currentWords.size === 0) return "Draft";
+
+  const shared = [...currentWords].filter((word) => baselineWords.has(word)).length;
+  const similarity = shared / Math.max(1, currentWords.size);
+  const edited = Math.max(0, Math.min(99, Math.round((1 - similarity) * 100)));
+  return edited <= 8 ? "Original" : `${edited}% edited`;
+}
+
+function wordSet(text) {
+  return new Set(
+    String(text ?? "")
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, " ")
+      .split(/\s+/)
+      .filter((word) => word.length > 3),
+  );
+}
+
+function formatClaimStatus(status) {
+  const labels = {
+    bound: "Bound",
+    conflict: "Conflict",
+    weak: "Weak",
+    open: "Open",
+  };
+  return labels[status] ?? "Review";
 }
 
 function renderRisks(question) {
@@ -2062,6 +2270,19 @@ function approveActiveQuestion() {
     return;
   }
 
+  const trace = claimTraceSnapshot(question);
+  if (trace.conflicts > 0) {
+    question.status = "needs-evidence";
+    question.routeStatus = "Needs owner";
+    if (!question.risks.includes("Claim trace found conflicting or legacy source language.")) {
+      question.risks.push("Claim trace found conflicting or legacy source language.");
+    }
+    addAudit("Approval blocked", "Claim Trace Engine found a source conflict.");
+    render();
+    showToast("Claim trace conflict found.");
+    return;
+  }
+
   question.status = "approved";
   question.approvedAt = new Date().toISOString();
   question.routeStatus = "Assigned";
@@ -2133,6 +2354,35 @@ async function copyActiveAnswer() {
   const question = getActiveQuestion();
   if (!question?.answer) return;
   copyText(question.answer, "Answer copied.");
+}
+
+function copyClaimTrace() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  copyText(claimTraceText(question), "Claim trace copied.");
+}
+
+function claimTraceText(question) {
+  const trace = claimTraceSnapshot(question);
+  const lines = trace.claims.map((claim, index) =>
+    [
+      `${index + 1}. ${claim.text}`,
+      `Status: ${formatClaimStatus(claim.status)} | Source: ${claim.sourceTitle} | Rank: ${claim.rank}%`,
+      `Excerpt: ${claim.excerpt}`,
+      claim.conflict ? `Conflict: ${claim.conflict}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  );
+
+  return [
+    `AnswerSeal Claim Trace - ${workspaceAccount.company}`,
+    `Build: ${BUILD_VERSION}`,
+    `Question: ${question.text}`,
+    `Trace: ${trace.bound}/${trace.claims.length} bound | ${trace.conflicts} conflicts | ${trace.averageRank}% average source rank | ${trace.answerDiff}`,
+    "",
+    lines.join("\n\n"),
+  ].join("\n");
 }
 
 async function copyText(text, message) {
@@ -2283,18 +2533,22 @@ function refreshDrafts(showMessage = true) {
 }
 
 function exportCsv() {
-  const header = ["Question", "Status", "Owner", "Assignee", "Route Status", "Confidence", "Answer", "Sources", "Risks"];
-  const rows = state.questions.map((question) => [
-    question.text,
-    formatStatus(question.status),
-    question.owner,
-    memberForQuestion(question).name,
-    routeStatusLabel(question.routeStatus),
-    `${question.confidence}%`,
-    question.answer,
-    (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
-    (question.risks ?? []).join("; "),
-  ]);
+  const header = ["Question", "Status", "Owner", "Assignee", "Route Status", "Confidence", "Trace", "Answer", "Sources", "Risks"];
+  const rows = state.questions.map((question) => {
+    const trace = claimTraceSnapshot(question);
+    return [
+      question.text,
+      formatStatus(question.status),
+      question.owner,
+      memberForQuestion(question).name,
+      routeStatusLabel(question.routeStatus),
+      `${question.confidence}%`,
+      `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
+      question.answer,
+      (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
+      (question.risks ?? []).join("; "),
+    ];
+  });
 
   downloadBlob("answerseal-questionnaire.csv", toCsv([header, ...rows]), "text/csv");
   addAudit("CSV exported", "Questionnaire answers exported.");
@@ -2324,7 +2578,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v4</h1>
+        <h1>AnswerSeal Review Pack v5</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -2490,15 +2744,48 @@ function exportReviewPack() {
               .join("")}
           </tbody>
         </table>
+        <h2>Claim Trace</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Claim</th>
+              <th>Status</th>
+              <th>Source</th>
+              <th>Rank</th>
+              <th>Excerpt</th>
+              <th>Conflict</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.questions
+              .flatMap((question) =>
+                claimTraceSnapshot(question).claims.map(
+                  (claim) => `
+                    <tr>
+                      <td>${escapeHtml(question.text)}</td>
+                      <td>${escapeHtml(claim.text)}</td>
+                      <td class="${claim.status === "bound" ? "ok" : "risk"}">${escapeHtml(formatClaimStatus(claim.status))}</td>
+                      <td>${escapeHtml(claim.sourceTitle)}</td>
+                      <td>${claim.rank}%</td>
+                      <td>${escapeHtml(claim.excerpt)}</td>
+                      <td class="risk">${escapeHtml(claim.conflict)}</td>
+                    </tr>
+                  `,
+                ),
+              )
+              .join("")}
+          </tbody>
+        </table>
       </body>
     </html>
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v4 created with pilot data room, notes, and close checklist.");
+  addAudit("Review pack exported", "Review Pack v5 created with claim trace, source ranking, and conflict checks.");
   renderAudit();
   renderDataRoom();
-  showToast("Review Pack v4 exported.");
+  showToast("Review Pack v5 exported.");
 }
 
 function toCsv(rows) {

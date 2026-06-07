@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.9 Alpha - Claim Trace Engine
+
+Phase: Claim Trace Engine
+
+- Added a Claim Trace section that maps each answer claim to a ranked source excerpt.
+- Added conflict detection for legacy, stale, or unsafe source language before approval.
+- Added answer diff and source rank metrics to the active answer review panel.
+- Added trace status to CSV exports.
+- Upgraded review pack export to Review Pack v5 with claim trace, source ranking, and conflict checks.
+- Updated the build phases page with the v0.10 Secure Workspace Accounts plan.
+
 ## v0.8 Alpha - Pilot Data Room
 
 Phase: Pilot Data Room
