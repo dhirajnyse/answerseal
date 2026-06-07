@@ -79,6 +79,9 @@
         <path d="M12 9v4" />
         <path d="M12 17h.01" />
       </symbol>
+      <symbol id="icon-message" viewBox="0 0 24 24">
+        <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z" />
+      </symbol>
       <symbol id="icon-x" viewBox="0 0 24 24">
         <path d="M18 6 6 18" />
         <path d="m6 6 12 12" />
@@ -111,6 +114,10 @@
           <button class="nav-item" id="trustRoomNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Trust Room</span>
+          </button>
+          <button class="nav-item" id="followUpNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-message"></use></svg>
+            <span>Follow-Up</span>
           </button>
           <button class="nav-item" id="analyticsNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
@@ -154,8 +161,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.15 Alpha</strong>
-          <span>Buyer Trust Rooms</span>
+          <strong>v0.16 Alpha</strong>
+          <span>Buyer Follow-Up Inbox</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -167,7 +174,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.15 Alpha</span>
+            <span class="label">Security questionnaire | v0.16 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -702,6 +709,75 @@
             <span>Copy into sales handoff</span>
           </div>
           <pre class="trust-room-digest" id="trustRoomDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="follow-up-backdrop drawer-backdrop" id="followUpBackdrop" hidden></div>
+    <aside class="workspace-drawer follow-up-drawer" id="followUpDrawer" aria-label="Buyer follow-up inbox" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Buyer Follow-Up Inbox</span>
+          <h2>Room comments routed back to proof</h2>
+        </div>
+        <button class="icon-button" id="closeFollowUpButton" type="button" aria-label="Close follow-up inbox" title="Close follow-up inbox">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip follow-up-metrics" aria-label="Follow-up inbox status">
+        <article>
+          <span class="label">Open</span>
+          <strong id="followUpOpenCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Routed</span>
+          <strong id="followUpRoutedCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Evidence Gaps</span>
+          <strong id="followUpEvidenceCount">0</strong>
+        </article>
+        <article>
+          <span class="label">SLA Risk</span>
+          <strong id="followUpSlaCount">0</strong>
+        </article>
+      </section>
+
+      <section class="follow-up-body">
+        <section class="follow-up-section" aria-label="Buyer comments">
+          <div class="section-heading">
+            <span class="label">Buyer Comments</span>
+            <span>Trust room loop</span>
+          </div>
+          <div class="follow-up-list" id="followUpList"></div>
+        </section>
+
+        <section class="follow-up-section" aria-label="Owner routing">
+          <div class="section-heading">
+            <span class="label">Owner Routing</span>
+            <span>Who owes the buyer</span>
+          </div>
+          <div class="follow-up-owner-list" id="followUpOwnerList"></div>
+        </section>
+
+        <section class="follow-up-section" aria-label="Room loop">
+          <div class="section-heading">
+            <span class="label">Room Loop</span>
+            <span>Comment to proof</span>
+          </div>
+          <div class="follow-up-loop-list" id="followUpLoopList"></div>
+        </section>
+
+        <section class="follow-up-section" aria-label="Follow-up digest">
+          <div class="section-heading">
+            <span class="label">Inbox Digest</span>
+            <button class="secondary-button compact-button" id="copyFollowUpDigestButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="follow-up-digest" id="followUpDigest"></pre>
         </section>
       </section>
     </aside>

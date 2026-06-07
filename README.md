@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.15 Alpha
+**Current version:** v0.16 Alpha
 
-**Current phase:** Buyer Trust Rooms
+**Current phase:** Buyer Follow-Up Inbox
 
 ## Brand
 
@@ -55,6 +55,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Source-safe evidence excerpts that hide internal-only files and block legacy evidence
 - Trust room access policy and receipt trail for buyer views, copied packets, and handoff activity
 - Copyable Trust Room link, buyer packet, answer text, evidence excerpts, and room digest
+- Buyer Follow-Up Inbox for comments captured from scoped trust rooms
+- Follow-up owner routing by security, legal, AI governance, and operations owner
+- Follow-up review task creation that converts buyer comments into internal questionnaire work
+- Evidence-gap and SLA-risk tracking for buyer comments that need stronger proof
+- Copyable follow-up briefs and inbox digest for sales/security handoff
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -75,7 +80,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v11 export with buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v12 export with buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -93,15 +98,15 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.16 Alpha - Buyer Follow-Up Inbox
+## Next Phase: v0.17 Alpha - Evidence Vault Connectors
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
 - Add private cloud workspace storage for evidence, answers, traces, and activity
 - Add organization-level evidence vaults and reusable answer libraries
-- Capture buyer follow-up questions from scoped trust rooms
-- Convert follow-ups into owned review tasks with source context
-- Route buyer comments to security, legal, AI governance, or operations owners
-- Reopen the trust room with updated proof and a buyer-facing change receipt
+- Model Google Drive, SharePoint, Notion, and Confluence-style evidence connectors in the static demo
+- Add source freshness monitoring for stale policies, old SOC reports, and expiring evidence
+- Add approval sync states for approved, pending, blocked, and ready evidence sources
+- Add vault health digest for security, legal, sales engineering, and founders
 
 ## License
 

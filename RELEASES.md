@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.16 Alpha - Buyer Follow-Up Inbox
+
+Phase: Buyer Follow-Up Inbox
+
+- Added a Buyer Follow-Up Inbox drawer for buyer comments captured from scoped trust rooms.
+- Added follow-up metrics for open comments, routed comments, evidence gaps, and SLA risk.
+- Added owner routing cards across security, legal, AI governance, and operations.
+- Added follow-up cards with linked answer context, evidence source, due date, task status, and buyer room origin.
+- Added actions to copy follow-up briefs, route comments, create review tasks, and mark comments answered.
+- Added room loop receipt updates when follow-ups are routed, converted into tasks, or answered.
+- Added follow-up inbox context to CSV exports.
+- Upgraded review pack export to Review Pack v12 with follow-up inbox, owner routing, evidence gaps, SLA risk, and digest.
+- Updated the build phases page with the v0.17 Evidence Vault Connectors plan.
+
 ## v0.15 Alpha - Buyer Trust Rooms
 
 Phase: Buyer Trust Rooms

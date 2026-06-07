@@ -1951,6 +1951,171 @@ svg {
   white-space: pre-wrap;
 }
 
+.follow-up-drawer {
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: min(780px, 100vw);
+}
+
+.follow-up-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.follow-up-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(241, 255, 251, 0.72) 0%, rgba(255, 255, 255, 0.96) 42%),
+    #ffffff;
+}
+
+.follow-up-section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.follow-up-list,
+.follow-up-owner-list,
+.follow-up-loop-list {
+  display: grid;
+  gap: 8px;
+}
+
+.follow-up-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.follow-up-card.is-evidence,
+.follow-up-card.is-sla-risk {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.follow-up-card.is-answered {
+  border-left-color: var(--green);
+  background: #f6fffb;
+}
+
+.follow-up-card header,
+.follow-up-card footer,
+.follow-up-owner-card,
+.follow-up-loop-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.follow-up-card header div,
+.follow-up-owner-card div,
+.follow-up-loop-row div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.follow-up-card strong,
+.follow-up-owner-card strong,
+.follow-up-loop-row strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.follow-up-card p,
+.follow-up-card footer span,
+.follow-up-owner-card p,
+.follow-up-loop-row span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.42;
+}
+
+.follow-up-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.follow-up-meta span {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.follow-up-card footer {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.follow-up-card footer .compact-button {
+  width: auto;
+  min-width: 88px;
+}
+
+.follow-up-owner-card,
+.follow-up-loop-row {
+  align-items: center;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.follow-up-owner-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.follow-up-owner-card b,
+.follow-up-loop-row b {
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.follow-up-digest {
+  min-height: 230px;
+  max-height: 340px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -4102,6 +4267,8 @@ svg {
     .trust-room-metrics,
     .trust-room-actions,
     .trust-policy-list,
+    .follow-up-metrics,
+    .follow-up-meta,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -4142,6 +4309,10 @@ svg {
     .trust-evidence-card header,
     .trust-evidence-card footer,
     .trust-receipt-row,
+    .follow-up-card header,
+    .follow-up-card footer,
+    .follow-up-owner-card,
+    .follow-up-loop-row,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -4227,6 +4398,8 @@ svg {
     .trust-room-metrics,
     .trust-room-actions,
     .trust-policy-list,
+    .follow-up-metrics,
+    .follow-up-meta,
     .analytics-metrics,
     .access-metrics,
     .data-room-metrics,
@@ -4246,6 +4419,10 @@ svg {
     .trust-evidence-card header,
     .trust-evidence-card footer,
     .trust-receipt-row,
+    .follow-up-card header,
+    .follow-up-card footer,
+    .follow-up-owner-card,
+    .follow-up-loop-row,
     .analytics-roi-card,
     .analytics-time-row,
     .access-role-card,

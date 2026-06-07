@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.15 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v15";
+const BUILD_VERSION = "v0.16 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v16";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v15",
   "answerseal.workspace.v14",
   "answerseal.workspace.v13",
   "answerseal.workspace.v12",
@@ -489,6 +490,69 @@ const trustRoomReceiptSeeds = [
   },
 ];
 
+const followUpSeeds = [
+  {
+    id: "fu-ai-retention",
+    buyer: "Aster Health security",
+    room: "Aster Health Trust Room",
+    comment: "Can you confirm whether AI prompts are retained by model providers after processing?",
+    category: "AI Governance",
+    ownerId: "owner-ai",
+    questionId: "q-ai-training",
+    sourceId: "ai-standard",
+    status: "New",
+    priority: "High",
+    receivedAt: "2026-06-08T07:38:00.000Z",
+    due: "2026-06-09",
+    linkedTaskId: null,
+  },
+  {
+    id: "fu-incident-sla",
+    buyer: "Aster Health legal",
+    room: "Aster Health Trust Room",
+    comment: "The incident answer mentions annual testing. What is the customer notification timeline for a confirmed breach?",
+    category: "Incident",
+    ownerId: "owner-security",
+    questionId: "q-incident",
+    sourceId: "soc2",
+    status: "Routed",
+    priority: "High",
+    receivedAt: "2026-06-08T08:04:00.000Z",
+    due: "2026-06-10",
+    linkedTaskId: null,
+  },
+  {
+    id: "fu-subprocessor",
+    buyer: "Aster Health privacy",
+    room: "Aster Health Trust Room",
+    comment: "Please share how customers are notified before subprocessor changes.",
+    category: "Privacy",
+    ownerId: "owner-legal",
+    questionId: "q-privacy",
+    sourceId: "dpa",
+    status: "Answered",
+    priority: "Medium",
+    receivedAt: "2026-06-08T08:26:00.000Z",
+    due: "2026-06-12",
+    linkedTaskId: null,
+  },
+  {
+    id: "fu-recovery-proof",
+    buyer: "Aster Health security",
+    room: "Aster Health Trust Room",
+    comment: "Do you have a recent recovery test result that supports the RTO and RPO claims?",
+    category: "Continuity",
+    ownerId: "owner-ops",
+    questionId: "q-backup",
+    sourceId: "bcp",
+    status: "Needs evidence",
+    priority: "Medium",
+    receivedAt: "2026-06-08T08:41:00.000Z",
+    due: "2026-06-13",
+    linkedTaskId: null,
+  },
+];
+
 function createSeedIntake() {
   return evidenceDocs.map((doc) => ({
     id: `seed-${doc.id}`,
@@ -531,6 +595,8 @@ function createInitialState() {
     pipelineOpen: false,
     trustRoomOpen: false,
     trustRoom: createInitialTrustRoom(),
+    followUpOpen: false,
+    followUps: createInitialFollowUps(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -565,6 +631,10 @@ function createInitialTrustRoom() {
     copies: 1,
     receipts: trustRoomReceiptSeeds.map((event) => ({ ...event })),
   };
+}
+
+function createInitialFollowUps() {
+  return followUpSeeds.map((item) => ({ ...item }));
 }
 
 function createInitialDataRoom() {
@@ -651,6 +721,7 @@ function loadWorkspaceState() {
       access: normalizeAccess(workspace.access ?? fresh.access),
       portal: normalizePortal(workspace.portal ?? fresh.portal),
       trustRoom: normalizeTrustRoom(workspace.trustRoom ?? fresh.trustRoom),
+      followUps: Array.isArray(workspace.followUps) ? workspace.followUps.map(normalizeFollowUp) : fresh.followUps,
       search: "",
       filter: "all",
       librarySearch: "",
@@ -661,6 +732,7 @@ function loadWorkspaceState() {
       workspaceOpen: false,
       pipelineOpen: false,
       trustRoomOpen: false,
+      followUpOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -838,6 +910,25 @@ function normalizeTrustRoomReceipt(receipt) {
   };
 }
 
+function normalizeFollowUp(item) {
+  const fallback = followUpSeeds.find((seed) => seed.id === item?.id) ?? followUpSeeds[0];
+  return {
+    id: String(item?.id ?? `fu-${Date.now()}`),
+    buyer: String(item?.buyer ?? fallback.buyer),
+    room: String(item?.room ?? fallback.room),
+    comment: String(item?.comment ?? fallback.comment),
+    category: String(item?.category ?? fallback.category),
+    ownerId: String(item?.ownerId ?? fallback.ownerId),
+    questionId: item?.questionId ? String(item.questionId) : fallback.questionId,
+    sourceId: item?.sourceId ? String(item.sourceId) : fallback.sourceId,
+    status: String(item?.status ?? fallback.status),
+    priority: String(item?.priority ?? fallback.priority),
+    receivedAt: item?.receivedAt ?? fallback.receivedAt,
+    due: String(item?.due ?? fallback.due),
+    linkedTaskId: item?.linkedTaskId ? String(item.linkedTaskId) : null,
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
@@ -846,6 +937,7 @@ const elements = {
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
+  followUpNavButton: document.querySelector("#followUpNavButton"),
   analyticsNavButton: document.querySelector("#analyticsNavButton"),
   accessNavButton: document.querySelector("#accessNavButton"),
   dataRoomNavButton: document.querySelector("#dataRoomNavButton"),
@@ -971,6 +1063,18 @@ const elements = {
   copyTrustRoomLinkButton: document.querySelector("#copyTrustRoomLinkButton"),
   copyTrustRoomPacketButton: document.querySelector("#copyTrustRoomPacketButton"),
   recordTrustRoomViewButton: document.querySelector("#recordTrustRoomViewButton"),
+  followUpBackdrop: document.querySelector("#followUpBackdrop"),
+  followUpDrawer: document.querySelector("#followUpDrawer"),
+  closeFollowUpButton: document.querySelector("#closeFollowUpButton"),
+  followUpOpenCount: document.querySelector("#followUpOpenCount"),
+  followUpRoutedCount: document.querySelector("#followUpRoutedCount"),
+  followUpEvidenceCount: document.querySelector("#followUpEvidenceCount"),
+  followUpSlaCount: document.querySelector("#followUpSlaCount"),
+  followUpList: document.querySelector("#followUpList"),
+  followUpOwnerList: document.querySelector("#followUpOwnerList"),
+  followUpLoopList: document.querySelector("#followUpLoopList"),
+  followUpDigest: document.querySelector("#followUpDigest"),
+  copyFollowUpDigestButton: document.querySelector("#copyFollowUpDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1076,6 +1180,7 @@ function bindEvents() {
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
+  elements.followUpNavButton.addEventListener("click", openFollowUp);
   elements.analyticsNavButton.addEventListener("click", openAnalytics);
   elements.accessNavButton.addEventListener("click", openAccess);
   elements.dataRoomNavButton.addEventListener("click", openDataRoom);
@@ -1117,6 +1222,7 @@ function bindEvents() {
     renderWorkspace();
     renderPipeline();
     renderTrustRoom();
+    renderFollowUps();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1147,6 +1253,9 @@ function bindEvents() {
   elements.copyTrustRoomLinkButton.addEventListener("click", copyTrustRoomLink);
   elements.copyTrustRoomPacketButton.addEventListener("click", copyTrustRoomPacket);
   elements.recordTrustRoomViewButton.addEventListener("click", recordTrustRoomView);
+  elements.closeFollowUpButton.addEventListener("click", closeFollowUp);
+  elements.followUpBackdrop.addEventListener("click", closeFollowUp);
+  elements.copyFollowUpDigestButton.addEventListener("click", copyFollowUpDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1192,6 +1301,7 @@ function bindEvents() {
     if (state.workspaceOpen) closeWorkspace();
     if (state.pipelineOpen) closePipeline();
     if (state.trustRoomOpen) closeTrustRoom();
+    if (state.followUpOpen) closeFollowUp();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1204,6 +1314,7 @@ function applyInitialHash() {
   if (hash === "workspace") openWorkspace();
   if (hash === "pipeline" || hash === "buyers") openPipeline();
   if (hash === "trust-room" || hash === "room" || hash === "rooms") openTrustRoom();
+  if (hash === "follow-up" || hash === "followups" || hash === "inbox") openFollowUp();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1230,6 +1341,7 @@ function render() {
   renderWorkspace();
   renderPipeline();
   renderTrustRoom();
+  renderFollowUps();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1301,6 +1413,7 @@ function renderQuestionList() {
       renderPortalCopy();
       renderPipeline();
       renderTrustRoom();
+      renderFollowUps();
       renderAnalytics();
       schedulePersist();
     });
@@ -1928,6 +2041,7 @@ function activateWorkspaceNav(target) {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeLibrary(false);
@@ -1951,6 +2065,7 @@ function setActiveNav(activeButton) {
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
+    elements.followUpNavButton,
     elements.analyticsNavButton,
     elements.accessNavButton,
     elements.dataRoomNavButton,
@@ -1965,6 +2080,7 @@ function setActiveNav(activeButton) {
 function openWorkspace() {
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -1991,6 +2107,7 @@ function closeWorkspace(activateReview = true) {
 function openPipeline() {
   closeWorkspace(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2018,6 +2135,7 @@ function closePipeline(activateReview = true) {
 function openTrustRoom() {
   closeWorkspace(false);
   closePipeline(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2042,10 +2160,39 @@ function closeTrustRoom(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openFollowUp() {
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.followUpOpen = true;
+  setActiveNav(elements.followUpNavButton);
+  elements.followUpBackdrop.hidden = false;
+  elements.followUpDrawer.classList.add("is-open");
+  elements.followUpDrawer.setAttribute("aria-hidden", "false");
+  renderFollowUps();
+  elements.copyFollowUpDigestButton.focus();
+}
+
+function closeFollowUp(activateReview = true) {
+  if (!state.followUpOpen && elements.followUpDrawer.getAttribute("aria-hidden") === "true") return;
+  state.followUpOpen = false;
+  elements.followUpDrawer.classList.remove("is-open");
+  elements.followUpDrawer.setAttribute("aria-hidden", "true");
+  elements.followUpBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -2073,6 +2220,7 @@ function openAccess() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -2099,6 +2247,7 @@ function openIntake() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeDataRoom(false);
@@ -2125,6 +2274,7 @@ function openDataRoom() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2151,6 +2301,7 @@ function openLibrary() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2178,6 +2329,7 @@ function openPortalCopy() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2753,6 +2905,308 @@ function trustRoomPacketText(room = trustRoomSnapshot()) {
     evidence || "No source-safe evidence excerpts yet.",
     "",
     "Policy: Only approved answers should be shared externally. Approval-gated answers remain internal until reviewer approval.",
+  ].join("\n");
+}
+
+function renderFollowUps() {
+  const inbox = followUpSnapshot();
+
+  elements.followUpOpenCount.textContent = inbox.openCount;
+  elements.followUpRoutedCount.textContent = inbox.routedCount;
+  elements.followUpEvidenceCount.textContent = inbox.evidenceCount;
+  elements.followUpSlaCount.textContent = inbox.slaCount;
+  elements.followUpDigest.textContent = followUpDigestText(inbox);
+
+  elements.followUpList.innerHTML = "";
+  inbox.items.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `follow-up-card ${followUpStatusClass(item.status)}${item.slaRisk ? " is-sla-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.category)} | ${escapeHtml(item.priority)}</span>
+          <strong>${escapeHtml(item.comment)}</strong>
+        </div>
+        <span class="route-status ${item.statusClass}">${escapeHtml(item.status)}</span>
+      </header>
+      <p>${escapeHtml(item.context)}</p>
+      <div class="follow-up-meta">
+        <span>${escapeHtml(item.owner.name)}</span>
+        <span>${escapeHtml(item.sourceTitle)}</span>
+        <span>${item.daysLeft}d left</span>
+        <span>${escapeHtml(item.linkedTaskId ? "Task linked" : "No task")}</span>
+      </div>
+      <footer>
+        <button class="secondary-button compact-button" type="button" data-follow-brief="${escapeHtml(item.id)}">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Brief</span>
+        </button>
+        <button class="secondary-button compact-button" type="button" data-follow-route="${escapeHtml(item.id)}">
+          <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+          <span>Route</span>
+        </button>
+        <button class="primary-button compact-button" type="button" data-follow-task="${escapeHtml(item.id)}">
+          <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+          <span>Task</span>
+        </button>
+        <button class="secondary-button compact-button" type="button" data-follow-resolve="${escapeHtml(item.id)}">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Resolve</span>
+        </button>
+      </footer>
+    `;
+    card.querySelector("[data-follow-brief]")?.addEventListener("click", () => copyFollowUpBrief(item.id));
+    card.querySelector("[data-follow-route]")?.addEventListener("click", () => routeFollowUp(item.id));
+    card.querySelector("[data-follow-task]")?.addEventListener("click", () => createFollowUpTask(item.id));
+    card.querySelector("[data-follow-resolve]")?.addEventListener("click", () => resolveFollowUp(item.id));
+    elements.followUpList.append(card);
+  });
+
+  elements.followUpOwnerList.innerHTML = "";
+  inbox.ownerRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = "follow-up-owner-card";
+    item.innerHTML = `
+      <span class="role-avatar">${escapeHtml(initials(row.member.name))}</span>
+      <div>
+        <header>
+          <strong>${escapeHtml(row.member.name)}</strong>
+          <b>${row.open} open</b>
+        </header>
+        <p>${escapeHtml(row.member.team)} | ${row.routed} routed | ${row.evidence} evidence gaps</p>
+      </div>
+    `;
+    elements.followUpOwnerList.append(item);
+  });
+
+  elements.followUpLoopList.innerHTML = "";
+  inbox.loopRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = "follow-up-loop-row";
+    item.innerHTML = `
+      <div>
+        <strong>${escapeHtml(row.label)}</strong>
+        <span>${escapeHtml(row.detail)}</span>
+      </div>
+      <b>${escapeHtml(row.value)}</b>
+    `;
+    elements.followUpLoopList.append(item);
+  });
+}
+
+function followUpSnapshot() {
+  const items = state.followUps
+    .map(enrichFollowUp)
+    .sort((a, b) => {
+      if (a.status === "Answered" && b.status !== "Answered") return 1;
+      if (b.status === "Answered" && a.status !== "Answered") return -1;
+      if (a.slaRisk !== b.slaRisk) return a.slaRisk ? -1 : 1;
+      return new Date(a.due).getTime() - new Date(b.due).getTime();
+    });
+  const open = items.filter((item) => item.status !== "Answered");
+  const ownerRows = workspaceAccount.members
+    .map((member) => {
+      const owned = items.filter((item) => item.owner.id === member.id);
+      return {
+        member,
+        open: owned.filter((item) => item.status !== "Answered").length,
+        routed: owned.filter((item) => item.status === "Routed").length,
+        evidence: owned.filter((item) => item.status === "Needs evidence").length,
+      };
+    })
+    .filter((row) => row.open > 0 || row.routed > 0 || row.evidence > 0);
+  const loopRows = [
+    {
+      label: "Room comments",
+      value: `${items.length}`,
+      detail: "Buyer follow-ups captured from scoped trust room activity.",
+    },
+    {
+      label: "Owner routing",
+      value: `${items.filter((item) => item.status === "Routed").length}/${open.length}`,
+      detail: "Open comments with a named internal owner.",
+    },
+    {
+      label: "Evidence gaps",
+      value: `${items.filter((item) => item.status === "Needs evidence").length}`,
+      detail: "Follow-ups that require stronger proof before buyer response.",
+    },
+    {
+      label: "Room loop",
+      value: `${items.filter((item) => item.linkedTaskId).length}`,
+      detail: "Comments converted into review tasks for updated proof.",
+    },
+  ];
+
+  return {
+    items,
+    openCount: open.length,
+    routedCount: items.filter((item) => item.status === "Routed").length,
+    evidenceCount: items.filter((item) => item.status === "Needs evidence").length,
+    slaCount: open.filter((item) => item.slaRisk).length,
+    ownerRows,
+    loopRows,
+  };
+}
+
+function enrichFollowUp(item) {
+  const owner = workspaceAccount.members.find((member) => member.id === item.ownerId) ?? workspaceAccount.members[0];
+  const question = state.questions.find((entry) => entry.id === item.questionId);
+  const source = getEvidenceById(item.sourceId);
+  const daysLeft = daysUntil(item.due);
+  const needsEvidence = item.status === "Needs evidence" || !source;
+  return {
+    ...item,
+    owner,
+    question,
+    source,
+    sourceTitle: source?.title ?? "No source mapped",
+    context: question
+      ? `Linked to "${shorten(question.text, 86)}" from ${item.room}.`
+      : `Captured from ${item.room}; no internal answer is linked yet.`,
+    daysLeft,
+    slaRisk: item.status !== "Answered" && (daysLeft <= 2 || needsEvidence),
+    statusClass: item.status === "Needs evidence" ? "is-needed" : item.status === "Answered" ? "is-assigned" : "is-review",
+  };
+}
+
+function followUpStatusClass(status) {
+  if (status === "Answered") return "is-answered";
+  if (status === "Needs evidence") return "is-evidence";
+  if (status === "Routed") return "is-routed";
+  return "is-new";
+}
+
+function routeFollowUp(id) {
+  const item = state.followUps.find((entry) => entry.id === id);
+  if (!item) return;
+  if (item.status !== "Answered") item.status = item.sourceId ? "Routed" : "Needs evidence";
+  const owner = workspaceAccount.members.find((member) => member.id === item.ownerId) ?? workspaceAccount.members[0];
+  addTrustRoomReceipt("Follow-up routed", owner.name, `${shorten(item.comment, 86)} routed from Buyer Follow-Up Inbox.`);
+  addAudit("Follow-up routed", `${shorten(item.comment, 72)} routed to ${owner.name}.`);
+  renderFollowUps();
+  renderTrustRoom();
+  showToast(`Follow-up routed to ${owner.name}.`);
+}
+
+function createFollowUpTask(id) {
+  const item = state.followUps.find((entry) => entry.id === id);
+  if (!item) return;
+
+  const existing = item.linkedTaskId ? state.questions.find((question) => question.id === item.linkedTaskId) : null;
+  if (existing) {
+    state.activeQuestionId = existing.id;
+    state.activeDocId = existing.sources?.[0] ?? state.evidence[0]?.id;
+    closeFollowUp(false);
+    activateWorkspaceNav("review");
+    render();
+    showToast("Linked follow-up task opened.");
+    return;
+  }
+
+  const owner = workspaceAccount.members.find((member) => member.id === item.ownerId) ?? workspaceAccount.members[0];
+  const sourceIds = [item.sourceId].filter((sourceId) => getEvidenceById(sourceId));
+  const draft = draftFromText(item.comment);
+  const sources = sourceIds.length > 0 ? sourceIds : draft.sources;
+  const taskId = `q-follow-${Date.now()}-${state.questions.length}`;
+  const task = {
+    id: taskId,
+    text: `Buyer follow-up: ${item.comment}`,
+    category: item.category,
+    owner: owner.team,
+    due: item.due,
+    portal: "Trust Room",
+    priority: item.priority,
+    answer: composeGenericAnswer(item.comment, sources, item.category),
+    sources,
+    confidence: calculateConfidence(item.comment.toLowerCase(), sources),
+    status: sources.length > 0 ? "draft" : "needs-evidence",
+    risks: sources.length > 0 ? [] : ["Buyer follow-up needs a stronger evidence source before room update."],
+    assigneeId: owner.id,
+    routeStatus: sources.length > 0 ? "Owner review" : "Needs owner",
+    routedAt: new Date().toISOString(),
+    custom: true,
+    approvedAt: null,
+  };
+
+  state.questions.push(task);
+  item.linkedTaskId = taskId;
+  item.status = sources.length > 0 ? "Routed" : "Needs evidence";
+  state.activeQuestionId = taskId;
+  state.activeDocId = sources[0] ?? state.evidence[0]?.id;
+  addTrustRoomReceipt("Follow-up task created", owner.name, `${shorten(item.comment, 86)} converted into an internal answer review task.`);
+  addAudit("Follow-up task created", `${shorten(item.comment, 72)} converted into a review task for ${owner.name}.`);
+  closeFollowUp(false);
+  activateWorkspaceNav("review");
+  render();
+  showToast("Follow-up review task created.");
+}
+
+function resolveFollowUp(id) {
+  const item = state.followUps.find((entry) => entry.id === id);
+  if (!item) return;
+  item.status = "Answered";
+  addTrustRoomReceipt("Follow-up answered", item.buyer, `${shorten(item.comment, 86)} marked answered for buyer room loop.`);
+  addAudit("Follow-up answered", shorten(item.comment, 72));
+  renderFollowUps();
+  renderTrustRoom();
+  showToast("Follow-up marked answered.");
+}
+
+function copyFollowUpBrief(id) {
+  const item = followUpSnapshot().items.find((entry) => entry.id === id);
+  if (!item) return;
+  copyText(followUpBriefText(item), "Follow-up brief copied.");
+}
+
+function copyFollowUpDigest() {
+  copyText(followUpDigestText(), "Follow-up inbox digest copied.");
+}
+
+function followUpBriefText(item) {
+  return [
+    `${workspaceAccount.company} - Buyer Follow-Up Brief`,
+    `Build: ${BUILD_VERSION}`,
+    `Buyer: ${item.buyer}`,
+    `Room: ${item.room}`,
+    `Status: ${item.status}`,
+    `Priority: ${item.priority}`,
+    `Owner: ${item.owner.name} (${item.owner.team})`,
+    `Due: ${formatShortDate(item.due)} (${item.daysLeft} days left)`,
+    `Source: ${item.sourceTitle}`,
+    `Linked answer: ${item.question?.text ?? "No internal answer linked"}`,
+    `Comment: ${item.comment}`,
+    `Next motion: ${item.status === "Needs evidence" ? "Attach stronger evidence before updating the room." : item.linkedTaskId ? "Finish linked review task and update the room receipt." : "Create a review task or route owner response."}`,
+  ].join("\n");
+}
+
+function followUpDigestText(inbox = followUpSnapshot()) {
+  const priority = inbox.items
+    .slice(0, 5)
+    .map((item, index) => `${index + 1}. ${item.status} | ${item.owner.name} | ${item.daysLeft}d | ${item.comment}`)
+    .join("\n");
+  const ownerLines = inbox.ownerRows
+    .map((row) => `${row.member.name}: ${row.open} open, ${row.routed} routed, ${row.evidence} evidence gaps`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Buyer Follow-Up Inbox",
+    `Build: ${BUILD_VERSION}`,
+    `Open follow-ups: ${inbox.openCount}`,
+    `Routed: ${inbox.routedCount}`,
+    `Evidence gaps: ${inbox.evidenceCount}`,
+    `SLA risk: ${inbox.slaCount}`,
+    "",
+    "Priority queue:",
+    priority || "No open buyer follow-ups.",
+    "",
+    "Owner load:",
+    ownerLines || "No owner load.",
+    "",
+    "Recommended motion:",
+    "- Convert high-priority buyer comments into review tasks.",
+    "- Attach fresh evidence before reopening the trust room.",
+    "- Mark answered only after the room receipt reflects the update.",
   ].join("\n");
 }
 
@@ -4381,6 +4835,7 @@ function selectNextOpenQuestion() {
   renderWorkspace();
   renderAnalytics();
   renderTrustRoom();
+  renderFollowUps();
   renderPortalCopy();
   schedulePersist();
 }
@@ -4632,6 +5087,10 @@ function exportCsv() {
     "Trust Room",
     "Trust Shared",
     "Trust Views",
+    "Follow-Ups Open",
+    "Follow-Ups Routed",
+    "Follow-Ups Evidence Gaps",
+    "Follow-Ups SLA Risk",
     "Trace",
     "Answer",
     "Sources",
@@ -4644,6 +5103,7 @@ function exportCsv() {
     const analytics = dealAnalyticsSnapshot();
     const pipeline = pipelineSnapshot();
     const trustRoom = trustRoomSnapshot();
+    const followUps = followUpSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -4663,6 +5123,10 @@ function exportCsv() {
       trustRoom.status,
       `${trustRoom.sharedCount}/${trustRoom.answers.length}`,
       trustRoom.views,
+      followUps.openCount,
+      followUps.routedCount,
+      followUps.evidenceCount,
+      followUps.slaCount,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -4685,6 +5149,7 @@ function exportReviewPack() {
   const deal = dealAnalyticsSnapshot();
   const pipeline = pipelineSnapshot();
   const trustRoom = trustRoomSnapshot();
+  const followUps = followUpSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -4702,7 +5167,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v11</h1>
+        <h1>AnswerSeal Review Pack v12</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -4845,6 +5310,38 @@ function exportReviewPack() {
         </table>
         <h2>Trust Room Digest</h2>
         <pre>${escapeHtml(trustRoomDigestText(trustRoom))}</pre>
+        <h2>Buyer Follow-Up Inbox</h2>
+        <p>Open follow-ups: ${followUps.openCount} | Routed: ${followUps.routedCount} | Evidence gaps: ${followUps.evidenceCount} | SLA risk: ${followUps.slaCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Buyer Comment</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Due</th>
+              <th>Source</th>
+              <th>Linked Task</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${followUps.items
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.comment)}</td>
+                    <td class="${item.status === "Needs evidence" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.owner.name)}</td>
+                    <td>${escapeHtml(formatShortDate(item.due))} | ${item.daysLeft} days</td>
+                    <td>${escapeHtml(item.sourceTitle)}</td>
+                    <td>${escapeHtml(item.linkedTaskId ?? "Not linked")}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Follow-Up Digest</h2>
+        <pre>${escapeHtml(followUpDigestText(followUps))}</pre>
         <h2>Deal Desk Analytics</h2>
         <p>Deal risk: ${escapeHtml(deal.riskLabel)} ${deal.riskScore}/100 | Time saved estimate: ${deal.timeSavedHours} hours | Next owner: ${escapeHtml(deal.nextOwner.name)}</p>
         <table>
@@ -5233,14 +5730,15 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v11 created with buyer trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v12 created with buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
   renderPipeline();
   renderTrustRoom();
+  renderFollowUps();
   renderAnalytics();
-  showToast("Review Pack v11 exported.");
+  showToast("Review Pack v12 exported.");
 }
 
 function toCsv(rows) {
@@ -5292,6 +5790,7 @@ function serializeWorkspace() {
     portal: state.portal,
     handoff: state.handoff,
     trustRoom: state.trustRoom,
+    followUps: state.followUps,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -5314,6 +5813,7 @@ function resetWorkspace() {
   closeAccess(false);
   closePortal(false);
   closeTrustRoom(false);
+  closeFollowUp(false);
   closeWorkspace(false);
   closeLibrary();
   render();
