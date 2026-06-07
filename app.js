@@ -1,5 +1,6 @@
-const BUILD_VERSION = "v0.5 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v04";
+const BUILD_VERSION = "v0.6 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v06";
+const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v04"];
 const MEMORY_READY_LABEL = "Saved locally";
 
 const evidenceDocs = [
@@ -80,6 +81,16 @@ const evidenceDocs = [
       "This template is archived and should not be used for new enterprise security answers.",
     ],
   },
+];
+
+const coverageRules = [
+  { category: "Encryption", owner: "Security", terms: ["encrypt", "tls", "aes", "transit", "rest"] },
+  { category: "Access", owner: "Security", terms: ["sso", "mfa", "access", "privileged", "role"] },
+  { category: "Incident", owner: "Security", terms: ["incident", "notification", "breach", "response"] },
+  { category: "AI Governance", owner: "AI Governance", terms: ["ai", "model", "training", "prompt"] },
+  { category: "Privacy", owner: "Legal", terms: ["privacy", "subprocessor", "deletion", "export", "personal data"] },
+  { category: "Continuity", owner: "Operations", terms: ["backup", "rto", "rpo", "disaster", "continuity"] },
+  { category: "Security Testing", owner: "Security", terms: ["vulnerability", "penetration", "scan", "remediation"] },
 ];
 
 const questionSeeds = [
@@ -243,6 +254,20 @@ const draftLibrary = {
   },
 };
 
+function createSeedIntake() {
+  return evidenceDocs.map((doc) => ({
+    id: `seed-${doc.id}`,
+    name: doc.title,
+    type: doc.type,
+    kind: "Evidence",
+    status: "Indexed",
+    category: categoryForEvidence(doc),
+    matches: doc.tags.length,
+    linkedDocId: doc.id,
+    addedAt: doc.updated,
+  }));
+}
+
 function createInitialState() {
   return {
     questions: questionSeeds.map((question) => ({
@@ -258,6 +283,9 @@ function createInitialState() {
     search: "",
     librarySearch: "",
     libraryOpen: false,
+    intake: createSeedIntake(),
+    intakeOpen: false,
+    portalOpen: false,
     audit: [
       {
         action: "Workspace created",
@@ -271,7 +299,7 @@ function createInitialState() {
 function loadWorkspaceState() {
   const fresh = createInitialState();
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = [STORAGE_KEY, ...LEGACY_STORAGE_KEYS].map((key) => localStorage.getItem(key)).find(Boolean);
     if (!raw) return fresh;
     const saved = JSON.parse(raw);
     const workspace = saved?.workspace ?? saved;
@@ -280,6 +308,7 @@ function loadWorkspaceState() {
       ...fresh,
       questions: Array.isArray(workspace.questions) ? workspace.questions.map(normalizeQuestion) : fresh.questions,
       evidence: Array.isArray(workspace.evidence) ? workspace.evidence.map(normalizeEvidence) : fresh.evidence,
+      intake: Array.isArray(workspace.intake) ? workspace.intake.map(normalizeIntakeItem) : fresh.intake,
       activeQuestionId: workspace.activeQuestionId ?? fresh.activeQuestionId,
       activeDocId: workspace.activeDocId ?? fresh.activeDocId,
       audit: Array.isArray(workspace.audit) ? workspace.audit.map(normalizeAuditEntry) : fresh.audit,
@@ -287,6 +316,8 @@ function loadWorkspaceState() {
       filter: "all",
       librarySearch: "",
       libraryOpen: false,
+      intakeOpen: false,
+      portalOpen: false,
     };
   } catch {
     return fresh;
@@ -324,6 +355,20 @@ function normalizeEvidence(doc) {
   };
 }
 
+function normalizeIntakeItem(item) {
+  return {
+    id: String(item.id ?? `intake-saved-${Date.now()}`),
+    name: String(item.name ?? "Imported file"),
+    type: String(item.type ?? "File"),
+    kind: String(item.kind ?? "Evidence"),
+    status: String(item.status ?? "Indexed"),
+    category: String(item.category ?? "Security"),
+    matches: Number.isFinite(Number(item.matches)) ? Number(item.matches) : 0,
+    linkedDocId: item.linkedDocId ? String(item.linkedDocId) : null,
+    addedAt: item.addedAt ?? new Date().toISOString(),
+  };
+}
+
 function normalizeAuditEntry(entry) {
   return {
     action: String(entry.action ?? "Workspace updated"),
@@ -337,11 +382,13 @@ const state = loadWorkspaceState();
 const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
+  intakeNavButton: document.querySelector("#intakeNavButton"),
   evidenceNavButton: document.querySelector("#evidenceNavButton"),
   libraryNavButton: document.querySelector("#libraryNavButton"),
   metricReceived: document.querySelector("#metricReceived"),
   metricApproved: document.querySelector("#metricApproved"),
   metricNeedsEvidence: document.querySelector("#metricNeedsEvidence"),
+  metricCoverage: document.querySelector("#metricCoverage"),
   metricConfidence: document.querySelector("#metricConfidence"),
   nextAction: document.querySelector("#nextAction strong"),
   questionCount: document.querySelector("#questionCount"),
@@ -362,6 +409,7 @@ const elements = {
   approveButton: document.querySelector("#approveButton"),
   needsEvidenceButton: document.querySelector("#needsEvidenceButton"),
   copyButton: document.querySelector("#copyButton"),
+  portalCopyButton: document.querySelector("#portalCopyButton"),
   riskList: document.querySelector("#riskList"),
   sourceList: document.querySelector("#sourceList"),
   sourceCount: document.querySelector("#sourceCount"),
@@ -377,6 +425,17 @@ const elements = {
   refreshDraftsButton: document.querySelector("#refreshDraftsButton"),
   exportCsvButton: document.querySelector("#exportCsvButton"),
   exportDocButton: document.querySelector("#exportDocButton"),
+  intakeBackdrop: document.querySelector("#intakeBackdrop"),
+  intakeDrawer: document.querySelector("#intakeDrawer"),
+  closeIntakeButton: document.querySelector("#closeIntakeButton"),
+  intakeEvidenceButton: document.querySelector("#intakeEvidenceButton"),
+  intakeQuestionnaireButton: document.querySelector("#intakeQuestionnaireButton"),
+  intakeCount: document.querySelector("#intakeCount"),
+  intakeCoverage: document.querySelector("#intakeCoverage"),
+  coverageSummary: document.querySelector("#coverageSummary"),
+  coverageMap: document.querySelector("#coverageMap"),
+  intakeStatus: document.querySelector("#intakeStatus"),
+  intakeList: document.querySelector("#intakeList"),
   libraryBackdrop: document.querySelector("#libraryBackdrop"),
   libraryDrawer: document.querySelector("#libraryDrawer"),
   closeLibraryButton: document.querySelector("#closeLibraryButton"),
@@ -385,6 +444,19 @@ const elements = {
   libraryCount: document.querySelector("#libraryCount"),
   memoryStatus: document.querySelector("#memoryStatus"),
   resetWorkspaceButton: document.querySelector("#resetWorkspaceButton"),
+  portalBackdrop: document.querySelector("#portalBackdrop"),
+  portalDrawer: document.querySelector("#portalDrawer"),
+  closePortalButton: document.querySelector("#closePortalButton"),
+  portalStatus: document.querySelector("#portalStatus"),
+  portalConfidence: document.querySelector("#portalConfidence"),
+  portalQuestion: document.querySelector("#portalQuestion"),
+  portalAnswer: document.querySelector("#portalAnswer"),
+  portalSourceCount: document.querySelector("#portalSourceCount"),
+  portalCitations: document.querySelector("#portalCitations"),
+  portalRiskStatus: document.querySelector("#portalRiskStatus"),
+  copyPortalAnswerButton: document.querySelector("#copyPortalAnswerButton"),
+  copyPortalCitationsButton: document.querySelector("#copyPortalCitationsButton"),
+  copyPortalFullButton: document.querySelector("#copyPortalFullButton"),
   toast: document.querySelector("#toast"),
 };
 
@@ -408,6 +480,7 @@ function init() {
 
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
+  elements.intakeNavButton.addEventListener("click", openIntake);
   elements.evidenceNavButton.addEventListener("click", () => activateWorkspaceNav("evidence"));
   elements.libraryNavButton.addEventListener("click", openLibrary);
 
@@ -439,13 +512,20 @@ function bindEvents() {
     renderQuestionList();
     renderActiveStatus(question);
     renderSealSummary(question);
+    renderIntake();
     renderLibrary();
+    renderPortalCopy();
     schedulePersist();
   });
 
   elements.approveButton.addEventListener("click", approveActiveQuestion);
   elements.needsEvidenceButton.addEventListener("click", markActiveNeedsEvidence);
   elements.copyButton.addEventListener("click", copyActiveAnswer);
+  elements.portalCopyButton.addEventListener("click", openPortalCopy);
+  elements.closeIntakeButton.addEventListener("click", closeIntake);
+  elements.intakeBackdrop.addEventListener("click", closeIntake);
+  elements.intakeEvidenceButton.addEventListener("click", () => elements.evidenceInput.click());
+  elements.intakeQuestionnaireButton.addEventListener("click", () => elements.questionnaireInput.click());
   elements.closeLibraryButton.addEventListener("click", closeLibrary);
   elements.libraryBackdrop.addEventListener("click", closeLibrary);
   elements.librarySearch.addEventListener("input", (event) => {
@@ -453,6 +533,11 @@ function bindEvents() {
     renderLibrary();
   });
   elements.resetWorkspaceButton.addEventListener("click", resetWorkspace);
+  elements.closePortalButton.addEventListener("click", closePortal);
+  elements.portalBackdrop.addEventListener("click", closePortal);
+  elements.copyPortalAnswerButton.addEventListener("click", copyPortalAnswer);
+  elements.copyPortalCitationsButton.addEventListener("click", copyPortalCitations);
+  elements.copyPortalFullButton.addEventListener("click", copyPortalFull);
   elements.uploadEvidenceButton.addEventListener("click", () => elements.evidenceInput.click());
   elements.uploadQuestionnaireButton.addEventListener("click", () => elements.questionnaireInput.click());
   elements.evidenceInput.addEventListener("change", importEvidenceFiles);
@@ -462,7 +547,10 @@ function bindEvents() {
   elements.exportDocButton.addEventListener("click", exportReviewPack);
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && state.libraryOpen) closeLibrary();
+    if (event.key !== "Escape") return;
+    if (state.libraryOpen) closeLibrary();
+    if (state.intakeOpen) closeIntake();
+    if (state.portalOpen) closePortal();
   });
 }
 
@@ -480,7 +568,9 @@ function render() {
   renderActiveQuestion();
   renderEvidence();
   renderAudit();
+  renderIntake();
   renderLibrary();
+  renderPortalCopy();
 }
 
 function renderMetrics() {
@@ -495,6 +585,7 @@ function renderMetrics() {
   elements.metricReceived.textContent = received;
   elements.metricApproved.textContent = approved;
   elements.metricNeedsEvidence.textContent = needsEvidence;
+  elements.metricCoverage.textContent = `${coverageSnapshot().score}%`;
   elements.metricConfidence.textContent = `${average}%`;
 
   const next = state.questions.find((question) => question.status === "needs-evidence")
@@ -538,6 +629,7 @@ function renderQuestionList() {
       renderQuestionList();
       renderActiveQuestion();
       renderEvidence();
+      renderPortalCopy();
       schedulePersist();
     });
     elements.questionList.append(button);
@@ -708,6 +800,8 @@ function renderAudit() {
 
 function activateWorkspaceNav(target) {
   closeLibrary(false);
+  closeIntake(false);
+  closePortal(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -720,12 +814,34 @@ function activateWorkspaceNav(target) {
 }
 
 function setActiveNav(activeButton) {
-  [elements.reviewNavButton, elements.evidenceNavButton, elements.libraryNavButton].forEach((button) => {
+  [elements.reviewNavButton, elements.intakeNavButton, elements.evidenceNavButton, elements.libraryNavButton].forEach((button) => {
     button.classList.toggle("is-active", button === activeButton);
   });
 }
 
+function openIntake() {
+  closeLibrary(false);
+  closePortal(false);
+  state.intakeOpen = true;
+  setActiveNav(elements.intakeNavButton);
+  elements.intakeBackdrop.hidden = false;
+  elements.intakeDrawer.classList.add("is-open");
+  elements.intakeDrawer.setAttribute("aria-hidden", "false");
+  renderIntake();
+}
+
+function closeIntake(activateReview = true) {
+  if (!state.intakeOpen && elements.intakeDrawer.getAttribute("aria-hidden") === "true") return;
+  state.intakeOpen = false;
+  elements.intakeDrawer.classList.remove("is-open");
+  elements.intakeDrawer.setAttribute("aria-hidden", "true");
+  elements.intakeBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openLibrary() {
+  closeIntake(false);
+  closePortal(false);
   state.libraryOpen = true;
   setActiveNav(elements.libraryNavButton);
   elements.libraryBackdrop.hidden = false;
@@ -742,6 +858,103 @@ function closeLibrary(activateReview = true) {
   elements.libraryDrawer.setAttribute("aria-hidden", "true");
   elements.libraryBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openPortalCopy() {
+  closeIntake(false);
+  closeLibrary(false);
+  state.portalOpen = true;
+  elements.portalBackdrop.hidden = false;
+  elements.portalDrawer.classList.add("is-open");
+  elements.portalDrawer.setAttribute("aria-hidden", "false");
+  renderPortalCopy();
+  elements.portalAnswer.focus();
+}
+
+function closePortal(activateReview = true) {
+  if (!state.portalOpen && elements.portalDrawer.getAttribute("aria-hidden") === "true") return;
+  state.portalOpen = false;
+  elements.portalDrawer.classList.remove("is-open");
+  elements.portalDrawer.setAttribute("aria-hidden", "true");
+  elements.portalBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderIntake() {
+  const coverage = coverageSnapshot();
+  elements.intakeCount.textContent = state.intake.length;
+  elements.intakeCoverage.textContent = `${coverage.score}%`;
+  elements.coverageSummary.textContent = `${coverage.ready}/${coverage.items.length} ready`;
+  elements.intakeStatus.textContent = `${state.intake.filter((item) => item.status !== "Indexed").length} new`;
+
+  renderCoverageMap(coverage.items);
+  renderIntakeList();
+}
+
+function renderCoverageMap(items) {
+  elements.coverageMap.innerHTML = "";
+
+  items.forEach((item) => {
+    const card = document.createElement("button");
+    card.className = `coverage-card is-${item.status}`;
+    card.type = "button";
+    card.innerHTML = `
+      <span>${escapeHtml(item.category)}</span>
+      <strong>${escapeHtml(formatCoverageStatus(item.status))}</strong>
+      <small>${item.sources} ${item.sources === 1 ? "source" : "sources"} | ${item.openRisks} ${item.openRisks === 1 ? "risk" : "risks"}</small>
+    `;
+    card.addEventListener("click", () => {
+      state.filter = item.openRisks > 0 ? "risk" : "all";
+      state.search = item.category.toLowerCase();
+      elements.statusFilter.value = state.filter;
+      elements.questionSearch.value = state.search;
+      closeIntake();
+      renderQuestionList();
+    });
+    elements.coverageMap.append(card);
+  });
+}
+
+function renderIntakeList() {
+  elements.intakeList.innerHTML = "";
+  const items = [...state.intake].sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
+
+  if (items.length === 0) {
+    elements.intakeList.append(emptyState("No intake files"));
+    return;
+  }
+
+  items.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "intake-item";
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.name)}</strong>
+        <span class="source-type">${escapeHtml(item.type)}</span>
+      </header>
+      <div class="intake-meta">
+        <span class="fact-chip">${escapeHtml(item.kind)}</span>
+        <span class="fact-chip ${intakeStatusClass(item.status)}">${escapeHtml(item.status)}</span>
+        <span class="fact-chip">${escapeHtml(item.category)}</span>
+      </div>
+      <footer>
+        <span>${item.matches} ${item.kind === "Questionnaire" ? "questions" : "matches"}</span>
+        ${item.linkedDocId ? '<button class="secondary-button" type="button" data-open-doc>Open</button>' : ""}
+      </footer>
+    `;
+
+    const openButton = card.querySelector("[data-open-doc]");
+    if (openButton) {
+      openButton.addEventListener("click", () => {
+        state.activeDocId = item.linkedDocId;
+        closeIntake();
+        renderEvidence();
+        schedulePersist();
+      });
+    }
+
+    elements.intakeList.append(card);
+  });
 }
 
 function renderLibrary() {
@@ -798,6 +1011,74 @@ function renderLibrary() {
 
       elements.libraryList.append(item);
     });
+}
+
+function renderPortalCopy() {
+  const question = getActiveQuestion();
+  if (!question) return;
+
+  const sources = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+  elements.portalStatus.textContent = formatStatus(question.status);
+  elements.portalConfidence.textContent = `${question.confidence ?? 0}%`;
+  elements.portalQuestion.textContent = question.text;
+  elements.portalAnswer.value = question.answer ?? "";
+  elements.portalSourceCount.textContent = `${sources.length} ${sources.length === 1 ? "source" : "sources"}`;
+  elements.portalCitations.innerHTML = "";
+
+  if (sources.length === 0) {
+    elements.portalCitations.append(emptyState("No citations attached"));
+  } else {
+    sources.forEach((source) => {
+      const citation = document.createElement("article");
+      citation.className = "portal-citation";
+      citation.innerHTML = `
+        <strong>${escapeHtml(source.title)}</strong>
+        <span>${escapeHtml(source.type)} | ${escapeHtml(freshnessLabel(source.updated))}</span>
+        <p>${escapeHtml(bestExcerptForQuestion(source, question.text))}</p>
+      `;
+      elements.portalCitations.append(citation);
+    });
+  }
+
+  const risks = question.risks ?? [];
+  elements.portalRiskStatus.innerHTML = risks.length
+    ? risks.map((risk) => `<div class="risk-item"><svg aria-hidden="true"><use href="#icon-warning"></use></svg><span>${escapeHtml(risk)}</span></div>`).join("")
+    : '<div class="empty-state compact">No review notes</div>';
+}
+
+function copyPortalAnswer() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  copyText(question.answer ?? "", "Portal answer copied.");
+}
+
+function copyPortalCitations() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  copyText(portalCitationsText(question), "Portal citations copied.");
+}
+
+function copyPortalFull() {
+  const question = getActiveQuestion();
+  if (!question) return;
+  copyText(portalFullText(question), "Full portal response copied.");
+}
+
+function portalCitationsText(question) {
+  const sources = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+  return sources
+    .map((source) => `${source.title} (${source.type}, ${freshnessLabel(source.updated)}): ${bestExcerptForQuestion(source, question.text)}`)
+    .join("\n");
+}
+
+function portalFullText(question) {
+  const risks = (question.risks ?? []).join("; ") || "No review notes";
+  return [
+    `Question: ${question.text}`,
+    `Answer: ${question.answer ?? ""}`,
+    `Citations:\n${portalCitationsText(question) || "No citations attached"}`,
+    `Review status: ${formatStatus(question.status)} | Confidence: ${question.confidence ?? 0}% | ${risks}`,
+  ].join("\n\n");
 }
 
 function addQuestion(rawText) {
@@ -942,6 +1223,53 @@ function sourceFreshnessSummary(sources) {
   return "Current";
 }
 
+function coverageSnapshot() {
+  const items = coverageRules.map(coverageItem);
+  const score = Math.round(items.reduce((sum, item) => sum + item.score, 0) / items.length);
+  const ready = items.filter((item) => item.status === "ready").length;
+  return { items, ready, score };
+}
+
+function coverageItem(rule) {
+  const docs = state.evidence.filter((doc) => evidenceMatchesRule(doc, rule));
+  const questions = state.questions.filter((question) => question.category === rule.category);
+  const openRisks = questions.filter((question) => question.status === "needs-evidence" || (question.risks ?? []).length > 0).length;
+  const staleSources = docs.filter((doc) => daysSince(doc.updated) >= 365).length;
+
+  if (docs.length === 0) {
+    return { ...rule, sources: 0, openRisks, status: "missing", score: 20 };
+  }
+
+  if (staleSources === docs.length) {
+    return { ...rule, sources: docs.length, openRisks, status: "stale", score: 45 };
+  }
+
+  if (openRisks > 0 || docs.length < 2 || staleSources > 0) {
+    return { ...rule, sources: docs.length, openRisks, status: "weak", score: 70 };
+  }
+
+  return { ...rule, sources: docs.length, openRisks, status: "ready", score: 100 };
+}
+
+function evidenceMatchesRule(doc, rule) {
+  const haystack = `${doc.title} ${doc.type} ${doc.owner} ${doc.tags.join(" ")} ${doc.excerpts.join(" ")}`.toLowerCase();
+  return rule.terms.some((term) => haystack.includes(term));
+}
+
+function categoryForEvidence(doc) {
+  return coverageRules.find((rule) => evidenceMatchesRule(doc, rule))?.category ?? doc.owner ?? "Security";
+}
+
+function formatCoverageStatus(status) {
+  const labels = {
+    ready: "Ready",
+    weak: "Weak",
+    stale: "Stale",
+    missing: "Missing",
+  };
+  return labels[status] ?? status;
+}
+
 function composeGenericAnswer(text, sourceIds, category) {
   const sources = sourceIds.map(getEvidenceById).filter(Boolean);
   if (sources.length === 0) {
@@ -989,6 +1317,8 @@ function selectNextOpenQuestion() {
   renderQuestionList();
   renderActiveQuestion();
   renderEvidence();
+  renderPortalCopy();
+  schedulePersist();
 }
 
 function markActiveNeedsEvidence() {
@@ -1028,10 +1358,11 @@ async function importEvidenceFiles(event) {
   if (files.length === 0) return;
 
   for (const file of files) {
-    const text = await file.text();
+    const text = await readFilePreview(file);
     const doc = createEvidenceFromFile(file.name, text);
     state.evidence.unshift(doc);
     state.activeDocId = doc.id;
+    state.intake.unshift(createIntakeItem(file, "Evidence", text, doc.id, doc.tags.length));
   }
 
   addAudit("Evidence imported", `${files.length} file${files.length === 1 ? "" : "s"} added to vault.`);
@@ -1047,8 +1378,9 @@ async function importQuestionnaireFiles(event) {
 
   let count = 0;
   for (const file of files) {
-    const text = await file.text();
-    parseQuestionLines(text).forEach((questionText) => {
+    const text = await readFilePreview(file);
+    const questions = parseQuestionLines(text);
+    questions.forEach((questionText) => {
       const draft = draftFromText(questionText);
       state.questions.push({
         id: `q-import-${Date.now()}-${count}`,
@@ -1064,6 +1396,7 @@ async function importQuestionnaireFiles(event) {
       });
       count += 1;
     });
+    state.intake.unshift(createIntakeItem(file, "Questionnaire", text, null, questions.length));
   }
 
   if (count > 0) {
@@ -1094,6 +1427,38 @@ function createEvidenceFromFile(name, text) {
     owner: "Imported",
     tags: keywordTerms(text.toLowerCase()).slice(0, 12),
     excerpts: excerpts.length > 0 ? excerpts : ["Imported evidence file is available for reviewer validation."],
+  };
+}
+
+async function readFilePreview(file) {
+  const extension = fileExtension(file.name);
+  const metadata = `${file.name} ${extension} evidence questionnaire policy soc report dpa security privacy continuity access incident ai`;
+
+  if (["pdf", "docx", "xlsx"].includes(extension)) {
+    return metadata;
+  }
+
+  try {
+    return await file.text();
+  } catch {
+    return metadata;
+  }
+}
+
+function createIntakeItem(file, kind, text, linkedDocId, matches) {
+  const extension = fileExtension(file.name).toUpperCase() || "File";
+  const isPreview = ["PDF", "DOCX", "XLSX"].includes(extension);
+
+  return {
+    id: `intake-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    name: file.name.replace(/\.[^.]+$/, ""),
+    type: extension,
+    kind,
+    status: isPreview ? "Preview" : "Parsed",
+    category: kind === "Questionnaire" ? "Buyer Review" : inferCategory(`${file.name} ${text}`.toLowerCase()),
+    matches,
+    linkedDocId,
+    addedAt: new Date().toISOString(),
   };
 }
 
@@ -1140,6 +1505,7 @@ function exportCsv() {
 }
 
 function exportReviewPack() {
+  const coverage = coverageSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -1153,11 +1519,39 @@ function exportReviewPack() {
           th, td { border: 1px solid #cfd8d2; padding: 8px; vertical-align: top; }
           th { background: #eef3ef; text-align: left; }
           .risk { color: #9a6700; }
+          .ok { color: #00786d; }
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack</h1>
+        <h1>AnswerSeal Review Pack v2</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
+        <h2>Evidence Coverage</h2>
+        <p>${coverage.score}% coverage across ${coverage.items.length} trust categories.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Sources</th>
+              <th>Open Risks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${coverage.items
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.category)}</td>
+                    <td class="${item.status === "ready" ? "ok" : "risk"}">${escapeHtml(formatCoverageStatus(item.status))}</td>
+                    <td>${item.sources}</td>
+                    <td>${item.openRisks}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Questionnaire Responses</h2>
         <table>
           <thead>
             <tr>
@@ -1165,6 +1559,8 @@ function exportReviewPack() {
               <th>Status</th>
               <th>Answer</th>
               <th>Citations</th>
+              <th>Freshness</th>
+              <th>Library Ref</th>
               <th>Notes</th>
             </tr>
           </thead>
@@ -1177,6 +1573,8 @@ function exportReviewPack() {
                     <td>${escapeHtml(formatStatus(question.status))}</td>
                     <td>${escapeHtml(question.answer)}</td>
                     <td>${escapeHtml((question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "))}</td>
+                    <td>${escapeHtml(sourceFreshnessSummary((question.sources ?? []).map(getEvidenceById).filter(Boolean)))}</td>
+                    <td>${escapeHtml(question.approvedAt ? `AS-LIB-${question.id}` : "Not approved")}</td>
                     <td class="risk">${escapeHtml((question.risks ?? []).join("; "))}</td>
                   </tr>
                 `,
@@ -1189,9 +1587,9 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Word-compatible response pack created.");
+  addAudit("Review pack exported", "Review Pack v2 created with coverage and library references.");
   renderAudit();
-  showToast("Review pack exported.");
+  showToast("Review Pack v2 exported.");
 }
 
 function toCsv(rows) {
@@ -1237,6 +1635,7 @@ function serializeWorkspace() {
   return {
     questions: state.questions,
     evidence: state.evidence,
+    intake: state.intake,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -1250,9 +1649,12 @@ function resetWorkspace() {
   const fresh = createInitialState();
   Object.assign(state, fresh);
   localStorage.removeItem(STORAGE_KEY);
+  LEGACY_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
   elements.questionSearch.value = "";
   elements.statusFilter.value = "all";
   elements.librarySearch.value = "";
+  closeIntake(false);
+  closePortal(false);
   closeLibrary();
   render();
   setMemoryStatus("Reset");
@@ -1347,6 +1749,16 @@ function freshnessClass(value) {
   if (age < 90) return "is-fresh";
   if (age >= 365) return "is-stale";
   return "";
+}
+
+function intakeStatusClass(status) {
+  if (status === "Parsed" || status === "Indexed") return "is-fresh";
+  if (status === "Preview") return "is-medium";
+  return "";
+}
+
+function fileExtension(name) {
+  return name.split(".").pop()?.toLowerCase() ?? "";
 }
 
 function daysSince(value) {

@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.6 Alpha - Evidence Intake
+
+Phase: Evidence Intake
+
+- Added an Evidence Intake drawer with parsed and preview file states.
+- Added an evidence coverage map for ready, weak, stale, and missing trust categories.
+- Added Portal Copy Mode for copying buyer-ready answers, citations, or full responses.
+- Upgraded review pack export to Review Pack v2 with coverage and library references.
+- Updated visible build labels and the build phases page with the v0.7 Private Workspace plan.
+
 ## v0.5 Alpha - Build Phases
 
 Phase: Build Phases
