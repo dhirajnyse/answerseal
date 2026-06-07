@@ -3,5 +3,6 @@ Thumbs.db
 *.log
 qa-*.png
 .edge-*
+.chrome-*
 node_modules/
 dist/

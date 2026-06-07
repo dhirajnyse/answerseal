@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.6 Alpha
+**Current version:** v0.7 Alpha
 
-**Current phase:** Evidence Intake
+**Current phase:** Private Workspace
 
 ## Brand
 
@@ -38,11 +38,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
+- Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
+- Secure handoff summary with copyable pilot link and workspace readiness score
 - Evidence vault with freshness signals and selected-source detail
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v2 export
+- CSV export and Word-compatible Review Pack v3 export with workspace routing
 
 ## Project Files
 
@@ -60,14 +62,14 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.7 Alpha - Private Workspace
+## Next Phase: v0.8 Alpha - Pilot Data Room
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
-- Add workspace accounts for pilot teams
-- Add owner routing for security, legal, AI governance, and operations questions
-- Add reviewer roles for drafter, approver, and admin flows
-- Add secure handoff links for workspace summaries
-- Add private cloud workspace storage and user accounts
+- Add data room folders for questionnaires, policies, SOC reports, contracts, and exports
+- Add reviewer notes on evidence files before reuse
+- Add a workspace activity timeline for imports, routing, approvals, and handoffs
+- Add a pilot close checklist for conversion into paid workspaces
+- Add private cloud workspace storage and user accounts after the pilot flow is proven
 - Add AI drafting against a retrieval index with per-claim citations
 
 ## License

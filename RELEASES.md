@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.7 Alpha - Private Workspace
+
+Phase: Private Workspace
+
+- Added a Private Workspace drawer with account context, access mode, and reviewer role visibility.
+- Added owner routing for security, legal, AI governance, and operations questions.
+- Added an Owner Routing metric and active-question Route Owner action.
+- Added a secure handoff summary with copyable link and workspace readiness score.
+- Upgraded review pack export to Review Pack v3 with workspace routing and handoff readiness.
+- Updated the build phases page with the v0.8 Pilot Data Room plan.
+
 ## v0.6 Alpha - Evidence Intake
 
 Phase: Evidence Intake

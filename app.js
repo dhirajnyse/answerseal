@@ -1,7 +1,48 @@
-const BUILD_VERSION = "v0.6 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v06";
-const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v04"];
+const BUILD_VERSION = "v0.7 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v07";
+const LEGACY_STORAGE_KEYS = ["answerseal.workspace.v06", "answerseal.workspace.v04"];
 const MEMORY_READY_LABEL = "Saved locally";
+
+const workspaceAccount = {
+  company: "Aster Health",
+  workspaceId: "AS-PRV-2407",
+  plan: "Private pilot",
+  access: "Invite only",
+  region: "Browser demo",
+  currentRole: "Trust Lead",
+  handoffUrl: "https://answerseal.app/secure/AS-HANDOFF-2407",
+  expires: "June 14, 2026",
+  members: [
+    {
+      id: "owner-security",
+      name: "Maya Shah",
+      team: "Security",
+      role: "Approver",
+      categories: ["Encryption", "Access", "Incident", "Security Testing"],
+    },
+    {
+      id: "owner-ai",
+      name: "Omar Khan",
+      team: "AI Governance",
+      role: "Reviewer",
+      categories: ["AI Governance"],
+    },
+    {
+      id: "owner-legal",
+      name: "Nina Patel",
+      team: "Legal",
+      role: "Approver",
+      categories: ["Privacy"],
+    },
+    {
+      id: "owner-ops",
+      name: "Leo Morgan",
+      team: "Operations",
+      role: "Reviewer",
+      categories: ["Continuity"],
+    },
+  ],
+};
 
 const evidenceDocs = [
   {
@@ -273,6 +314,9 @@ function createInitialState() {
     questions: questionSeeds.map((question) => ({
       ...question,
       ...draftLibrary[question.id],
+      assigneeId: ownerToMemberId(question.owner),
+      routeStatus: draftLibrary[question.id]?.status === "needs-evidence" ? "Needs owner" : "Assigned",
+      routedAt: null,
       custom: false,
       approvedAt: null,
     })),
@@ -285,14 +329,25 @@ function createInitialState() {
     libraryOpen: false,
     intake: createSeedIntake(),
     intakeOpen: false,
+    workspaceOpen: false,
     portalOpen: false,
+    handoff: createInitialHandoff(),
     audit: [
       {
         action: "Workspace created",
-        detail: "Aster Health questionnaire imported with seeded evidence.",
+        detail: "Aster Health private workspace created with seeded evidence and owner routing.",
         at: new Date().toISOString(),
       },
     ],
+  };
+}
+
+function createInitialHandoff() {
+  return {
+    status: "Draft",
+    url: workspaceAccount.handoffUrl,
+    expires: workspaceAccount.expires,
+    preparedAt: null,
   };
 }
 
@@ -312,11 +367,13 @@ function loadWorkspaceState() {
       activeQuestionId: workspace.activeQuestionId ?? fresh.activeQuestionId,
       activeDocId: workspace.activeDocId ?? fresh.activeDocId,
       audit: Array.isArray(workspace.audit) ? workspace.audit.map(normalizeAuditEntry) : fresh.audit,
+      handoff: normalizeHandoff(workspace.handoff ?? fresh.handoff),
       search: "",
       filter: "all",
       librarySearch: "",
       libraryOpen: false,
       intakeOpen: false,
+      workspaceOpen: false,
       portalOpen: false,
     };
   } catch {
@@ -338,6 +395,9 @@ function normalizeQuestion(question) {
     confidence: Number.isFinite(Number(question.confidence)) ? Number(question.confidence) : 0,
     status: ["draft", "approved", "needs-evidence", "blocked"].includes(question.status) ? question.status : "draft",
     risks: Array.isArray(question.risks) ? question.risks.map(String) : [],
+    assigneeId: String(question.assigneeId ?? ownerToMemberId(question.owner ?? "Security")),
+    routeStatus: String(question.routeStatus ?? (question.status === "needs-evidence" ? "Needs owner" : "Assigned")),
+    routedAt: question.routedAt ?? null,
     custom: Boolean(question.custom),
     approvedAt: question.approvedAt ?? null,
   };
@@ -377,17 +437,29 @@ function normalizeAuditEntry(entry) {
   };
 }
 
+function normalizeHandoff(handoff) {
+  const fresh = createInitialHandoff();
+  return {
+    status: String(handoff?.status ?? fresh.status),
+    url: String(handoff?.url ?? fresh.url),
+    expires: String(handoff?.expires ?? fresh.expires),
+    preparedAt: handoff?.preparedAt ?? null,
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
+  workspaceNavButton: document.querySelector("#workspaceNavButton"),
   intakeNavButton: document.querySelector("#intakeNavButton"),
   evidenceNavButton: document.querySelector("#evidenceNavButton"),
   libraryNavButton: document.querySelector("#libraryNavButton"),
   metricReceived: document.querySelector("#metricReceived"),
   metricApproved: document.querySelector("#metricApproved"),
   metricNeedsEvidence: document.querySelector("#metricNeedsEvidence"),
+  metricRouted: document.querySelector("#metricRouted"),
   metricCoverage: document.querySelector("#metricCoverage"),
   metricConfidence: document.querySelector("#metricConfidence"),
   nextAction: document.querySelector("#nextAction strong"),
@@ -408,6 +480,7 @@ const elements = {
   sealFreshness: document.querySelector("#sealFreshness"),
   approveButton: document.querySelector("#approveButton"),
   needsEvidenceButton: document.querySelector("#needsEvidenceButton"),
+  routeOwnerButton: document.querySelector("#routeOwnerButton"),
   copyButton: document.querySelector("#copyButton"),
   portalCopyButton: document.querySelector("#portalCopyButton"),
   riskList: document.querySelector("#riskList"),
@@ -436,6 +509,25 @@ const elements = {
   coverageMap: document.querySelector("#coverageMap"),
   intakeStatus: document.querySelector("#intakeStatus"),
   intakeList: document.querySelector("#intakeList"),
+  workspaceBackdrop: document.querySelector("#workspaceBackdrop"),
+  workspaceDrawer: document.querySelector("#workspaceDrawer"),
+  closeWorkspaceButton: document.querySelector("#closeWorkspaceButton"),
+  workspaceCompany: document.querySelector("#workspaceCompany"),
+  workspaceId: document.querySelector("#workspaceId"),
+  workspacePlan: document.querySelector("#workspacePlan"),
+  workspaceAccess: document.querySelector("#workspaceAccess"),
+  workspaceRole: document.querySelector("#workspaceRole"),
+  workspaceRouted: document.querySelector("#workspaceRouted"),
+  workspaceOpenRisks: document.querySelector("#workspaceOpenRisks"),
+  workspaceReady: document.querySelector("#workspaceReady"),
+  workspaceOwnerList: document.querySelector("#workspaceOwnerList"),
+  handoffStatus: document.querySelector("#handoffStatus"),
+  handoffExpiry: document.querySelector("#handoffExpiry"),
+  handoffLink: document.querySelector("#handoffLink"),
+  handoffSummary: document.querySelector("#handoffSummary"),
+  prepareHandoffButton: document.querySelector("#prepareHandoffButton"),
+  copyHandoffLinkButton: document.querySelector("#copyHandoffLinkButton"),
+  copyHandoffSummaryButton: document.querySelector("#copyHandoffSummaryButton"),
   libraryBackdrop: document.querySelector("#libraryBackdrop"),
   libraryDrawer: document.querySelector("#libraryDrawer"),
   closeLibraryButton: document.querySelector("#closeLibraryButton"),
@@ -473,13 +565,20 @@ function init() {
   elements.questionSearch.value = state.search;
   elements.statusFilter.value = state.filter;
   elements.librarySearch.value = state.librarySearch;
+  elements.workspaceCompany.textContent = workspaceAccount.company;
+  elements.workspaceId.textContent = workspaceAccount.workspaceId;
+  elements.workspacePlan.textContent = workspaceAccount.plan;
+  elements.workspaceAccess.textContent = workspaceAccount.access;
+  elements.workspaceRole.textContent = workspaceAccount.currentRole;
   setMemoryStatus(MEMORY_READY_LABEL);
   bindEvents();
   render();
+  applyInitialHash();
 }
 
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
+  elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.intakeNavButton.addEventListener("click", openIntake);
   elements.evidenceNavButton.addEventListener("click", () => activateWorkspaceNav("evidence"));
   elements.libraryNavButton.addEventListener("click", openLibrary);
@@ -513,6 +612,7 @@ function bindEvents() {
     renderActiveStatus(question);
     renderSealSummary(question);
     renderIntake();
+    renderWorkspace();
     renderLibrary();
     renderPortalCopy();
     schedulePersist();
@@ -520,8 +620,14 @@ function bindEvents() {
 
   elements.approveButton.addEventListener("click", approveActiveQuestion);
   elements.needsEvidenceButton.addEventListener("click", markActiveNeedsEvidence);
+  elements.routeOwnerButton.addEventListener("click", routeActiveQuestion);
   elements.copyButton.addEventListener("click", copyActiveAnswer);
   elements.portalCopyButton.addEventListener("click", openPortalCopy);
+  elements.closeWorkspaceButton.addEventListener("click", closeWorkspace);
+  elements.workspaceBackdrop.addEventListener("click", closeWorkspace);
+  elements.prepareHandoffButton.addEventListener("click", prepareHandoff);
+  elements.copyHandoffLinkButton.addEventListener("click", copyHandoffLink);
+  elements.copyHandoffSummaryButton.addEventListener("click", copyHandoffSummary);
   elements.closeIntakeButton.addEventListener("click", closeIntake);
   elements.intakeBackdrop.addEventListener("click", closeIntake);
   elements.intakeEvidenceButton.addEventListener("click", () => elements.evidenceInput.click());
@@ -550,8 +656,19 @@ function bindEvents() {
     if (event.key !== "Escape") return;
     if (state.libraryOpen) closeLibrary();
     if (state.intakeOpen) closeIntake();
+    if (state.workspaceOpen) closeWorkspace();
     if (state.portalOpen) closePortal();
   });
+
+  window.addEventListener("hashchange", applyInitialHash);
+}
+
+function applyInitialHash() {
+  const hash = window.location.hash.replace("#", "").toLowerCase();
+  if (hash === "workspace") openWorkspace();
+  if (hash === "intake") openIntake();
+  if (hash === "library") openLibrary();
+  if (hash === "portal") openPortalCopy();
 }
 
 function getActiveQuestion() {
@@ -569,6 +686,7 @@ function render() {
   renderEvidence();
   renderAudit();
   renderIntake();
+  renderWorkspace();
   renderLibrary();
   renderPortalCopy();
 }
@@ -577,6 +695,7 @@ function renderMetrics() {
   const received = state.questions.length;
   const approved = state.questions.filter((question) => question.status === "approved").length;
   const needsEvidence = state.questions.filter((question) => question.status === "needs-evidence").length;
+  const routing = ownerRoutingSnapshot();
   const average =
     received === 0
       ? 0
@@ -585,6 +704,7 @@ function renderMetrics() {
   elements.metricReceived.textContent = received;
   elements.metricApproved.textContent = approved;
   elements.metricNeedsEvidence.textContent = needsEvidence;
+  elements.metricRouted.textContent = `${routing.routed}/${received}`;
   elements.metricCoverage.textContent = `${coverageSnapshot().score}%`;
   elements.metricConfidence.textContent = `${average}%`;
 
@@ -606,17 +726,20 @@ function renderQuestionList() {
   }
 
   questions.forEach((question) => {
+    const member = memberForQuestion(question);
     const button = document.createElement("button");
     button.className = `question-card${question.id === state.activeQuestionId ? " is-active" : ""}`;
     button.type = "button";
     button.innerHTML = `
       <div class="question-meta">
         <span>${escapeHtml(question.category)}</span>
+        <span>${escapeHtml(member.name)}</span>
         <span>${escapeHtml(question.portal)}</span>
       </div>
       <strong>${escapeHtml(question.text)}</strong>
       <div class="question-footer">
         <span class="question-status is-${question.status}">${formatStatus(question.status)}</span>
+        <span class="route-mini ${routeStatusClass(question.routeStatus)}">${escapeHtml(routeStatusLabel(question.routeStatus))}</span>
         <span class="confidence-mini">
           <span class="confidence-dot ${confidenceClass(question.confidence)}"></span>
           ${question.confidence}%
@@ -656,8 +779,9 @@ function renderActiveQuestion() {
   }
 
   state.activeQuestionId = question.id;
+  const member = memberForQuestion(question);
   elements.activeQuestionTitle.textContent = question.text;
-  elements.activeQuestionMeta.textContent = `${question.category} | ${question.owner} | Due ${formatShortDate(question.due)}`;
+  elements.activeQuestionMeta.textContent = `${question.category} | ${member.name} | ${member.role} | Due ${formatShortDate(question.due)}`;
   elements.answerDraft.value = question.answer ?? "";
   renderActiveStatus(question);
   renderConfidence(question);
@@ -799,6 +923,7 @@ function renderAudit() {
 }
 
 function activateWorkspaceNav(target) {
+  closeWorkspace(false);
   closeLibrary(false);
   closeIntake(false);
   closePortal(false);
@@ -814,12 +939,34 @@ function activateWorkspaceNav(target) {
 }
 
 function setActiveNav(activeButton) {
-  [elements.reviewNavButton, elements.intakeNavButton, elements.evidenceNavButton, elements.libraryNavButton].forEach((button) => {
+  [elements.reviewNavButton, elements.workspaceNavButton, elements.intakeNavButton, elements.evidenceNavButton, elements.libraryNavButton].forEach((button) => {
     button.classList.toggle("is-active", button === activeButton);
   });
 }
 
+function openWorkspace() {
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.workspaceOpen = true;
+  setActiveNav(elements.workspaceNavButton);
+  elements.workspaceBackdrop.hidden = false;
+  elements.workspaceDrawer.classList.add("is-open");
+  elements.workspaceDrawer.setAttribute("aria-hidden", "false");
+  renderWorkspace();
+}
+
+function closeWorkspace(activateReview = true) {
+  if (!state.workspaceOpen && elements.workspaceDrawer.getAttribute("aria-hidden") === "true") return;
+  state.workspaceOpen = false;
+  elements.workspaceDrawer.classList.remove("is-open");
+  elements.workspaceDrawer.setAttribute("aria-hidden", "true");
+  elements.workspaceBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openIntake() {
+  closeWorkspace(false);
   closeLibrary(false);
   closePortal(false);
   state.intakeOpen = true;
@@ -840,6 +987,7 @@ function closeIntake(activateReview = true) {
 }
 
 function openLibrary() {
+  closeWorkspace(false);
   closeIntake(false);
   closePortal(false);
   state.libraryOpen = true;
@@ -861,6 +1009,7 @@ function closeLibrary(activateReview = true) {
 }
 
 function openPortalCopy() {
+  closeWorkspace(false);
   closeIntake(false);
   closeLibrary(false);
   state.portalOpen = true;
@@ -878,6 +1027,51 @@ function closePortal(activateReview = true) {
   elements.portalDrawer.setAttribute("aria-hidden", "true");
   elements.portalBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderWorkspace() {
+  const routing = ownerRoutingSnapshot();
+  const handoff = handoffReadinessSnapshot();
+
+  elements.workspaceRouted.textContent = `${routing.routed}/${state.questions.length}`;
+  elements.workspaceOpenRisks.textContent = routing.openRisks;
+  elements.workspaceReady.textContent = `${handoff.ready}%`;
+  elements.handoffStatus.textContent = state.handoff.status;
+  elements.handoffExpiry.textContent = state.handoff.expires;
+  elements.handoffLink.textContent = state.handoff.url;
+  elements.handoffSummary.textContent = handoffSummaryText();
+  renderWorkspaceOwners(routing.groups);
+}
+
+function renderWorkspaceOwners(groups) {
+  elements.workspaceOwnerList.innerHTML = "";
+
+  workspaceAccount.members.forEach((member) => {
+    const group = groups.find((item) => item.member.id === member.id) ?? {
+      member,
+      total: 0,
+      openRisks: 0,
+      needsOwner: 0,
+      approved: 0,
+    };
+    const card = document.createElement("article");
+    card.className = "owner-route-card";
+    card.innerHTML = `
+      <div class="role-avatar" aria-hidden="true">${escapeHtml(initials(member.name))}</div>
+      <div>
+        <header>
+          <strong>${escapeHtml(member.name)}</strong>
+          <span>${escapeHtml(member.role)}</span>
+        </header>
+        <p>${escapeHtml(member.team)} | ${group.total} ${group.total === 1 ? "question" : "questions"} | ${group.openRisks} open</p>
+        <div class="owner-load">
+          <span class="route-status ${group.needsOwner > 0 ? "is-needed" : "is-assigned"}">${group.needsOwner > 0 ? `${group.needsOwner} needs owner` : "Assigned"}</span>
+          <span>${group.approved} approved</span>
+        </div>
+      </div>
+    `;
+    elements.workspaceOwnerList.append(card);
+  });
 }
 
 function renderIntake() {
@@ -1134,13 +1328,18 @@ function draftFromText(text) {
     }
   }
 
+  const status = confidence >= 82 && risks.length === 0 ? "draft" : "needs-evidence";
+
   return {
     category,
     owner,
+    assigneeId: ownerToMemberId(owner),
+    routeStatus: status === "needs-evidence" ? "Needs owner" : "Assigned",
+    routedAt: null,
     answer: composeGenericAnswer(text, sources, category),
     sources,
     confidence,
-    status: confidence >= 82 && risks.length === 0 ? "draft" : "needs-evidence",
+    status,
     risks,
   };
 }
@@ -1166,6 +1365,88 @@ function inferOwner(category) {
     "AI Governance": "AI Governance",
   };
   return owners[category] ?? "Security";
+}
+
+function ownerToMemberId(owner) {
+  const normalized = String(owner ?? "Security").toLowerCase();
+  if (normalized.includes("ai")) return "owner-ai";
+  if (normalized.includes("legal") || normalized.includes("privacy")) return "owner-legal";
+  if (normalized.includes("operations") || normalized.includes("continuity")) return "owner-ops";
+  return "owner-security";
+}
+
+function memberById(id) {
+  return workspaceAccount.members.find((member) => member.id === id) ?? workspaceAccount.members[0];
+}
+
+function memberForQuestion(question) {
+  return memberById(question.assigneeId ?? ownerToMemberId(question.owner));
+}
+
+function ownerRoutingSnapshot() {
+  const groups = workspaceAccount.members.map((member) => {
+    const questions = state.questions.filter((question) => memberForQuestion(question).id === member.id);
+    const openRisks = questions.filter((question) => question.status === "needs-evidence" || (question.risks ?? []).length > 0).length;
+    const needsOwner = questions.filter((question) => ["Needs owner", "Owner review"].includes(question.routeStatus)).length;
+    const approved = questions.filter((question) => question.status === "approved").length;
+    return {
+      member,
+      questions,
+      total: questions.length,
+      openRisks,
+      needsOwner,
+      approved,
+    };
+  });
+
+  return {
+    routed: state.questions.filter((question) => Boolean(question.assigneeId)).length,
+    openRisks: groups.reduce((sum, group) => sum + group.openRisks, 0),
+    groups,
+  };
+}
+
+function handoffReadinessSnapshot() {
+  const total = Math.max(1, state.questions.length);
+  const approved = state.questions.filter((question) => question.status === "approved").length;
+  const sourced = state.questions.filter((question) => (question.sources ?? []).length > 0).length;
+  const routed = state.questions.filter((question) => Boolean(question.assigneeId)).length;
+  const coverage = coverageSnapshot().score;
+  const score = Math.round((approved / total) * 35 + (sourced / total) * 25 + (routed / total) * 20 + coverage * 0.2);
+  return {
+    ready: Math.max(0, Math.min(100, score)),
+    approved,
+    sourced,
+    routed,
+    coverage,
+  };
+}
+
+function handoffSummaryText() {
+  const routing = ownerRoutingSnapshot();
+  const handoff = handoffReadinessSnapshot();
+  const ownerLines = routing.groups
+    .filter((group) => group.total > 0)
+    .map((group) => `${group.member.name} (${group.member.team}): ${group.total} assigned, ${group.openRisks} open risks`)
+    .join("\n");
+
+  return [
+    `${workspaceAccount.company} - AnswerSeal Private Workspace`,
+    `Build: ${BUILD_VERSION}`,
+    `Workspace ID: ${workspaceAccount.workspaceId}`,
+    `Handoff status: ${state.handoff.status}`,
+    `Readiness: ${handoff.ready}%`,
+    `Evidence coverage: ${handoff.coverage}%`,
+    `Approved answers: ${handoff.approved}/${state.questions.length}`,
+    `Owner routing: ${routing.routed}/${state.questions.length} assigned`,
+    `Open risks: ${routing.openRisks}`,
+    "",
+    "Owners:",
+    ownerLines || "No owner assignments yet.",
+    "",
+    `Secure handoff: ${state.handoff.url}`,
+    `Expires: ${state.handoff.expires}`,
+  ].join("\n");
 }
 
 function rankEvidenceForText(lower) {
@@ -1303,6 +1584,7 @@ function approveActiveQuestion() {
 
   question.status = "approved";
   question.approvedAt = new Date().toISOString();
+  question.routeStatus = "Assigned";
   addAudit("Answer approved", shorten(question.text, 72));
   render();
   selectNextOpenQuestion();
@@ -1317,6 +1599,7 @@ function selectNextOpenQuestion() {
   renderQuestionList();
   renderActiveQuestion();
   renderEvidence();
+  renderWorkspace();
   renderPortalCopy();
   schedulePersist();
 }
@@ -1326,12 +1609,43 @@ function markActiveNeedsEvidence() {
   if (!question) return;
   question.status = "needs-evidence";
   question.approvedAt = null;
+  question.routeStatus = "Needs owner";
   if (!question.risks.includes("Reviewer marked this answer as needing stronger evidence.")) {
     question.risks.push("Reviewer marked this answer as needing stronger evidence.");
   }
   addAudit("Evidence requested", shorten(question.text, 72));
   render();
   showToast("Marked for evidence.");
+}
+
+function routeActiveQuestion() {
+  const question = getActiveQuestion();
+  if (!question) return;
+
+  const member = memberForQuestion(question);
+  question.assigneeId = member.id;
+  question.routeStatus = question.status === "needs-evidence" || (question.risks ?? []).length > 0 ? "Owner review" : "Assigned";
+  question.routedAt = new Date().toISOString();
+  addAudit("Owner routed", `${shorten(question.text, 62)} routed to ${member.name}.`);
+  render();
+  openWorkspace();
+  showToast(`Routed to ${member.name}.`);
+}
+
+function prepareHandoff() {
+  state.handoff.status = "Prepared";
+  state.handoff.preparedAt = new Date().toISOString();
+  addAudit("Handoff prepared", "Private workspace summary prepared for buyer-facing review.");
+  renderWorkspace();
+  showToast("Private handoff prepared.");
+}
+
+function copyHandoffLink() {
+  copyText(state.handoff.url, "Secure handoff link copied.");
+}
+
+function copyHandoffSummary() {
+  copyText(handoffSummaryText(), "Workspace handoff summary copied.");
 }
 
 async function copyActiveAnswer() {
@@ -1487,11 +1801,13 @@ function refreshDrafts(showMessage = true) {
 }
 
 function exportCsv() {
-  const header = ["Question", "Status", "Owner", "Confidence", "Answer", "Sources", "Risks"];
+  const header = ["Question", "Status", "Owner", "Assignee", "Route Status", "Confidence", "Answer", "Sources", "Risks"];
   const rows = state.questions.map((question) => [
     question.text,
     formatStatus(question.status),
     question.owner,
+    memberForQuestion(question).name,
+    routeStatusLabel(question.routeStatus),
     `${question.confidence}%`,
     question.answer,
     (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -1506,6 +1822,8 @@ function exportCsv() {
 
 function exportReviewPack() {
   const coverage = coverageSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const handoff = handoffReadinessSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -1523,8 +1841,35 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v2</h1>
+        <h1>AnswerSeal Review Pack v3</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
+        <h2>Private Workspace</h2>
+        <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
+        <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Owner</th>
+              <th>Role</th>
+              <th>Questions</th>
+              <th>Open Risks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${routing.groups
+              .map(
+                (group) => `
+                  <tr>
+                    <td>${escapeHtml(group.member.name)}</td>
+                    <td>${escapeHtml(`${group.member.team} ${group.member.role}`)}</td>
+                    <td>${group.total}</td>
+                    <td class="${group.openRisks > 0 ? "risk" : "ok"}">${group.openRisks}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
         <h2>Evidence Coverage</h2>
         <p>${coverage.score}% coverage across ${coverage.items.length} trust categories.</p>
         <table>
@@ -1557,6 +1902,8 @@ function exportReviewPack() {
             <tr>
               <th>Question</th>
               <th>Status</th>
+              <th>Assignee</th>
+              <th>Route</th>
               <th>Answer</th>
               <th>Citations</th>
               <th>Freshness</th>
@@ -1571,6 +1918,8 @@ function exportReviewPack() {
                   <tr>
                     <td>${escapeHtml(question.text)}</td>
                     <td>${escapeHtml(formatStatus(question.status))}</td>
+                    <td>${escapeHtml(memberForQuestion(question).name)}</td>
+                    <td>${escapeHtml(routeStatusLabel(question.routeStatus))}</td>
                     <td>${escapeHtml(question.answer)}</td>
                     <td>${escapeHtml((question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "))}</td>
                     <td>${escapeHtml(sourceFreshnessSummary((question.sources ?? []).map(getEvidenceById).filter(Boolean)))}</td>
@@ -1587,9 +1936,9 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v2 created with coverage and library references.");
+  addAudit("Review pack exported", "Review Pack v3 created with workspace routing and handoff readiness.");
   renderAudit();
-  showToast("Review Pack v2 exported.");
+  showToast("Review Pack v3 exported.");
 }
 
 function toCsv(rows) {
@@ -1636,6 +1985,7 @@ function serializeWorkspace() {
     questions: state.questions,
     evidence: state.evidence,
     intake: state.intake,
+    handoff: state.handoff,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -1655,6 +2005,7 @@ function resetWorkspace() {
   elements.librarySearch.value = "";
   closeIntake(false);
   closePortal(false);
+  closeWorkspace(false);
   closeLibrary();
   render();
   setMemoryStatus("Reset");
@@ -1712,9 +2063,24 @@ function formatStatus(status) {
   return labels[status] ?? status;
 }
 
+function routeStatusLabel(status) {
+  const labels = {
+    Assigned: "Assigned",
+    "Needs owner": "Needs owner",
+    "Owner review": "Owner review",
+  };
+  return labels[status] ?? "Assigned";
+}
+
+function routeStatusClass(status) {
+  if (status === "Needs owner") return "is-needed";
+  if (status === "Owner review") return "is-review";
+  return "is-assigned";
+}
+
 function nextActionLabel(question) {
   const verb = question.status === "needs-evidence" ? "Add evidence" : "Review";
-  return `${verb}: ${question.category}`;
+  return `${verb}: ${question.category} with ${memberForQuestion(question).name}`;
 }
 
 function formatShortDate(value) {
@@ -1770,6 +2136,15 @@ function daysSince(value) {
 function shorten(text, maxLength) {
   if (text.length <= maxLength) return text;
   return `${text.slice(0, maxLength - 3).trim()}...`;
+}
+
+function initials(name) {
+  return String(name)
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 function escapeHtml(value) {

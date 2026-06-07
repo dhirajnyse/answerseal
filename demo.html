@@ -55,6 +55,20 @@
       <symbol id="icon-shield" viewBox="0 0 24 24">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
       </symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.9" />
+        <path d="M16 3.1a4 4 0 0 1 0 7.8" />
+      </symbol>
+      <symbol id="icon-link" viewBox="0 0 24 24">
+        <path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1" />
+        <path d="M14 11a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1" />
+      </symbol>
+      <symbol id="icon-lock" viewBox="0 0 24 24">
+        <rect x="3" y="11" width="18" height="10" rx="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </symbol>
       <symbol id="icon-upload" viewBox="0 0 24 24">
         <path d="M12 16V4" />
         <path d="m7 9 5-5 5 5" />
@@ -86,6 +100,10 @@
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Review Desk</span>
           </button>
+          <button class="nav-item" id="workspaceNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+            <span>Workspace</span>
+          </button>
           <button class="nav-item" id="intakeNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
             <span>Intake</span>
@@ -116,8 +134,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.6 Alpha</strong>
-          <span>Evidence Intake</span>
+          <strong>v0.7 Alpha</strong>
+          <span>Private Workspace</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -129,7 +147,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.6 Alpha</span>
+            <span class="label">Security questionnaire | v0.7 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -161,6 +179,10 @@
           <article>
             <span class="metric-value" id="metricNeedsEvidence">0</span>
             <span class="metric-label">Needs Evidence</span>
+          </article>
+          <article>
+            <span class="metric-value" id="metricRouted">0/0</span>
+            <span class="metric-label">Owner Routing</span>
           </article>
           <article>
             <span class="metric-value" id="metricCoverage">0%</span>
@@ -266,6 +288,10 @@
                 <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
                 <span>Needs Evidence</span>
               </button>
+              <button class="secondary-button" id="routeOwnerButton" type="button">
+                <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+                <span>Route Owner</span>
+              </button>
               <button class="icon-button" id="copyButton" type="button" aria-label="Copy answer" title="Copy answer">
                 <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
               </button>
@@ -320,6 +346,99 @@
         </section>
       </main>
     </div>
+
+    <div class="workspace-backdrop drawer-backdrop" id="workspaceBackdrop" hidden></div>
+    <aside class="workspace-drawer private-workspace-drawer" id="workspaceDrawer" aria-label="Private workspace" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Private Workspace</span>
+          <h2>Team review room</h2>
+        </div>
+        <button class="icon-button" id="closeWorkspaceButton" type="button" aria-label="Close workspace" title="Close workspace">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip workspace-metrics" aria-label="Private workspace status">
+        <article>
+          <span class="label">Routed</span>
+          <strong id="workspaceRouted">0/0</strong>
+        </article>
+        <article>
+          <span class="label">Open Risks</span>
+          <strong id="workspaceOpenRisks">0</strong>
+        </article>
+        <article>
+          <span class="label">Handoff Ready</span>
+          <strong id="workspaceReady">0%</strong>
+        </article>
+      </section>
+
+      <section class="workspace-drawer-body">
+        <section class="workspace-account-card" aria-label="Account context">
+          <div class="section-heading">
+            <span class="label">Account</span>
+            <span id="workspaceRole">Trust Lead</span>
+          </div>
+          <div class="account-grid">
+            <div>
+              <span class="label">Company</span>
+              <strong id="workspaceCompany">Aster Health</strong>
+            </div>
+            <div>
+              <span class="label">Workspace ID</span>
+              <strong id="workspaceId">AS-PRV-2407</strong>
+            </div>
+            <div>
+              <span class="label">Plan</span>
+              <strong id="workspacePlan">Private pilot</strong>
+            </div>
+            <div>
+              <span class="label">Access</span>
+              <strong id="workspaceAccess">Invite only</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-account-card" aria-label="Owner routing">
+          <div class="section-heading">
+            <span class="label">Owner Routing</span>
+            <span>Reviewer roles</span>
+          </div>
+          <div class="owner-route-list" id="workspaceOwnerList"></div>
+        </section>
+
+        <section class="handoff-panel" aria-label="Secure handoff">
+          <div class="section-heading">
+            <span class="label">Secure Handoff</span>
+            <span id="handoffStatus">Draft</span>
+          </div>
+          <div class="handoff-link-row">
+            <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+            <div>
+              <span class="label">Expires</span>
+              <strong id="handoffExpiry">June 14, 2026</strong>
+            </div>
+          </div>
+          <code class="handoff-code" id="handoffLink">https://answerseal.app/secure/AS-HANDOFF-2407</code>
+          <pre class="handoff-summary" id="handoffSummary"></pre>
+          <div class="handoff-actions">
+            <button class="primary-button" id="prepareHandoffButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+              <span>Prepare</span>
+            </button>
+            <button class="secondary-button" id="copyHandoffLinkButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+              <span>Link</span>
+            </button>
+            <button class="secondary-button" id="copyHandoffSummaryButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Summary</span>
+            </button>
+          </div>
+        </section>
+      </section>
+    </aside>
 
     <div class="intake-backdrop drawer-backdrop" id="intakeBackdrop" hidden></div>
     <aside class="workspace-drawer intake-drawer" id="intakeDrawer" aria-label="Evidence intake" aria-hidden="true">
