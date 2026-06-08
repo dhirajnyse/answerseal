@@ -103,6 +103,10 @@
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Review Desk</span>
           </button>
+          <button class="nav-item" id="importNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span>Import</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -165,8 +169,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.17 Alpha</strong>
-          <span>Evidence Vault Connectors</span>
+          <strong>v0.18 Alpha</strong>
+          <span>Questionnaire Import Studio</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -178,7 +182,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.17 Alpha</span>
+            <span class="label">Security questionnaire | v0.18 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -851,6 +855,105 @@
             </button>
           </div>
           <pre class="connector-digest" id="connectorDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="import-backdrop drawer-backdrop" id="importBackdrop" hidden></div>
+    <aside class="workspace-drawer import-drawer" id="importDrawer" aria-label="Questionnaire import studio" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Questionnaire Import Studio</span>
+          <h2>Clean messy buyer inputs before review</h2>
+        </div>
+        <button class="icon-button" id="closeImportButton" type="button" aria-label="Close import studio" title="Close import studio">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip import-metrics" aria-label="Import health">
+        <article>
+          <span class="label">Rows</span>
+          <strong id="importRowCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Ready</span>
+          <strong id="importReadyCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Duplicates</span>
+          <strong id="importDuplicateCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Confidence</span>
+          <strong id="importConfidenceScore">0%</strong>
+        </article>
+      </section>
+
+      <section class="import-body">
+        <section class="import-panel import-paste-panel" aria-label="Import source">
+          <div class="section-heading">
+            <span class="label">Paste or Upload Source Text</span>
+            <span>CSV, portal copy, or messy rows</span>
+          </div>
+          <textarea id="importTextArea" spellcheck="false" aria-label="Questionnaire import text"></textarea>
+          <div class="import-actions">
+            <button class="secondary-button compact-button" id="loadImportSampleButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+              <span>Sample</span>
+            </button>
+            <button class="secondary-button compact-button" id="analyzeImportButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-search"></use></svg>
+              <span>Analyze</span>
+            </button>
+            <button class="primary-button compact-button" id="addReadyImportsButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+              <span>Add Ready</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="import-panel" aria-label="Detected mapping">
+          <div class="section-heading">
+            <span class="label">Detected Mapping</span>
+            <span>Fields recognized</span>
+          </div>
+          <div class="import-mapping-list" id="importMappingList"></div>
+        </section>
+
+        <section class="import-panel import-row-panel" aria-label="Parsed rows">
+          <div class="section-heading">
+            <span class="label">Parsed Rows</span>
+            <span>Promote clean questions</span>
+          </div>
+          <div class="import-row-list" id="importRowList"></div>
+        </section>
+
+        <section class="import-panel" aria-label="Duplicate warnings">
+          <div class="section-heading">
+            <span class="label">Duplicate Radar</span>
+            <span>Approved memory and queue overlap</span>
+          </div>
+          <div class="import-duplicate-list" id="importDuplicateList"></div>
+        </section>
+
+        <section class="import-panel" aria-label="Owner routing">
+          <div class="section-heading">
+            <span class="label">Owner Suggestions</span>
+            <span>Auto-routed before review</span>
+          </div>
+          <div class="import-owner-list" id="importOwnerList"></div>
+        </section>
+
+        <section class="import-panel" aria-label="Import digest">
+          <div class="section-heading">
+            <span class="label">Import Digest</span>
+            <button class="secondary-button compact-button" id="copyImportDigestButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="import-digest" id="importDigest"></pre>
         </section>
       </section>
     </aside>

@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.18 Alpha - Questionnaire Import Studio
+
+Phase: Questionnaire Import Studio
+
+- Added a Questionnaire Import Studio drawer for messy CSV rows, spreadsheets, and buyer portal paste.
+- Added detected field mapping for question, portal, due date, owner, and buyer notes.
+- Added duplicate radar against existing review queue items and approved answer memory.
+- Added owner suggestions, source matching, row status, and import confidence before queue promotion.
+- Added one-click actions to analyze imports, load sample text, add ready rows, add one row, and copy row briefs.
+- Added an import digest for sales/security handoff.
+- Added import context to CSV exports.
+- Upgraded review pack export to Review Pack v14 with import rows, mapping confidence, duplicates, owner routing, and digest.
+- Updated the build phases page with the v0.19 Evidence Gap Autopilot plan.
+
 ## v0.17 Alpha - Evidence Vault Connectors
 
 Phase: Evidence Vault Connectors

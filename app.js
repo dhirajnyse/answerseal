@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.17 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v17";
+const BUILD_VERSION = "v0.18 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v18";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v17",
   "answerseal.workspace.v16",
   "answerseal.workspace.v15",
   "answerseal.workspace.v14",
@@ -609,6 +610,14 @@ const connectorSeeds = [
   },
 ];
 
+const importSampleText = `Question,Portal,Due,Buyer Notes
+"Do you encrypt audit logs and backups at rest?",OneTrust,2026-06-15,"Buyer wants SOC 2 citation"
+"How are customers notified before subprocessor changes?",Aster Portal,2026-06-12,"Legal review requested"
+"Do you use customer data to train AI models?",Aster Portal,2026-06-12,"Likely duplicate"
+"What is the RTO and RPO for core services?",Excel,2026-06-13,"Operations owner"
+"Describe your annual penetration testing process.",Excel,2026-06-13,"Needs pentest evidence"
+"Can customers request deletion or export of personal data?",Zip,2026-06-14,"Privacy answer memory exists"`;
+
 function createSeedIntake() {
   return evidenceDocs.map((doc) => ({
     id: `seed-${doc.id}`,
@@ -655,6 +664,8 @@ function createInitialState() {
     followUps: createInitialFollowUps(),
     connectorOpen: false,
     connectors: createInitialConnectors(),
+    importOpen: false,
+    importStudio: createInitialImportStudio(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -697,6 +708,15 @@ function createInitialFollowUps() {
 
 function createInitialConnectors() {
   return connectorSeeds.map((item) => ({ ...item, linkedEvidence: [...item.linkedEvidence] }));
+}
+
+function createInitialImportStudio() {
+  return {
+    text: importSampleText,
+    rows: [],
+    importedIds: [],
+    lastAnalyzedAt: null,
+  };
 }
 
 function createInitialDataRoom() {
@@ -785,6 +805,7 @@ function loadWorkspaceState() {
       trustRoom: normalizeTrustRoom(workspace.trustRoom ?? fresh.trustRoom),
       followUps: Array.isArray(workspace.followUps) ? workspace.followUps.map(normalizeFollowUp) : fresh.followUps,
       connectors: Array.isArray(workspace.connectors) ? workspace.connectors.map(normalizeConnector) : fresh.connectors,
+      importStudio: normalizeImportStudio(workspace.importStudio ?? fresh.importStudio),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -797,6 +818,7 @@ function loadWorkspaceState() {
       trustRoomOpen: false,
       followUpOpen: false,
       connectorOpen: false,
+      importOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1010,11 +1032,48 @@ function normalizeConnector(item) {
   };
 }
 
+function normalizeImportStudio(item) {
+  const text = String(item?.text ?? importSampleText);
+  const rows = Array.isArray(item?.rows) ? item.rows.map(normalizeImportRow) : [];
+  return {
+    text,
+    rows,
+    importedIds: Array.isArray(item?.importedIds) ? item.importedIds.map(String) : [],
+    lastAnalyzedAt: item?.lastAnalyzedAt ?? null,
+  };
+}
+
+function normalizeImportRow(row) {
+  const text = String(row?.question ?? row?.text ?? "Imported buyer question");
+  const category = String(row?.category ?? inferCategory(text.toLowerCase()));
+  const owner = String(row?.owner ?? inferOwner(category));
+  return {
+    id: String(row?.id ?? `import-${Date.now()}`),
+    question: text,
+    portal: String(row?.portal ?? "Import"),
+    due: String(row?.due ?? "2026-06-14"),
+    notes: String(row?.notes ?? ""),
+    category,
+    owner,
+    assigneeId: String(row?.assigneeId ?? ownerToMemberId(owner)),
+    sources: Array.isArray(row?.sources) ? row.sources.map(String) : [],
+    confidence: Number.isFinite(Number(row?.confidence)) ? Number(row.confidence) : 0,
+    importConfidence: Number.isFinite(Number(row?.importConfidence)) ? Number(row.importConfidence) : 0,
+    duplicateId: row?.duplicateId ? String(row.duplicateId) : "",
+    duplicateScore: Number.isFinite(Number(row?.duplicateScore)) ? Number(row.duplicateScore) : 0,
+    status: String(row?.status ?? "Ready"),
+    issues: Array.isArray(row?.issues) ? row.issues.map(String) : [],
+    mappedAt: row?.mappedAt ?? null,
+    importedQuestionId: row?.importedQuestionId ? String(row.importedQuestionId) : "",
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
+  importNavButton: document.querySelector("#importNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1169,6 +1228,23 @@ const elements = {
   connectorOwnerList: document.querySelector("#connectorOwnerList"),
   connectorDigest: document.querySelector("#connectorDigest"),
   copyConnectorDigestButton: document.querySelector("#copyConnectorDigestButton"),
+  importBackdrop: document.querySelector("#importBackdrop"),
+  importDrawer: document.querySelector("#importDrawer"),
+  closeImportButton: document.querySelector("#closeImportButton"),
+  importTextArea: document.querySelector("#importTextArea"),
+  loadImportSampleButton: document.querySelector("#loadImportSampleButton"),
+  analyzeImportButton: document.querySelector("#analyzeImportButton"),
+  addReadyImportsButton: document.querySelector("#addReadyImportsButton"),
+  importRowCount: document.querySelector("#importRowCount"),
+  importReadyCount: document.querySelector("#importReadyCount"),
+  importDuplicateCount: document.querySelector("#importDuplicateCount"),
+  importConfidenceScore: document.querySelector("#importConfidenceScore"),
+  importMappingList: document.querySelector("#importMappingList"),
+  importRowList: document.querySelector("#importRowList"),
+  importDuplicateList: document.querySelector("#importDuplicateList"),
+  importOwnerList: document.querySelector("#importOwnerList"),
+  importDigest: document.querySelector("#importDigest"),
+  copyImportDigestButton: document.querySelector("#copyImportDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1271,6 +1347,7 @@ function init() {
 
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
+  elements.importNavButton.addEventListener("click", openImportStudio);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1355,6 +1432,12 @@ function bindEvents() {
   elements.closeConnectorButton.addEventListener("click", closeConnectors);
   elements.connectorBackdrop.addEventListener("click", closeConnectors);
   elements.copyConnectorDigestButton.addEventListener("click", copyConnectorDigest);
+  elements.closeImportButton.addEventListener("click", closeImportStudio);
+  elements.importBackdrop.addEventListener("click", closeImportStudio);
+  elements.loadImportSampleButton.addEventListener("click", loadImportSample);
+  elements.analyzeImportButton.addEventListener("click", analyzeImportStudio);
+  elements.addReadyImportsButton.addEventListener("click", addReadyImportRows);
+  elements.copyImportDigestButton.addEventListener("click", copyImportDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1402,6 +1485,7 @@ function bindEvents() {
     if (state.trustRoomOpen) closeTrustRoom();
     if (state.followUpOpen) closeFollowUp();
     if (state.connectorOpen) closeConnectors();
+    if (state.importOpen) closeImportStudio();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1416,6 +1500,7 @@ function applyInitialHash() {
   if (hash === "trust-room" || hash === "room" || hash === "rooms") openTrustRoom();
   if (hash === "follow-up" || hash === "followups" || hash === "inbox") openFollowUp();
   if (hash === "connectors" || hash === "vault" || hash === "sources") openConnectors();
+  if (hash === "import" || hash === "imports" || hash === "studio") openImportStudio();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1444,6 +1529,7 @@ function render() {
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
+  renderImportStudio();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -2141,6 +2227,7 @@ function renderAudit() {
 }
 
 function activateWorkspaceNav(target) {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2166,6 +2253,7 @@ function activateWorkspaceNav(target) {
 function setActiveNav(activeButton) {
   [
     elements.reviewNavButton,
+    elements.importNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -2183,6 +2271,7 @@ function setActiveNav(activeButton) {
 }
 
 function openWorkspace() {
+  closeImportStudio(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2211,6 +2300,7 @@ function closeWorkspace(activateReview = true) {
 }
 
 function openPipeline() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2240,6 +2330,7 @@ function closePipeline(activateReview = true) {
 }
 
 function openTrustRoom() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
@@ -2269,6 +2360,7 @@ function closeTrustRoom(activateReview = true) {
 }
 
 function openFollowUp() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2298,6 +2390,7 @@ function closeFollowUp(activateReview = true) {
 }
 
 function openConnectors() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2326,7 +2419,38 @@ function closeConnectors(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openImportStudio() {
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.importOpen = true;
+  setActiveNav(elements.importNavButton);
+  elements.importBackdrop.hidden = false;
+  elements.importDrawer.classList.add("is-open");
+  elements.importDrawer.setAttribute("aria-hidden", "false");
+  renderImportStudio();
+  elements.importTextArea.focus();
+}
+
+function closeImportStudio(activateReview = true) {
+  if (!state.importOpen && elements.importDrawer.getAttribute("aria-hidden") === "true") return;
+  state.importOpen = false;
+  elements.importDrawer.classList.remove("is-open");
+  elements.importDrawer.setAttribute("aria-hidden", "true");
+  elements.importBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2356,6 +2480,7 @@ function closeAnalytics(activateReview = true) {
 }
 
 function openAccess() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2384,6 +2509,7 @@ function closeAccess(activateReview = true) {
 }
 
 function openIntake() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2412,6 +2538,7 @@ function closeIntake(activateReview = true) {
 }
 
 function openDataRoom() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2440,6 +2567,7 @@ function closeDataRoom(activateReview = true) {
 }
 
 function openLibrary() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2469,6 +2597,7 @@ function closeLibrary(activateReview = true) {
 }
 
 function openPortalCopy() {
+  closeImportStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3351,6 +3480,539 @@ function followUpDigestText(inbox = followUpSnapshot()) {
     "- Convert high-priority buyer comments into review tasks.",
     "- Attach fresh evidence before reopening the trust room.",
     "- Mark answered only after the room receipt reflects the update.",
+  ].join("\n");
+}
+
+function renderImportStudio() {
+  if (!state.importStudio.rows.length) {
+    state.importStudio.rows = createImportRows(state.importStudio.text);
+    state.importStudio.lastAnalyzedAt = new Date().toISOString();
+  }
+
+  const studio = importSnapshot();
+  elements.importTextArea.value = state.importStudio.text;
+  elements.importRowCount.textContent = studio.rowCount;
+  elements.importReadyCount.textContent = studio.readyCount;
+  elements.importDuplicateCount.textContent = studio.duplicateCount;
+  elements.importConfidenceScore.textContent = `${studio.averageConfidence}%`;
+  elements.importDigest.textContent = importDigestText(studio);
+
+  elements.importMappingList.innerHTML = "";
+  studio.mapping.forEach((field) => {
+    const item = document.createElement("article");
+    item.className = `import-mapping-card is-${field.status}`;
+    item.innerHTML = `
+      <span class="label">${escapeHtml(field.label)}</span>
+      <strong>${escapeHtml(field.value)}</strong>
+      <p>${escapeHtml(field.detail)}</p>
+    `;
+    elements.importMappingList.append(item);
+  });
+
+  elements.importRowList.innerHTML = "";
+  if (studio.rows.length === 0) {
+    elements.importRowList.append(emptyState("Paste buyer questions to analyze"));
+  }
+
+  studio.rows.forEach((row) => {
+    const card = document.createElement("article");
+    card.className = `import-row-card ${importRowStatusClass(row)}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(row.portal)} | ${escapeHtml(row.category)} | Due ${escapeHtml(formatShortDate(row.due))}</span>
+          <strong>${escapeHtml(row.question)}</strong>
+        </div>
+        <b>${row.importConfidence}%</b>
+      </header>
+      <div class="import-row-meta">
+        <span>${escapeHtml(row.statusLabel)}</span>
+        <span>${escapeHtml(row.member.name)}</span>
+        <span>${row.sources.length} source${row.sources.length === 1 ? "" : "s"}</span>
+        <span>${row.duplicateScore ? `${row.duplicateScore}% duplicate` : "unique"}</span>
+      </div>
+      ${row.issues.length ? `<ul>${row.issues.map((issue) => `<li>${escapeHtml(issue)}</li>`).join("")}</ul>` : "<p>Mapped cleanly and ready for review queue.</p>"}
+      <footer>
+        <span>${escapeHtml(row.notes || "No buyer note")}</span>
+        <button class="secondary-button compact-button" type="button" data-import-copy="${escapeHtml(row.id)}">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Brief</span>
+        </button>
+        <button class="primary-button compact-button" type="button" data-import-add="${escapeHtml(row.id)}" ${row.canAdd ? "" : "disabled"}>
+          <svg aria-hidden="true"><use href="#icon-plus"></use></svg>
+          <span>Add</span>
+        </button>
+      </footer>
+    `;
+    card.querySelector("[data-import-copy]")?.addEventListener("click", () => copyImportRowBrief(row.id));
+    card.querySelector("[data-import-add]")?.addEventListener("click", () => addImportRow(row.id));
+    elements.importRowList.append(card);
+  });
+
+  elements.importDuplicateList.innerHTML = "";
+  if (studio.duplicates.length === 0) {
+    elements.importDuplicateList.append(emptyState("No strong duplicates"));
+  }
+  studio.duplicates.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = "import-duplicate-card";
+    item.innerHTML = `
+      <div>
+        <strong>${escapeHtml(row.question)}</strong>
+        <span>${row.duplicateScore}% match to ${escapeHtml(shorten(row.duplicateQuestion?.text ?? "existing queue item", 72))}</span>
+      </div>
+      <b>${escapeHtml(row.duplicateQuestion?.status ? formatStatus(row.duplicateQuestion.status) : "Memory")}</b>
+    `;
+    elements.importDuplicateList.append(item);
+  });
+
+  elements.importOwnerList.innerHTML = "";
+  studio.ownerRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = "import-owner-card";
+    item.innerHTML = `
+      <span class="role-avatar">${escapeHtml(initials(row.member.name))}</span>
+      <div>
+        <header>
+          <strong>${escapeHtml(row.member.name)}</strong>
+          <b>${row.ready} ready</b>
+        </header>
+        <p>${escapeHtml(row.member.team)} | ${row.rows} imported rows | ${row.cleanup} cleanup</p>
+      </div>
+    `;
+    elements.importOwnerList.append(item);
+  });
+}
+
+function importSnapshot() {
+  const imported = new Set(state.importStudio.importedIds);
+  const rows = state.importStudio.rows.map((row) => {
+    const duplicateQuestion = state.questions.find((question) => question.id === row.duplicateId);
+    const importedQuestion = row.importedQuestionId ? state.questions.find((question) => question.id === row.importedQuestionId) : null;
+    const wasImported = imported.has(row.id) || Boolean(importedQuestion);
+    return {
+      ...row,
+      member: memberById(row.assigneeId),
+      duplicateQuestion,
+      wasImported,
+      canAdd: row.status === "Ready" && !wasImported,
+      statusLabel: wasImported ? "Imported" : row.status,
+    };
+  });
+  const rowCount = rows.length;
+  const readyCount = rows.filter((row) => row.canAdd).length;
+  const duplicateCount = rows.filter((row) => row.status === "Duplicate").length;
+  const cleanupCount = rows.filter((row) => ["Cleanup", "Weak Evidence"].includes(row.status)).length;
+  const averageConfidence = rowCount === 0 ? 0 : Math.round(rows.reduce((sum, row) => sum + row.importConfidence, 0) / rowCount);
+  const ownerRows = workspaceAccount.members
+    .map((member) => {
+      const owned = rows.filter((row) => row.assigneeId === member.id);
+      return {
+        member,
+        rows: owned.length,
+        ready: owned.filter((row) => row.canAdd).length,
+        cleanup: owned.filter((row) => ["Cleanup", "Weak Evidence"].includes(row.status)).length,
+      };
+    })
+    .filter((row) => row.rows > 0);
+
+  return {
+    rows,
+    rowCount,
+    readyCount,
+    duplicateCount,
+    cleanupCount,
+    averageConfidence,
+    mapping: importMappingForText(state.importStudio.text),
+    duplicates: rows.filter((row) => row.duplicateScore >= 72).sort((a, b) => b.duplicateScore - a.duplicateScore),
+    ownerRows,
+    importedCount: rows.filter((row) => row.wasImported).length,
+  };
+}
+
+function createImportRows(text, existingQuestions = state.questions) {
+  return parseImportRecords(text).map((record, index) => mapImportRecord(record, index, existingQuestions));
+}
+
+function parseImportRecords(text) {
+  const normalized = String(text ?? "").replace(/\r/g, "\n").trim();
+  if (!normalized) return [];
+
+  const lines = normalized
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length === 0) return [];
+
+  const delimiter = detectImportDelimiter(lines[0]);
+  if (!delimiter) {
+    return lines
+      .map((line) => ({ question: cleanImportQuestion(line), portal: "Portal paste", due: "2026-06-14", notes: "" }))
+      .filter((row) => row.question);
+  }
+
+  const records = lines.map((line) => parseDelimitedLine(line, delimiter));
+  const header = isImportHeader(records[0]) ? records.shift() : null;
+  const headerMap = header ? mapImportHeaders(header) : {};
+
+  return records
+    .map((cells) => recordFromCells(cells, headerMap))
+    .filter((row) => row.question);
+}
+
+function detectImportDelimiter(line) {
+  if (line.includes("\t")) return "\t";
+  if ((line.match(/,/g) ?? []).length >= 2) return ",";
+  if ((line.match(/\|/g) ?? []).length >= 2) return "|";
+  return "";
+}
+
+function parseDelimitedLine(line, delimiter) {
+  const cells = [];
+  let current = "";
+  let quoted = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    const next = line[index + 1];
+    if (char === '"' && quoted && next === '"') {
+      current += '"';
+      index += 1;
+      continue;
+    }
+    if (char === '"') {
+      quoted = !quoted;
+      continue;
+    }
+    if (char === delimiter && !quoted) {
+      cells.push(current.trim());
+      current = "";
+      continue;
+    }
+    current += char;
+  }
+  cells.push(current.trim());
+  return cells;
+}
+
+function isImportHeader(cells) {
+  const headerWords = ["question", "prompt", "control", "requirement", "portal", "due", "deadline", "notes"];
+  return cells.some((cell) => headerWords.includes(normalizeImportHeader(cell)));
+}
+
+function mapImportHeaders(cells) {
+  return cells.reduce((map, cell, index) => {
+    const header = normalizeImportHeader(cell);
+    if (["question", "prompt", "control", "requirement"].includes(header)) map.question = index;
+    if (["portal", "system", "destination"].includes(header)) map.portal = index;
+    if (["due", "deadline", "date"].includes(header)) map.due = index;
+    if (["notes", "note", "context", "buyer notes"].includes(header)) map.notes = index;
+    if (["owner", "assignee"].includes(header)) map.owner = index;
+    if (["category", "domain", "topic"].includes(header)) map.category = index;
+    return map;
+  }, {});
+}
+
+function normalizeImportHeader(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ");
+}
+
+function recordFromCells(cells, headerMap) {
+  const questionIndex = headerMap.question ?? 0;
+  return {
+    question: cleanImportQuestion(cells[questionIndex] ?? ""),
+    portal: cells[headerMap.portal] || "Import Studio",
+    due: normalizeImportDue(cells[headerMap.due]),
+    notes: cells[headerMap.notes] || "",
+    owner: cells[headerMap.owner] || "",
+    category: cells[headerMap.category] || "",
+  };
+}
+
+function cleanImportQuestion(value) {
+  return String(value ?? "")
+    .replace(/^\s*(q(uestion)?|prompt|control|requirement)\s*[:#-]\s*/i, "")
+    .replace(/^\s*\d+[\).:-]\s*/, "")
+    .trim();
+}
+
+function normalizeImportDue(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "2026-06-14";
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return "2026-06-14";
+  return parsed.toISOString().slice(0, 10);
+}
+
+function mapImportRecord(record, index, existingQuestions) {
+  const question = cleanImportQuestion(record.question);
+  const draft = draftFromText(question);
+  const duplicate = bestImportDuplicate(question, existingQuestions);
+  const category = record.category || draft.category;
+  const owner = record.owner || draft.owner;
+  const row = {
+    id: `import-${index}-${slugify(question).slice(0, 42) || Date.now()}`,
+    question,
+    portal: record.portal || "Import Studio",
+    due: normalizeImportDue(record.due),
+    notes: record.notes || "",
+    category,
+    owner,
+    assigneeId: ownerToMemberId(owner),
+    sources: draft.sources,
+    confidence: draft.confidence,
+    duplicateId: duplicate?.question.id ?? "",
+    duplicateScore: duplicate?.score ?? 0,
+    issues: [],
+    mappedAt: new Date().toISOString(),
+    importedQuestionId: "",
+  };
+  row.importConfidence = importConfidenceForRow(record, draft, duplicate);
+  row.issues = importIssuesForRow(row, draft, duplicate);
+  row.status = importStatusForRow(row, draft, duplicate);
+  return row;
+}
+
+function importConfidenceForRow(record, draft, duplicate) {
+  const hasQuestion = cleanImportQuestion(record.question).length >= 24;
+  const fieldScore = (hasQuestion ? 22 : 0) + (record.portal ? 8 : 0) + (record.due ? 10 : 0) + (record.notes ? 4 : 0) + (draft.owner ? 8 : 0);
+  const duplicatePenalty = duplicate?.score >= 88 ? 28 : duplicate?.score >= 72 ? 12 : 0;
+  return Math.max(20, Math.min(98, Math.round(draft.confidence * 0.56 + fieldScore - duplicatePenalty)));
+}
+
+function importIssuesForRow(row, draft, duplicate) {
+  const issues = [];
+  if (row.question.length < 24) issues.push("Question text is too short to trust without cleanup.");
+  if (!/[?]$/.test(row.question) && !/^(describe|list|explain|provide|confirm|what|how|do|can|does|is|are|when|where)\b/i.test(row.question)) {
+    issues.push("Question wording may need cleanup before routing.");
+  }
+  if (draft.sources.length === 0) issues.push("No matching evidence source found in the vault.");
+  if (draft.confidence < 68) issues.push("Evidence match is weak; route for human cleanup.");
+  if (duplicate?.score >= 88) issues.push("Strong duplicate found. Reuse approved memory or existing queue item.");
+  if (duplicate?.score >= 72 && duplicate.score < 88) issues.push("Possible duplicate; review before adding.");
+  return issues;
+}
+
+function importStatusForRow(row, draft, duplicate) {
+  if (duplicate?.score >= 88) return "Duplicate";
+  if (row.question.length < 24 || row.importConfidence < 68) return "Cleanup";
+  if (draft.sources.length === 0 || draft.confidence < 68) return "Weak Evidence";
+  return "Ready";
+}
+
+function bestImportDuplicate(questionText, existingQuestions = state.questions) {
+  const words = wordSet(questionText);
+  if (words.size === 0) return null;
+  return (
+    existingQuestions
+      .map((question) => {
+        const target = wordSet(question.text);
+        const shared = [...words].filter((word) => target.has(word)).length;
+        const score = Math.round((shared * 2 * 100) / Math.max(1, words.size + target.size));
+        return { question, score };
+      })
+      .filter((item) => item.score >= 58)
+      .sort((a, b) => b.score - a.score)[0] ?? null
+  );
+}
+
+function importMappingForText(text) {
+  const records = String(text ?? "")
+    .replace(/\r/g, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const first = records[0] ?? "";
+  const delimiter = detectImportDelimiter(first);
+  const header = delimiter ? parseDelimitedLine(first, delimiter) : [];
+  const headerMap = isImportHeader(header) ? mapImportHeaders(header) : {};
+  const mapped = (key) => Number.isInteger(headerMap[key]);
+  return [
+    {
+      label: "Question",
+      value: mapped("question") ? `Column ${headerMap.question + 1}` : delimiter ? "Column 1 inferred" : "Line text",
+      status: mapped("question") || !delimiter ? "mapped" : "inferred",
+      detail: "Buyer prompt becomes the review queue title.",
+    },
+    {
+      label: "Portal",
+      value: mapped("portal") ? `Column ${headerMap.portal + 1}` : "Inferred",
+      status: mapped("portal") ? "mapped" : "inferred",
+      detail: "Destination system is kept for portal handoff.",
+    },
+    {
+      label: "Due Date",
+      value: mapped("due") ? `Column ${headerMap.due + 1}` : "Default Jun 14",
+      status: mapped("due") ? "mapped" : "inferred",
+      detail: "Missing dates are defaulted but visible before import.",
+    },
+    {
+      label: "Owner",
+      value: mapped("owner") ? `Column ${headerMap.owner + 1}` : "AI-routed",
+      status: mapped("owner") ? "mapped" : "inferred",
+      detail: "Owner is suggested from trust category and evidence match.",
+    },
+    {
+      label: "Notes",
+      value: mapped("notes") ? `Column ${headerMap.notes + 1}` : "Optional",
+      status: mapped("notes") ? "mapped" : "missing",
+      detail: "Buyer notes are preserved for reviewer context.",
+    },
+  ];
+}
+
+function importRowStatusClass(row) {
+  if (row.wasImported) return "is-imported";
+  if (row.status === "Ready") return "is-ready";
+  if (row.status === "Duplicate") return "is-duplicate";
+  if (row.status === "Weak Evidence") return "is-weak";
+  return "is-cleanup";
+}
+
+function analyzeImportStudio() {
+  state.importStudio.text = elements.importTextArea.value.trim() || importSampleText;
+  state.importStudio.rows = createImportRows(state.importStudio.text);
+  state.importStudio.lastAnalyzedAt = new Date().toISOString();
+  addAudit("Questionnaire import analyzed", `${state.importStudio.rows.length} row${state.importStudio.rows.length === 1 ? "" : "s"} mapped in Import Studio.`);
+  renderImportStudio();
+  showToast("Questionnaire import analyzed.");
+}
+
+function loadImportSample() {
+  state.importStudio.text = importSampleText;
+  state.importStudio.rows = createImportRows(importSampleText);
+  state.importStudio.lastAnalyzedAt = new Date().toISOString();
+  renderImportStudio();
+  showToast("Sample questionnaire loaded.");
+}
+
+function addReadyImportRows() {
+  const ready = importSnapshot().rows.filter((row) => row.canAdd);
+  if (ready.length === 0) {
+    showToast("No ready import rows to add.");
+    return;
+  }
+  ready.slice().reverse().forEach((row, index) => promoteImportRow(row, index));
+  state.activeQuestionId = ready[0].importedQuestionId || state.questions[0]?.id;
+  state.activeDocId = getActiveQuestion()?.sources?.[0] ?? state.evidence[0]?.id;
+  state.intake.unshift({
+    id: `intake-import-${Date.now()}`,
+    name: "Questionnaire Import Studio",
+    type: "Mapped rows",
+    kind: "Questionnaire",
+    status: "Imported",
+    category: "Questionnaire",
+    matches: ready.length,
+    linkedDocId: null,
+    addedAt: new Date().toISOString(),
+  });
+  addAudit("Import rows added", `${ready.length} ready question${ready.length === 1 ? "" : "s"} added to the review queue.`);
+  render();
+  showToast(`${ready.length} ready question${ready.length === 1 ? "" : "s"} added.`);
+}
+
+function addImportRow(id) {
+  const row = importSnapshot().rows.find((item) => item.id === id);
+  if (!row?.canAdd) {
+    showToast("Row needs cleanup before adding.");
+    return;
+  }
+  promoteImportRow(row, 0);
+  state.activeQuestionId = row.importedQuestionId;
+  state.activeDocId = getActiveQuestion()?.sources?.[0] ?? state.evidence[0]?.id;
+  addAudit("Import row added", shorten(row.question, 72));
+  render();
+  showToast("Import row added to queue.");
+}
+
+function promoteImportRow(row, index) {
+  const draft = draftFromText(row.question);
+  const id = `q-import-studio-${Date.now()}-${index}`;
+  const question = {
+    id,
+    text: row.question,
+    category: row.category,
+    owner: row.owner,
+    due: row.due,
+    portal: row.portal,
+    priority: row.importConfidence >= 82 ? "Medium" : "High",
+    custom: true,
+    approvedAt: null,
+    importRowId: row.id,
+    ...draft,
+    assigneeId: row.assigneeId,
+    routeStatus: draft.status === "needs-evidence" ? "Needs owner" : "Assigned",
+  };
+  state.questions.unshift(question);
+  const savedRow = state.importStudio.rows.find((item) => item.id === row.id);
+  if (savedRow) savedRow.importedQuestionId = id;
+  if (!state.importStudio.importedIds.includes(row.id)) state.importStudio.importedIds.push(row.id);
+  row.importedQuestionId = id;
+}
+
+function copyImportRowBrief(id) {
+  const row = importSnapshot().rows.find((item) => item.id === id);
+  if (!row) return;
+  copyText(importRowBriefText(row), "Import row brief copied.");
+}
+
+function copyImportDigest() {
+  copyText(importDigestText(), "Import digest copied.");
+}
+
+function importRowBriefText(row) {
+  const sources = row.sources.map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; ") || "No source matched";
+  return [
+    `${workspaceAccount.company} - Import Row Brief`,
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${row.statusLabel}`,
+    `Question: ${row.question}`,
+    `Portal: ${row.portal}`,
+    `Due: ${formatShortDate(row.due)}`,
+    `Owner: ${row.member.name} (${row.member.team})`,
+    `Category: ${row.category}`,
+    `Import confidence: ${row.importConfidence}%`,
+    `Evidence: ${sources}`,
+    `Duplicate: ${row.duplicateScore ? `${row.duplicateScore}% ${row.duplicateQuestion?.text ?? ""}` : "None"}`,
+    `Issues: ${row.issues.join("; ") || "None"}`,
+    `Buyer notes: ${row.notes || "None"}`,
+  ].join("\n");
+}
+
+function importDigestText(studio = importSnapshot()) {
+  const readyLines = studio.rows
+    .filter((row) => row.canAdd)
+    .slice(0, 5)
+    .map((row, index) => `${index + 1}. ${row.category}: ${shorten(row.question, 82)} | ${row.member.name} | ${row.importConfidence}%`)
+    .join("\n");
+  const cleanupLines = studio.rows
+    .filter((row) => ["Cleanup", "Weak Evidence", "Duplicate"].includes(row.status))
+    .slice(0, 5)
+    .map((row, index) => `${index + 1}. ${row.status}: ${shorten(row.question, 82)} | ${row.issues[0] ?? "Review needed"}`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Questionnaire Import Studio",
+    `Build: ${BUILD_VERSION}`,
+    `Rows: ${studio.rowCount}`,
+    `Ready to add: ${studio.readyCount}`,
+    `Duplicates: ${studio.duplicateCount}`,
+    `Needs cleanup: ${studio.cleanupCount}`,
+    `Average import confidence: ${studio.averageConfidence}%`,
+    `Already imported: ${studio.importedCount}`,
+    "",
+    "Ready rows:",
+    readyLines || "No ready rows yet.",
+    "",
+    "Rows needing attention:",
+    cleanupLines || "No cleanup required.",
+    "",
+    "Recommended motion:",
+    "- Add ready rows to the review queue.",
+    "- Reuse duplicate answers from approved memory.",
+    "- Route weak evidence rows to source owners before buyer submission.",
   ].join("\n");
 }
 
@@ -5493,6 +6155,10 @@ function exportCsv() {
     "Connectors Approved",
     "Connectors Stale",
     "Connector Issues",
+    "Import Rows",
+    "Import Ready",
+    "Import Duplicates",
+    "Import Confidence",
     "Trace",
     "Answer",
     "Sources",
@@ -5507,6 +6173,7 @@ function exportCsv() {
     const trustRoom = trustRoomSnapshot();
     const followUps = followUpSnapshot();
     const connectors = connectorSnapshot();
+    const importStudio = importSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -5534,6 +6201,10 @@ function exportCsv() {
       `${connectors.approvedCount}/${connectors.connectorCount}`,
       connectors.staleCount,
       connectors.issueCount,
+      importStudio.rowCount,
+      importStudio.readyCount,
+      importStudio.duplicateCount,
+      `${importStudio.averageConfidence}%`,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -5558,6 +6229,7 @@ function exportReviewPack() {
   const trustRoom = trustRoomSnapshot();
   const followUps = followUpSnapshot();
   const connectors = connectorSnapshot();
+  const importStudio = importSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -5575,11 +6247,43 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v13</h1>
+        <h1>AnswerSeal Review Pack v14</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Questionnaire Import Studio</h2>
+        <p>Rows: ${importStudio.rowCount} | Ready: ${importStudio.readyCount} | Duplicates: ${importStudio.duplicateCount} | Cleanup: ${importStudio.cleanupCount} | Confidence: ${importStudio.averageConfidence}%</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Imported Question</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Portal</th>
+              <th>Confidence</th>
+              <th>Issues</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${importStudio.rows
+              .map(
+                (row) => `
+                  <tr>
+                    <td>${escapeHtml(row.question)}</td>
+                    <td class="${row.canAdd ? "ok" : "risk"}">${escapeHtml(row.statusLabel)}</td>
+                    <td>${escapeHtml(row.member.name)}</td>
+                    <td>${escapeHtml(row.portal)}</td>
+                    <td>${row.importConfidence}%</td>
+                    <td>${escapeHtml(row.issues.join("; ") || "None")}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Import Digest</h2>
+        <pre>${escapeHtml(importDigestText(importStudio))}</pre>
         <h2>Multi-Buyer Pipeline</h2>
         <p>Pipeline protected: ${formatMoney(pipeline.totalValue)} | Active reviews: ${pipeline.accounts.length} | SLA risk: ${pipeline.slaRiskCount} reviews | Proof reuse: ${pipeline.reuseRate}%</p>
         <table>
@@ -6196,16 +6900,17 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v13 created with evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v14 created with questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
+  renderImportStudio();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v13 exported.");
+  showToast("Review Pack v14 exported.");
 }
 
 function toCsv(rows) {
@@ -6259,6 +6964,7 @@ function serializeWorkspace() {
     trustRoom: state.trustRoom,
     followUps: state.followUps,
     connectors: state.connectors,
+    importStudio: state.importStudio,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -6283,6 +6989,7 @@ function resetWorkspace() {
   closeTrustRoom(false);
   closeFollowUp(false);
   closeConnectors(false);
+  closeImportStudio(false);
   closeWorkspace(false);
   closeLibrary();
   render();
@@ -6447,6 +7154,13 @@ function initials(name) {
     .join("")
     .slice(0, 2)
     .toUpperCase();
+}
+
+function slugify(value) {
+  return String(value ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 function escapeHtml(value) {

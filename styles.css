@@ -2301,6 +2301,253 @@ svg {
   white-space: pre-wrap;
 }
 
+.import-drawer {
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: min(860px, 100vw);
+}
+
+.import-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.import-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(232, 255, 249, 0.72) 0%, rgba(255, 255, 255, 0.96) 46%),
+    #ffffff;
+}
+
+.import-panel {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.import-paste-panel textarea {
+  min-height: 170px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  color: var(--ink);
+  background: #fbfffd;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.import-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.import-actions .compact-button {
+  width: auto;
+  min-width: 112px;
+}
+
+.import-mapping-list,
+.import-row-list,
+.import-duplicate-list,
+.import-owner-list {
+  display: grid;
+  gap: 8px;
+}
+
+.import-mapping-list {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.import-mapping-card {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.import-mapping-card.is-mapped {
+  border-color: rgba(0, 168, 137, 0.28);
+  background: #f2fff9;
+}
+
+.import-mapping-card.is-inferred {
+  border-color: rgba(26, 122, 255, 0.22);
+  background: #f4fbff;
+}
+
+.import-mapping-card.is-missing {
+  border-color: rgba(154, 103, 0, 0.22);
+  background: #fffaf0;
+}
+
+.import-mapping-card strong,
+.import-row-card strong,
+.import-duplicate-card strong,
+.import-owner-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.import-mapping-card p,
+.import-row-card p,
+.import-row-card li,
+.import-row-card footer span,
+.import-duplicate-card span,
+.import-owner-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.42;
+}
+
+.import-row-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.import-row-card.is-ready {
+  border-left-color: var(--green);
+  background: #f4fffa;
+}
+
+.import-row-card.is-duplicate {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.import-row-card.is-weak,
+.import-row-card.is-cleanup {
+  border-left-color: #26c6da;
+  background: #f5fdff;
+}
+
+.import-row-card.is-imported {
+  border-left-color: var(--accent-dark);
+  background: #eefaf6;
+}
+
+.import-row-card header,
+.import-row-card footer,
+.import-duplicate-card,
+.import-owner-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.import-row-card header div,
+.import-duplicate-card div,
+.import-owner-card div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.import-row-card header b,
+.import-duplicate-card b,
+.import-owner-card b {
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.import-row-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.import-row-meta span {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.import-row-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.import-row-card footer {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.import-row-card footer .compact-button {
+  width: auto;
+  min-width: 84px;
+}
+
+.import-row-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.import-duplicate-card,
+.import-owner-card {
+  align-items: center;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.import-duplicate-card {
+  border-color: rgba(154, 103, 0, 0.22);
+  background: #fffaf0;
+}
+
+.import-owner-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.import-digest {
+  min-height: 220px;
+  max-height: 340px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -4456,6 +4703,9 @@ svg {
     .follow-up-meta,
     .connector-metrics,
     .connector-meta,
+    .import-metrics,
+    .import-mapping-list,
+    .import-row-meta,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -4504,6 +4754,11 @@ svg {
     .connector-card footer,
     .connector-freshness-row,
     .connector-owner-card,
+    .import-actions,
+    .import-row-card header,
+    .import-row-card footer,
+    .import-duplicate-card,
+    .import-owner-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -4593,6 +4848,9 @@ svg {
     .follow-up-meta,
     .connector-metrics,
     .connector-meta,
+    .import-metrics,
+    .import-mapping-list,
+    .import-row-meta,
     .analytics-metrics,
     .access-metrics,
     .data-room-metrics,
@@ -4620,6 +4878,11 @@ svg {
     .connector-card footer,
     .connector-freshness-row,
     .connector-owner-card,
+    .import-actions,
+    .import-row-card header,
+    .import-row-card footer,
+    .import-duplicate-card,
+    .import-owner-card,
     .analytics-roi-card,
     .analytics-time-row,
     .access-role-card,
