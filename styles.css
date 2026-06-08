@@ -2752,6 +2752,234 @@ svg {
   white-space: pre-wrap;
 }
 
+.run-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(920px, 100vw);
+}
+
+.run-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.run-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: #fbfffd;
+}
+
+.run-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(229, 249, 255, 0.64) 0%, rgba(255, 255, 255, 0.96) 44%),
+    #ffffff;
+}
+
+.run-section,
+.run-recommendation,
+.run-step-card,
+.run-gate-card,
+.run-next-card,
+.run-receipt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.run-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.run-recommendation {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  border-left: 4px solid var(--blue);
+  background: #f8fdff;
+}
+
+.run-recommendation header,
+.run-step-card header,
+.run-step-card footer,
+.run-gate-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.run-recommendation header div,
+.run-step-card > div:last-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.run-recommendation strong,
+.run-step-card strong,
+.run-gate-card strong,
+.run-next-card strong,
+.run-receipt-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.run-recommendation b {
+  color: var(--accent-dark);
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.run-recommendation p,
+.run-step-card p,
+.run-gate-card p,
+.run-next-card p,
+.run-receipt-card p,
+.run-step-card footer span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.run-recommendation-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.run-recommendation-meta span {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--accent-dark);
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.run-step-list,
+.run-gate-list,
+.run-next-list,
+.run-receipt-list {
+  display: grid;
+  gap: 8px;
+}
+
+.run-step-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+  padding: 11px;
+  border-left: 4px solid var(--green);
+  background: #fbfcfb;
+}
+
+.run-step-card.is-blocked {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.run-step-card.is-ready {
+  border-left-color: var(--blue);
+  background: #f5fdff;
+}
+
+.run-step-number {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
+  font-size: 0.8rem;
+  font-weight: 950;
+}
+
+.run-step-card header span,
+.run-gate-card header span {
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.run-step-card footer {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.run-step-card .compact-button,
+.run-next-card .compact-button {
+  width: auto;
+  min-width: 86px;
+}
+
+.run-gate-card,
+.run-next-card,
+.run-receipt-card {
+  display: grid;
+  gap: 8px;
+  padding: 11px;
+  background: #fbfcfb;
+}
+
+.run-gate-card {
+  border-left: 4px solid var(--green);
+}
+
+.run-gate-card.is-open {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.run-next-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.run-next-card p {
+  grid-column: 1 / -1;
+}
+
+.run-receipt-card span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.run-digest {
+  min-height: 220px;
+  max-height: 340px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -4912,6 +5140,9 @@ svg {
     .import-row-meta,
     .gap-metrics,
     .gap-task-meta,
+    .run-metrics,
+    .run-actions,
+    .run-recommendation-meta,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -4970,6 +5201,12 @@ svg {
     .gap-request-card,
     .gap-owner-card,
     .gap-fallback-card header,
+    .run-recommendation header,
+    .run-step-card,
+    .run-step-card header,
+    .run-step-card footer,
+    .run-gate-card header,
+    .run-next-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

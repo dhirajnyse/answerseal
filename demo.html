@@ -111,6 +111,10 @@
             <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
             <span>Gaps</span>
           </button>
+          <button class="nav-item" id="runNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Runs</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -173,8 +177,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.19 Alpha</strong>
-          <span>Evidence Gap Autopilot</span>
+          <strong>v0.20 Alpha</strong>
+          <span>Autonomous Review Runs</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -186,7 +190,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.19 Alpha</span>
+            <span class="label">Security questionnaire | v0.20 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1035,6 +1039,103 @@
             </button>
           </div>
           <pre class="gap-digest" id="gapDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="run-backdrop drawer-backdrop" id="runBackdrop" hidden></div>
+    <aside class="workspace-drawer run-drawer" id="runDrawer" aria-label="Autonomous review runs" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Autonomous Review Runs</span>
+          <h2>Plan the work, keep humans in control</h2>
+        </div>
+        <button class="icon-button" id="closeRunButton" type="button" aria-label="Close review runs" title="Close review runs">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip run-metrics" aria-label="Autonomous run health">
+        <article>
+          <span class="label">Run Score</span>
+          <strong id="runScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Steps</span>
+          <strong id="runStepCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Open Gates</span>
+          <strong id="runGateCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="runReceiptCount">0</strong>
+        </article>
+      </section>
+
+      <section class="run-actions" aria-label="Run controls">
+        <button class="primary-button" id="startRunButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Start Run</span>
+        </button>
+        <button class="secondary-button" id="approveRunGateButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve Gate</span>
+        </button>
+        <button class="secondary-button" id="copyRunDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="run-body">
+        <section class="run-section" aria-label="Recommended run">
+          <div class="section-heading">
+            <span class="label">Recommended Run</span>
+            <span>Generated from live workspace state</span>
+          </div>
+          <article class="run-recommendation" id="runRecommended"></article>
+        </section>
+
+        <section class="run-section" aria-label="Run plan">
+          <div class="section-heading">
+            <span class="label">Run Plan</span>
+            <span>Autonomous steps with human gates</span>
+          </div>
+          <div class="run-step-list" id="runStepList"></div>
+        </section>
+
+        <section class="run-section" aria-label="Human gates">
+          <div class="section-heading">
+            <span class="label">Human Gates</span>
+            <span>Buyer-facing output stays controlled</span>
+          </div>
+          <div class="run-gate-list" id="runGateList"></div>
+        </section>
+
+        <section class="run-section" aria-label="Next actions">
+          <div class="section-heading">
+            <span class="label">Next Actions</span>
+            <span>Where the team should move now</span>
+          </div>
+          <div class="run-next-list" id="runNextList"></div>
+        </section>
+
+        <section class="run-section" aria-label="Run receipts">
+          <div class="section-heading">
+            <span class="label">Run Receipts</span>
+            <span>Audit trail for autonomous work</span>
+          </div>
+          <div class="run-receipt-list" id="runReceiptList"></div>
+        </section>
+
+        <section class="run-section" aria-label="Run digest">
+          <div class="section-heading">
+            <span class="label">Run Digest</span>
+            <span>Copy into Slack or review notes</span>
+          </div>
+          <pre class="run-digest" id="runDigest"></pre>
         </section>
       </section>
     </aside>

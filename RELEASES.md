@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.20 Alpha - Autonomous Review Runs
+
+Phase: Autonomous Review Runs
+
+- Added a Runs drawer with recommended autonomous review plan, run score, run steps, human gates, next actions, receipts, and digest.
+- Added run planning across questionnaire intake, evidence gaps, connector health, buyer follow-ups, and sealed handoff readiness.
+- Added human approval gate status so buyer-facing output remains controlled even when the system plans internal work.
+- Added run receipts for started runs, approved gates, and copied run digests.
+- Added run context to CSV exports.
+- Upgraded review pack export to Review Pack v16 with autonomous run plan, gates, digest, and receipts.
+- Updated the build phases page with the v0.21 Trust Center Launchpad plan.
+
 ## v0.19 Alpha - Evidence Gap Autopilot
 
 Phase: Evidence Gap Autopilot

@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.19 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v19";
+const BUILD_VERSION = "v0.20 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v20";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v19",
   "answerseal.workspace.v18",
   "answerseal.workspace.v17",
   "answerseal.workspace.v16",
@@ -669,6 +670,8 @@ function createInitialState() {
     importStudio: createInitialImportStudio(),
     gapOpen: false,
     gapActions: {},
+    runOpen: false,
+    runActions: createInitialRunActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -689,6 +692,16 @@ function createInitialHandoff() {
     url: workspaceAccount.handoffUrl,
     expires: workspaceAccount.expires,
     preparedAt: null,
+  };
+}
+
+function createInitialRunActions() {
+  return {
+    status: "Draft",
+    startedAt: null,
+    approvedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
   };
 }
 
@@ -810,6 +823,7 @@ function loadWorkspaceState() {
       connectors: Array.isArray(workspace.connectors) ? workspace.connectors.map(normalizeConnector) : fresh.connectors,
       importStudio: normalizeImportStudio(workspace.importStudio ?? fresh.importStudio),
       gapActions: normalizeGapActions(workspace.gapActions ?? fresh.gapActions),
+      runActions: normalizeRunActions(workspace.runActions ?? fresh.runActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -824,6 +838,7 @@ function loadWorkspaceState() {
       connectorOpen: false,
       importOpen: false,
       gapOpen: false,
+      runOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1063,6 +1078,26 @@ function normalizeGapActions(actions) {
   );
 }
 
+function normalizeRunActions(actions) {
+  const status = ["Draft", "Running", "Human gate approved"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    startedAt: actions?.startedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeRunReceipt) : [],
+  };
+}
+
+function normalizeRunReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `run-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Run planned"),
+    detail: String(receipt?.detail ?? "Autonomous review run was planned with human gates."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1095,6 +1130,7 @@ const elements = {
   reviewNavButton: document.querySelector("#reviewNavButton"),
   importNavButton: document.querySelector("#importNavButton"),
   gapNavButton: document.querySelector("#gapNavButton"),
+  runNavButton: document.querySelector("#runNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1279,6 +1315,22 @@ const elements = {
   gapFallbackList: document.querySelector("#gapFallbackList"),
   gapDigest: document.querySelector("#gapDigest"),
   copyGapDigestButton: document.querySelector("#copyGapDigestButton"),
+  runBackdrop: document.querySelector("#runBackdrop"),
+  runDrawer: document.querySelector("#runDrawer"),
+  closeRunButton: document.querySelector("#closeRunButton"),
+  runScore: document.querySelector("#runScore"),
+  runStepCount: document.querySelector("#runStepCount"),
+  runGateCount: document.querySelector("#runGateCount"),
+  runReceiptCount: document.querySelector("#runReceiptCount"),
+  runRecommended: document.querySelector("#runRecommended"),
+  runStepList: document.querySelector("#runStepList"),
+  runGateList: document.querySelector("#runGateList"),
+  runReceiptList: document.querySelector("#runReceiptList"),
+  runNextList: document.querySelector("#runNextList"),
+  runDigest: document.querySelector("#runDigest"),
+  startRunButton: document.querySelector("#startRunButton"),
+  approveRunGateButton: document.querySelector("#approveRunGateButton"),
+  copyRunDigestButton: document.querySelector("#copyRunDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1383,6 +1435,7 @@ function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
   elements.importNavButton.addEventListener("click", openImportStudio);
   elements.gapNavButton.addEventListener("click", openGapAutopilot);
+  elements.runNavButton.addEventListener("click", openAutonomousRuns);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1432,6 +1485,7 @@ function bindEvents() {
     renderFollowUps();
     renderConnectors();
     renderGapAutopilot();
+    renderAutonomousRuns();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1477,6 +1531,11 @@ function bindEvents() {
   elements.closeGapButton.addEventListener("click", closeGapAutopilot);
   elements.gapBackdrop.addEventListener("click", closeGapAutopilot);
   elements.copyGapDigestButton.addEventListener("click", copyGapDigest);
+  elements.closeRunButton.addEventListener("click", closeAutonomousRuns);
+  elements.runBackdrop.addEventListener("click", closeAutonomousRuns);
+  elements.startRunButton.addEventListener("click", startAutonomousRun);
+  elements.approveRunGateButton.addEventListener("click", approveRunGate);
+  elements.copyRunDigestButton.addEventListener("click", copyRunDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1526,6 +1585,7 @@ function bindEvents() {
     if (state.connectorOpen) closeConnectors();
     if (state.importOpen) closeImportStudio();
     if (state.gapOpen) closeGapAutopilot();
+    if (state.runOpen) closeAutonomousRuns();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1542,6 +1602,7 @@ function applyInitialHash() {
   if (hash === "connectors" || hash === "vault" || hash === "sources") openConnectors();
   if (hash === "import" || hash === "imports" || hash === "studio") openImportStudio();
   if (hash === "gaps" || hash === "gap" || hash === "autopilot") openGapAutopilot();
+  if (hash === "runs" || hash === "run" || hash === "agent") openAutonomousRuns();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1572,6 +1633,7 @@ function render() {
   renderConnectors();
   renderImportStudio();
   renderGapAutopilot();
+  renderAutonomousRuns();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1646,6 +1708,7 @@ function renderQuestionList() {
       renderFollowUps();
       renderConnectors();
       renderGapAutopilot();
+      renderAutonomousRuns();
       renderAnalytics();
       schedulePersist();
     });
@@ -2272,6 +2335,7 @@ function renderAudit() {
 function activateWorkspaceNav(target) {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2299,6 +2363,7 @@ function setActiveNav(activeButton) {
     elements.reviewNavButton,
     elements.importNavButton,
     elements.gapNavButton,
+    elements.runNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -2318,6 +2383,7 @@ function setActiveNav(activeButton) {
 function openWorkspace() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2348,6 +2414,7 @@ function closeWorkspace(activateReview = true) {
 function openPipeline() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2379,6 +2446,7 @@ function closePipeline(activateReview = true) {
 function openTrustRoom() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
@@ -2410,6 +2478,7 @@ function closeTrustRoom(activateReview = true) {
 function openFollowUp() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2441,6 +2510,7 @@ function closeFollowUp(activateReview = true) {
 function openConnectors() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2472,6 +2542,7 @@ function closeConnectors(activateReview = true) {
 function openImportStudio() {
   closeWorkspace(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2501,6 +2572,7 @@ function closeImportStudio(activateReview = true) {
 }
 
 function openGapAutopilot() {
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2531,9 +2603,42 @@ function closeGapAutopilot(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openAutonomousRuns() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.runOpen = true;
+  setActiveNav(elements.runNavButton);
+  elements.runBackdrop.hidden = false;
+  elements.runDrawer.classList.add("is-open");
+  elements.runDrawer.setAttribute("aria-hidden", "false");
+  renderAutonomousRuns();
+  elements.startRunButton.focus();
+}
+
+function closeAutonomousRuns(activateReview = true) {
+  if (!state.runOpen && elements.runDrawer.getAttribute("aria-hidden") === "true") return;
+  state.runOpen = false;
+  elements.runDrawer.classList.remove("is-open");
+  elements.runDrawer.setAttribute("aria-hidden", "true");
+  elements.runBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2565,6 +2670,7 @@ function closeAnalytics(activateReview = true) {
 function openAccess() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2595,6 +2701,7 @@ function closeAccess(activateReview = true) {
 function openIntake() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2625,6 +2732,7 @@ function closeIntake(activateReview = true) {
 function openDataRoom() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2655,6 +2763,7 @@ function closeDataRoom(activateReview = true) {
 function openLibrary() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2686,6 +2795,7 @@ function closeLibrary(activateReview = true) {
 function openPortalCopy() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4440,6 +4550,7 @@ function copyGapFallback(id) {
   };
   addAudit("Gap fallback copied", `${shorten(task.question.text, 62)} buyer-safe fallback copied.`);
   renderGapAutopilot();
+  renderAutonomousRuns();
   copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
 }
 
@@ -4487,6 +4598,399 @@ function gapDigestText(gaps = gapAutopilotSnapshot()) {
     "- Request the exact proof artifact before approving weak answers.",
     "- Route high-risk gaps to named owners today.",
     "- Use fallback language only while evidence is being collected.",
+  ].join("\n");
+}
+
+function renderAutonomousRuns() {
+  const run = autonomousRunSnapshot();
+
+  elements.runScore.textContent = `${run.score}%`;
+  elements.runStepCount.textContent = run.steps.length;
+  elements.runGateCount.textContent = run.openGateCount;
+  elements.runReceiptCount.textContent = run.receipts.length;
+  elements.runDigest.textContent = runDigestText(run);
+  elements.startRunButton.disabled = run.steps.length === 0;
+  elements.approveRunGateButton.disabled = state.runActions.status === "Human gate approved";
+
+  elements.runRecommended.innerHTML = `
+    <header>
+      <div>
+        <span class="label">${escapeHtml(run.status)}</span>
+        <strong>${escapeHtml(run.recommended.title)}</strong>
+      </div>
+      <b>${run.score}%</b>
+    </header>
+    <p>${escapeHtml(run.recommended.detail)}</p>
+    <div class="run-recommendation-meta">
+      <span>${run.gapCount} gaps</span>
+      <span>${run.importCount} imports</span>
+      <span>${run.followUpCount} follow-ups</span>
+      <span>${run.connectorIssueCount} source issues</span>
+    </div>
+  `;
+
+  elements.runStepList.innerHTML = "";
+  run.steps.forEach((step, index) => {
+    const item = document.createElement("article");
+    item.className = `run-step-card ${runStatusClass(step.status)}`;
+    item.innerHTML = `
+      <div class="run-step-number">${String(index + 1).padStart(2, "0")}</div>
+      <div>
+        <header>
+          <strong>${escapeHtml(step.title)}</strong>
+          <span>${escapeHtml(step.status)}</span>
+        </header>
+        <p>${escapeHtml(step.detail)}</p>
+        <footer>
+          <span>${escapeHtml(step.owner)} | Gate: ${escapeHtml(step.gate)}</span>
+          <button class="secondary-button compact-button" type="button" data-run-open="${escapeHtml(step.target)}">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Open</span>
+          </button>
+        </footer>
+      </div>
+    `;
+    item.querySelector("[data-run-open]")?.addEventListener("click", () => openRunTarget(step.target));
+    elements.runStepList.append(item);
+  });
+
+  elements.runGateList.innerHTML = "";
+  run.gates.forEach((gate) => {
+    const item = document.createElement("article");
+    item.className = `run-gate-card ${gate.open ? "is-open" : "is-closed"}`;
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <span>${escapeHtml(gate.open ? "Gate open" : "Cleared")}</span>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+    `;
+    elements.runGateList.append(item);
+  });
+
+  elements.runReceiptList.innerHTML = "";
+  if (run.receipts.length === 0) {
+    elements.runReceiptList.append(emptyState("No run receipts yet"));
+  }
+  run.receipts.forEach((receipt) => {
+    const item = document.createElement("article");
+    item.className = "run-receipt-card";
+    item.innerHTML = `
+      <span>${escapeHtml(formatAuditTime(receipt.at))}</span>
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+    `;
+    elements.runReceiptList.append(item);
+  });
+
+  elements.runNextList.innerHTML = "";
+  run.nextActions.forEach((action) => {
+    const item = document.createElement("article");
+    item.className = "run-next-card";
+    item.innerHTML = `
+      <strong>${escapeHtml(action.title)}</strong>
+      <p>${escapeHtml(action.detail)}</p>
+      <button class="secondary-button compact-button" type="button" data-run-next="${escapeHtml(action.target)}">
+        <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+        <span>Open</span>
+      </button>
+    `;
+    item.querySelector("[data-run-next]")?.addEventListener("click", () => openRunTarget(action.target));
+    elements.runNextList.append(item);
+  });
+}
+
+function autonomousRunSnapshot() {
+  const gaps = gapAutopilotSnapshot();
+  const imports = importSnapshot();
+  const connectors = connectorSnapshot();
+  const followUps = followUpSnapshot();
+  const handoff = handoffReadinessSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const coverage = coverageSnapshot();
+  const openGateCount = [
+    gaps.highRiskCount > 0,
+    imports.cleanupCount > 0,
+    connectors.issueCount > 0,
+    followUps.slaCount > 0,
+    state.runActions.status !== "Human gate approved",
+  ].filter(Boolean).length;
+  const recommended = recommendedRun({ gaps, imports, connectors, followUps, handoff, coverage });
+  const steps = runPlanSteps({ gaps, imports, connectors, followUps, handoff, routing });
+  const gates = runGates({ gaps, imports, connectors, followUps });
+  const nextActions = runNextActions({ gaps, imports, connectors, followUps, handoff });
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(handoff.ready * 0.34 + coverage.score * 0.24 + connectors.score * 0.18 + Math.max(0, 100 - gaps.highRiskCount * 16 - imports.cleanupCount * 7 - followUps.slaCount * 8) * 0.24),
+    ),
+  );
+
+  return {
+    status: state.runActions.status,
+    score,
+    recommended,
+    steps,
+    gates,
+    nextActions,
+    receipts: state.runActions.receipts.slice(-8).reverse(),
+    openGateCount,
+    gapCount: gaps.taskCount,
+    importCount: imports.readyCount,
+    followUpCount: followUps.openCount,
+    connectorIssueCount: connectors.issueCount,
+    gaps,
+    imports,
+    connectors,
+    followUps,
+    handoff,
+    routing,
+    coverage,
+  };
+}
+
+function recommendedRun({ gaps, imports, connectors, followUps, handoff }) {
+  if (gaps.highRiskCount > 0) {
+    return {
+      title: "Evidence gap sweep",
+      detail: `${gaps.highRiskCount} high-risk proof gap${gaps.highRiskCount === 1 ? "" : "s"} can block buyer submission. Run owner routing and fallback language before approvals.`,
+    };
+  }
+  if (imports.readyCount > 0) {
+    return {
+      title: "Questionnaire intake run",
+      detail: `${imports.readyCount} mapped buyer row${imports.readyCount === 1 ? "" : "s"} can enter the review desk with owner routing and source checks.`,
+    };
+  }
+  if (followUps.slaCount > 0) {
+    return {
+      title: "Buyer follow-up run",
+      detail: `${followUps.slaCount} buyer follow-up${followUps.slaCount === 1 ? "" : "s"} are near SLA risk. Route evidence responses before the room loop slows down.`,
+    };
+  }
+  if (handoff.ready >= 75) {
+    return {
+      title: "Review pack seal run",
+      detail: "The workspace is close to handoff-ready. Prepare the review pack, copy portal answers, and keep buyer-facing output behind approval gates.",
+    };
+  }
+  return {
+    title: "Source readiness run",
+    detail: "Improve evidence coverage, connector health, and owner routing before attempting buyer-facing handoff.",
+  };
+}
+
+function runPlanSteps({ gaps, imports, connectors, followUps, handoff, routing }) {
+  return [
+    {
+      id: "import",
+      title: "Intake buyer rows",
+      detail: imports.readyCount > 0 ? `Add ${imports.readyCount} ready mapped row${imports.readyCount === 1 ? "" : "s"} after duplicate review.` : "No mapped import rows are ready; keep sample parser available for the next buyer file.",
+      owner: "Trust Lead",
+      gate: "Mapped rows reviewed",
+      status: imports.readyCount > 0 ? "Ready" : "Idle",
+      target: "import",
+    },
+    {
+      id: "gaps",
+      title: "Route proof gaps",
+      detail: gaps.taskCount > 0 ? `Route ${gaps.taskCount} evidence gap${gaps.taskCount === 1 ? "" : "s"} to named owners with exact proof requests.` : "No open evidence gaps detected from current answers.",
+      owner: "AnswerSeal Autopilot",
+      gate: "Owner proof required",
+      status: gaps.highRiskCount > 0 ? "Blocked" : gaps.taskCount > 0 ? "Ready" : "Clear",
+      target: "gaps",
+    },
+    {
+      id: "connectors",
+      title: "Refresh source health",
+      detail: connectors.issueCount > 0 ? `Review ${connectors.issueCount} connector issue${connectors.issueCount === 1 ? "" : "s"} and ${connectors.staleCount} stale source${connectors.staleCount === 1 ? "" : "s"}.` : "Connector health is clean enough for the next review cycle.",
+      owner: "Evidence Owners",
+      gate: "Approved sources only",
+      status: connectors.issueCount > 0 ? "Review" : "Clear",
+      target: "connectors",
+    },
+    {
+      id: "followups",
+      title: "Close buyer loops",
+      detail: followUps.openCount > 0 ? `Resolve ${followUps.openCount} open buyer follow-up${followUps.openCount === 1 ? "" : "s"} before room handoff.` : "No open buyer-room follow-ups need routing.",
+      owner: "Sales Engineering",
+      gate: "Buyer-safe response",
+      status: followUps.slaCount > 0 ? "SLA risk" : followUps.openCount > 0 ? "Ready" : "Clear",
+      target: "followups",
+    },
+    {
+      id: "handoff",
+      title: "Prepare sealed handoff",
+      detail: `Handoff readiness is ${handoff.ready}%; ${routing.openRisks} open risk${routing.openRisks === 1 ? "" : "s"} remain before broad buyer reuse.`,
+      owner: "Trust Lead",
+      gate: "Human approval",
+      status: handoff.ready >= 75 && routing.openRisks === 0 ? "Ready" : "Gated",
+      target: "workspace",
+    },
+  ];
+}
+
+function runGates({ gaps, imports, connectors, followUps }) {
+  const approvedLabel = state.runActions.approvedAt ? formatAuditTime(state.runActions.approvedAt) : "this session";
+  return [
+    {
+      title: "Human approval before buyer-facing output",
+      detail: state.runActions.status === "Human gate approved" ? `Approved ${approvedLabel} for this demo run.` : "Autonomous runs can plan, route, and draft internally, but buyer-facing answers remain blocked until reviewed.",
+      open: state.runActions.status !== "Human gate approved",
+    },
+    {
+      title: "High-risk proof gaps cleared",
+      detail: gaps.highRiskCount > 0 ? `${gaps.highRiskCount} high-risk gap${gaps.highRiskCount === 1 ? "" : "s"} still require owner evidence.` : "No high-risk proof gaps detected.",
+      open: gaps.highRiskCount > 0,
+    },
+    {
+      title: "Import cleanup reviewed",
+      detail: imports.cleanupCount > 0 ? `${imports.cleanupCount} imported row${imports.cleanupCount === 1 ? "" : "s"} need cleanup or stronger evidence.` : "Import rows are either ready, duplicate, or already handled.",
+      open: imports.cleanupCount > 0,
+    },
+    {
+      title: "Source freshness acceptable",
+      detail: connectors.issueCount > 0 ? `${connectors.issueCount} connector issue${connectors.issueCount === 1 ? "" : "s"} remain across the evidence vault.` : "Evidence connectors have no open source issues.",
+      open: connectors.issueCount > 0,
+    },
+    {
+      title: "Buyer follow-up SLA safe",
+      detail: followUps.slaCount > 0 ? `${followUps.slaCount} follow-up${followUps.slaCount === 1 ? "" : "s"} are near SLA risk.` : "Buyer follow-ups are not at SLA risk.",
+      open: followUps.slaCount > 0,
+    },
+  ];
+}
+
+function runNextActions({ gaps, imports, connectors, followUps, handoff }) {
+  const actions = [];
+  if (gaps.tasks[0]) {
+    actions.push({
+      title: `Request ${gaps.tasks[0].request.title.toLowerCase()}`,
+      detail: `${gaps.tasks[0].owner.name} owns the highest-risk proof gap: ${shorten(gaps.tasks[0].question.text, 88)}.`,
+      target: "gaps",
+    });
+  }
+  if (imports.readyCount > 0) {
+    actions.push({
+      title: "Promote ready import rows",
+      detail: `${imports.readyCount} mapped buyer row${imports.readyCount === 1 ? "" : "s"} can be added after duplicate review.`,
+      target: "import",
+    });
+  }
+  if (connectors.issueCount > 0) {
+    actions.push({
+      title: "Refresh source connectors",
+      detail: "Connector issues can create stale or conflicting citations inside buyer answers.",
+      target: "connectors",
+    });
+  }
+  if (followUps.slaCount > 0) {
+    actions.push({
+      title: "Protect buyer follow-up SLA",
+      detail: `${followUps.slaCount} follow-up${followUps.slaCount === 1 ? "" : "s"} should be routed before the trust room loop slows down.`,
+      target: "followups",
+    });
+  }
+  if (actions.length === 0) {
+    actions.push({
+      title: handoff.ready >= 75 ? "Prepare review pack" : "Improve handoff readiness",
+      detail: handoff.ready >= 75 ? "Workspace is close to handoff-ready; export the review pack after approval." : `Current readiness is ${handoff.ready}%; route owners and improve source coverage first.`,
+      target: "workspace",
+    });
+  }
+  return actions.slice(0, 4);
+}
+
+function runStatusClass(status) {
+  if (["Blocked", "SLA risk", "Gated"].includes(status)) return "is-blocked";
+  if (["Ready", "Review"].includes(status)) return "is-ready";
+  return "is-clear";
+}
+
+function startAutonomousRun() {
+  const run = autonomousRunSnapshot();
+  const detail = `${run.recommended.title} started with ${run.steps.length} steps, ${run.openGateCount} open gates, and ${run.gapCount} evidence gaps.`;
+  state.runActions.status = "Running";
+  state.runActions.startedAt = new Date().toISOString();
+  addRunReceipt("Run started", detail);
+  addAudit("Autonomous run started", detail);
+  render();
+  showToast("Autonomous review run started.");
+}
+
+function approveRunGate() {
+  const run = autonomousRunSnapshot();
+  const detail = `${run.recommended.title} human gate approved with ${run.openGateCount} remaining system gates visible.`;
+  state.runActions.status = "Human gate approved";
+  state.runActions.approvedAt = new Date().toISOString();
+  addRunReceipt("Human gate approved", detail);
+  addAudit("Run gate approved", detail);
+  render();
+  showToast("Human gate approved for this run.");
+}
+
+function copyRunDigest() {
+  const run = autonomousRunSnapshot();
+  state.runActions.lastCopiedAt = new Date().toISOString();
+  addRunReceipt("Run digest copied", `${run.recommended.title} digest copied for internal review.`);
+  addAudit("Run digest copied", "Autonomous review run digest copied.");
+  renderAutonomousRuns();
+  copyText(runDigestText(run), "Autonomous run digest copied.");
+}
+
+function addRunReceipt(action, detail) {
+  state.runActions.receipts = [
+    ...(state.runActions.receipts ?? []),
+    {
+      id: `run-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+}
+
+function openRunTarget(target) {
+  if (target === "import") openImportStudio();
+  if (target === "gaps") openGapAutopilot();
+  if (target === "connectors") openConnectors();
+  if (target === "followups") openFollowUp();
+  if (target === "workspace") openWorkspace();
+}
+
+function runDigestText(run = autonomousRunSnapshot()) {
+  const stepLines = run.steps.map((step, index) => `${index + 1}. ${step.status}: ${step.title} | ${step.owner} | ${step.gate}`).join("\n");
+  const gateLines = run.gates.map((gate, index) => `${index + 1}. ${gate.open ? "OPEN" : "CLEARED"}: ${gate.title} - ${gate.detail}`).join("\n");
+  const nextLines = run.nextActions.map((action, index) => `${index + 1}. ${action.title}: ${action.detail}`).join("\n");
+  const receiptLines = run.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Autonomous Review Run",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${run.status}`,
+    `Recommended run: ${run.recommended.title}`,
+    `Run score: ${run.score}%`,
+    `Open gates: ${run.openGateCount}`,
+    `Handoff readiness: ${run.handoff.ready}%`,
+    `Evidence gaps: ${run.gapCount}`,
+    "",
+    "Run plan:",
+    stepLines || "No steps planned.",
+    "",
+    "Human gates:",
+    gateLines || "No gates open.",
+    "",
+    "Next actions:",
+    nextLines || "No next actions.",
+    "",
+    "Run receipts:",
+    receiptLines || "No run receipts yet.",
+    "",
+    "Policy:",
+    "- Plan and route internally.",
+    "- Keep buyer-facing output behind human approval.",
+    "- Record every run action as a receipt.",
   ].join("\n");
 }
 
@@ -6371,6 +6875,7 @@ function selectNextOpenQuestion() {
   renderTrustRoom();
   renderFollowUps();
   renderGapAutopilot();
+  renderAutonomousRuns();
   renderPortalCopy();
   schedulePersist();
 }
@@ -6638,6 +7143,10 @@ function exportCsv() {
     "Gap High Risk",
     "Gap Requested",
     "Gap Fallbacks",
+    "Run Status",
+    "Run Score",
+    "Run Gates",
+    "Run Next Action",
     "Trace",
     "Answer",
     "Sources",
@@ -6654,6 +7163,7 @@ function exportCsv() {
     const connectors = connectorSnapshot();
     const importStudio = importSnapshot();
     const gaps = gapAutopilotSnapshot();
+    const run = autonomousRunSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -6689,6 +7199,10 @@ function exportCsv() {
       gaps.highRiskCount,
       gaps.requestedCount,
       gaps.fallbackCount,
+      run.status,
+      `${run.score}%`,
+      run.openGateCount,
+      run.nextActions[0]?.title ?? "No next action",
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -6715,6 +7229,7 @@ function exportReviewPack() {
   const connectors = connectorSnapshot();
   const importStudio = importSnapshot();
   const gaps = gapAutopilotSnapshot();
+  const run = autonomousRunSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -6732,11 +7247,41 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v15</h1>
+        <h1>AnswerSeal Review Pack v16</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Autonomous Review Run</h2>
+        <p>Status: ${escapeHtml(run.status)} | Recommended run: ${escapeHtml(run.recommended.title)} | Run score: ${run.score}% | Open gates: ${run.openGateCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Gate</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${run.steps
+              .map(
+                (step) => `
+                  <tr>
+                    <td>${escapeHtml(step.title)}</td>
+                    <td class="${["Blocked", "SLA risk", "Gated"].includes(step.status) ? "risk" : "ok"}">${escapeHtml(step.status)}</td>
+                    <td>${escapeHtml(step.owner)}</td>
+                    <td>${escapeHtml(step.gate)}</td>
+                    <td>${escapeHtml(step.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Run Digest</h2>
+        <pre>${escapeHtml(runDigestText(run))}</pre>
         <h2>Evidence Gap Autopilot</h2>
         <p>Open gaps: ${gaps.taskCount} | High risk: ${gaps.highRiskCount} | Evidence requested: ${gaps.requestedCount} | Fallbacks ready: ${gaps.fallbackCount}</p>
         <table>
@@ -7417,18 +7962,19 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v15 created with evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v16 created with autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
   renderImportStudio();
   renderGapAutopilot();
+  renderAutonomousRuns();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v15 exported.");
+  showToast("Review Pack v16 exported.");
 }
 
 function toCsv(rows) {
@@ -7484,6 +8030,7 @@ function serializeWorkspace() {
     connectors: state.connectors,
     importStudio: state.importStudio,
     gapActions: state.gapActions,
+    runActions: state.runActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -7510,6 +8057,7 @@ function resetWorkspace() {
   closeConnectors(false);
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeAutonomousRuns(false);
   closeWorkspace(false);
   closeLibrary();
   render();
