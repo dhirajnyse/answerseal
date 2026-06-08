@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.16 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v16";
+const BUILD_VERSION = "v0.17 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v17";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v16",
   "answerseal.workspace.v15",
   "answerseal.workspace.v14",
   "answerseal.workspace.v13",
@@ -553,6 +554,61 @@ const followUpSeeds = [
   },
 ];
 
+const connectorSeeds = [
+  {
+    id: "conn-drive-security",
+    provider: "Google Drive",
+    name: "Security Policies",
+    ownerId: "owner-security",
+    status: "Approved",
+    lastSync: "2026-06-08T06:52:00.000Z",
+    docs: 5,
+    linkedEvidence: ["soc2", "security-policy"],
+    freshness: "Fresh",
+    issues: 0,
+    nextAction: "Keep SOC 2 and policy folders approved for buyer-room reuse.",
+  },
+  {
+    id: "conn-sharepoint-legal",
+    provider: "SharePoint",
+    name: "Legal Trust Docs",
+    ownerId: "owner-legal",
+    status: "Pending",
+    lastSync: "2026-06-07T15:20:00.000Z",
+    docs: 3,
+    linkedEvidence: ["dpa"],
+    freshness: "Current",
+    issues: 1,
+    nextAction: "Legal should approve DPA excerpts before the next trust room update.",
+  },
+  {
+    id: "conn-notion-ai",
+    provider: "Notion",
+    name: "AI Governance Wiki",
+    ownerId: "owner-ai",
+    status: "Review",
+    lastSync: "2026-06-06T10:10:00.000Z",
+    docs: 4,
+    linkedEvidence: ["ai-standard", "pilot-terms-2025"],
+    freshness: "Mixed",
+    issues: 2,
+    nextAction: "Block legacy pilot language and approve the current AI Usage Standard.",
+  },
+  {
+    id: "conn-confluence-ops",
+    provider: "Confluence",
+    name: "Continuity Runbooks",
+    ownerId: "owner-ops",
+    status: "Stale",
+    lastSync: "2026-05-24T09:15:00.000Z",
+    docs: 2,
+    linkedEvidence: ["bcp"],
+    freshness: "Stale",
+    issues: 1,
+    nextAction: "Operations should upload recent recovery test proof for RTO and RPO claims.",
+  },
+];
+
 function createSeedIntake() {
   return evidenceDocs.map((doc) => ({
     id: `seed-${doc.id}`,
@@ -597,6 +653,8 @@ function createInitialState() {
     trustRoom: createInitialTrustRoom(),
     followUpOpen: false,
     followUps: createInitialFollowUps(),
+    connectorOpen: false,
+    connectors: createInitialConnectors(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -635,6 +693,10 @@ function createInitialTrustRoom() {
 
 function createInitialFollowUps() {
   return followUpSeeds.map((item) => ({ ...item }));
+}
+
+function createInitialConnectors() {
+  return connectorSeeds.map((item) => ({ ...item, linkedEvidence: [...item.linkedEvidence] }));
 }
 
 function createInitialDataRoom() {
@@ -722,6 +784,7 @@ function loadWorkspaceState() {
       portal: normalizePortal(workspace.portal ?? fresh.portal),
       trustRoom: normalizeTrustRoom(workspace.trustRoom ?? fresh.trustRoom),
       followUps: Array.isArray(workspace.followUps) ? workspace.followUps.map(normalizeFollowUp) : fresh.followUps,
+      connectors: Array.isArray(workspace.connectors) ? workspace.connectors.map(normalizeConnector) : fresh.connectors,
       search: "",
       filter: "all",
       librarySearch: "",
@@ -733,6 +796,7 @@ function loadWorkspaceState() {
       pipelineOpen: false,
       trustRoomOpen: false,
       followUpOpen: false,
+      connectorOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -929,6 +993,23 @@ function normalizeFollowUp(item) {
   };
 }
 
+function normalizeConnector(item) {
+  const fallback = connectorSeeds.find((seed) => seed.id === item?.id) ?? connectorSeeds[0];
+  return {
+    id: String(item?.id ?? `conn-${Date.now()}`),
+    provider: String(item?.provider ?? fallback.provider),
+    name: String(item?.name ?? fallback.name),
+    ownerId: String(item?.ownerId ?? fallback.ownerId),
+    status: String(item?.status ?? fallback.status),
+    lastSync: item?.lastSync ?? fallback.lastSync,
+    docs: Number.isFinite(Number(item?.docs)) ? Number(item.docs) : fallback.docs,
+    linkedEvidence: Array.isArray(item?.linkedEvidence) ? item.linkedEvidence.map(String) : [...fallback.linkedEvidence],
+    freshness: String(item?.freshness ?? fallback.freshness),
+    issues: Number.isFinite(Number(item?.issues)) ? Number(item.issues) : fallback.issues,
+    nextAction: String(item?.nextAction ?? fallback.nextAction),
+  };
+}
+
 const state = loadWorkspaceState();
 
 const elements = {
@@ -938,6 +1019,7 @@ const elements = {
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
   followUpNavButton: document.querySelector("#followUpNavButton"),
+  connectorNavButton: document.querySelector("#connectorNavButton"),
   analyticsNavButton: document.querySelector("#analyticsNavButton"),
   accessNavButton: document.querySelector("#accessNavButton"),
   dataRoomNavButton: document.querySelector("#dataRoomNavButton"),
@@ -1075,6 +1157,18 @@ const elements = {
   followUpLoopList: document.querySelector("#followUpLoopList"),
   followUpDigest: document.querySelector("#followUpDigest"),
   copyFollowUpDigestButton: document.querySelector("#copyFollowUpDigestButton"),
+  connectorBackdrop: document.querySelector("#connectorBackdrop"),
+  connectorDrawer: document.querySelector("#connectorDrawer"),
+  closeConnectorButton: document.querySelector("#closeConnectorButton"),
+  connectorSourceCount: document.querySelector("#connectorSourceCount"),
+  connectorApprovedCount: document.querySelector("#connectorApprovedCount"),
+  connectorStaleCount: document.querySelector("#connectorStaleCount"),
+  connectorVaultScore: document.querySelector("#connectorVaultScore"),
+  connectorList: document.querySelector("#connectorList"),
+  connectorFreshnessList: document.querySelector("#connectorFreshnessList"),
+  connectorOwnerList: document.querySelector("#connectorOwnerList"),
+  connectorDigest: document.querySelector("#connectorDigest"),
+  copyConnectorDigestButton: document.querySelector("#copyConnectorDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1181,6 +1275,7 @@ function bindEvents() {
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
   elements.followUpNavButton.addEventListener("click", openFollowUp);
+  elements.connectorNavButton.addEventListener("click", openConnectors);
   elements.analyticsNavButton.addEventListener("click", openAnalytics);
   elements.accessNavButton.addEventListener("click", openAccess);
   elements.dataRoomNavButton.addEventListener("click", openDataRoom);
@@ -1223,6 +1318,7 @@ function bindEvents() {
     renderPipeline();
     renderTrustRoom();
     renderFollowUps();
+    renderConnectors();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1256,6 +1352,9 @@ function bindEvents() {
   elements.closeFollowUpButton.addEventListener("click", closeFollowUp);
   elements.followUpBackdrop.addEventListener("click", closeFollowUp);
   elements.copyFollowUpDigestButton.addEventListener("click", copyFollowUpDigest);
+  elements.closeConnectorButton.addEventListener("click", closeConnectors);
+  elements.connectorBackdrop.addEventListener("click", closeConnectors);
+  elements.copyConnectorDigestButton.addEventListener("click", copyConnectorDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1302,6 +1401,7 @@ function bindEvents() {
     if (state.pipelineOpen) closePipeline();
     if (state.trustRoomOpen) closeTrustRoom();
     if (state.followUpOpen) closeFollowUp();
+    if (state.connectorOpen) closeConnectors();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1315,6 +1415,7 @@ function applyInitialHash() {
   if (hash === "pipeline" || hash === "buyers") openPipeline();
   if (hash === "trust-room" || hash === "room" || hash === "rooms") openTrustRoom();
   if (hash === "follow-up" || hash === "followups" || hash === "inbox") openFollowUp();
+  if (hash === "connectors" || hash === "vault" || hash === "sources") openConnectors();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1342,6 +1443,7 @@ function render() {
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
+  renderConnectors();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1414,6 +1516,7 @@ function renderQuestionList() {
       renderPipeline();
       renderTrustRoom();
       renderFollowUps();
+      renderConnectors();
       renderAnalytics();
       schedulePersist();
     });
@@ -2042,6 +2145,7 @@ function activateWorkspaceNav(target) {
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeLibrary(false);
@@ -2066,6 +2170,7 @@ function setActiveNav(activeButton) {
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
     elements.followUpNavButton,
+    elements.connectorNavButton,
     elements.analyticsNavButton,
     elements.accessNavButton,
     elements.dataRoomNavButton,
@@ -2081,6 +2186,7 @@ function openWorkspace() {
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2108,6 +2214,7 @@ function openPipeline() {
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2136,6 +2243,7 @@ function openTrustRoom() {
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2164,6 +2272,7 @@ function openFollowUp() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2188,11 +2297,41 @@ function closeFollowUp(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openConnectors() {
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.connectorOpen = true;
+  setActiveNav(elements.connectorNavButton);
+  elements.connectorBackdrop.hidden = false;
+  elements.connectorDrawer.classList.add("is-open");
+  elements.connectorDrawer.setAttribute("aria-hidden", "false");
+  renderConnectors();
+  elements.copyConnectorDigestButton.focus();
+}
+
+function closeConnectors(activateReview = true) {
+  if (!state.connectorOpen && elements.connectorDrawer.getAttribute("aria-hidden") === "true") return;
+  state.connectorOpen = false;
+  elements.connectorDrawer.classList.remove("is-open");
+  elements.connectorDrawer.setAttribute("aria-hidden", "true");
+  elements.connectorBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAccess(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -2221,6 +2360,7 @@ function openAccess() {
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeIntake(false);
   closeDataRoom(false);
@@ -2248,6 +2388,7 @@ function openIntake() {
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeDataRoom(false);
@@ -2275,6 +2416,7 @@ function openDataRoom() {
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2302,6 +2444,7 @@ function openLibrary() {
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -2330,6 +2473,7 @@ function openPortalCopy() {
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeAnalytics(false);
   closeAccess(false);
   closeIntake(false);
@@ -3207,6 +3351,260 @@ function followUpDigestText(inbox = followUpSnapshot()) {
     "- Convert high-priority buyer comments into review tasks.",
     "- Attach fresh evidence before reopening the trust room.",
     "- Mark answered only after the room receipt reflects the update.",
+  ].join("\n");
+}
+
+function renderConnectors() {
+  const vault = connectorSnapshot();
+
+  elements.connectorSourceCount.textContent = vault.connectorCount;
+  elements.connectorApprovedCount.textContent = vault.approvedCount;
+  elements.connectorStaleCount.textContent = vault.staleCount;
+  elements.connectorVaultScore.textContent = `${vault.score}%`;
+  elements.connectorDigest.textContent = connectorDigestText(vault);
+
+  elements.connectorList.innerHTML = "";
+  vault.connectors.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `connector-card ${connectorStatusClass(item.status)}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.provider)} | ${escapeHtml(item.status)}</span>
+          <strong>${escapeHtml(item.name)}</strong>
+        </div>
+        <b>${item.health}%</b>
+      </header>
+      <div class="connector-progress" aria-label="${escapeHtml(item.name)} health">
+        <span style="width: ${Math.max(0, Math.min(100, item.health))}%"></span>
+      </div>
+      <div class="connector-meta">
+        <span>${item.docs} docs</span>
+        <span>${item.linkedEvidence.length} linked</span>
+        <span>${item.issues} issues</span>
+        <span>${escapeHtml(item.syncAge)}</span>
+      </div>
+      <p>${escapeHtml(item.nextAction)}</p>
+      <footer>
+        <span>${escapeHtml(item.owner.name)} | ${escapeHtml(item.freshness)}</span>
+        <button class="secondary-button compact-button" type="button" data-connector-brief="${escapeHtml(item.id)}">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Brief</span>
+        </button>
+        <button class="secondary-button compact-button" type="button" data-connector-sync="${escapeHtml(item.id)}">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Sync</span>
+        </button>
+        <button class="primary-button compact-button" type="button" data-connector-approve="${escapeHtml(item.id)}">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve</span>
+        </button>
+      </footer>
+    `;
+    card.querySelector("[data-connector-brief]")?.addEventListener("click", () => copyConnectorBrief(item.id));
+    card.querySelector("[data-connector-sync]")?.addEventListener("click", () => syncConnector(item.id));
+    card.querySelector("[data-connector-approve]")?.addEventListener("click", () => approveConnector(item.id));
+    elements.connectorList.append(card);
+  });
+
+  elements.connectorFreshnessList.innerHTML = "";
+  vault.freshnessRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = `connector-freshness-row ${row.risk ? "is-risk" : ""}`;
+    item.innerHTML = `
+      <div>
+        <strong>${escapeHtml(row.title)}</strong>
+        <span>${escapeHtml(row.connectorName)} | ${escapeHtml(row.owner)} | ${escapeHtml(row.updated)}</span>
+      </div>
+      <b>${escapeHtml(row.status)}</b>
+    `;
+    elements.connectorFreshnessList.append(item);
+  });
+
+  elements.connectorOwnerList.innerHTML = "";
+  vault.ownerRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = "connector-owner-card";
+    item.innerHTML = `
+      <span class="role-avatar">${escapeHtml(initials(row.member.name))}</span>
+      <div>
+        <header>
+          <strong>${escapeHtml(row.member.name)}</strong>
+          <b>${row.pending} pending</b>
+        </header>
+        <p>${escapeHtml(row.member.team)} | ${row.sources} sources | ${row.issues} issues</p>
+      </div>
+    `;
+    elements.connectorOwnerList.append(item);
+  });
+}
+
+function connectorSnapshot() {
+  const connectors = state.connectors.map(enrichConnector).sort((a, b) => {
+    if (a.status === "Stale" && b.status !== "Stale") return -1;
+    if (b.status === "Stale" && a.status !== "Stale") return 1;
+    if (a.issues !== b.issues) return b.issues - a.issues;
+    return a.name.localeCompare(b.name);
+  });
+  const connectorCount = connectors.length;
+  const approvedCount = connectors.filter((item) => item.status === "Approved").length;
+  const staleCount = connectors.filter((item) => item.freshness === "Stale" || item.status === "Stale").length;
+  const issueCount = connectors.reduce((sum, item) => sum + item.issues, 0);
+  const totalDocs = connectors.reduce((sum, item) => sum + item.docs, 0);
+  const score = Math.max(
+    0,
+    Math.min(100, Math.round((approvedCount / Math.max(1, connectorCount)) * 46 + ((connectorCount - staleCount) / Math.max(1, connectorCount)) * 34 + Math.max(0, 20 - issueCount * 4))),
+  );
+  const freshnessRows = connectors
+    .flatMap((connector) =>
+      connector.linkedEvidence.map((docId) => {
+        const doc = getEvidenceById(docId);
+        const status = doc ? freshnessLabel(doc.updated) : "Missing";
+        return {
+          title: doc?.title ?? docId,
+          connectorName: connector.name,
+          owner: connector.owner.name,
+          updated: doc ? formatShortDate(doc.updated) : "No file",
+          status,
+          risk: status === "Stale" || status === "Missing" || connector.status === "Stale",
+        };
+      }),
+    )
+    .sort((a, b) => Number(b.risk) - Number(a.risk) || a.title.localeCompare(b.title));
+  const ownerRows = workspaceAccount.members
+    .map((member) => {
+      const owned = connectors.filter((connector) => connector.owner.id === member.id);
+      return {
+        member,
+        sources: owned.length,
+        pending: owned.filter((connector) => connector.status !== "Approved").length,
+        issues: owned.reduce((sum, connector) => sum + connector.issues, 0),
+      };
+    })
+    .filter((row) => row.sources > 0);
+
+  return {
+    connectors,
+    connectorCount,
+    approvedCount,
+    staleCount,
+    pendingCount: connectors.filter((item) => item.status !== "Approved").length,
+    issueCount,
+    totalDocs,
+    score,
+    freshnessRows,
+    ownerRows,
+  };
+}
+
+function enrichConnector(item) {
+  const owner = workspaceAccount.members.find((member) => member.id === item.ownerId) ?? workspaceAccount.members[0];
+  const linkedDocs = item.linkedEvidence.map(getEvidenceById).filter(Boolean);
+  const staleDocs = linkedDocs.filter((doc) => daysSince(doc.updated) >= 365).length;
+  const syncAgeDays = daysSince(item.lastSync);
+  const statusPenalty = item.status === "Approved" ? 0 : item.status === "Pending" ? 10 : item.status === "Review" ? 16 : 24;
+  const health = Math.max(35, Math.min(100, 92 - statusPenalty - item.issues * 8 - staleDocs * 12 - Math.max(0, syncAgeDays - 3)));
+  return {
+    ...item,
+    owner,
+    linkedDocs,
+    staleDocs,
+    health,
+    syncAge: syncAgeDays === 0 ? "synced today" : `${syncAgeDays}d sync age`,
+  };
+}
+
+function connectorStatusClass(status) {
+  if (status === "Approved") return "is-approved";
+  if (status === "Stale") return "is-stale";
+  if (status === "Review") return "is-review";
+  return "is-pending";
+}
+
+function syncConnector(id) {
+  const connector = state.connectors.find((item) => item.id === id);
+  if (!connector) return;
+  connector.lastSync = new Date().toISOString();
+  connector.freshness = connector.status === "Stale" ? "Current" : connector.freshness;
+  connector.status = connector.status === "Stale" ? "Review" : connector.status;
+  connector.issues = Math.max(0, connector.issues - 1);
+  addAudit("Connector synced", `${connector.provider} ${connector.name} synced into the evidence vault.`);
+  renderConnectors();
+  renderDataRoom();
+  showToast("Connector synced.");
+}
+
+function approveConnector(id) {
+  const connector = state.connectors.find((item) => item.id === id);
+  if (!connector) return;
+  connector.status = "Approved";
+  connector.freshness = connector.freshness === "Stale" ? "Current" : connector.freshness;
+  connector.issues = Math.max(0, connector.issues - 1);
+  connector.lastSync = new Date().toISOString();
+  addAudit("Connector approved", `${connector.provider} ${connector.name} approved for buyer-room evidence reuse.`);
+  renderConnectors();
+  renderTrustRoom();
+  showToast("Connector approved.");
+}
+
+function copyConnectorBrief(id) {
+  const connector = connectorSnapshot().connectors.find((item) => item.id === id);
+  if (!connector) return;
+  copyText(connectorBriefText(connector), "Connector brief copied.");
+}
+
+function copyConnectorDigest() {
+  copyText(connectorDigestText(), "Evidence vault digest copied.");
+}
+
+function connectorBriefText(connector) {
+  const docs = connector.linkedDocs.map((doc) => `${doc.title} (${freshnessLabel(doc.updated)})`).join("; ") || "No linked evidence";
+  return [
+    `${workspaceAccount.company} - Evidence Connector Brief`,
+    `Build: ${BUILD_VERSION}`,
+    `Connector: ${connector.provider} / ${connector.name}`,
+    `Owner: ${connector.owner.name} (${connector.owner.team})`,
+    `Status: ${connector.status}`,
+    `Health: ${connector.health}%`,
+    `Docs: ${connector.docs}`,
+    `Linked evidence: ${docs}`,
+    `Issues: ${connector.issues}`,
+    `Last sync: ${formatAccessDate(connector.lastSync)}`,
+    `Next action: ${connector.nextAction}`,
+  ].join("\n");
+}
+
+function connectorDigestText(vault = connectorSnapshot()) {
+  const sourceLines = vault.connectors
+    .slice(0, 5)
+    .map((item, index) => `${index + 1}. ${item.provider} / ${item.name}: ${item.status}, ${item.health}% health, ${item.issues} issues, owner ${item.owner.name}`)
+    .join("\n");
+  const freshnessLines = vault.freshnessRows
+    .slice(0, 5)
+    .map((item, index) => `${index + 1}. ${item.title}: ${item.status}, ${item.connectorName}, owner ${item.owner}`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Evidence Vault Connectors",
+    `Build: ${BUILD_VERSION}`,
+    `Vault score: ${vault.score}%`,
+    `Connectors: ${vault.connectorCount}`,
+    `Approved: ${vault.approvedCount}`,
+    `Pending/review: ${vault.pendingCount}`,
+    `Stale sources: ${vault.staleCount}`,
+    `Open issues: ${vault.issueCount}`,
+    `Connected docs: ${vault.totalDocs}`,
+    "",
+    "Connector priority:",
+    sourceLines || "No connected sources.",
+    "",
+    "Freshness watch:",
+    freshnessLines || "No freshness risks.",
+    "",
+    "Recommended motion:",
+    "- Sync stale or review-state connectors before buyer-room updates.",
+    "- Ask owners to approve pending evidence before reuse.",
+    "- Replace legacy or missing evidence before answering buyer follow-ups.",
   ].join("\n");
 }
 
@@ -5091,6 +5489,10 @@ function exportCsv() {
     "Follow-Ups Routed",
     "Follow-Ups Evidence Gaps",
     "Follow-Ups SLA Risk",
+    "Vault Score",
+    "Connectors Approved",
+    "Connectors Stale",
+    "Connector Issues",
     "Trace",
     "Answer",
     "Sources",
@@ -5104,6 +5506,7 @@ function exportCsv() {
     const pipeline = pipelineSnapshot();
     const trustRoom = trustRoomSnapshot();
     const followUps = followUpSnapshot();
+    const connectors = connectorSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -5127,6 +5530,10 @@ function exportCsv() {
       followUps.routedCount,
       followUps.evidenceCount,
       followUps.slaCount,
+      `${connectors.score}%`,
+      `${connectors.approvedCount}/${connectors.connectorCount}`,
+      connectors.staleCount,
+      connectors.issueCount,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -5150,6 +5557,7 @@ function exportReviewPack() {
   const pipeline = pipelineSnapshot();
   const trustRoom = trustRoomSnapshot();
   const followUps = followUpSnapshot();
+  const connectors = connectorSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -5167,7 +5575,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v12</h1>
+        <h1>AnswerSeal Review Pack v13</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -5342,6 +5750,64 @@ function exportReviewPack() {
         </table>
         <h2>Follow-Up Digest</h2>
         <pre>${escapeHtml(followUpDigestText(followUps))}</pre>
+        <h2>Evidence Vault Connectors</h2>
+        <p>Vault score: ${connectors.score}% | Connectors: ${connectors.connectorCount} | Approved: ${connectors.approvedCount} | Stale: ${connectors.staleCount} | Issues: ${connectors.issueCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Connector</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Docs</th>
+              <th>Health</th>
+              <th>Next Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${connectors.connectors
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.provider)} / ${escapeHtml(item.name)}</td>
+                    <td class="${item.status === "Approved" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.owner.name)}</td>
+                    <td>${item.docs}</td>
+                    <td>${item.health}%</td>
+                    <td>${escapeHtml(item.nextAction)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Vault Freshness Watch</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Evidence</th>
+              <th>Connector</th>
+              <th>Owner</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${connectors.freshnessRows
+              .slice(0, 8)
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.connectorName)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td class="${item.risk ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evidence Vault Digest</h2>
+        <pre>${escapeHtml(connectorDigestText(connectors))}</pre>
         <h2>Deal Desk Analytics</h2>
         <p>Deal risk: ${escapeHtml(deal.riskLabel)} ${deal.riskScore}/100 | Time saved estimate: ${deal.timeSavedHours} hours | Next owner: ${escapeHtml(deal.nextOwner.name)}</p>
         <table>
@@ -5730,15 +6196,16 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v12 created with buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v13 created with evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
+  renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v12 exported.");
+  showToast("Review Pack v13 exported.");
 }
 
 function toCsv(rows) {
@@ -5791,6 +6258,7 @@ function serializeWorkspace() {
     handoff: state.handoff,
     trustRoom: state.trustRoom,
     followUps: state.followUps,
+    connectors: state.connectors,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -5814,6 +6282,7 @@ function resetWorkspace() {
   closePortal(false);
   closeTrustRoom(false);
   closeFollowUp(false);
+  closeConnectors(false);
   closeWorkspace(false);
   closeLibrary();
   render();

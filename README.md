@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.16 Alpha
+**Current version:** v0.17 Alpha
 
-**Current phase:** Buyer Follow-Up Inbox
+**Current phase:** Evidence Vault Connectors
 
 ## Brand
 
@@ -60,6 +60,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Follow-up review task creation that converts buyer comments into internal questionnaire work
 - Evidence-gap and SLA-risk tracking for buyer comments that need stronger proof
 - Copyable follow-up briefs and inbox digest for sales/security handoff
+- Evidence Vault Connectors drawer for Drive, SharePoint, Notion, and Confluence-style sources
+- Vault score, approved connector count, stale connector count, source issues, and sync health
+- Source freshness watch mapped to linked evidence and stale proof risks
+- Owner approval cards for source owners, pending reviews, and connector issues
+- Copyable connector briefs and vault digest for evidence operations handoff
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -80,7 +85,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v12 export with buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v13 export with evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -98,15 +103,16 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.17 Alpha - Evidence Vault Connectors
+## Next Phase: v0.18 Alpha - Questionnaire Import Studio
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
 - Add private cloud workspace storage for evidence, answers, traces, and activity
 - Add organization-level evidence vaults and reusable answer libraries
-- Model Google Drive, SharePoint, Notion, and Confluence-style evidence connectors in the static demo
-- Add source freshness monitoring for stale policies, old SOC reports, and expiring evidence
-- Add approval sync states for approved, pending, blocked, and ready evidence sources
-- Add vault health digest for security, legal, sales engineering, and founders
+- Import messy buyer spreadsheets and portal exports into the review queue
+- Map columns and fields to question, owner, category, due date, and buyer portal
+- Detect duplicate buyer questions against approved response memory
+- Suggest owners from trust category, source system, and prior routing history
+- Show import confidence and route weak rows for human cleanup
 
 ## License
 

@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.17 Alpha - Evidence Vault Connectors
+
+Phase: Evidence Vault Connectors
+
+- Added an Evidence Vault Connectors drawer for Drive, SharePoint, Notion, and Confluence-style source systems.
+- Added connector metrics for vault score, approved sources, stale sources, open issues, and sync health.
+- Added source freshness watch mapped to linked evidence so stale proof is visible before reuse.
+- Added owner approval cards for source owners, pending connector reviews, and evidence issues.
+- Added actions to sync sources, approve connector reviews, copy connector briefs, and copy a vault digest.
+- Added connector context to CSV exports.
+- Upgraded review pack export to Review Pack v13 with evidence vault connectors, freshness watch, owner approval, and vault digest.
+- Updated the build phases page with the v0.18 Questionnaire Import Studio plan.
+
 ## v0.16 Alpha - Buyer Follow-Up Inbox
 
 Phase: Buyer Follow-Up Inbox
