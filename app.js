@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.18 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v18";
+const BUILD_VERSION = "v0.19 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v19";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v18",
   "answerseal.workspace.v17",
   "answerseal.workspace.v16",
   "answerseal.workspace.v15",
@@ -666,6 +667,8 @@ function createInitialState() {
     connectors: createInitialConnectors(),
     importOpen: false,
     importStudio: createInitialImportStudio(),
+    gapOpen: false,
+    gapActions: {},
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -806,6 +809,7 @@ function loadWorkspaceState() {
       followUps: Array.isArray(workspace.followUps) ? workspace.followUps.map(normalizeFollowUp) : fresh.followUps,
       connectors: Array.isArray(workspace.connectors) ? workspace.connectors.map(normalizeConnector) : fresh.connectors,
       importStudio: normalizeImportStudio(workspace.importStudio ?? fresh.importStudio),
+      gapActions: normalizeGapActions(workspace.gapActions ?? fresh.gapActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -819,6 +823,7 @@ function loadWorkspaceState() {
       followUpOpen: false,
       connectorOpen: false,
       importOpen: false,
+      gapOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1043,6 +1048,21 @@ function normalizeImportStudio(item) {
   };
 }
 
+function normalizeGapActions(actions) {
+  if (!actions || typeof actions !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(actions).map(([id, action]) => [
+      String(id),
+      {
+        status: String(action?.status ?? "Open"),
+        requestedAt: action?.requestedAt ?? null,
+        routedAt: action?.routedAt ?? null,
+        fallbackCopiedAt: action?.fallbackCopiedAt ?? null,
+      },
+    ]),
+  );
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1074,6 +1094,7 @@ const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
   importNavButton: document.querySelector("#importNavButton"),
+  gapNavButton: document.querySelector("#gapNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1245,6 +1266,19 @@ const elements = {
   importOwnerList: document.querySelector("#importOwnerList"),
   importDigest: document.querySelector("#importDigest"),
   copyImportDigestButton: document.querySelector("#copyImportDigestButton"),
+  gapBackdrop: document.querySelector("#gapBackdrop"),
+  gapDrawer: document.querySelector("#gapDrawer"),
+  closeGapButton: document.querySelector("#closeGapButton"),
+  gapTaskCount: document.querySelector("#gapTaskCount"),
+  gapHighRiskCount: document.querySelector("#gapHighRiskCount"),
+  gapOwnerCount: document.querySelector("#gapOwnerCount"),
+  gapFallbackCount: document.querySelector("#gapFallbackCount"),
+  gapTaskList: document.querySelector("#gapTaskList"),
+  gapRequestList: document.querySelector("#gapRequestList"),
+  gapOwnerList: document.querySelector("#gapOwnerList"),
+  gapFallbackList: document.querySelector("#gapFallbackList"),
+  gapDigest: document.querySelector("#gapDigest"),
+  copyGapDigestButton: document.querySelector("#copyGapDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1348,6 +1382,7 @@ function init() {
 function bindEvents() {
   elements.reviewNavButton.addEventListener("click", () => activateWorkspaceNav("review"));
   elements.importNavButton.addEventListener("click", openImportStudio);
+  elements.gapNavButton.addEventListener("click", openGapAutopilot);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1396,6 +1431,7 @@ function bindEvents() {
     renderTrustRoom();
     renderFollowUps();
     renderConnectors();
+    renderGapAutopilot();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1438,6 +1474,9 @@ function bindEvents() {
   elements.analyzeImportButton.addEventListener("click", analyzeImportStudio);
   elements.addReadyImportsButton.addEventListener("click", addReadyImportRows);
   elements.copyImportDigestButton.addEventListener("click", copyImportDigest);
+  elements.closeGapButton.addEventListener("click", closeGapAutopilot);
+  elements.gapBackdrop.addEventListener("click", closeGapAutopilot);
+  elements.copyGapDigestButton.addEventListener("click", copyGapDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1486,6 +1525,7 @@ function bindEvents() {
     if (state.followUpOpen) closeFollowUp();
     if (state.connectorOpen) closeConnectors();
     if (state.importOpen) closeImportStudio();
+    if (state.gapOpen) closeGapAutopilot();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1501,6 +1541,7 @@ function applyInitialHash() {
   if (hash === "follow-up" || hash === "followups" || hash === "inbox") openFollowUp();
   if (hash === "connectors" || hash === "vault" || hash === "sources") openConnectors();
   if (hash === "import" || hash === "imports" || hash === "studio") openImportStudio();
+  if (hash === "gaps" || hash === "gap" || hash === "autopilot") openGapAutopilot();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1530,6 +1571,7 @@ function render() {
   renderFollowUps();
   renderConnectors();
   renderImportStudio();
+  renderGapAutopilot();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1603,6 +1645,7 @@ function renderQuestionList() {
       renderTrustRoom();
       renderFollowUps();
       renderConnectors();
+      renderGapAutopilot();
       renderAnalytics();
       schedulePersist();
     });
@@ -2228,6 +2271,7 @@ function renderAudit() {
 
 function activateWorkspaceNav(target) {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2254,6 +2298,7 @@ function setActiveNav(activeButton) {
   [
     elements.reviewNavButton,
     elements.importNavButton,
+    elements.gapNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -2272,6 +2317,7 @@ function setActiveNav(activeButton) {
 
 function openWorkspace() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2301,6 +2347,7 @@ function closeWorkspace(activateReview = true) {
 
 function openPipeline() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2331,6 +2378,7 @@ function closePipeline(activateReview = true) {
 
 function openTrustRoom() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
@@ -2361,6 +2409,7 @@ function closeTrustRoom(activateReview = true) {
 
 function openFollowUp() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2391,6 +2440,7 @@ function closeFollowUp(activateReview = true) {
 
 function openConnectors() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2421,6 +2471,7 @@ function closeConnectors(activateReview = true) {
 
 function openImportStudio() {
   closeWorkspace(false);
+  closeGapAutopilot(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2449,8 +2500,40 @@ function closeImportStudio(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openGapAutopilot() {
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeImportStudio(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.gapOpen = true;
+  setActiveNav(elements.gapNavButton);
+  elements.gapBackdrop.hidden = false;
+  elements.gapDrawer.classList.add("is-open");
+  elements.gapDrawer.setAttribute("aria-hidden", "false");
+  renderGapAutopilot();
+  elements.copyGapDigestButton.focus();
+}
+
+function closeGapAutopilot(activateReview = true) {
+  if (!state.gapOpen && elements.gapDrawer.getAttribute("aria-hidden") === "true") return;
+  state.gapOpen = false;
+  elements.gapDrawer.classList.remove("is-open");
+  elements.gapDrawer.setAttribute("aria-hidden", "true");
+  elements.gapBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2481,6 +2564,7 @@ function closeAnalytics(activateReview = true) {
 
 function openAccess() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2510,6 +2594,7 @@ function closeAccess(activateReview = true) {
 
 function openIntake() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2539,6 +2624,7 @@ function closeIntake(activateReview = true) {
 
 function openDataRoom() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2568,6 +2654,7 @@ function closeDataRoom(activateReview = true) {
 
 function openLibrary() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2598,6 +2685,7 @@ function closeLibrary(activateReview = true) {
 
 function openPortalCopy() {
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4013,6 +4101,392 @@ function importDigestText(studio = importSnapshot()) {
     "- Add ready rows to the review queue.",
     "- Reuse duplicate answers from approved memory.",
     "- Route weak evidence rows to source owners before buyer submission.",
+  ].join("\n");
+}
+
+function renderGapAutopilot() {
+  const gaps = gapAutopilotSnapshot();
+
+  elements.gapTaskCount.textContent = gaps.taskCount;
+  elements.gapHighRiskCount.textContent = gaps.highRiskCount;
+  elements.gapOwnerCount.textContent = gaps.ownerRows.length;
+  elements.gapFallbackCount.textContent = gaps.fallbackRows.length;
+  elements.gapDigest.textContent = gapDigestText(gaps);
+
+  elements.gapTaskList.innerHTML = "";
+  if (gaps.tasks.length === 0) {
+    elements.gapTaskList.append(emptyState("No evidence gaps detected"));
+  }
+
+  gaps.tasks.forEach((task) => {
+    const card = document.createElement("article");
+    card.className = `gap-task-card ${gapSeverityClass(task.severity)}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(task.question.category)} | ${escapeHtml(task.owner.name)} | Due ${escapeHtml(formatShortDate(task.question.due))}</span>
+          <strong>${escapeHtml(task.question.text)}</strong>
+        </div>
+        <b>${task.score}</b>
+      </header>
+      <div class="gap-task-meta">
+        <span>${escapeHtml(task.severity)}</span>
+        <span>${escapeHtml(task.status)}</span>
+        <span>${task.daysLeft}d left</span>
+        <span>${task.confidence}% confidence</span>
+      </div>
+      <p>${escapeHtml(task.reason)}</p>
+      <ul>${task.gaps.map((gap) => `<li>${escapeHtml(gap)}</li>`).join("")}</ul>
+      <footer>
+        <span>${escapeHtml(task.request.title)}</span>
+        <button class="secondary-button compact-button" type="button" data-gap-copy="${escapeHtml(task.id)}">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Fallback</span>
+        </button>
+        <button class="secondary-button compact-button" type="button" data-gap-route="${escapeHtml(task.id)}">
+          <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+          <span>Route</span>
+        </button>
+        <button class="primary-button compact-button" type="button" data-gap-request="${escapeHtml(task.id)}">
+          <svg aria-hidden="true"><use href="#icon-plus"></use></svg>
+          <span>Request</span>
+        </button>
+      </footer>
+    `;
+    card.querySelector("[data-gap-copy]")?.addEventListener("click", () => copyGapFallback(task.id));
+    card.querySelector("[data-gap-route]")?.addEventListener("click", () => routeGapTask(task.id));
+    card.querySelector("[data-gap-request]")?.addEventListener("click", () => requestGapEvidence(task.id));
+    elements.gapTaskList.append(card);
+  });
+
+  elements.gapRequestList.innerHTML = "";
+  if (gaps.requestRows.length === 0) {
+    elements.gapRequestList.append(emptyState("No evidence requests needed"));
+  }
+  gaps.requestRows.forEach((request) => {
+    const item = document.createElement("article");
+    item.className = `gap-request-card ${gapSeverityClass(request.severity)}`;
+    item.innerHTML = `
+      <div>
+        <strong>${escapeHtml(request.title)}</strong>
+        <span>${escapeHtml(request.owner.name)} | ${request.count} linked gap${request.count === 1 ? "" : "s"} | ${escapeHtml(request.sourceHint)}</span>
+      </div>
+      <b>${escapeHtml(request.severity)}</b>
+    `;
+    elements.gapRequestList.append(item);
+  });
+
+  elements.gapOwnerList.innerHTML = "";
+  if (gaps.ownerRows.length === 0) {
+    elements.gapOwnerList.append(emptyState("No owner load"));
+  }
+  gaps.ownerRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = "gap-owner-card";
+    item.innerHTML = `
+      <span class="role-avatar">${escapeHtml(initials(row.member.name))}</span>
+      <div>
+        <header>
+          <strong>${escapeHtml(row.member.name)}</strong>
+          <b>${row.highRisk} high</b>
+        </header>
+        <p>${escapeHtml(row.member.team)} | ${row.tasks} gaps | ${row.averageScore}% avg risk | ${row.requested} requested</p>
+      </div>
+    `;
+    elements.gapOwnerList.append(item);
+  });
+
+  elements.gapFallbackList.innerHTML = "";
+  if (gaps.fallbackRows.length === 0) {
+    elements.gapFallbackList.append(emptyState("No fallback language needed"));
+  }
+  gaps.fallbackRows.slice(0, 4).forEach((task) => {
+    const item = document.createElement("article");
+    item.className = "gap-fallback-card";
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(shorten(task.question.text, 86))}</strong>
+        <button class="secondary-button compact-button" type="button" data-gap-fallback="${escapeHtml(task.id)}">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </header>
+      <p>${escapeHtml(task.fallback)}</p>
+    `;
+    item.querySelector("[data-gap-fallback]")?.addEventListener("click", () => copyGapFallback(task.id));
+    elements.gapFallbackList.append(item);
+  });
+}
+
+function gapAutopilotSnapshot() {
+  const tasks = state.questions
+    .map(gapTaskForQuestion)
+    .filter(Boolean)
+    .sort((a, b) => b.score - a.score || a.daysLeft - b.daysLeft || a.question.text.localeCompare(b.question.text));
+  const requestRows = gapRequestRows(tasks);
+  const ownerRows = workspaceAccount.members
+    .map((member) => {
+      const owned = tasks.filter((task) => task.owner.id === member.id);
+      return {
+        member,
+        tasks: owned.length,
+        highRisk: owned.filter((task) => task.severity === "High").length,
+        requested: owned.filter((task) => task.status === "Requested").length,
+        averageScore: owned.length ? Math.round(owned.reduce((sum, task) => sum + task.score, 0) / owned.length) : 0,
+      };
+    })
+    .filter((row) => row.tasks > 0);
+  const fallbackRows = tasks.filter((task) => task.needsFallback);
+
+  return {
+    tasks,
+    taskCount: tasks.length,
+    highRiskCount: tasks.filter((task) => task.severity === "High").length,
+    requestRows,
+    ownerRows,
+    fallbackRows,
+    requestedCount: tasks.filter((task) => task.status === "Requested").length,
+    fallbackCount: fallbackRows.length,
+  };
+}
+
+function gapTaskForQuestion(question) {
+  if (question.status === "approved") return null;
+
+  const docs = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+  const trace = claimTraceSnapshot(question);
+  const retrieval = retrievalSnapshot(question);
+  const gaps = [];
+  const staleDocs = docs.filter((doc) => daysSince(doc.updated) >= 365);
+  const missingSources = docs.length === 0;
+  const weakSources = retrieval.topScore < 70 || Number(question.confidence || 0) < 75;
+  const conflicts = trace.conflicts > 0;
+  const openRisks = question.risks ?? [];
+
+  if (question.status === "needs-evidence") gaps.push("Question is blocked by evidence review.");
+  if (missingSources) gaps.push("No source is attached.");
+  if (weakSources) gaps.push("Source match or answer confidence is below approval threshold.");
+  if (staleDocs.length) gaps.push(`${staleDocs.length} attached source${staleDocs.length === 1 ? " is" : "s are"} stale.`);
+  if (conflicts) gaps.push("Claim trace found conflicting or legacy source language.");
+  openRisks.forEach((risk) => gaps.push(risk));
+
+  if (gaps.length === 0) return null;
+
+  const daysLeft = daysUntil(question.due);
+  const owner = memberForQuestion(question);
+  const request = evidenceRequestForQuestion(question, gaps);
+  const status = state.gapActions[question.id]?.status ?? "Open";
+  const score = gapRiskScore(question, { missingSources, weakSources, conflicts, staleDocs, openRisks, daysLeft });
+  const severity = score >= 78 ? "High" : score >= 58 ? "Medium" : "Low";
+  return {
+    id: question.id,
+    question,
+    owner,
+    docs,
+    trace,
+    retrieval,
+    gaps: [...new Set(gaps)],
+    daysLeft,
+    request,
+    status,
+    score,
+    severity,
+    confidence: Number(question.confidence || 0),
+    reason: gapReason(question, score, request),
+    fallback: buyerSafeFallback(question, request),
+    needsFallback: daysLeft <= 3 || severity === "High" || status === "Requested",
+  };
+}
+
+function gapRiskScore(question, context) {
+  const statusRisk = question.status === "needs-evidence" ? 22 : 8;
+  const confidenceRisk = Math.max(0, 85 - Number(question.confidence || 0));
+  const sourceRisk = context.missingSources ? 24 : context.weakSources ? 14 : 0;
+  const staleRisk = context.staleDocs.length * 10;
+  const conflictRisk = context.conflicts ? 24 : 0;
+  const noteRisk = Math.min(16, context.openRisks.length * 6);
+  const deadlineRisk = context.daysLeft <= 1 ? 18 : context.daysLeft <= 3 ? 12 : context.daysLeft <= 5 ? 6 : 0;
+  return Math.max(0, Math.min(100, Math.round(statusRisk + confidenceRisk + sourceRisk + staleRisk + conflictRisk + noteRisk + deadlineRisk)));
+}
+
+function evidenceRequestForQuestion(question, gaps) {
+  const category = question.category;
+  const catalog = {
+    Encryption: {
+      title: "Current encryption control evidence",
+      sourceHint: "SOC 2 control excerpt or encryption policy section",
+    },
+    Access: {
+      title: "Access review and MFA evidence",
+      sourceHint: "SSO/MFA policy plus latest privileged access review",
+    },
+    Incident: {
+      title: "Incident notification SLA proof",
+      sourceHint: "Incident response policy, customer notice clause, or tabletop test",
+    },
+    "AI Governance": {
+      title: "Current AI usage approval",
+      sourceHint: "AI Usage Standard, model provider policy, or human-review control",
+    },
+    Privacy: {
+      title: "Privacy and DPA proof",
+      sourceHint: "DPA clause, subprocessor list, deletion/export procedure",
+    },
+    Continuity: {
+      title: "Continuity test evidence",
+      sourceHint: "BCP test, backup integrity report, or RTO/RPO runbook",
+    },
+    "Security Testing": {
+      title: "Penetration testing attestation",
+      sourceHint: "Latest pentest letter, remediation summary, or vuln scan report",
+    },
+  };
+  const fallback = {
+    title: `${category} owner-approved evidence`,
+    sourceHint: "Policy, report, contract clause, or owner-approved note",
+  };
+  const request = catalog[category] ?? fallback;
+  if (gaps.some((gap) => gap.toLowerCase().includes("conflict") || gap.toLowerCase().includes("legacy"))) {
+    return {
+      title: `Conflict-safe ${request.title}`,
+      sourceHint: `${request.sourceHint}; archive or replace conflicting source language`,
+    };
+  }
+  return request;
+}
+
+function gapReason(question, score, request) {
+  if ((question.risks ?? []).length > 0) return `Open reviewer note requires ${request.title.toLowerCase()} before approval.`;
+  if (!(question.sources ?? []).length) return `No attached proof. Request ${request.sourceHint.toLowerCase()}.`;
+  if (score >= 78) return `High-risk proof gap because deadline, confidence, or claim trace needs owner action.`;
+  return `Route ${request.title.toLowerCase()} to the owner before buyer-facing reuse.`;
+}
+
+function buyerSafeFallback(question, request) {
+  return `We are validating the current ${question.category.toLowerCase()} evidence before final submission. The request is with ${memberForQuestion(question).name} for ${request.sourceHint.toLowerCase()}, and we will provide a sourced answer once the control owner confirms the latest proof.`;
+}
+
+function gapRequestRows(tasks) {
+  const rows = new Map();
+  tasks.forEach((task) => {
+    const key = `${task.owner.id}-${task.request.title}`;
+    const existing = rows.get(key) ?? {
+      id: key,
+      title: task.request.title,
+      sourceHint: task.request.sourceHint,
+      owner: task.owner,
+      count: 0,
+      score: 0,
+      severity: "Low",
+    };
+    existing.count += 1;
+    existing.score = Math.max(existing.score, task.score);
+    existing.severity = existing.score >= 78 ? "High" : existing.score >= 58 ? "Medium" : "Low";
+    rows.set(key, existing);
+  });
+  return [...rows.values()].sort((a, b) => b.score - a.score || b.count - a.count || a.title.localeCompare(b.title));
+}
+
+function gapSeverityClass(severity) {
+  if (severity === "High") return "is-high";
+  if (severity === "Medium") return "is-medium";
+  return "is-low";
+}
+
+function requestGapEvidence(id) {
+  const task = gapAutopilotSnapshot().tasks.find((item) => item.id === id);
+  if (!task) return;
+  const action = state.gapActions[id] ?? {};
+  state.gapActions[id] = {
+    ...action,
+    status: "Requested",
+    requestedAt: new Date().toISOString(),
+  };
+  task.question.status = "needs-evidence";
+  task.question.routeStatus = "Owner review";
+  task.question.assigneeId = task.owner.id;
+  const risk = `Evidence Gap Autopilot requested: ${task.request.title}.`;
+  task.question.risks = task.question.risks ?? [];
+  if (!task.question.risks.includes(risk)) task.question.risks.push(risk);
+  addAudit("Gap evidence requested", `${task.request.title} requested from ${task.owner.name}.`);
+  render();
+  showToast(`Evidence requested from ${task.owner.name}.`);
+}
+
+function routeGapTask(id) {
+  const task = gapAutopilotSnapshot().tasks.find((item) => item.id === id);
+  if (!task) return;
+  const action = state.gapActions[id] ?? {};
+  state.gapActions[id] = {
+    ...action,
+    status: action.status === "Requested" ? "Requested" : "Routed",
+    routedAt: new Date().toISOString(),
+  };
+  task.question.assigneeId = task.owner.id;
+  task.question.routeStatus = "Owner review";
+  task.question.routedAt = new Date().toISOString();
+  addAudit("Gap routed", `${shorten(task.question.text, 62)} routed to ${task.owner.name}.`);
+  render();
+  showToast(`Gap routed to ${task.owner.name}.`);
+}
+
+function copyGapFallback(id) {
+  const task = gapAutopilotSnapshot().tasks.find((item) => item.id === id);
+  if (!task) return;
+  const action = state.gapActions[id] ?? {};
+  state.gapActions[id] = {
+    ...action,
+    fallbackCopiedAt: new Date().toISOString(),
+  };
+  addAudit("Gap fallback copied", `${shorten(task.question.text, 62)} buyer-safe fallback copied.`);
+  renderGapAutopilot();
+  copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
+}
+
+function copyGapDigest() {
+  copyText(gapDigestText(), "Evidence gap digest copied.");
+}
+
+function gapFallbackText(task) {
+  return [
+    `${workspaceAccount.company} - Buyer-safe gap fallback`,
+    `Build: ${BUILD_VERSION}`,
+    `Question: ${task.question.text}`,
+    `Owner: ${task.owner.name} (${task.owner.team})`,
+    `Gap: ${task.request.title}`,
+    `Requested proof: ${task.request.sourceHint}`,
+    `Fallback: ${task.fallback}`,
+  ].join("\n");
+}
+
+function gapDigestText(gaps = gapAutopilotSnapshot()) {
+  const taskLines = gaps.tasks
+    .slice(0, 6)
+    .map((task, index) => `${index + 1}. ${task.severity} ${task.score}: ${task.question.category} | ${task.owner.name} | ${task.daysLeft}d | ${shorten(task.question.text, 76)}`)
+    .join("\n");
+  const requestLines = gaps.requestRows
+    .slice(0, 5)
+    .map((request, index) => `${index + 1}. ${request.title}: ${request.count} gap${request.count === 1 ? "" : "s"}, owner ${request.owner.name}`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Evidence Gap Autopilot",
+    `Build: ${BUILD_VERSION}`,
+    `Open gaps: ${gaps.taskCount}`,
+    `High risk: ${gaps.highRiskCount}`,
+    `Evidence requested: ${gaps.requestedCount}`,
+    `Fallbacks ready: ${gaps.fallbackCount}`,
+    "",
+    "Priority gaps:",
+    taskLines || "No evidence gaps detected.",
+    "",
+    "Evidence requests:",
+    requestLines || "No evidence requests needed.",
+    "",
+    "Recommended motion:",
+    "- Request the exact proof artifact before approving weak answers.",
+    "- Route high-risk gaps to named owners today.",
+    "- Use fallback language only while evidence is being collected.",
   ].join("\n");
 }
 
@@ -5896,6 +6370,7 @@ function selectNextOpenQuestion() {
   renderAnalytics();
   renderTrustRoom();
   renderFollowUps();
+  renderGapAutopilot();
   renderPortalCopy();
   schedulePersist();
 }
@@ -6159,6 +6634,10 @@ function exportCsv() {
     "Import Ready",
     "Import Duplicates",
     "Import Confidence",
+    "Gap Tasks",
+    "Gap High Risk",
+    "Gap Requested",
+    "Gap Fallbacks",
     "Trace",
     "Answer",
     "Sources",
@@ -6174,6 +6653,7 @@ function exportCsv() {
     const followUps = followUpSnapshot();
     const connectors = connectorSnapshot();
     const importStudio = importSnapshot();
+    const gaps = gapAutopilotSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -6205,6 +6685,10 @@ function exportCsv() {
       importStudio.readyCount,
       importStudio.duplicateCount,
       `${importStudio.averageConfidence}%`,
+      gaps.taskCount,
+      gaps.highRiskCount,
+      gaps.requestedCount,
+      gaps.fallbackCount,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -6230,6 +6714,7 @@ function exportReviewPack() {
   const followUps = followUpSnapshot();
   const connectors = connectorSnapshot();
   const importStudio = importSnapshot();
+  const gaps = gapAutopilotSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -6247,11 +6732,43 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v14</h1>
+        <h1>AnswerSeal Review Pack v15</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Evidence Gap Autopilot</h2>
+        <p>Open gaps: ${gaps.taskCount} | High risk: ${gaps.highRiskCount} | Evidence requested: ${gaps.requestedCount} | Fallbacks ready: ${gaps.fallbackCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Severity</th>
+              <th>Owner</th>
+              <th>Request</th>
+              <th>Risk</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${gaps.tasks
+              .map(
+                (task) => `
+                  <tr>
+                    <td>${escapeHtml(task.question.text)}</td>
+                    <td class="${task.severity === "High" ? "risk" : "ok"}">${escapeHtml(task.severity)}</td>
+                    <td>${escapeHtml(task.owner.name)}</td>
+                    <td>${escapeHtml(task.request.title)}</td>
+                    <td>${task.score}</td>
+                    <td>${escapeHtml(task.status)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evidence Gap Digest</h2>
+        <pre>${escapeHtml(gapDigestText(gaps))}</pre>
         <h2>Questionnaire Import Studio</h2>
         <p>Rows: ${importStudio.rowCount} | Ready: ${importStudio.readyCount} | Duplicates: ${importStudio.duplicateCount} | Cleanup: ${importStudio.cleanupCount} | Confidence: ${importStudio.averageConfidence}%</p>
         <table>
@@ -6900,17 +7417,18 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v14 created with questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v15 created with evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
   renderImportStudio();
+  renderGapAutopilot();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v14 exported.");
+  showToast("Review Pack v15 exported.");
 }
 
 function toCsv(rows) {
@@ -6965,6 +7483,7 @@ function serializeWorkspace() {
     followUps: state.followUps,
     connectors: state.connectors,
     importStudio: state.importStudio,
+    gapActions: state.gapActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -6990,6 +7509,7 @@ function resetWorkspace() {
   closeFollowUp(false);
   closeConnectors(false);
   closeImportStudio(false);
+  closeGapAutopilot(false);
   closeWorkspace(false);
   closeLibrary();
   render();

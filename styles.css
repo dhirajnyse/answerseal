@@ -2548,6 +2548,210 @@ svg {
   white-space: pre-wrap;
 }
 
+.gap-drawer {
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: min(860px, 100vw);
+}
+
+.gap-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gap-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 232, 0.72) 0%, rgba(255, 255, 255, 0.96) 46%),
+    #ffffff;
+}
+
+.gap-section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.gap-task-list,
+.gap-request-list,
+.gap-owner-list,
+.gap-fallback-list {
+  display: grid;
+  gap: 8px;
+}
+
+.gap-task-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.gap-task-card.is-high,
+.gap-request-card.is-high {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.gap-task-card.is-medium,
+.gap-request-card.is-medium {
+  border-left-color: #26c6da;
+  background: #f5fdff;
+}
+
+.gap-task-card.is-low,
+.gap-request-card.is-low {
+  border-left-color: var(--green);
+  background: #f4fffa;
+}
+
+.gap-task-card header,
+.gap-task-card footer,
+.gap-request-card,
+.gap-owner-card,
+.gap-fallback-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.gap-task-card header div,
+.gap-request-card div,
+.gap-owner-card div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.gap-task-card strong,
+.gap-request-card strong,
+.gap-owner-card strong,
+.gap-fallback-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.gap-task-card header b,
+.gap-request-card b,
+.gap-owner-card b {
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.gap-task-card p,
+.gap-task-card li,
+.gap-task-card footer span,
+.gap-request-card span,
+.gap-owner-card p,
+.gap-fallback-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.42;
+}
+
+.gap-task-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.gap-task-meta span {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.gap-task-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.gap-task-card footer {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.gap-task-card footer .compact-button,
+.gap-fallback-card .compact-button {
+  width: auto;
+  min-width: 90px;
+}
+
+.gap-request-card,
+.gap-owner-card,
+.gap-fallback-card {
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.gap-request-card {
+  border-left: 4px solid var(--blue);
+}
+
+.gap-owner-card {
+  align-items: center;
+}
+
+.gap-owner-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gap-fallback-card {
+  display: grid;
+  gap: 10px;
+}
+
+.gap-fallback-card p {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfffd;
+}
+
+.gap-digest {
+  min-height: 220px;
+  max-height: 340px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -4706,6 +4910,8 @@ svg {
     .import-metrics,
     .import-mapping-list,
     .import-row-meta,
+    .gap-metrics,
+    .gap-task-meta,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -4759,6 +4965,11 @@ svg {
     .import-row-card footer,
     .import-duplicate-card,
     .import-owner-card,
+    .gap-task-card header,
+    .gap-task-card footer,
+    .gap-request-card,
+    .gap-owner-card,
+    .gap-fallback-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -4851,6 +5062,8 @@ svg {
     .import-metrics,
     .import-mapping-list,
     .import-row-meta,
+    .gap-metrics,
+    .gap-task-meta,
     .analytics-metrics,
     .access-metrics,
     .data-room-metrics,
@@ -4883,6 +5096,11 @@ svg {
     .import-row-card footer,
     .import-duplicate-card,
     .import-owner-card,
+    .gap-task-card header,
+    .gap-task-card footer,
+    .gap-request-card,
+    .gap-owner-card,
+    .gap-fallback-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .access-role-card,

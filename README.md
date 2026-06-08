@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.18 Alpha
+**Current version:** v0.19 Alpha
 
-**Current phase:** Questionnaire Import Studio
+**Current phase:** Evidence Gap Autopilot
 
 ## Brand
 
@@ -71,6 +71,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Owner suggestions, source matching, row status, and import confidence before queue promotion
 - One-click import of ready rows into the live review queue
 - Copyable import row briefs and import digest for sales/security handoff
+- Evidence Gap Autopilot for weak, stale, missing, or conflicting proof
+- Risk-scored evidence gap queue ranked by deadline, confidence, source quality, and claim conflicts
+- Exact evidence request suggestions for policies, reports, clauses, tests, or owner-approved notes
+- Owner load view for high-risk gaps, requested proof, and average risk score
+- Buyer-safe fallback language while final proof is being collected
+- Copyable gap digest and fallback briefs for sales, security, legal, and operations handoff
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -91,7 +97,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v14 export with questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v15 export with evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -109,16 +115,16 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.19 Alpha - Evidence Gap Autopilot
+## Next Phase: v0.20 Alpha - Autonomous Review Runs
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
 - Add private cloud workspace storage for evidence, answers, traces, and activity
 - Add organization-level evidence vaults and reusable answer libraries
-- Convert weak, stale, missing, or conflicting proof into owner tasks
-- Suggest the exact evidence artifact needed to unblock each answer
-- Rank gaps by due date, buyer impact, owner load, and deal risk
-- Draft buyer-safe fallback language while evidence is being collected
-- Add a gap digest for founders, sales, legal, security, and operations
+- Generate an ordered run plan for each buyer questionnaire
+- Recommend the next safest action across draft, evidence, owner, portal, and room workflows
+- Record run receipts for changes, copies, routes, and evidence requests
+- Keep approval, external sharing, and unsupported claims behind human gates
+- Add a review-run digest for founders, sales, security, legal, and operations
 
 ## License
 

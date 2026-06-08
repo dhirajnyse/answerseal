@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.19 Alpha - Evidence Gap Autopilot
+
+Phase: Evidence Gap Autopilot
+
+- Added an Evidence Gap Autopilot drawer for weak, stale, missing, or conflicting proof.
+- Added risk-scored gap tasks ranked by deadline, confidence, source quality, and claim conflicts.
+- Added exact evidence request suggestions for policies, reports, clauses, tests, or owner-approved notes.
+- Added owner load cards for high-risk gaps, requested evidence, and average risk score.
+- Added buyer-safe fallback language for interim buyer replies while proof is being collected.
+- Added actions to request evidence, route gap owners, copy fallback language, and copy a gap digest.
+- Added gap context to CSV exports.
+- Upgraded review pack export to Review Pack v15 with gap tasks, evidence requests, owner load, fallback language, and digest.
+- Updated the build phases page with the v0.20 Autonomous Review Runs plan.
+
 ## v0.18 Alpha - Questionnaire Import Studio
 
 Phase: Questionnaire Import Studio

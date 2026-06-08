@@ -107,6 +107,10 @@
             <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
             <span>Import</span>
           </button>
+          <button class="nav-item" id="gapNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+            <span>Gaps</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -169,8 +173,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.18 Alpha</strong>
-          <span>Questionnaire Import Studio</span>
+          <strong>v0.19 Alpha</strong>
+          <span>Evidence Gap Autopilot</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -182,7 +186,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.18 Alpha</span>
+            <span class="label">Security questionnaire | v0.19 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -954,6 +958,83 @@
             </button>
           </div>
           <pre class="import-digest" id="importDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="gap-backdrop drawer-backdrop" id="gapBackdrop" hidden></div>
+    <aside class="workspace-drawer gap-drawer" id="gapDrawer" aria-label="Evidence gap autopilot" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Evidence Gap Autopilot</span>
+          <h2>Turn weak proof into owner-ready work</h2>
+        </div>
+        <button class="icon-button" id="closeGapButton" type="button" aria-label="Close evidence gaps" title="Close evidence gaps">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip gap-metrics" aria-label="Evidence gap health">
+        <article>
+          <span class="label">Open Gaps</span>
+          <strong id="gapTaskCount">0</strong>
+        </article>
+        <article>
+          <span class="label">High Risk</span>
+          <strong id="gapHighRiskCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Owners</span>
+          <strong id="gapOwnerCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Fallbacks</span>
+          <strong id="gapFallbackCount">0</strong>
+        </article>
+      </section>
+
+      <section class="gap-body">
+        <section class="gap-section" aria-label="Gap queue">
+          <div class="section-heading">
+            <span class="label">Gap Queue</span>
+            <span>Ranked by deadline and proof risk</span>
+          </div>
+          <div class="gap-task-list" id="gapTaskList"></div>
+        </section>
+
+        <section class="gap-section" aria-label="Evidence requests">
+          <div class="section-heading">
+            <span class="label">Evidence Requests</span>
+            <span>What unblocks approval</span>
+          </div>
+          <div class="gap-request-list" id="gapRequestList"></div>
+        </section>
+
+        <section class="gap-section" aria-label="Owner load">
+          <div class="section-heading">
+            <span class="label">Owner Load</span>
+            <span>Who needs to move</span>
+          </div>
+          <div class="gap-owner-list" id="gapOwnerList"></div>
+        </section>
+
+        <section class="gap-section" aria-label="Buyer-safe fallback language">
+          <div class="section-heading">
+            <span class="label">Fallback Language</span>
+            <span>Safe interim replies</span>
+          </div>
+          <div class="gap-fallback-list" id="gapFallbackList"></div>
+        </section>
+
+        <section class="gap-section" aria-label="Gap digest">
+          <div class="section-heading">
+            <span class="label">Gap Digest</span>
+            <button class="secondary-button compact-button" id="copyGapDigestButton" type="button">
+              <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="gap-digest" id="gapDigest"></pre>
         </section>
       </section>
     </aside>
