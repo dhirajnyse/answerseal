@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.20 Alpha
+**Current version:** v0.21 Alpha
 
-**Current phase:** Autonomous Review Runs
+**Current phase:** Trust Center Launchpad
 
 ## Brand
 
@@ -82,6 +82,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Human approval gates that keep buyer-facing answers, sharing, and unsupported claims controlled
 - Copyable run digest for founders, sales, security, legal, and operations
 - Run receipts for started runs, human gate approvals, copied digests, and internal review activity
+- Trust Center Launchpad drawer with launch score, ready packet count, learning signals, and learning rows
+- Buyer-ready launch packet readiness for answer library, evidence excerpts, AI/privacy notes, and receipts
+- Audience controls for founders, sales engineering, security reviewers, and external buyers
+- Closed-loop learning signals from buyer room activity, run gates, evidence gaps, and source health
+- Reinforcement queue for local workspace improvements and privacy-safe network learning patterns
+- Launch receipts for prepared launch, applied learning loop, and copied launch digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -102,7 +108,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v16 export with autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v17 export with trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -120,15 +126,15 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.21 Alpha - Trust Center Launchpad
+## Next Phase: v0.22 Alpha - Privacy-Safe Learning Network
 
 - Validate private pilot requests from SaaS founders, CTOs, and sales engineers
 - Add private cloud workspace storage for evidence, answers, traces, and activity
 - Add organization-level evidence vaults and reusable answer libraries
-- Package approved answers, evidence packets, SOC 2 proof, and AI governance notes into a buyer-ready trust center surface
-- Add audience controls for founders, sales engineers, security reviewers, and external buyers
-- Monitor published proof freshness, conflicts, and safe-reuse status
-- Record launch receipts for published packets, copied answers, source refreshes, and buyer-room updates
+- Add abstract pattern exchange for proof needs, category trends, freshness windows, and review reward signals
+- Keep raw evidence, answers, contracts, prompts, and customer names inside each tenant
+- Learn from faster approvals, fewer reopened claims, higher source confidence, and lower buyer follow-up friction
+- Add admin controls for which aggregate learning signals can participate in network improvement
 
 ## License
 

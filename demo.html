@@ -115,6 +115,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Runs</span>
           </button>
+          <button class="nav-item" id="launchNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+            <span>Launch</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -177,8 +181,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.20 Alpha</strong>
-          <span>Autonomous Review Runs</span>
+          <strong>v0.21 Alpha</strong>
+          <span>Trust Center Launchpad</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -190,7 +194,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.20 Alpha</span>
+            <span class="label">Security questionnaire | v0.21 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1136,6 +1140,107 @@
             <span>Copy into Slack or review notes</span>
           </div>
           <pre class="run-digest" id="runDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="launch-backdrop drawer-backdrop" id="launchBackdrop" hidden></div>
+    <aside class="workspace-drawer launch-drawer" id="launchDrawer" aria-label="Trust center launchpad" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Trust Center Launchpad</span>
+          <h2>Publish proof, learn from every review</h2>
+        </div>
+        <button class="icon-button" id="closeLaunchButton" type="button" aria-label="Close launchpad" title="Close launchpad">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip launch-metrics" aria-label="Trust center launch health">
+        <article>
+          <span class="label">Launch Score</span>
+          <strong id="launchScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Ready Packets</span>
+          <strong id="launchPacketCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Signals</span>
+          <strong id="launchSignalCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Learning Rows</span>
+          <strong id="launchLearningCount">0</strong>
+        </article>
+      </section>
+
+      <section class="launch-actions" aria-label="Launch controls">
+        <div>
+          <span class="label">Launch Status</span>
+          <strong id="launchStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="prepareLaunchButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+          <span>Prepare Launch</span>
+        </button>
+        <button class="secondary-button" id="applyLearningButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Apply Learning</span>
+        </button>
+        <button class="secondary-button" id="copyLaunchDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="launch-body">
+        <section class="launch-section" aria-label="Launch packet">
+          <div class="section-heading">
+            <span class="label">Launch Packet</span>
+            <span>What can become buyer-facing</span>
+          </div>
+          <div class="launch-packet-list" id="launchPacketList"></div>
+        </section>
+
+        <section class="launch-section" aria-label="Audience controls">
+          <div class="section-heading">
+            <span class="label">Audience Controls</span>
+            <span>Right proof for each role</span>
+          </div>
+          <div class="launch-audience-list" id="launchAudienceList"></div>
+        </section>
+
+        <section class="launch-section" aria-label="Learning signals">
+          <div class="section-heading">
+            <span class="label">Learning Signals</span>
+            <span>Closed-loop inputs</span>
+          </div>
+          <div class="launch-signal-list" id="launchSignalList"></div>
+        </section>
+
+        <section class="launch-section" aria-label="Reinforcement recommendations">
+          <div class="section-heading">
+            <span class="label">Reinforcement Queue</span>
+            <span>Local and network-safe learning</span>
+          </div>
+          <div class="launch-learning-list" id="launchLearningList"></div>
+        </section>
+
+        <section class="launch-section" aria-label="Launch receipts">
+          <div class="section-heading">
+            <span class="label">Launch Receipts</span>
+            <span>What the loop changed</span>
+          </div>
+          <div class="launch-receipt-list" id="launchReceiptList"></div>
+        </section>
+
+        <section class="launch-section" aria-label="Launch digest">
+          <div class="section-heading">
+            <span class="label">Launch Digest</span>
+            <span>Privacy-safe summary</span>
+          </div>
+          <pre class="launch-digest" id="launchDigest"></pre>
         </section>
       </section>
     </aside>

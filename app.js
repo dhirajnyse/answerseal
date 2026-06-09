@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.20 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v20";
+const BUILD_VERSION = "v0.21 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v21";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v20",
   "answerseal.workspace.v19",
   "answerseal.workspace.v18",
   "answerseal.workspace.v17",
@@ -672,6 +673,8 @@ function createInitialState() {
     gapActions: {},
     runOpen: false,
     runActions: createInitialRunActions(),
+    launchOpen: false,
+    launchActions: createInitialLaunchActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -700,6 +703,16 @@ function createInitialRunActions() {
     status: "Draft",
     startedAt: null,
     approvedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialLaunchActions() {
+  return {
+    status: "Draft",
+    preparedAt: null,
+    learningAppliedAt: null,
     lastCopiedAt: null,
     receipts: [],
   };
@@ -824,6 +837,7 @@ function loadWorkspaceState() {
       importStudio: normalizeImportStudio(workspace.importStudio ?? fresh.importStudio),
       gapActions: normalizeGapActions(workspace.gapActions ?? fresh.gapActions),
       runActions: normalizeRunActions(workspace.runActions ?? fresh.runActions),
+      launchActions: normalizeLaunchActions(workspace.launchActions ?? fresh.launchActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -839,6 +853,7 @@ function loadWorkspaceState() {
       importOpen: false,
       gapOpen: false,
       runOpen: false,
+      launchOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1098,6 +1113,26 @@ function normalizeRunReceipt(receipt) {
   };
 }
 
+function normalizeLaunchActions(actions) {
+  const status = ["Draft", "Ready to launch", "Learning applied"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    preparedAt: actions?.preparedAt ?? null,
+    learningAppliedAt: actions?.learningAppliedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeLaunchReceipt) : [],
+  };
+}
+
+function normalizeLaunchReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `launch-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Launch planned"),
+    detail: String(receipt?.detail ?? "Trust center launch action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1131,6 +1166,7 @@ const elements = {
   importNavButton: document.querySelector("#importNavButton"),
   gapNavButton: document.querySelector("#gapNavButton"),
   runNavButton: document.querySelector("#runNavButton"),
+  launchNavButton: document.querySelector("#launchNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1331,6 +1367,23 @@ const elements = {
   startRunButton: document.querySelector("#startRunButton"),
   approveRunGateButton: document.querySelector("#approveRunGateButton"),
   copyRunDigestButton: document.querySelector("#copyRunDigestButton"),
+  launchBackdrop: document.querySelector("#launchBackdrop"),
+  launchDrawer: document.querySelector("#launchDrawer"),
+  closeLaunchButton: document.querySelector("#closeLaunchButton"),
+  launchScore: document.querySelector("#launchScore"),
+  launchPacketCount: document.querySelector("#launchPacketCount"),
+  launchSignalCount: document.querySelector("#launchSignalCount"),
+  launchLearningCount: document.querySelector("#launchLearningCount"),
+  launchStatus: document.querySelector("#launchStatus"),
+  launchPacketList: document.querySelector("#launchPacketList"),
+  launchAudienceList: document.querySelector("#launchAudienceList"),
+  launchSignalList: document.querySelector("#launchSignalList"),
+  launchLearningList: document.querySelector("#launchLearningList"),
+  launchReceiptList: document.querySelector("#launchReceiptList"),
+  launchDigest: document.querySelector("#launchDigest"),
+  prepareLaunchButton: document.querySelector("#prepareLaunchButton"),
+  applyLearningButton: document.querySelector("#applyLearningButton"),
+  copyLaunchDigestButton: document.querySelector("#copyLaunchDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1436,6 +1489,7 @@ function bindEvents() {
   elements.importNavButton.addEventListener("click", openImportStudio);
   elements.gapNavButton.addEventListener("click", openGapAutopilot);
   elements.runNavButton.addEventListener("click", openAutonomousRuns);
+  elements.launchNavButton.addEventListener("click", openTrustLaunchpad);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1486,6 +1540,7 @@ function bindEvents() {
     renderConnectors();
     renderGapAutopilot();
     renderAutonomousRuns();
+    renderTrustLaunchpad();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1536,6 +1591,11 @@ function bindEvents() {
   elements.startRunButton.addEventListener("click", startAutonomousRun);
   elements.approveRunGateButton.addEventListener("click", approveRunGate);
   elements.copyRunDigestButton.addEventListener("click", copyRunDigest);
+  elements.closeLaunchButton.addEventListener("click", closeTrustLaunchpad);
+  elements.launchBackdrop.addEventListener("click", closeTrustLaunchpad);
+  elements.prepareLaunchButton.addEventListener("click", prepareTrustLaunch);
+  elements.applyLearningButton.addEventListener("click", applyLearningLoop);
+  elements.copyLaunchDigestButton.addEventListener("click", copyLaunchDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1586,6 +1646,7 @@ function bindEvents() {
     if (state.importOpen) closeImportStudio();
     if (state.gapOpen) closeGapAutopilot();
     if (state.runOpen) closeAutonomousRuns();
+    if (state.launchOpen) closeTrustLaunchpad();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1603,6 +1664,7 @@ function applyInitialHash() {
   if (hash === "import" || hash === "imports" || hash === "studio") openImportStudio();
   if (hash === "gaps" || hash === "gap" || hash === "autopilot") openGapAutopilot();
   if (hash === "runs" || hash === "run" || hash === "agent") openAutonomousRuns();
+  if (hash === "launch" || hash === "trust-center" || hash === "learning") openTrustLaunchpad();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1634,6 +1696,7 @@ function render() {
   renderImportStudio();
   renderGapAutopilot();
   renderAutonomousRuns();
+  renderTrustLaunchpad();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1709,6 +1772,7 @@ function renderQuestionList() {
       renderConnectors();
       renderGapAutopilot();
       renderAutonomousRuns();
+      renderTrustLaunchpad();
       renderAnalytics();
       schedulePersist();
     });
@@ -2336,6 +2400,7 @@ function activateWorkspaceNav(target) {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2364,6 +2429,7 @@ function setActiveNav(activeButton) {
     elements.importNavButton,
     elements.gapNavButton,
     elements.runNavButton,
+    elements.launchNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -2384,6 +2450,7 @@ function openWorkspace() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2415,6 +2482,7 @@ function openPipeline() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2447,6 +2515,7 @@ function openTrustRoom() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
@@ -2479,6 +2548,7 @@ function openFollowUp() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2511,6 +2581,7 @@ function openConnectors() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2543,6 +2614,7 @@ function openImportStudio() {
   closeWorkspace(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2573,6 +2645,7 @@ function closeImportStudio(activateReview = true) {
 
 function openGapAutopilot() {
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2606,6 +2679,7 @@ function closeGapAutopilot(activateReview = true) {
 function openAutonomousRuns() {
   closeImportStudio(false);
   closeGapAutopilot(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2635,10 +2709,44 @@ function closeAutonomousRuns(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openTrustLaunchpad() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.launchOpen = true;
+  setActiveNav(elements.launchNavButton);
+  elements.launchBackdrop.hidden = false;
+  elements.launchDrawer.classList.add("is-open");
+  elements.launchDrawer.setAttribute("aria-hidden", "false");
+  renderTrustLaunchpad();
+  elements.prepareLaunchButton.focus();
+}
+
+function closeTrustLaunchpad(activateReview = true) {
+  if (!state.launchOpen && elements.launchDrawer.getAttribute("aria-hidden") === "true") return;
+  state.launchOpen = false;
+  elements.launchDrawer.classList.remove("is-open");
+  elements.launchDrawer.setAttribute("aria-hidden", "true");
+  elements.launchBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2671,6 +2779,7 @@ function openAccess() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2702,6 +2811,7 @@ function openIntake() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2733,6 +2843,7 @@ function openDataRoom() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2764,6 +2875,7 @@ function openLibrary() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2796,6 +2908,7 @@ function openPortalCopy() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4551,6 +4664,7 @@ function copyGapFallback(id) {
   addAudit("Gap fallback copied", `${shorten(task.question.text, 62)} buyer-safe fallback copied.`);
   renderGapAutopilot();
   renderAutonomousRuns();
+  renderTrustLaunchpad();
   copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
 }
 
@@ -4936,6 +5050,7 @@ function copyRunDigest() {
   addRunReceipt("Run digest copied", `${run.recommended.title} digest copied for internal review.`);
   addAudit("Run digest copied", "Autonomous review run digest copied.");
   renderAutonomousRuns();
+  renderTrustLaunchpad();
   copyText(runDigestText(run), "Autonomous run digest copied.");
 }
 
@@ -4991,6 +5106,334 @@ function runDigestText(run = autonomousRunSnapshot()) {
     "- Plan and route internally.",
     "- Keep buyer-facing output behind human approval.",
     "- Record every run action as a receipt.",
+  ].join("\n");
+}
+
+function renderTrustLaunchpad() {
+  const launch = trustLaunchSnapshot();
+
+  elements.launchScore.textContent = `${launch.score}%`;
+  elements.launchPacketCount.textContent = launch.packetCount;
+  elements.launchSignalCount.textContent = launch.signalCount;
+  elements.launchLearningCount.textContent = launch.learningRows.length;
+  elements.launchStatus.textContent = launch.statusLabel;
+  elements.launchDigest.textContent = launchDigestText(launch);
+  elements.applyLearningButton.disabled = state.launchActions.status === "Learning applied";
+
+  elements.launchPacketList.innerHTML = "";
+  launch.packets.forEach((packet) => {
+    const item = document.createElement("article");
+    item.className = `launch-packet-card ${packet.ready ? "is-ready" : "is-gated"}`;
+    item.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(packet.type)}</span>
+          <strong>${escapeHtml(packet.title)}</strong>
+        </div>
+        <b>${escapeHtml(packet.ready ? "Ready" : "Gated")}</b>
+      </header>
+      <p>${escapeHtml(packet.detail)}</p>
+      <footer>
+        <span>${packet.count} item${packet.count === 1 ? "" : "s"}</span>
+        <span>${escapeHtml(packet.visibility)}</span>
+      </footer>
+    `;
+    elements.launchPacketList.append(item);
+  });
+
+  elements.launchAudienceList.innerHTML = "";
+  launch.audiences.forEach((audience) => {
+    const item = document.createElement("article");
+    item.className = "launch-audience-card";
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(audience.name)}</strong>
+        <span>${escapeHtml(audience.access)}</span>
+      </header>
+      <p>${escapeHtml(audience.detail)}</p>
+    `;
+    elements.launchAudienceList.append(item);
+  });
+
+  elements.launchSignalList.innerHTML = "";
+  launch.signals.forEach((signal) => {
+    const item = document.createElement("article");
+    item.className = "launch-signal-card";
+    item.innerHTML = `
+      <span>${escapeHtml(signal.source)}</span>
+      <strong>${escapeHtml(signal.value)}</strong>
+      <p>${escapeHtml(signal.detail)}</p>
+    `;
+    elements.launchSignalList.append(item);
+  });
+
+  elements.launchLearningList.innerHTML = "";
+  launch.learningRows.forEach((row) => {
+    const item = document.createElement("article");
+    item.className = `launch-learning-card ${row.scope === "Network" ? "is-network" : "is-local"}`;
+    item.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(row.scope)} learning</span>
+          <strong>${escapeHtml(row.title)}</strong>
+        </div>
+        <b>${row.impact}</b>
+      </header>
+      <p>${escapeHtml(row.detail)}</p>
+      <footer>
+        <span>${escapeHtml(row.guardrail)}</span>
+      </footer>
+    `;
+    elements.launchLearningList.append(item);
+  });
+
+  elements.launchReceiptList.innerHTML = "";
+  if (launch.receipts.length === 0) {
+    elements.launchReceiptList.append(emptyState("No launch receipts yet"));
+  }
+  launch.receipts.forEach((receipt) => {
+    const item = document.createElement("article");
+    item.className = "launch-receipt-card";
+    item.innerHTML = `
+      <span>${escapeHtml(formatAuditTime(receipt.at))}</span>
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+    `;
+    elements.launchReceiptList.append(item);
+  });
+}
+
+function trustLaunchSnapshot() {
+  const trustRoom = trustRoomSnapshot();
+  const coverage = coverageSnapshot();
+  const connectors = connectorSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const run = autonomousRunSnapshot();
+  const approvedAnswers = state.questions.filter((question) => question.status === "approved");
+  const safeAnswers = trustRoom.answers.filter((item) => item.sourceSafe);
+  const packets = launchPackets({ trustRoom, coverage, connectors, gaps, approvedAnswers, safeAnswers });
+  const audiences = launchAudiences({ trustRoom, gaps, run });
+  const signals = launchSignals({ trustRoom, gaps, run, connectors });
+  const learningRows = launchLearningRows({ trustRoom, coverage, connectors, gaps, run });
+  const readinessPenalty = gaps.highRiskCount * 8 + connectors.staleCount * 5 + Math.max(0, 3 - approvedAnswers.length) * 6;
+  const score = Math.max(0, Math.min(100, Math.round(trustRoom.score * 0.3 + coverage.score * 0.24 + connectors.score * 0.2 + run.score * 0.16 + Math.max(0, 100 - readinessPenalty) * 0.1)));
+  const statusLabel = state.launchActions.status === "Draft" ? (score >= 72 ? "Launch candidate" : "Needs proof") : state.launchActions.status;
+
+  return {
+    score,
+    statusLabel,
+    packets,
+    audiences,
+    signals,
+    learningRows,
+    receipts: state.launchActions.receipts.slice(-8).reverse(),
+    packetCount: packets.filter((packet) => packet.ready).length,
+    signalCount: signals.length,
+    trustRoom,
+    coverage,
+    connectors,
+    gaps,
+    run,
+    approvedAnswers,
+    safeAnswers,
+  };
+}
+
+function launchPackets({ trustRoom, coverage, connectors, gaps, approvedAnswers, safeAnswers }) {
+  return [
+    {
+      type: "Answers",
+      title: "Buyer-safe answer library",
+      count: safeAnswers.length,
+      ready: safeAnswers.length > 0 && gaps.highRiskCount === 0,
+      visibility: "External buyer packet",
+      detail: `${safeAnswers.length}/${trustRoom.answers.length} answers have source-safe citations and can be packaged when open proof gates are cleared.`,
+    },
+    {
+      type: "Evidence",
+      title: "Approved evidence excerpts",
+      count: trustRoom.evidencePackets.length,
+      ready: trustRoom.evidencePackets.length > 0 && connectors.staleCount === 0,
+      visibility: "Scoped excerpts only",
+      detail: `${trustRoom.evidencePackets.length} evidence packet${trustRoom.evidencePackets.length === 1 ? "" : "s"} are mapped with citation excerpts; stale connector issues stay gated.`,
+    },
+    {
+      type: "Governance",
+      title: "AI and privacy trust notes",
+      count: coverage.items.filter((item) => ["AI Governance", "Privacy"].includes(item.category)).length,
+      ready: coverage.items.filter((item) => ["AI Governance", "Privacy"].includes(item.category) && item.status === "ready").length >= 1,
+      visibility: "Reviewer approved",
+      detail: "AI governance, privacy, subprocessor, and human-review claims are separated from generic security proof.",
+    },
+    {
+      type: "Receipts",
+      title: "Launch receipts and room activity",
+      count: trustRoom.receipts.length + state.launchActions.receipts.length,
+      ready: state.launchActions.status !== "Draft",
+      visibility: "Internal audit",
+      detail: "Room activity, copied packets, launch preparation, and learning-loop actions are preserved for handoff.",
+    },
+  ];
+}
+
+function launchAudiences({ trustRoom, gaps, run }) {
+  return [
+    {
+      name: "Founder / CEO",
+      access: "Executive digest",
+      detail: `Sees launch score, open gates, and buyer risk without raw evidence clutter. Current run score: ${run.score}%.`,
+    },
+    {
+      name: "Sales Engineering",
+      access: "Buyer packet",
+      detail: `Can reuse approved answer language, fallback copy, and room links while ${gaps.taskCount} proof gap${gaps.taskCount === 1 ? "" : "s"} remain internal.`,
+    },
+    {
+      name: "Security Reviewer",
+      access: "Source room",
+      detail: `Can inspect ${trustRoom.evidencePackets.length} evidence packet${trustRoom.evidencePackets.length === 1 ? "" : "s"}, claim trace, and freshness gates before publication.`,
+    },
+    {
+      name: "External Buyer",
+      access: "Scoped trust center",
+      detail: "Receives approved answers, safe excerpts, expiry, and citations only after internal launch approval.",
+    },
+  ];
+}
+
+function launchSignals({ trustRoom, gaps, run, connectors }) {
+  return [
+    {
+      source: "Buyer room",
+      value: `${trustRoom.views} views / ${trustRoom.copies} copies`,
+      detail: "Engagement signals show which trust content buyers return to before close.",
+    },
+    {
+      source: "Review run",
+      value: `${run.openGateCount} open gates`,
+      detail: "Run gates become reinforcement targets for the next questionnaire cycle.",
+    },
+    {
+      source: "Evidence gaps",
+      value: `${gaps.taskCount} gaps`,
+      detail: "Repeated proof gaps teach which trust assets should be prepared before the next buyer asks.",
+    },
+    {
+      source: "Source health",
+      value: `${connectors.issueCount} issues`,
+      detail: "Connector and freshness issues become source operations tasks, not hidden answer risk.",
+    },
+  ];
+}
+
+function launchLearningRows({ trustRoom, coverage, connectors, gaps, run }) {
+  const topGap = gaps.tasks[0];
+  return [
+    {
+      scope: "Local",
+      title: topGap ? `Pre-build ${topGap.request.title.toLowerCase()}` : "Promote sealed answers into launch content",
+      impact: topGap ? `${topGap.score}%` : `${trustRoom.sharedCount}`,
+      detail: topGap ? `${topGap.owner.name} repeatedly blocks buyer readiness for ${topGap.question.category}. Prepare the proof asset before the next review.` : "Approved answers should graduate into reusable trust center content once their citations are stable.",
+      guardrail: "Uses only this workspace's approved evidence and reviewer actions.",
+    },
+    {
+      scope: "Local",
+      title: "Refresh stale source operations",
+      impact: `${connectors.staleCount}`,
+      detail: connectors.staleCount > 0 ? "Stale source issues should trigger source-owner reminders before they weaken buyer-facing proof." : "No stale source issues; keep connector freshness monitoring active.",
+      guardrail: "No buyer data leaves the organization workspace.",
+    },
+    {
+      scope: "Network",
+      title: "Anonymized buyer-question pattern",
+      impact: `${coverage.ready}/${coverage.items.length}`,
+      detail: "Across organizations, only abstract patterns should improve suggestions: categories asked, proof types needed, freshness windows, and safe answer structure.",
+      guardrail: "No raw answers, customer names, contracts, prompts, or evidence files are shared.",
+    },
+    {
+      scope: "Network",
+      title: "Reinforcement reward signal",
+      impact: `${run.score}%`,
+      detail: "Positive signals should come from faster approvals, fewer reopened claims, fewer buyer follow-ups, and higher source confidence after human review.",
+      guardrail: "Humans approve outcomes; the model learns from labels and metrics, not private documents.",
+    },
+  ];
+}
+
+function prepareTrustLaunch() {
+  const launch = trustLaunchSnapshot();
+  const detail = `Trust center launch prepared with ${launch.packetCount} ready packets, ${launch.signalCount} learning signals, and ${launch.gaps.taskCount} open proof gaps.`;
+  state.launchActions.status = "Ready to launch";
+  state.launchActions.preparedAt = new Date().toISOString();
+  addLaunchReceipt("Launch prepared", detail);
+  addAudit("Trust launch prepared", detail);
+  render();
+  showToast("Trust center launch prepared.");
+}
+
+function applyLearningLoop() {
+  const launch = trustLaunchSnapshot();
+  const detail = `Learning loop applied from ${launch.signalCount} signals and ${launch.learningRows.length} reinforcement recommendations.`;
+  state.launchActions.status = "Learning applied";
+  state.launchActions.learningAppliedAt = new Date().toISOString();
+  addLaunchReceipt("Learning loop applied", detail);
+  addAudit("Learning loop applied", detail);
+  render();
+  showToast("Learning loop applied.");
+}
+
+function copyLaunchDigest() {
+  const launch = trustLaunchSnapshot();
+  state.launchActions.lastCopiedAt = new Date().toISOString();
+  addLaunchReceipt("Launch digest copied", "Trust center launch and learning-loop digest copied.");
+  addAudit("Launch digest copied", "Trust center launch digest copied.");
+  renderTrustLaunchpad();
+  copyText(launchDigestText(launch), "Trust launch digest copied.");
+}
+
+function addLaunchReceipt(action, detail) {
+  state.launchActions.receipts = [
+    ...(state.launchActions.receipts ?? []),
+    {
+      id: `launch-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+}
+
+function launchDigestText(launch = trustLaunchSnapshot()) {
+  const packetLines = launch.packets.map((packet, index) => `${index + 1}. ${packet.ready ? "READY" : "GATED"}: ${packet.title} | ${packet.count} ${packet.type.toLowerCase()} | ${packet.visibility}`).join("\n");
+  const signalLines = launch.signals.map((signal, index) => `${index + 1}. ${signal.source}: ${signal.value} - ${signal.detail}`).join("\n");
+  const learningLines = launch.learningRows.map((row, index) => `${index + 1}. ${row.scope}: ${row.title} | impact ${row.impact} | ${row.guardrail}`).join("\n");
+  const receiptLines = launch.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Trust Center Launchpad",
+    `Build: ${BUILD_VERSION}`,
+    `Launch status: ${launch.statusLabel}`,
+    `Launch score: ${launch.score}%`,
+    `Ready packets: ${launch.packetCount}/${launch.packets.length}`,
+    `Learning signals: ${launch.signalCount}`,
+    `Network learning rows: ${launch.learningRows.filter((row) => row.scope === "Network").length}`,
+    "",
+    "Launch packet:",
+    packetLines,
+    "",
+    "Learning signals:",
+    signalLines,
+    "",
+    "Reinforcement recommendations:",
+    learningLines,
+    "",
+    "Launch receipts:",
+    receiptLines || "No launch receipts yet.",
+    "",
+    "Privacy guardrail:",
+    "- Organization learning stays inside the workspace.",
+    "- Network learning uses only anonymized patterns and aggregate reward signals.",
+    "- No raw answers, evidence, customer names, contracts, prompts, or private files are shared.",
   ].join("\n");
 }
 
@@ -6876,6 +7319,7 @@ function selectNextOpenQuestion() {
   renderFollowUps();
   renderGapAutopilot();
   renderAutonomousRuns();
+  renderTrustLaunchpad();
   renderPortalCopy();
   schedulePersist();
 }
@@ -7147,6 +7591,10 @@ function exportCsv() {
     "Run Score",
     "Run Gates",
     "Run Next Action",
+    "Launch Status",
+    "Launch Score",
+    "Learning Signals",
+    "Network Learning",
     "Trace",
     "Answer",
     "Sources",
@@ -7164,6 +7612,7 @@ function exportCsv() {
     const importStudio = importSnapshot();
     const gaps = gapAutopilotSnapshot();
     const run = autonomousRunSnapshot();
+    const launch = trustLaunchSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -7203,6 +7652,10 @@ function exportCsv() {
       `${run.score}%`,
       run.openGateCount,
       run.nextActions[0]?.title ?? "No next action",
+      launch.statusLabel,
+      `${launch.score}%`,
+      launch.signalCount,
+      launch.learningRows.filter((row) => row.scope === "Network").length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -7230,6 +7683,7 @@ function exportReviewPack() {
   const importStudio = importSnapshot();
   const gaps = gapAutopilotSnapshot();
   const run = autonomousRunSnapshot();
+  const launch = trustLaunchSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -7247,11 +7701,66 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v16</h1>
+        <h1>AnswerSeal Review Pack v17</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Trust Center Launchpad</h2>
+        <p>Status: ${escapeHtml(launch.statusLabel)} | Launch score: ${launch.score}% | Ready packets: ${launch.packetCount}/${launch.packets.length} | Learning signals: ${launch.signalCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Packet</th>
+              <th>Status</th>
+              <th>Visibility</th>
+              <th>Count</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${launch.packets
+              .map(
+                (packet) => `
+                  <tr>
+                    <td>${escapeHtml(packet.title)}</td>
+                    <td class="${packet.ready ? "ok" : "risk"}">${escapeHtml(packet.ready ? "Ready" : "Gated")}</td>
+                    <td>${escapeHtml(packet.visibility)}</td>
+                    <td>${packet.count}</td>
+                    <td>${escapeHtml(packet.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Learning Loop</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Scope</th>
+              <th>Recommendation</th>
+              <th>Impact</th>
+              <th>Privacy Guardrail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${launch.learningRows
+              .map(
+                (row) => `
+                  <tr>
+                    <td>${escapeHtml(row.scope)}</td>
+                    <td>${escapeHtml(row.title)}<br />${escapeHtml(row.detail)}</td>
+                    <td>${escapeHtml(String(row.impact))}</td>
+                    <td>${escapeHtml(row.guardrail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Launch Digest</h2>
+        <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
         <p>Status: ${escapeHtml(run.status)} | Recommended run: ${escapeHtml(run.recommended.title)} | Run score: ${run.score}% | Open gates: ${run.openGateCount}</p>
         <table>
@@ -7962,19 +8471,20 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v16 created with autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v17 created with trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
   renderImportStudio();
   renderGapAutopilot();
   renderAutonomousRuns();
+  renderTrustLaunchpad();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v16 exported.");
+  showToast("Review Pack v17 exported.");
 }
 
 function toCsv(rows) {
@@ -8031,6 +8541,7 @@ function serializeWorkspace() {
     importStudio: state.importStudio,
     gapActions: state.gapActions,
     runActions: state.runActions,
+    launchActions: state.launchActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -8058,6 +8569,7 @@ function resetWorkspace() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
   closeWorkspace(false);
   closeLibrary();
   render();

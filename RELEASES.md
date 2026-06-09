@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.21 Alpha - Trust Center Launchpad
+
+Phase: Trust Center Launchpad
+
+- Added a Launch drawer with launch score, ready packet count, learning signals, learning rows, and launch status.
+- Added launch packet readiness for buyer-safe answers, approved evidence excerpts, AI/privacy notes, and launch receipts.
+- Added audience controls for founders, sales engineering, security reviewers, and external buyers.
+- Added closed-loop learning signals from buyer room activity, run gates, evidence gaps, and source health.
+- Added a privacy-safe reinforcement queue that separates local workspace learning from anonymized network learning patterns.
+- Added launch receipts for prepared launch, applied learning loop, and copied launch digest.
+- Added launch and learning context to CSV exports.
+- Upgraded review pack export to Review Pack v17 with trust center launchpad, learning loop, launch digest, and privacy guardrails.
+- Updated the build phases page with the v0.22 Privacy-Safe Learning Network plan.
+
 ## v0.20 Alpha - Autonomous Review Runs
 
 Phase: Autonomous Review Runs
