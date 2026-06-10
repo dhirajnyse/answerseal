@@ -127,6 +127,10 @@
             <svg aria-hidden="true"><use href="#icon-check"></use></svg>
             <span>Coach</span>
           </button>
+          <button class="nav-item" id="agentNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+            <span>Agent</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -189,8 +193,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.23 Alpha</strong>
-          <span>Adaptive Proof Coach</span>
+          <strong>v0.24 Alpha</strong>
+          <span>Governed Evidence Agent</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -202,7 +206,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.23 Alpha</span>
+            <span class="label">Security questionnaire | v0.24 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1451,6 +1455,111 @@
             <span>Copyable action plan</span>
           </div>
           <pre class="coach-digest" id="coachDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="agent-backdrop drawer-backdrop" id="agentBackdrop" hidden></div>
+    <aside class="workspace-drawer agent-drawer" id="agentDrawer" aria-label="Governed evidence agent" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Governed Evidence Agent</span>
+          <h2>Execute proof work with human approval gates</h2>
+        </div>
+        <button class="icon-button" id="closeAgentButton" type="button" aria-label="Close agent" title="Close agent">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip agent-metrics" aria-label="Governed agent control">
+        <article>
+          <span class="label">Control Score</span>
+          <strong id="agentControlScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Tasks</span>
+          <strong id="agentTaskCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Limits</span>
+          <strong id="agentLimitCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="agentReceiptCount">0</strong>
+        </article>
+      </section>
+
+      <section class="agent-actions" aria-label="Governed agent controls">
+        <div>
+          <span class="label">Agent Status</span>
+          <strong id="agentStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="prepareAgentButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Prepare Plan</span>
+        </button>
+        <button class="secondary-button" id="approveAgentButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Human Approve</span>
+        </button>
+        <button class="secondary-button" id="queueRefreshButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+          <span>Queue Refresh</span>
+        </button>
+        <button class="secondary-button" id="copyAgentDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="agent-body">
+        <section class="agent-section" aria-label="Governed tasks">
+          <div class="section-heading">
+            <span class="label">Governed Tasks</span>
+            <span>Owner, proof, risk, and approval mode</span>
+          </div>
+          <div class="agent-task-list" id="agentTaskList"></div>
+        </section>
+
+        <section class="agent-section" aria-label="Permission limits">
+          <div class="section-heading">
+            <span class="label">Permission Limits</span>
+            <span>What the agent may and may not change</span>
+          </div>
+          <div class="agent-limit-list" id="agentLimitList"></div>
+        </section>
+
+        <section class="agent-section" aria-label="Safe refresh queue">
+          <div class="section-heading">
+            <span class="label">Safe Refresh Queue</span>
+            <span>Stale source checks without silent answer changes</span>
+          </div>
+          <div class="agent-refresh-list" id="agentRefreshList"></div>
+        </section>
+
+        <section class="agent-section" aria-label="Impact map">
+          <div class="section-heading">
+            <span class="label">Impact Map</span>
+            <span>How governed work improves the review loop</span>
+          </div>
+          <div class="agent-impact-list" id="agentImpactList"></div>
+        </section>
+
+        <section class="agent-section" aria-label="Agent receipts">
+          <div class="section-heading">
+            <span class="label">Agent Receipts</span>
+            <span>Recorded governed actions</span>
+          </div>
+          <div class="agent-receipt-list" id="agentReceiptList"></div>
+        </section>
+
+        <section class="agent-section" aria-label="Agent digest">
+          <div class="section-heading">
+            <span class="label">Agent Digest</span>
+            <span>Copyable controlled-execution note</span>
+          </div>
+          <pre class="agent-digest" id="agentDigest"></pre>
         </section>
       </section>
     </aside>

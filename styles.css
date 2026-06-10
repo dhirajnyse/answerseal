@@ -3518,6 +3518,191 @@ svg {
   white-space: pre-wrap;
 }
 
+.agent-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(980px, 100vw);
+}
+
+.agent-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.agent-actions {
+  display: grid;
+  grid-template-columns: minmax(170px, 1fr) repeat(4, minmax(0, 150px));
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: #f8fdff;
+}
+
+.agent-actions > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 168, 137, 0.2);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.agent-actions strong {
+  color: var(--accent-dark);
+  overflow-wrap: anywhere;
+}
+
+.agent-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(232, 248, 255, 0.74) 0%, rgba(255, 255, 255, 0.97) 46%),
+    #ffffff;
+}
+
+.agent-section,
+.agent-task-card,
+.agent-limit-card,
+.agent-refresh-card,
+.agent-impact-card,
+.agent-receipt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.agent-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.agent-task-list,
+.agent-limit-list,
+.agent-refresh-list,
+.agent-receipt-list {
+  display: grid;
+  gap: 8px;
+}
+
+.agent-impact-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.agent-task-card,
+.agent-limit-card,
+.agent-refresh-card,
+.agent-impact-card,
+.agent-receipt-card {
+  display: grid;
+  gap: 9px;
+  padding: 11px;
+  background: #fbfcfb;
+}
+
+.agent-task-card {
+  border-left: 4px solid var(--blue);
+}
+
+.agent-task-card.is-gated {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.agent-task-card header,
+.agent-task-card footer,
+.agent-limit-card header,
+.agent-refresh-card header,
+.agent-impact-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.agent-task-card header div,
+.agent-refresh-card header div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.agent-task-card strong,
+.agent-limit-card strong,
+.agent-refresh-card strong,
+.agent-impact-card strong,
+.agent-receipt-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.agent-task-card b,
+.agent-limit-card b,
+.agent-refresh-card b,
+.agent-impact-card b {
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.agent-task-card p,
+.agent-task-card footer span,
+.agent-limit-card p,
+.agent-refresh-card p,
+.agent-impact-card p,
+.agent-receipt-card p,
+.agent-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.agent-limit-card {
+  background: #fbfffd;
+}
+
+.agent-limit-card b {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(218, 249, 241, 0.88);
+}
+
+.agent-refresh-card {
+  border-left: 4px solid #26c6da;
+  background: #f7fdff;
+}
+
+.agent-impact-card strong {
+  color: var(--blue);
+}
+
+.agent-digest {
+  min-height: 240px;
+  max-height: 360px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -5690,6 +5875,9 @@ svg {
     .coach-metrics,
     .coach-actions,
     .coach-outcome-list,
+    .agent-metrics,
+    .agent-actions,
+    .agent-impact-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -5766,6 +5954,11 @@ svg {
     .coach-proof-card header,
     .coach-proof-card footer,
     .coach-route-card header,
+    .agent-task-card header,
+    .agent-task-card footer,
+    .agent-limit-card header,
+    .agent-refresh-card header,
+    .agent-impact-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

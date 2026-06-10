@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.24 Alpha - Governed Evidence Agent
+
+Phase: Governed Evidence Agent
+
+- Added an Agent drawer with control score, governed task count, permission limit count, receipt count, and agent status.
+- Added governed evidence tasks that convert coach recommendations, proof gaps, and stale connector issues into owner-routed work.
+- Added explicit agent permission limits for drafting evidence requests, refreshing source metadata, changing buyer-facing claims, and tenant sharing.
+- Added a safe refresh queue for stale sources and connector issues without silently changing approved answers.
+- Added an impact map that links governed work to coverage, confidence, owner routing, connector health, and learning-loop quality.
+- Added agent receipts for prepared plans, human approvals, queued refreshes, and copied agent digests.
+- Added agent status, control score, task count, refresh count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v20 with governed evidence agent tasks, permission limits, safe refresh queue, and agent digest.
+- Updated the build phases page with the v0.25 Trust Outcome Memory plan.
+
 ## v0.23 Alpha - Adaptive Proof Coach
 
 Phase: Adaptive Proof Coach

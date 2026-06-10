@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.23 Alpha
+**Current version:** v0.24 Alpha
 
-**Current phase:** Adaptive Proof Coach
+**Current phase:** Governed Evidence Agent
 
 ## Brand
 
@@ -99,6 +99,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Reviewer routing with owner, due date, reason, and expected proof
 - Outcome tuning from approvals, buyer friction, network safety, run quality, and stability penalties
 - Coach receipts for generated plans, applied recommendations, and copied coach digests
+- Governed Evidence Agent drawer with control score, governed task count, permission limits, receipt count, and agent status
+- Governed evidence tasks that turn coach recommendations and proof gaps into owner-routed work with due dates and approval modes
+- Agent permission limits for drafting evidence requests, refreshing source metadata, changing buyer-facing claims, and tenant sharing
+- Safe refresh queue for stale source checks without silent answer changes
+- Impact map that shows how governed work improves coverage, confidence, routing, connector health, and closed-loop learning
+- Agent receipts for prepared plans, human approvals, refresh queues, and copied digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -119,7 +125,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v19 export with adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v20 export with governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -137,13 +143,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.24 Alpha - Governed Evidence Agent
+## Next Phase: v0.25 Alpha - Trust Outcome Memory
 
-- Convert coach recommendations into governed evidence tasks with owner, due date, expected proof, and risk
-- Define agent permissions for draft, request, refresh, and suggestion-only actions
-- Record source-owner receipts for new or refreshed proof assets
-- Detect stale sources and prepare refresh tasks without automatically changing buyer-facing claims
-- Keep all autonomous evidence work behind human approval, audit receipts, and tenant guardrails
+- Capture whether sealed answers were accepted, challenged, delayed, or reused after buyer review
+- Score which sources, reviewers, rewrites, routes, and refreshes improved enterprise review outcomes
+- Keep organization-specific evidence private while sharing only privacy-safe aggregate patterns
+- Suggest adaptive playbooks from similar successful reviews without exposing another tenant
+- Turn every approval, block, refresh, and buyer outcome into a safer local reinforcement signal
 
 ## License
 

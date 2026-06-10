@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.23 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v23";
+const BUILD_VERSION = "v0.24 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v24";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v23",
   "answerseal.workspace.v22",
   "answerseal.workspace.v21",
   "answerseal.workspace.v20",
@@ -681,6 +682,8 @@ function createInitialState() {
     networkActions: createInitialNetworkActions(),
     coachOpen: false,
     coachActions: createInitialCoachActions(),
+    agentOpen: false,
+    agentActions: createInitialAgentActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -739,6 +742,17 @@ function createInitialCoachActions() {
     status: "Draft",
     generatedAt: null,
     appliedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialAgentActions() {
+  return {
+    status: "Draft",
+    plannedAt: null,
+    approvedAt: null,
+    refreshedAt: null,
     lastCopiedAt: null,
     receipts: [],
   };
@@ -866,6 +880,7 @@ function loadWorkspaceState() {
       launchActions: normalizeLaunchActions(workspace.launchActions ?? fresh.launchActions),
       networkActions: normalizeNetworkActions(workspace.networkActions ?? fresh.networkActions),
       coachActions: normalizeCoachActions(workspace.coachActions ?? fresh.coachActions),
+      agentActions: normalizeAgentActions(workspace.agentActions ?? fresh.agentActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -884,6 +899,7 @@ function loadWorkspaceState() {
       launchOpen: false,
       networkOpen: false,
       coachOpen: false,
+      agentOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1203,6 +1219,27 @@ function normalizeCoachReceipt(receipt) {
   };
 }
 
+function normalizeAgentActions(actions) {
+  const status = ["Draft", "Plan prepared", "Human approved", "Refresh queued"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    plannedAt: actions?.plannedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    refreshedAt: actions?.refreshedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeAgentReceipt) : [],
+  };
+}
+
+function normalizeAgentReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `agent-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Agent action planned"),
+    detail: String(receipt?.detail ?? "Governed evidence agent action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1239,6 +1276,7 @@ const elements = {
   launchNavButton: document.querySelector("#launchNavButton"),
   networkNavButton: document.querySelector("#networkNavButton"),
   coachNavButton: document.querySelector("#coachNavButton"),
+  agentNavButton: document.querySelector("#agentNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1490,6 +1528,24 @@ const elements = {
   generateCoachButton: document.querySelector("#generateCoachButton"),
   applyCoachButton: document.querySelector("#applyCoachButton"),
   copyCoachDigestButton: document.querySelector("#copyCoachDigestButton"),
+  agentBackdrop: document.querySelector("#agentBackdrop"),
+  agentDrawer: document.querySelector("#agentDrawer"),
+  closeAgentButton: document.querySelector("#closeAgentButton"),
+  agentControlScore: document.querySelector("#agentControlScore"),
+  agentTaskCount: document.querySelector("#agentTaskCount"),
+  agentLimitCount: document.querySelector("#agentLimitCount"),
+  agentReceiptCount: document.querySelector("#agentReceiptCount"),
+  agentStatus: document.querySelector("#agentStatus"),
+  agentTaskList: document.querySelector("#agentTaskList"),
+  agentLimitList: document.querySelector("#agentLimitList"),
+  agentReceiptList: document.querySelector("#agentReceiptList"),
+  agentRefreshList: document.querySelector("#agentRefreshList"),
+  agentImpactList: document.querySelector("#agentImpactList"),
+  agentDigest: document.querySelector("#agentDigest"),
+  prepareAgentButton: document.querySelector("#prepareAgentButton"),
+  approveAgentButton: document.querySelector("#approveAgentButton"),
+  queueRefreshButton: document.querySelector("#queueRefreshButton"),
+  copyAgentDigestButton: document.querySelector("#copyAgentDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1598,6 +1654,7 @@ function bindEvents() {
   elements.launchNavButton.addEventListener("click", openTrustLaunchpad);
   elements.networkNavButton.addEventListener("click", openLearningNetwork);
   elements.coachNavButton.addEventListener("click", openAdaptiveCoach);
+  elements.agentNavButton.addEventListener("click", openEvidenceAgent);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1651,6 +1708,7 @@ function bindEvents() {
     renderTrustLaunchpad();
     renderLearningNetwork();
     renderAdaptiveCoach();
+    renderEvidenceAgent();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1716,6 +1774,12 @@ function bindEvents() {
   elements.generateCoachButton.addEventListener("click", generateCoachPlan);
   elements.applyCoachButton.addEventListener("click", applyCoachRecommendation);
   elements.copyCoachDigestButton.addEventListener("click", copyCoachDigest);
+  elements.closeAgentButton.addEventListener("click", closeEvidenceAgent);
+  elements.agentBackdrop.addEventListener("click", closeEvidenceAgent);
+  elements.prepareAgentButton.addEventListener("click", prepareAgentPlan);
+  elements.approveAgentButton.addEventListener("click", approveAgentPlan);
+  elements.queueRefreshButton.addEventListener("click", queueAgentRefresh);
+  elements.copyAgentDigestButton.addEventListener("click", copyAgentDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1769,6 +1833,7 @@ function bindEvents() {
     if (state.launchOpen) closeTrustLaunchpad();
     if (state.networkOpen) closeLearningNetwork();
     if (state.coachOpen) closeAdaptiveCoach();
+    if (state.agentOpen) closeEvidenceAgent();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1789,6 +1854,7 @@ function applyInitialHash() {
   if (hash === "launch" || hash === "trust-center" || hash === "learning") openTrustLaunchpad();
   if (hash === "network" || hash === "learning-network" || hash === "privacy-network") openLearningNetwork();
   if (hash === "coach" || hash === "proof-coach" || hash === "adaptive-coach") openAdaptiveCoach();
+  if (hash === "agent" || hash === "evidence-agent" || hash === "governed-agent") openEvidenceAgent();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1823,6 +1889,7 @@ function render() {
   renderTrustLaunchpad();
   renderLearningNetwork();
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1901,6 +1968,7 @@ function renderQuestionList() {
       renderTrustLaunchpad();
       renderLearningNetwork();
       renderAdaptiveCoach();
+      renderEvidenceAgent();
       renderAnalytics();
       schedulePersist();
     });
@@ -2560,6 +2628,7 @@ function setActiveNav(activeButton) {
     elements.launchNavButton,
     elements.networkNavButton,
     elements.coachNavButton,
+    elements.agentNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -2583,6 +2652,7 @@ function openWorkspace() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2617,6 +2687,7 @@ function openPipeline() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2652,6 +2723,7 @@ function openTrustRoom() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
@@ -2687,6 +2759,7 @@ function openFollowUp() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2722,6 +2795,7 @@ function openConnectors() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2757,6 +2831,7 @@ function openImportStudio() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2790,6 +2865,7 @@ function openGapAutopilot() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2826,6 +2902,7 @@ function openAutonomousRuns() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2862,6 +2939,7 @@ function openTrustLaunchpad() {
   closeWorkspace(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2896,6 +2974,7 @@ function openLearningNetwork() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2931,6 +3010,7 @@ function openAdaptiveCoach() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2960,6 +3040,42 @@ function closeAdaptiveCoach(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openEvidenceAgent() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.agentOpen = true;
+  setActiveNav(elements.agentNavButton);
+  elements.agentBackdrop.hidden = false;
+  elements.agentDrawer.classList.add("is-open");
+  elements.agentDrawer.setAttribute("aria-hidden", "false");
+  renderEvidenceAgent();
+  elements.prepareAgentButton.focus();
+}
+
+function closeEvidenceAgent(activateReview = true) {
+  if (!state.agentOpen && elements.agentDrawer.getAttribute("aria-hidden") === "true") return;
+  state.agentOpen = false;
+  elements.agentDrawer.classList.remove("is-open");
+  elements.agentDrawer.setAttribute("aria-hidden", "true");
+  elements.agentBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -2967,6 +3083,7 @@ function openAnalytics() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3002,6 +3119,7 @@ function openAccess() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3036,6 +3154,7 @@ function openIntake() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3070,6 +3189,7 @@ function openDataRoom() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3104,6 +3224,7 @@ function openLibrary() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3139,6 +3260,7 @@ function openPortalCopy() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4897,6 +5019,7 @@ function copyGapFallback(id) {
   renderTrustLaunchpad();
   renderLearningNetwork();
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
 }
 
@@ -5285,6 +5408,7 @@ function copyRunDigest() {
   renderTrustLaunchpad();
   renderLearningNetwork();
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   copyText(runDigestText(run), "Autonomous run digest copied.");
 }
 
@@ -5624,6 +5748,7 @@ function copyLaunchDigest() {
   renderTrustLaunchpad();
   renderLearningNetwork();
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   copyText(launchDigestText(launch), "Trust launch digest copied.");
 }
 
@@ -5939,6 +6064,7 @@ function copyNetworkDigest() {
   addAudit("Network digest copied", "Privacy-safe learning network digest copied.");
   renderLearningNetwork();
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   copyText(networkDigestText(network), "Learning network digest copied.");
 }
 
@@ -6282,6 +6408,7 @@ function copyCoachDigest() {
   addCoachReceipt("Coach digest copied", "Adaptive proof coach digest copied.");
   addAudit("Coach digest copied", "Adaptive proof coach digest copied.");
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   copyText(coachDigestText(coach), "Adaptive proof coach digest copied.");
 }
 
@@ -6332,6 +6459,352 @@ function coachDigestText(coach = adaptiveCoachSnapshot()) {
     "- Recommendations explain the source signal, expected proof, and human approval gate.",
     "- Network learning informs priority only through privacy-safe patterns and reward labels.",
     "- Buyer-facing copy remains gated until evidence and reviewer approval are attached.",
+  ].join("\n");
+}
+
+function renderEvidenceAgent() {
+  const agent = governedAgentSnapshot();
+
+  elements.agentControlScore.textContent = `${agent.controlScore}%`;
+  elements.agentTaskCount.textContent = agent.tasks.length;
+  elements.agentLimitCount.textContent = agent.limits.length;
+  elements.agentReceiptCount.textContent = agent.receipts.length;
+  elements.agentStatus.textContent = agent.statusLabel;
+  elements.agentDigest.textContent = agentDigestText(agent);
+  elements.approveAgentButton.disabled = state.agentActions.status === "Human approved";
+
+  elements.agentTaskList.innerHTML = "";
+  agent.tasks.forEach((task) => {
+    const item = document.createElement("article");
+    item.className = `agent-task-card ${task.mode === "Approval required" ? "is-gated" : ""}`;
+    item.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(task.mode)}</span>
+          <strong>${escapeHtml(task.title)}</strong>
+        </div>
+        <b>${escapeHtml(task.owner)}</b>
+      </header>
+      <p>${escapeHtml(task.detail)}</p>
+      <footer>
+        <span>${escapeHtml(task.action)}</span>
+        <span>${escapeHtml(task.risk)}</span>
+      </footer>
+    `;
+    elements.agentTaskList.append(item);
+  });
+
+  elements.agentLimitList.innerHTML = "";
+  agent.limits.forEach((limit) => {
+    const item = document.createElement("article");
+    item.className = "agent-limit-card";
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(limit.action)}</strong>
+        <span>${escapeHtml(limit.permission)}</span>
+      </header>
+      <p>${escapeHtml(limit.detail)}</p>
+    `;
+    elements.agentLimitList.append(item);
+  });
+
+  elements.agentRefreshList.innerHTML = "";
+  agent.refreshes.forEach((refresh) => {
+    const item = document.createElement("article");
+    item.className = "agent-refresh-card";
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(refresh.source)}</strong>
+        <span>${escapeHtml(refresh.status)}</span>
+      </header>
+      <p>${escapeHtml(refresh.reason)}</p>
+      <b>${escapeHtml(refresh.owner)}</b>
+    `;
+    elements.agentRefreshList.append(item);
+  });
+
+  elements.agentImpactList.innerHTML = "";
+  agent.impacts.forEach((impact) => {
+    const item = document.createElement("article");
+    item.className = "agent-impact-card";
+    item.innerHTML = `
+      <span>${escapeHtml(impact.metric)}</span>
+      <strong>${escapeHtml(impact.value)}</strong>
+      <p>${escapeHtml(impact.detail)}</p>
+    `;
+    elements.agentImpactList.append(item);
+  });
+
+  elements.agentReceiptList.innerHTML = "";
+  if (agent.receipts.length === 0) {
+    elements.agentReceiptList.append(emptyState("No agent receipts yet"));
+  }
+  agent.receipts.forEach((receipt) => {
+    const item = document.createElement("article");
+    item.className = "agent-receipt-card";
+    item.innerHTML = `
+      <span>${escapeHtml(formatAuditTime(receipt.at))}</span>
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+    `;
+    elements.agentReceiptList.append(item);
+  });
+}
+
+function governedAgentSnapshot() {
+  const coach = adaptiveCoachSnapshot();
+  const connectors = connectorSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const coverage = coverageSnapshot();
+  const tasks = agentTasks({ coach, gaps, connectors });
+  const limits = agentLimits();
+  const refreshes = agentRefreshQueue({ connectors, gaps });
+  const impacts = agentImpactMap({ coach, coverage, connectors, gaps, tasks, refreshes });
+  const controlScore = Math.max(0, Math.min(100, Math.round(coach.score * 0.34 + connectors.score * 0.2 + coverage.score * 0.18 + Math.max(0, 100 - gaps.highRiskCount * 12) * 0.16 + Math.max(0, 100 - refreshes.length * 8) * 0.12)));
+  const statusLabel = state.agentActions.status === "Draft" ? (tasks.length ? "Ready for approval" : "No agent work") : state.agentActions.status;
+
+  return {
+    statusLabel,
+    controlScore,
+    tasks,
+    limits,
+    refreshes,
+    impacts,
+    receipts: state.agentActions.receipts.slice(-8).reverse(),
+    coach,
+    connectors,
+    gaps,
+    coverage,
+  };
+}
+
+function agentTasks({ coach, gaps, connectors }) {
+  const proofTasks = coach.proofs.slice(0, 3).map((proof, index) => ({
+    id: proof.id || `proof-${index}`,
+    title: proof.title,
+    owner: proof.owner,
+    detail: proof.detail,
+    action: proof.action,
+    mode: proof.priority === "High" ? "Approval required" : "Agent draft",
+    risk: proof.priority === "High" ? "High-risk proof change" : "Internal evidence task",
+  }));
+  const topGap = gaps.tasks[0];
+  const staleConnector = connectors.connectors.find((item) => item.freshness === "Stale" || item.status === "Stale" || item.issues > 0);
+  const governed = [
+    topGap
+      ? {
+          id: `request-${topGap.id}`,
+          title: `Request ${topGap.request.title.toLowerCase()}`,
+          owner: topGap.owner.name,
+          detail: topGap.reason,
+          action: topGap.request.sourceHint,
+          mode: "Approval required",
+          risk: `${topGap.severity} proof gap`,
+        }
+      : null,
+    staleConnector
+      ? {
+          id: `refresh-${staleConnector.id}`,
+          title: `Prepare ${staleConnector.name} refresh`,
+          owner: staleConnector.owner.name,
+          detail: `${staleConnector.name} has ${staleConnector.issues} issue${staleConnector.issues === 1 ? "" : "s"} and ${staleConnector.health}% health.`,
+          action: staleConnector.nextAction,
+          mode: "Agent draft",
+          risk: "Source freshness",
+        }
+      : null,
+  ].filter(Boolean);
+
+  return [...governed, ...proofTasks].filter((task, index, items) => items.findIndex((item) => item.id === task.id) === index).slice(0, 5);
+}
+
+function agentLimits() {
+  return [
+    {
+      action: "Draft evidence request",
+      permission: "Allowed",
+      detail: "The agent may prepare an internal source request with owner, expected proof, risk, and deadline.",
+    },
+    {
+      action: "Refresh source metadata",
+      permission: "Allowed with receipt",
+      detail: "The agent may queue freshness checks and owner review, but it cannot replace source text automatically.",
+    },
+    {
+      action: "Change buyer-facing claim",
+      permission: "Blocked",
+      detail: "Buyer-facing answers remain unchanged until evidence is attached and a human reviewer approves the response.",
+    },
+    {
+      action: "Share across tenants",
+      permission: "Aggregate only",
+      detail: "Only privacy-safe patterns and reward labels can participate in network learning.",
+    },
+  ];
+}
+
+function agentRefreshQueue({ connectors, gaps }) {
+  const staleDocs = state.evidence
+    .filter((doc) => daysSince(doc.updated) >= 120)
+    .slice(0, 4)
+    .map((doc) => ({
+      id: doc.id,
+      source: doc.title,
+      owner: doc.owner,
+      status: daysSince(doc.updated) >= 365 ? "Stale" : "Review freshness",
+      reason: `${doc.title} was last updated ${formatShortDate(doc.updated)} and supports ${state.questions.filter((question) => question.sources?.includes(doc.id)).length} buyer question${state.questions.filter((question) => question.sources?.includes(doc.id)).length === 1 ? "" : "s"}.`,
+    }));
+  const connectorRows = connectors.connectors
+    .filter((item) => item.freshness === "Stale" || item.issues > 0)
+    .slice(0, 2)
+    .map((item) => ({
+      id: item.id,
+      source: item.name,
+      owner: item.owner.name,
+      status: item.status,
+      reason: item.nextAction,
+    }));
+  const gapRows = gaps.tasks.slice(0, 2).map((task) => ({
+    id: task.id,
+    source: task.request.title,
+    owner: task.owner.name,
+    status: task.severity,
+    reason: task.request.sourceHint,
+  }));
+
+  return [...connectorRows, ...gapRows, ...staleDocs].filter((item, index, items) => items.findIndex((row) => row.id === item.id) === index).slice(0, 6);
+}
+
+function agentImpactMap({ coach, coverage, connectors, gaps, tasks, refreshes }) {
+  return [
+    {
+      metric: "Coach handoff",
+      value: `${coach.score}%`,
+      detail: "Agent work starts only from explainable coach recommendations.",
+    },
+    {
+      metric: "Evidence coverage",
+      value: `${coverage.ready}/${coverage.items.length}`,
+      detail: "Governed source tasks target weak, stale, or missing coverage before the next buyer asks.",
+    },
+    {
+      metric: "Source health",
+      value: `${connectors.score}%`,
+      detail: "Refresh queue improves connector health without rewriting buyer answers automatically.",
+    },
+    {
+      metric: "Open risk",
+      value: `${gaps.highRiskCount} high`,
+      detail: "High-risk proof work requires human approval before any buyer-facing reuse.",
+    },
+    {
+      metric: "Agent workload",
+      value: `${tasks.length} tasks / ${refreshes.length} refreshes`,
+      detail: "The agent keeps the work operational: owner, due date, expected proof, permission, and receipt.",
+    },
+  ];
+}
+
+function prepareAgentPlan() {
+  const agent = governedAgentSnapshot();
+  const detail = `Governed evidence plan prepared with ${agent.tasks.length} tasks, ${agent.refreshes.length} refresh items, ${agent.limits.length} permission limits, and ${agent.controlScore}% control score.`;
+  state.agentActions.status = "Plan prepared";
+  state.agentActions.plannedAt = new Date().toISOString();
+  addAgentReceipt("Agent plan prepared", detail);
+  addAudit("Evidence agent plan prepared", detail);
+  render();
+  showToast("Governed evidence agent plan prepared.");
+}
+
+function approveAgentPlan() {
+  const agent = governedAgentSnapshot();
+  const task = agent.tasks[0];
+  if (task?.id && state.questions.some((question) => question.id === task.id)) {
+    const question = state.questions.find((item) => item.id === task.id);
+    question.routeStatus = "Routed";
+    question.routedAt = new Date().toISOString();
+    state.gapActions[question.id] = {
+      ...(state.gapActions[question.id] ?? {}),
+      status: "Requested",
+      requestedAt: new Date().toISOString(),
+    };
+  }
+  const detail = task ? `Human approved governed agent task: ${task.title}. ${task.action}` : "Human approved governed agent plan.";
+  state.agentActions.status = "Human approved";
+  state.agentActions.approvedAt = new Date().toISOString();
+  addAgentReceipt("Human approved", detail);
+  addAudit("Evidence agent approved", detail);
+  render();
+  showToast("Governed agent task approved.");
+}
+
+function queueAgentRefresh() {
+  const agent = governedAgentSnapshot();
+  const refresh = agent.refreshes[0];
+  const detail = refresh ? `Queued source refresh: ${refresh.source} for ${refresh.owner}. ${refresh.reason}` : "No source refresh item is currently available.";
+  state.agentActions.status = "Refresh queued";
+  state.agentActions.refreshedAt = new Date().toISOString();
+  addAgentReceipt("Refresh queued", detail);
+  addAudit("Evidence refresh queued", detail);
+  render();
+  showToast("Evidence refresh queued.");
+}
+
+function copyAgentDigest() {
+  const agent = governedAgentSnapshot();
+  state.agentActions.lastCopiedAt = new Date().toISOString();
+  addAgentReceipt("Agent digest copied", "Governed evidence agent digest copied.");
+  addAudit("Agent digest copied", "Governed evidence agent digest copied.");
+  renderEvidenceAgent();
+  copyText(agentDigestText(agent), "Governed evidence agent digest copied.");
+}
+
+function addAgentReceipt(action, detail) {
+  state.agentActions.receipts = [
+    ...(state.agentActions.receipts ?? []),
+    {
+      id: `agent-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+}
+
+function agentDigestText(agent = governedAgentSnapshot()) {
+  const taskLines = agent.tasks.map((task, index) => `${index + 1}. ${task.mode}: ${task.title} | ${task.owner} | ${task.action}`).join("\n");
+  const limitLines = agent.limits.map((limit, index) => `${index + 1}. ${limit.action}: ${limit.permission} - ${limit.detail}`).join("\n");
+  const refreshLines = agent.refreshes.map((refresh, index) => `${index + 1}. ${refresh.source}: ${refresh.status} | ${refresh.owner} | ${refresh.reason}`).join("\n");
+  const impactLines = agent.impacts.map((impact, index) => `${index + 1}. ${impact.metric}: ${impact.value} - ${impact.detail}`).join("\n");
+  const receiptLines = agent.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Governed Evidence Agent",
+    `Build: ${BUILD_VERSION}`,
+    `Agent status: ${agent.statusLabel}`,
+    `Control score: ${agent.controlScore}%`,
+    `Governed tasks: ${agent.tasks.length}`,
+    `Refresh queue: ${agent.refreshes.length}`,
+    "",
+    "Agent tasks:",
+    taskLines,
+    "",
+    "Permission limits:",
+    limitLines,
+    "",
+    "Safe refresh queue:",
+    refreshLines || "No refresh items.",
+    "",
+    "Impact map:",
+    impactLines,
+    "",
+    "Agent receipts:",
+    receiptLines || "No agent receipts yet.",
+    "",
+    "Agent rule:",
+    "- The agent may draft internal evidence work and queue refreshes.",
+    "- The agent may not change buyer-facing claims without evidence and human approval.",
+    "- Every governed action needs an owner, permission mode, and receipt.",
   ].join("\n");
 }
 
@@ -8220,6 +8693,7 @@ function selectNextOpenQuestion() {
   renderTrustLaunchpad();
   renderLearningNetwork();
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   renderPortalCopy();
   schedulePersist();
 }
@@ -8504,6 +8978,11 @@ function exportCsv() {
     "Coach Proofs",
     "Coach Rewrites",
     "Coach Routes",
+    "Agent Status",
+    "Agent Control",
+    "Agent Tasks",
+    "Agent Refreshes",
+    "Agent Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -8524,6 +9003,7 @@ function exportCsv() {
     const launch = trustLaunchSnapshot();
     const network = learningNetworkSnapshot();
     const coach = adaptiveCoachSnapshot();
+    const agent = governedAgentSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -8576,6 +9056,11 @@ function exportCsv() {
       coach.proofs.length,
       coach.rewrites.length,
       coach.routes.length,
+      agent.statusLabel,
+      `${agent.controlScore}%`,
+      agent.tasks.length,
+      agent.refreshes.length,
+      agent.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -8606,6 +9091,7 @@ function exportReviewPack() {
   const launch = trustLaunchSnapshot();
   const network = learningNetworkSnapshot();
   const coach = adaptiveCoachSnapshot();
+  const agent = governedAgentSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -8623,7 +9109,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v19</h1>
+        <h1>AnswerSeal Review Pack v20</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -8833,6 +9319,84 @@ function exportReviewPack() {
         </table>
         <h2>Coach Digest</h2>
         <pre>${escapeHtml(coachDigestText(coach))}</pre>
+        <h2>Governed Evidence Agent</h2>
+        <p>Status: ${escapeHtml(agent.statusLabel)} | Control score: ${agent.controlScore}% | Governed tasks: ${agent.tasks.length} | Refresh queue: ${agent.refreshes.length} | Receipts: ${agent.receipts.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Mode</th>
+              <th>Owner</th>
+              <th>Due</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${agent.tasks
+              .map(
+                (task) => `
+                  <tr>
+                    <td>${escapeHtml(task.title)}<br />${escapeHtml(task.detail)}</td>
+                    <td class="${task.mode === "Approval required" ? "risk" : "ok"}">${escapeHtml(task.mode)}</td>
+                    <td>${escapeHtml(task.owner)}</td>
+                    <td>${escapeHtml(task.due)}</td>
+                    <td>${escapeHtml(task.action)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Agent Permission Limits</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Permission</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${agent.limits
+              .map(
+                (limit) => `
+                  <tr>
+                    <td>${escapeHtml(limit.action)}</td>
+                    <td class="${limit.permission === "Blocked" ? "risk" : "ok"}">${escapeHtml(limit.permission)}</td>
+                    <td>${escapeHtml(limit.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Agent Safe Refresh Queue</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${agent.refreshes
+              .map(
+                (refresh) => `
+                  <tr>
+                    <td>${escapeHtml(refresh.source)}</td>
+                    <td class="${refresh.status === "Human review" ? "risk" : "ok"}">${escapeHtml(refresh.status)}</td>
+                    <td>${escapeHtml(refresh.owner)}</td>
+                    <td>${escapeHtml(refresh.reason)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Agent Digest</h2>
+        <pre>${escapeHtml(agentDigestText(agent))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -9545,7 +10109,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v19 created with adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v20 created with governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -9555,12 +10119,13 @@ function exportReviewPack() {
   renderTrustLaunchpad();
   renderLearningNetwork();
   renderAdaptiveCoach();
+  renderEvidenceAgent();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v19 exported.");
+  showToast("Review Pack v20 exported.");
 }
 
 function toCsv(rows) {
@@ -9620,6 +10185,7 @@ function serializeWorkspace() {
     launchActions: state.launchActions,
     networkActions: state.networkActions,
     coachActions: state.coachActions,
+    agentActions: state.agentActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -9650,6 +10216,7 @@ function resetWorkspace() {
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
   closeWorkspace(false);
   closeLibrary();
   render();
