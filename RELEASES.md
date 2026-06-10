@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.22 Alpha - Privacy-Safe Learning Network
+
+Phase: Privacy-Safe Learning Network
+
+- Added a Network drawer with privacy score, shareable pattern count, reward signal count, tenant controls, and network status.
+- Added abstract pattern exchange for buyer-question taxonomy, proof freshness benchmarks, approval reward labels, and gap-prevention patterns.
+- Added tenant guardrails that block raw answers, evidence, prompts, contracts, buyer names, and customer names from cross-organization learning.
+- Added reward signals from human approvals, buyer engagement, review stability, operations friction, and launch readiness.
+- Added tenant control cards for the private workspace, aggregate pattern network, and threshold-gated peer recommendations.
+- Added network receipts for prepared pattern exchange, applied reward signals, and copied network digests.
+- Added network status, privacy score, pattern readiness, and reward signal context to CSV exports.
+- Upgraded review pack export to Review Pack v18 with privacy-safe learning network, guardrails, reward signals, and network digest.
+- Updated the build phases page with the v0.23 Adaptive Proof Coach plan.
+
 ## v0.21 Alpha - Trust Center Launchpad
 
 Phase: Trust Center Launchpad

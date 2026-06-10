@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.21 Alpha
+**Current version:** v0.22 Alpha
 
-**Current phase:** Trust Center Launchpad
+**Current phase:** Privacy-Safe Learning Network
 
 ## Brand
 
@@ -88,6 +88,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Closed-loop learning signals from buyer room activity, run gates, evidence gaps, and source health
 - Reinforcement queue for local workspace improvements and privacy-safe network learning patterns
 - Launch receipts for prepared launch, applied learning loop, and copied launch digests
+- Privacy-Safe Learning Network drawer with privacy score, shareable pattern count, reward signals, and tenant controls
+- Abstract pattern exchange for buyer-question taxonomy, proof freshness benchmarks, approval reward labels, and gap prevention
+- Tenant guardrails that keep raw answers, evidence, prompts, contracts, buyer names, and customer names inside each organization
+- Reward signals from human approvals, buyer engagement, review stability, operations friction, and launch readiness
+- Network receipts for prepared pattern exchange, applied reward signals, and copied network digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -108,7 +113,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v17 export with trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v18 export with privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -126,15 +131,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.22 Alpha - Privacy-Safe Learning Network
+## Next Phase: v0.23 Alpha - Adaptive Proof Coach
 
-- Validate private pilot requests from SaaS founders, CTOs, and sales engineers
-- Add private cloud workspace storage for evidence, answers, traces, and activity
-- Add organization-level evidence vaults and reusable answer libraries
-- Add abstract pattern exchange for proof needs, category trends, freshness windows, and review reward signals
-- Keep raw evidence, answers, contracts, prompts, and customer names inside each tenant
-- Learn from faster approvals, fewer reopened claims, higher source confidence, and lower buyer follow-up friction
-- Add admin controls for which aggregate learning signals can participate in network improvement
+- Recommend the next-best proof asset before a repeated buyer question appears
+- Suggest safer answer rewrites for weak, stale, unsupported, or buyer-sensitive claims
+- Route reviewers with reason, expected proof, and SLA risk
+- Tune recommendations from approval outcomes, buyer follow-up friction, launch readiness, and network-safe reward signals
+- Keep every coaching action explainable with source, guardrail, and human approval context
 
 ## License
 

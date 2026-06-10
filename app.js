@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.21 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v21";
+const BUILD_VERSION = "v0.22 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v22";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v21",
   "answerseal.workspace.v20",
   "answerseal.workspace.v19",
   "answerseal.workspace.v18",
@@ -675,6 +676,8 @@ function createInitialState() {
     runActions: createInitialRunActions(),
     launchOpen: false,
     launchActions: createInitialLaunchActions(),
+    networkOpen: false,
+    networkActions: createInitialNetworkActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -713,6 +716,16 @@ function createInitialLaunchActions() {
     status: "Draft",
     preparedAt: null,
     learningAppliedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialNetworkActions() {
+  return {
+    status: "Draft",
+    exchangePreparedAt: null,
+    signalAppliedAt: null,
     lastCopiedAt: null,
     receipts: [],
   };
@@ -838,6 +851,7 @@ function loadWorkspaceState() {
       gapActions: normalizeGapActions(workspace.gapActions ?? fresh.gapActions),
       runActions: normalizeRunActions(workspace.runActions ?? fresh.runActions),
       launchActions: normalizeLaunchActions(workspace.launchActions ?? fresh.launchActions),
+      networkActions: normalizeNetworkActions(workspace.networkActions ?? fresh.networkActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -854,6 +868,7 @@ function loadWorkspaceState() {
       gapOpen: false,
       runOpen: false,
       launchOpen: false,
+      networkOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1133,6 +1148,26 @@ function normalizeLaunchReceipt(receipt) {
   };
 }
 
+function normalizeNetworkActions(actions) {
+  const status = ["Draft", "Exchange prepared", "Signal applied"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    exchangePreparedAt: actions?.exchangePreparedAt ?? null,
+    signalAppliedAt: actions?.signalAppliedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeNetworkReceipt) : [],
+  };
+}
+
+function normalizeNetworkReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `network-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Network action planned"),
+    detail: String(receipt?.detail ?? "Privacy-safe network learning action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1167,6 +1202,7 @@ const elements = {
   gapNavButton: document.querySelector("#gapNavButton"),
   runNavButton: document.querySelector("#runNavButton"),
   launchNavButton: document.querySelector("#launchNavButton"),
+  networkNavButton: document.querySelector("#networkNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1384,6 +1420,23 @@ const elements = {
   prepareLaunchButton: document.querySelector("#prepareLaunchButton"),
   applyLearningButton: document.querySelector("#applyLearningButton"),
   copyLaunchDigestButton: document.querySelector("#copyLaunchDigestButton"),
+  networkBackdrop: document.querySelector("#networkBackdrop"),
+  networkDrawer: document.querySelector("#networkDrawer"),
+  closeNetworkButton: document.querySelector("#closeNetworkButton"),
+  networkPrivacyScore: document.querySelector("#networkPrivacyScore"),
+  networkPatternCount: document.querySelector("#networkPatternCount"),
+  networkRewardCount: document.querySelector("#networkRewardCount"),
+  networkTenantCount: document.querySelector("#networkTenantCount"),
+  networkStatus: document.querySelector("#networkStatus"),
+  networkPatternList: document.querySelector("#networkPatternList"),
+  networkGuardrailList: document.querySelector("#networkGuardrailList"),
+  networkRewardList: document.querySelector("#networkRewardList"),
+  networkTenantList: document.querySelector("#networkTenantList"),
+  networkReceiptList: document.querySelector("#networkReceiptList"),
+  networkDigest: document.querySelector("#networkDigest"),
+  prepareNetworkButton: document.querySelector("#prepareNetworkButton"),
+  applyNetworkButton: document.querySelector("#applyNetworkButton"),
+  copyNetworkDigestButton: document.querySelector("#copyNetworkDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1490,6 +1543,7 @@ function bindEvents() {
   elements.gapNavButton.addEventListener("click", openGapAutopilot);
   elements.runNavButton.addEventListener("click", openAutonomousRuns);
   elements.launchNavButton.addEventListener("click", openTrustLaunchpad);
+  elements.networkNavButton.addEventListener("click", openLearningNetwork);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1541,6 +1595,7 @@ function bindEvents() {
     renderGapAutopilot();
     renderAutonomousRuns();
     renderTrustLaunchpad();
+    renderLearningNetwork();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1596,6 +1651,11 @@ function bindEvents() {
   elements.prepareLaunchButton.addEventListener("click", prepareTrustLaunch);
   elements.applyLearningButton.addEventListener("click", applyLearningLoop);
   elements.copyLaunchDigestButton.addEventListener("click", copyLaunchDigest);
+  elements.closeNetworkButton.addEventListener("click", closeLearningNetwork);
+  elements.networkBackdrop.addEventListener("click", closeLearningNetwork);
+  elements.prepareNetworkButton.addEventListener("click", prepareNetworkExchange);
+  elements.applyNetworkButton.addEventListener("click", applyNetworkSignal);
+  elements.copyNetworkDigestButton.addEventListener("click", copyNetworkDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1647,6 +1707,7 @@ function bindEvents() {
     if (state.gapOpen) closeGapAutopilot();
     if (state.runOpen) closeAutonomousRuns();
     if (state.launchOpen) closeTrustLaunchpad();
+    if (state.networkOpen) closeLearningNetwork();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1665,6 +1726,7 @@ function applyInitialHash() {
   if (hash === "gaps" || hash === "gap" || hash === "autopilot") openGapAutopilot();
   if (hash === "runs" || hash === "run" || hash === "agent") openAutonomousRuns();
   if (hash === "launch" || hash === "trust-center" || hash === "learning") openTrustLaunchpad();
+  if (hash === "network" || hash === "learning-network" || hash === "privacy-network") openLearningNetwork();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1697,6 +1759,7 @@ function render() {
   renderGapAutopilot();
   renderAutonomousRuns();
   renderTrustLaunchpad();
+  renderLearningNetwork();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1773,6 +1836,7 @@ function renderQuestionList() {
       renderGapAutopilot();
       renderAutonomousRuns();
       renderTrustLaunchpad();
+      renderLearningNetwork();
       renderAnalytics();
       schedulePersist();
     });
@@ -2430,6 +2494,7 @@ function setActiveNav(activeButton) {
     elements.gapNavButton,
     elements.runNavButton,
     elements.launchNavButton,
+    elements.networkNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -2451,6 +2516,7 @@ function openWorkspace() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2483,6 +2549,7 @@ function openPipeline() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2516,6 +2583,7 @@ function openTrustRoom() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
@@ -2549,6 +2617,7 @@ function openFollowUp() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2582,6 +2651,7 @@ function openConnectors() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2615,6 +2685,7 @@ function openImportStudio() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2646,6 +2717,7 @@ function closeImportStudio(activateReview = true) {
 function openGapAutopilot() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2680,6 +2752,7 @@ function openAutonomousRuns() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2714,6 +2787,7 @@ function openTrustLaunchpad() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeWorkspace(false);
+  closeLearningNetwork(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2742,11 +2816,46 @@ function closeTrustLaunchpad(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openLearningNetwork() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.networkOpen = true;
+  setActiveNav(elements.networkNavButton);
+  elements.networkBackdrop.hidden = false;
+  elements.networkDrawer.classList.add("is-open");
+  elements.networkDrawer.setAttribute("aria-hidden", "false");
+  renderLearningNetwork();
+  elements.prepareNetworkButton.focus();
+}
+
+function closeLearningNetwork(activateReview = true) {
+  if (!state.networkOpen && elements.networkDrawer.getAttribute("aria-hidden") === "true") return;
+  state.networkOpen = false;
+  elements.networkDrawer.classList.remove("is-open");
+  elements.networkDrawer.setAttribute("aria-hidden", "true");
+  elements.networkBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2780,6 +2889,7 @@ function openAccess() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2812,6 +2922,7 @@ function openIntake() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2844,6 +2955,7 @@ function openDataRoom() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2876,6 +2988,7 @@ function openLibrary() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2909,6 +3022,7 @@ function openPortalCopy() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4665,6 +4779,7 @@ function copyGapFallback(id) {
   renderGapAutopilot();
   renderAutonomousRuns();
   renderTrustLaunchpad();
+  renderLearningNetwork();
   copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
 }
 
@@ -5051,6 +5166,7 @@ function copyRunDigest() {
   addAudit("Run digest copied", "Autonomous review run digest copied.");
   renderAutonomousRuns();
   renderTrustLaunchpad();
+  renderLearningNetwork();
   copyText(runDigestText(run), "Autonomous run digest copied.");
 }
 
@@ -5388,6 +5504,7 @@ function copyLaunchDigest() {
   addLaunchReceipt("Launch digest copied", "Trust center launch and learning-loop digest copied.");
   addAudit("Launch digest copied", "Trust center launch digest copied.");
   renderTrustLaunchpad();
+  renderLearningNetwork();
   copyText(launchDigestText(launch), "Trust launch digest copied.");
 }
 
@@ -5434,6 +5551,323 @@ function launchDigestText(launch = trustLaunchSnapshot()) {
     "- Organization learning stays inside the workspace.",
     "- Network learning uses only anonymized patterns and aggregate reward signals.",
     "- No raw answers, evidence, customer names, contracts, prompts, or private files are shared.",
+  ].join("\n");
+}
+
+function renderLearningNetwork() {
+  const network = learningNetworkSnapshot();
+
+  elements.networkPrivacyScore.textContent = `${network.privacyScore}%`;
+  elements.networkPatternCount.textContent = `${network.readyPatternCount}/${network.patterns.length}`;
+  elements.networkRewardCount.textContent = network.rewards.length;
+  elements.networkTenantCount.textContent = network.tenants.length;
+  elements.networkStatus.textContent = network.statusLabel;
+  elements.networkDigest.textContent = networkDigestText(network);
+  elements.applyNetworkButton.disabled = state.networkActions.status === "Signal applied";
+
+  elements.networkPatternList.innerHTML = "";
+  network.patterns.forEach((pattern) => {
+    const item = document.createElement("article");
+    item.className = `network-pattern-card ${pattern.ready ? "is-ready" : "is-gated"}`;
+    item.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(pattern.kind)}</span>
+          <strong>${escapeHtml(pattern.title)}</strong>
+        </div>
+        <b>${escapeHtml(pattern.ready ? "Shareable" : "Local only")}</b>
+      </header>
+      <p>${escapeHtml(pattern.detail)}</p>
+      <footer>
+        <span>${escapeHtml(pattern.signal)}</span>
+        <span>${escapeHtml(pattern.output)}</span>
+      </footer>
+    `;
+    elements.networkPatternList.append(item);
+  });
+
+  elements.networkGuardrailList.innerHTML = "";
+  network.guardrails.forEach((guardrail) => {
+    const item = document.createElement("article");
+    item.className = "network-guardrail-card";
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(guardrail.title)}</strong>
+        <span>${escapeHtml(guardrail.status)}</span>
+      </header>
+      <p>${escapeHtml(guardrail.detail)}</p>
+    `;
+    elements.networkGuardrailList.append(item);
+  });
+
+  elements.networkRewardList.innerHTML = "";
+  network.rewards.forEach((reward) => {
+    const item = document.createElement("article");
+    item.className = "network-reward-card";
+    item.innerHTML = `
+      <span>${escapeHtml(reward.source)}</span>
+      <strong>${escapeHtml(reward.value)}</strong>
+      <p>${escapeHtml(reward.detail)}</p>
+    `;
+    elements.networkRewardList.append(item);
+  });
+
+  elements.networkTenantList.innerHTML = "";
+  network.tenants.forEach((tenant) => {
+    const item = document.createElement("article");
+    item.className = "network-tenant-card";
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(tenant.name)}</strong>
+        <span>${escapeHtml(tenant.mode)}</span>
+      </header>
+      <p>${escapeHtml(tenant.detail)}</p>
+    `;
+    elements.networkTenantList.append(item);
+  });
+
+  elements.networkReceiptList.innerHTML = "";
+  if (network.receipts.length === 0) {
+    elements.networkReceiptList.append(emptyState("No network receipts yet"));
+  }
+  network.receipts.forEach((receipt) => {
+    const item = document.createElement("article");
+    item.className = "network-receipt-card";
+    item.innerHTML = `
+      <span>${escapeHtml(formatAuditTime(receipt.at))}</span>
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+    `;
+    elements.networkReceiptList.append(item);
+  });
+}
+
+function learningNetworkSnapshot() {
+  const launch = trustLaunchSnapshot();
+  const coverage = coverageSnapshot();
+  const connectors = connectorSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const run = autonomousRunSnapshot();
+  const trustRoom = trustRoomSnapshot();
+  const patterns = networkPatterns({ launch, coverage, connectors, gaps, run, trustRoom });
+  const guardrails = networkGuardrails({ patterns, connectors, gaps });
+  const rewards = networkRewards({ launch, run, trustRoom, gaps, connectors });
+  const tenants = networkTenants();
+  const readyPatternCount = patterns.filter((pattern) => pattern.ready).length;
+  const privacyScore = Math.max(0, Math.min(100, Math.round(96 - Math.max(0, 3 - readyPatternCount) * 4 - connectors.issueCount * 2 - gaps.highRiskCount * 2)));
+  const statusLabel = state.networkActions.status === "Draft" ? (readyPatternCount >= 3 && privacyScore >= 86 ? "Exchange candidate" : "Needs abstraction") : state.networkActions.status;
+
+  return {
+    statusLabel,
+    privacyScore,
+    patterns,
+    readyPatternCount,
+    guardrails,
+    rewards,
+    tenants,
+    receipts: state.networkActions.receipts.slice(-8).reverse(),
+    launch,
+    coverage,
+    connectors,
+    gaps,
+    run,
+    trustRoom,
+  };
+}
+
+function networkPatterns({ launch, coverage, connectors, gaps, run, trustRoom }) {
+  const categories = [...new Set(state.questions.map((question) => question.category))];
+  const topGap = gaps.tasks[0];
+  const approvedCount = state.questions.filter((question) => question.status === "approved").length;
+  return [
+    {
+      kind: "Taxonomy",
+      title: "Buyer-question pattern",
+      ready: categories.length >= 4,
+      signal: `${categories.length} abstract categories`,
+      output: "Question clustering",
+      detail: `Shares only category demand, proof type, and review stage. Current categories: ${categories.slice(0, 5).join(", ")}.`,
+    },
+    {
+      kind: "Evidence",
+      title: "Proof freshness benchmark",
+      ready: connectors.staleCount === 0 && connectors.issueCount <= 2,
+      signal: `${connectors.score}% source health`,
+      output: "Freshness window",
+      detail: "Contributes source freshness windows and proof-type coverage, not document text or file names.",
+    },
+    {
+      kind: "Reward",
+      title: "Approval outcome signal",
+      ready: approvedCount > 0 || run.status === "Human gate approved",
+      signal: `${approvedCount}/${state.questions.length} approved`,
+      output: "Human reward label",
+      detail: "Teaches which answer structures survive human review, approval gates, and buyer handoff.",
+    },
+    {
+      kind: "Prevention",
+      title: topGap ? `${topGap.question.category} gap prevention` : "Proof gap prevention",
+      ready: gaps.taskCount > 0 || launch.packetCount > 0,
+      signal: topGap ? `${topGap.score}% risk` : `${launch.packetCount} launch packets`,
+      output: "Next-best proof task",
+      detail: topGap ? `Turns the ${topGap.request.title.toLowerCase()} blocker into an anonymized prevention pattern.` : "Uses ready launch packets to suggest which proof assets similar teams should prepare earlier.",
+    },
+  ];
+}
+
+function networkGuardrails({ patterns, connectors, gaps }) {
+  return [
+    {
+      title: "Tenant boundary",
+      status: "Enforced",
+      detail: "Raw answers, evidence, prompts, contracts, buyer names, and customer names stay inside the organization workspace.",
+    },
+    {
+      title: "Pattern abstraction",
+      status: `${patterns.filter((pattern) => pattern.ready).length}/${patterns.length} ready`,
+      detail: "Only proof category, outcome label, freshness window, confidence band, and review friction are eligible for network learning.",
+    },
+    {
+      title: "Threshold release",
+      status: "K-anonymity simulated",
+      detail: "Cross-organization recommendations should activate only when a pattern appears across enough similar tenants.",
+    },
+    {
+      title: "Human reward control",
+      status: connectors.issueCount + gaps.highRiskCount > 0 ? "Needs reviewer" : "Clean",
+      detail: "The system learns from approved outcomes, copied packets, fewer reopen events, and lower buyer friction after human review.",
+    },
+  ];
+}
+
+function networkRewards({ launch, run, trustRoom, gaps, connectors }) {
+  const reopened = state.audit.filter((entry) => entry.action === "Approval reopened").length;
+  return [
+    {
+      source: "Human approvals",
+      value: `${state.questions.filter((question) => question.status === "approved").length} approved`,
+      detail: "Approved answers become positive reward labels only after citation and human review gates pass.",
+    },
+    {
+      source: "Buyer engagement",
+      value: `${trustRoom.views} views / ${trustRoom.copies} copies`,
+      detail: "Room views and copied packets indicate which proof buyers actually use before close.",
+    },
+    {
+      source: "Review stability",
+      value: `${reopened} reopened`,
+      detail: "Fewer reopened claims increases confidence that a pattern is useful and stable.",
+    },
+    {
+      source: "Operations friction",
+      value: `${gaps.taskCount + connectors.issueCount} blockers`,
+      detail: "Open evidence gaps and source issues become negative reward signals for future preparation.",
+    },
+    {
+      source: "Launch readiness",
+      value: `${launch.score}% launch / ${run.score}% run`,
+      detail: "Launch and autonomous run scores tune which recommendations appear first in the next review.",
+    },
+  ];
+}
+
+function networkTenants() {
+  return [
+    {
+      name: workspaceAccount.company,
+      mode: "Private tenant",
+      detail: "All source files, answer drafts, reviewer notes, and buyer identifiers remain local to this workspace.",
+    },
+    {
+      name: "AnswerSeal pattern network",
+      mode: "Aggregate only",
+      detail: "Receives anonymized categories, confidence bands, freshness windows, and outcome labels after guardrails pass.",
+    },
+    {
+      name: "Peer recommendation layer",
+      mode: "Threshold gated",
+      detail: "Suggests proof tasks only after enough similar organizations produce the same abstract pattern.",
+    },
+  ];
+}
+
+function prepareNetworkExchange() {
+  const network = learningNetworkSnapshot();
+  const detail = `Privacy-safe exchange prepared with ${network.readyPatternCount}/${network.patterns.length} shareable patterns, ${network.rewards.length} reward signals, and ${network.privacyScore}% privacy score.`;
+  state.networkActions.status = "Exchange prepared";
+  state.networkActions.exchangePreparedAt = new Date().toISOString();
+  addNetworkReceipt("Pattern exchange prepared", detail);
+  addAudit("Learning network prepared", detail);
+  render();
+  showToast("Privacy-safe learning exchange prepared.");
+}
+
+function applyNetworkSignal() {
+  const network = learningNetworkSnapshot();
+  const detail = `Network signal applied from ${network.readyPatternCount} shareable patterns and ${network.rewards.length} reward signals without sharing raw customer data.`;
+  state.networkActions.status = "Signal applied";
+  state.networkActions.signalAppliedAt = new Date().toISOString();
+  addNetworkReceipt("Reward signal applied", detail);
+  addAudit("Network reward signal applied", detail);
+  render();
+  showToast("Network reward signal applied.");
+}
+
+function copyNetworkDigest() {
+  const network = learningNetworkSnapshot();
+  state.networkActions.lastCopiedAt = new Date().toISOString();
+  addNetworkReceipt("Network digest copied", "Privacy-safe learning network digest copied.");
+  addAudit("Network digest copied", "Privacy-safe learning network digest copied.");
+  renderLearningNetwork();
+  copyText(networkDigestText(network), "Learning network digest copied.");
+}
+
+function addNetworkReceipt(action, detail) {
+  state.networkActions.receipts = [
+    ...(state.networkActions.receipts ?? []),
+    {
+      id: `network-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+}
+
+function networkDigestText(network = learningNetworkSnapshot()) {
+  const patternLines = network.patterns.map((pattern, index) => `${index + 1}. ${pattern.ready ? "SHAREABLE" : "LOCAL"}: ${pattern.title} | ${pattern.signal} | ${pattern.output}`).join("\n");
+  const guardrailLines = network.guardrails.map((guardrail, index) => `${index + 1}. ${guardrail.title}: ${guardrail.status} - ${guardrail.detail}`).join("\n");
+  const rewardLines = network.rewards.map((reward, index) => `${index + 1}. ${reward.source}: ${reward.value} - ${reward.detail}`).join("\n");
+  const tenantLines = network.tenants.map((tenant, index) => `${index + 1}. ${tenant.name}: ${tenant.mode} - ${tenant.detail}`).join("\n");
+  const receiptLines = network.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Privacy-Safe Learning Network",
+    `Build: ${BUILD_VERSION}`,
+    `Network status: ${network.statusLabel}`,
+    `Privacy score: ${network.privacyScore}%`,
+    `Shareable patterns: ${network.readyPatternCount}/${network.patterns.length}`,
+    `Reward signals: ${network.rewards.length}`,
+    "",
+    "Pattern exchange:",
+    patternLines,
+    "",
+    "Guardrails:",
+    guardrailLines,
+    "",
+    "Reward signals:",
+    rewardLines,
+    "",
+    "Tenant controls:",
+    tenantLines,
+    "",
+    "Receipts:",
+    receiptLines || "No network receipts yet.",
+    "",
+    "Network rule:",
+    "- Learn from patterns, labels, friction, and outcomes.",
+    "- Keep raw documents, answers, prompts, contracts, buyer names, and customer names inside the tenant.",
+    "- Use reviewer approval and threshold gates before any cross-organization recommendation.",
   ].join("\n");
 }
 
@@ -7320,6 +7754,7 @@ function selectNextOpenQuestion() {
   renderGapAutopilot();
   renderAutonomousRuns();
   renderTrustLaunchpad();
+  renderLearningNetwork();
   renderPortalCopy();
   schedulePersist();
 }
@@ -7595,6 +8030,10 @@ function exportCsv() {
     "Launch Score",
     "Learning Signals",
     "Network Learning",
+    "Network Status",
+    "Network Privacy",
+    "Network Patterns",
+    "Network Rewards",
     "Trace",
     "Answer",
     "Sources",
@@ -7613,6 +8052,7 @@ function exportCsv() {
     const gaps = gapAutopilotSnapshot();
     const run = autonomousRunSnapshot();
     const launch = trustLaunchSnapshot();
+    const network = learningNetworkSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -7656,6 +8096,10 @@ function exportCsv() {
       `${launch.score}%`,
       launch.signalCount,
       launch.learningRows.filter((row) => row.scope === "Network").length,
+      network.statusLabel,
+      `${network.privacyScore}%`,
+      `${network.readyPatternCount}/${network.patterns.length}`,
+      network.rewards.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -7684,6 +8128,7 @@ function exportReviewPack() {
   const gaps = gapAutopilotSnapshot();
   const run = autonomousRunSnapshot();
   const launch = trustLaunchSnapshot();
+  const network = learningNetworkSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -7701,7 +8146,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v17</h1>
+        <h1>AnswerSeal Review Pack v18</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -7759,6 +8204,82 @@ function exportReviewPack() {
               .join("")}
           </tbody>
         </table>
+        <h2>Privacy-Safe Learning Network</h2>
+        <p>Status: ${escapeHtml(network.statusLabel)} | Privacy score: ${network.privacyScore}% | Shareable patterns: ${network.readyPatternCount}/${network.patterns.length} | Reward signals: ${network.rewards.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Status</th>
+              <th>Signal</th>
+              <th>Output</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${network.patterns
+              .map(
+                (pattern) => `
+                  <tr>
+                    <td>${escapeHtml(pattern.title)}</td>
+                    <td class="${pattern.ready ? "ok" : "risk"}">${escapeHtml(pattern.ready ? "Shareable" : "Local only")}</td>
+                    <td>${escapeHtml(pattern.signal)}</td>
+                    <td>${escapeHtml(pattern.output)}</td>
+                    <td>${escapeHtml(pattern.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network Guardrails</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Guardrail</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${network.guardrails
+              .map(
+                (guardrail) => `
+                  <tr>
+                    <td>${escapeHtml(guardrail.title)}</td>
+                    <td>${escapeHtml(guardrail.status)}</td>
+                    <td>${escapeHtml(guardrail.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network Reward Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Value</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${network.rewards
+              .map(
+                (reward) => `
+                  <tr>
+                    <td>${escapeHtml(reward.source)}</td>
+                    <td>${escapeHtml(reward.value)}</td>
+                    <td>${escapeHtml(reward.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network Digest</h2>
+        <pre>${escapeHtml(networkDigestText(network))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -8471,7 +8992,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v17 created with trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v18 created with privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -8479,12 +9000,13 @@ function exportReviewPack() {
   renderGapAutopilot();
   renderAutonomousRuns();
   renderTrustLaunchpad();
+  renderLearningNetwork();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v17 exported.");
+  showToast("Review Pack v18 exported.");
 }
 
 function toCsv(rows) {
@@ -8542,6 +9064,7 @@ function serializeWorkspace() {
     gapActions: state.gapActions,
     runActions: state.runActions,
     launchActions: state.launchActions,
+    networkActions: state.networkActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -8570,6 +9093,7 @@ function resetWorkspace() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
   closeWorkspace(false);
   closeLibrary();
   render();

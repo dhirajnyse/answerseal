@@ -119,6 +119,10 @@
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Launch</span>
           </button>
+          <button class="nav-item" id="networkNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Network</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -181,8 +185,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.21 Alpha</strong>
-          <span>Trust Center Launchpad</span>
+          <strong>v0.22 Alpha</strong>
+          <span>Privacy-Safe Learning Network</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -194,7 +198,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.21 Alpha</span>
+            <span class="label">Security questionnaire | v0.22 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1241,6 +1245,107 @@
             <span>Privacy-safe summary</span>
           </div>
           <pre class="launch-digest" id="launchDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="network-backdrop drawer-backdrop" id="networkBackdrop" hidden></div>
+    <aside class="workspace-drawer network-drawer" id="networkDrawer" aria-label="Privacy-safe learning network" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Privacy-Safe Learning Network</span>
+          <h2>Learn across teams without leaking private data</h2>
+        </div>
+        <button class="icon-button" id="closeNetworkButton" type="button" aria-label="Close network" title="Close network">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip network-metrics" aria-label="Learning network health">
+        <article>
+          <span class="label">Privacy Score</span>
+          <strong id="networkPrivacyScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Patterns</span>
+          <strong id="networkPatternCount">0/0</strong>
+        </article>
+        <article>
+          <span class="label">Rewards</span>
+          <strong id="networkRewardCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Tenants</span>
+          <strong id="networkTenantCount">0</strong>
+        </article>
+      </section>
+
+      <section class="network-actions" aria-label="Learning network controls">
+        <div>
+          <span class="label">Network Status</span>
+          <strong id="networkStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="prepareNetworkButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+          <span>Prepare Exchange</span>
+        </button>
+        <button class="secondary-button" id="applyNetworkButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Apply Signal</span>
+        </button>
+        <button class="secondary-button" id="copyNetworkDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="network-body">
+        <section class="network-section" aria-label="Pattern exchange">
+          <div class="section-heading">
+            <span class="label">Pattern Exchange</span>
+            <span>Only abstract proof patterns can travel</span>
+          </div>
+          <div class="network-pattern-list" id="networkPatternList"></div>
+        </section>
+
+        <section class="network-section" aria-label="Tenant guardrails">
+          <div class="section-heading">
+            <span class="label">Tenant Guardrails</span>
+            <span>What blocks unsafe learning</span>
+          </div>
+          <div class="network-guardrail-list" id="networkGuardrailList"></div>
+        </section>
+
+        <section class="network-section" aria-label="Reward signals">
+          <div class="section-heading">
+            <span class="label">Reward Signals</span>
+            <span>How the system improves after review</span>
+          </div>
+          <div class="network-reward-list" id="networkRewardList"></div>
+        </section>
+
+        <section class="network-section" aria-label="Tenant controls">
+          <div class="section-heading">
+            <span class="label">Tenant Controls</span>
+            <span>Who learns what</span>
+          </div>
+          <div class="network-tenant-list" id="networkTenantList"></div>
+        </section>
+
+        <section class="network-section" aria-label="Network receipts">
+          <div class="section-heading">
+            <span class="label">Network Receipts</span>
+            <span>Recorded learning actions</span>
+          </div>
+          <div class="network-receipt-list" id="networkReceiptList"></div>
+        </section>
+
+        <section class="network-section" aria-label="Network digest">
+          <div class="section-heading">
+            <span class="label">Network Digest</span>
+            <span>Copyable privacy-safe learning note</span>
+          </div>
+          <pre class="network-digest" id="networkDigest"></pre>
         </section>
       </section>
     </aside>
