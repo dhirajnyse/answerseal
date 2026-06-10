@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.22 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v22";
+const BUILD_VERSION = "v0.23 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v23";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v22",
   "answerseal.workspace.v21",
   "answerseal.workspace.v20",
   "answerseal.workspace.v19",
@@ -678,6 +679,8 @@ function createInitialState() {
     launchActions: createInitialLaunchActions(),
     networkOpen: false,
     networkActions: createInitialNetworkActions(),
+    coachOpen: false,
+    coachActions: createInitialCoachActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -726,6 +729,16 @@ function createInitialNetworkActions() {
     status: "Draft",
     exchangePreparedAt: null,
     signalAppliedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialCoachActions() {
+  return {
+    status: "Draft",
+    generatedAt: null,
+    appliedAt: null,
     lastCopiedAt: null,
     receipts: [],
   };
@@ -852,6 +865,7 @@ function loadWorkspaceState() {
       runActions: normalizeRunActions(workspace.runActions ?? fresh.runActions),
       launchActions: normalizeLaunchActions(workspace.launchActions ?? fresh.launchActions),
       networkActions: normalizeNetworkActions(workspace.networkActions ?? fresh.networkActions),
+      coachActions: normalizeCoachActions(workspace.coachActions ?? fresh.coachActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -869,6 +883,7 @@ function loadWorkspaceState() {
       runOpen: false,
       launchOpen: false,
       networkOpen: false,
+      coachOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1168,6 +1183,26 @@ function normalizeNetworkReceipt(receipt) {
   };
 }
 
+function normalizeCoachActions(actions) {
+  const status = ["Draft", "Plan generated", "Recommendation applied"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    generatedAt: actions?.generatedAt ?? null,
+    appliedAt: actions?.appliedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeCoachReceipt) : [],
+  };
+}
+
+function normalizeCoachReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `coach-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Coach action planned"),
+    detail: String(receipt?.detail ?? "Adaptive proof coach action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1203,6 +1238,7 @@ const elements = {
   runNavButton: document.querySelector("#runNavButton"),
   launchNavButton: document.querySelector("#launchNavButton"),
   networkNavButton: document.querySelector("#networkNavButton"),
+  coachNavButton: document.querySelector("#coachNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1437,6 +1473,23 @@ const elements = {
   prepareNetworkButton: document.querySelector("#prepareNetworkButton"),
   applyNetworkButton: document.querySelector("#applyNetworkButton"),
   copyNetworkDigestButton: document.querySelector("#copyNetworkDigestButton"),
+  coachBackdrop: document.querySelector("#coachBackdrop"),
+  coachDrawer: document.querySelector("#coachDrawer"),
+  closeCoachButton: document.querySelector("#closeCoachButton"),
+  coachScore: document.querySelector("#coachScore"),
+  coachProofCount: document.querySelector("#coachProofCount"),
+  coachRewriteCount: document.querySelector("#coachRewriteCount"),
+  coachRouteCount: document.querySelector("#coachRouteCount"),
+  coachStatus: document.querySelector("#coachStatus"),
+  coachProofList: document.querySelector("#coachProofList"),
+  coachRewriteList: document.querySelector("#coachRewriteList"),
+  coachRouteList: document.querySelector("#coachRouteList"),
+  coachOutcomeList: document.querySelector("#coachOutcomeList"),
+  coachReceiptList: document.querySelector("#coachReceiptList"),
+  coachDigest: document.querySelector("#coachDigest"),
+  generateCoachButton: document.querySelector("#generateCoachButton"),
+  applyCoachButton: document.querySelector("#applyCoachButton"),
+  copyCoachDigestButton: document.querySelector("#copyCoachDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1544,6 +1597,7 @@ function bindEvents() {
   elements.runNavButton.addEventListener("click", openAutonomousRuns);
   elements.launchNavButton.addEventListener("click", openTrustLaunchpad);
   elements.networkNavButton.addEventListener("click", openLearningNetwork);
+  elements.coachNavButton.addEventListener("click", openAdaptiveCoach);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1596,6 +1650,7 @@ function bindEvents() {
     renderAutonomousRuns();
     renderTrustLaunchpad();
     renderLearningNetwork();
+    renderAdaptiveCoach();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1656,6 +1711,11 @@ function bindEvents() {
   elements.prepareNetworkButton.addEventListener("click", prepareNetworkExchange);
   elements.applyNetworkButton.addEventListener("click", applyNetworkSignal);
   elements.copyNetworkDigestButton.addEventListener("click", copyNetworkDigest);
+  elements.closeCoachButton.addEventListener("click", closeAdaptiveCoach);
+  elements.coachBackdrop.addEventListener("click", closeAdaptiveCoach);
+  elements.generateCoachButton.addEventListener("click", generateCoachPlan);
+  elements.applyCoachButton.addEventListener("click", applyCoachRecommendation);
+  elements.copyCoachDigestButton.addEventListener("click", copyCoachDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1708,6 +1768,7 @@ function bindEvents() {
     if (state.runOpen) closeAutonomousRuns();
     if (state.launchOpen) closeTrustLaunchpad();
     if (state.networkOpen) closeLearningNetwork();
+    if (state.coachOpen) closeAdaptiveCoach();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1727,6 +1788,7 @@ function applyInitialHash() {
   if (hash === "runs" || hash === "run" || hash === "agent") openAutonomousRuns();
   if (hash === "launch" || hash === "trust-center" || hash === "learning") openTrustLaunchpad();
   if (hash === "network" || hash === "learning-network" || hash === "privacy-network") openLearningNetwork();
+  if (hash === "coach" || hash === "proof-coach" || hash === "adaptive-coach") openAdaptiveCoach();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1760,6 +1822,7 @@ function render() {
   renderAutonomousRuns();
   renderTrustLaunchpad();
   renderLearningNetwork();
+  renderAdaptiveCoach();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1837,6 +1900,7 @@ function renderQuestionList() {
       renderAutonomousRuns();
       renderTrustLaunchpad();
       renderLearningNetwork();
+      renderAdaptiveCoach();
       renderAnalytics();
       schedulePersist();
     });
@@ -2495,6 +2559,7 @@ function setActiveNav(activeButton) {
     elements.runNavButton,
     elements.launchNavButton,
     elements.networkNavButton,
+    elements.coachNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -2517,6 +2582,7 @@ function openWorkspace() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2550,6 +2616,7 @@ function openPipeline() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2584,6 +2651,7 @@ function openTrustRoom() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeFollowUp(false);
@@ -2618,6 +2686,7 @@ function openFollowUp() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2652,6 +2721,7 @@ function openConnectors() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2686,6 +2756,7 @@ function openImportStudio() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2718,6 +2789,7 @@ function openGapAutopilot() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2753,6 +2825,7 @@ function openAutonomousRuns() {
   closeGapAutopilot(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2788,6 +2861,7 @@ function openTrustLaunchpad() {
   closeAutonomousRuns(false);
   closeWorkspace(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closePipeline(false);
   closeTrustRoom(false);
   closeFollowUp(false);
@@ -2821,6 +2895,7 @@ function openLearningNetwork() {
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2850,12 +2925,48 @@ function closeLearningNetwork(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openAdaptiveCoach() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.coachOpen = true;
+  setActiveNav(elements.coachNavButton);
+  elements.coachBackdrop.hidden = false;
+  elements.coachDrawer.classList.add("is-open");
+  elements.coachDrawer.setAttribute("aria-hidden", "false");
+  renderAdaptiveCoach();
+  elements.generateCoachButton.focus();
+}
+
+function closeAdaptiveCoach(activateReview = true) {
+  if (!state.coachOpen && elements.coachDrawer.getAttribute("aria-hidden") === "true") return;
+  state.coachOpen = false;
+  elements.coachDrawer.classList.remove("is-open");
+  elements.coachDrawer.setAttribute("aria-hidden", "true");
+  elements.coachBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2890,6 +3001,7 @@ function openAccess() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2923,6 +3035,7 @@ function openIntake() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2956,6 +3069,7 @@ function openDataRoom() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -2989,6 +3103,7 @@ function openLibrary() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3023,6 +3138,7 @@ function openPortalCopy() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4780,6 +4896,7 @@ function copyGapFallback(id) {
   renderAutonomousRuns();
   renderTrustLaunchpad();
   renderLearningNetwork();
+  renderAdaptiveCoach();
   copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
 }
 
@@ -5167,6 +5284,7 @@ function copyRunDigest() {
   renderAutonomousRuns();
   renderTrustLaunchpad();
   renderLearningNetwork();
+  renderAdaptiveCoach();
   copyText(runDigestText(run), "Autonomous run digest copied.");
 }
 
@@ -5505,6 +5623,7 @@ function copyLaunchDigest() {
   addAudit("Launch digest copied", "Trust center launch digest copied.");
   renderTrustLaunchpad();
   renderLearningNetwork();
+  renderAdaptiveCoach();
   copyText(launchDigestText(launch), "Trust launch digest copied.");
 }
 
@@ -5819,6 +5938,7 @@ function copyNetworkDigest() {
   addNetworkReceipt("Network digest copied", "Privacy-safe learning network digest copied.");
   addAudit("Network digest copied", "Privacy-safe learning network digest copied.");
   renderLearningNetwork();
+  renderAdaptiveCoach();
   copyText(networkDigestText(network), "Learning network digest copied.");
 }
 
@@ -5868,6 +5988,350 @@ function networkDigestText(network = learningNetworkSnapshot()) {
     "- Learn from patterns, labels, friction, and outcomes.",
     "- Keep raw documents, answers, prompts, contracts, buyer names, and customer names inside the tenant.",
     "- Use reviewer approval and threshold gates before any cross-organization recommendation.",
+  ].join("\n");
+}
+
+function renderAdaptiveCoach() {
+  const coach = adaptiveCoachSnapshot();
+
+  elements.coachScore.textContent = `${coach.score}%`;
+  elements.coachProofCount.textContent = coach.proofs.length;
+  elements.coachRewriteCount.textContent = coach.rewrites.length;
+  elements.coachRouteCount.textContent = coach.routes.length;
+  elements.coachStatus.textContent = coach.statusLabel;
+  elements.coachDigest.textContent = coachDigestText(coach);
+  elements.applyCoachButton.disabled = state.coachActions.status === "Recommendation applied";
+
+  elements.coachProofList.innerHTML = "";
+  coach.proofs.forEach((proof) => {
+    const item = document.createElement("article");
+    item.className = `coach-proof-card ${proof.priority === "High" ? "is-high" : ""}`;
+    item.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(proof.priority)} impact</span>
+          <strong>${escapeHtml(proof.title)}</strong>
+        </div>
+        <b>${escapeHtml(proof.owner)}</b>
+      </header>
+      <p>${escapeHtml(proof.detail)}</p>
+      <footer>
+        <span>${escapeHtml(proof.action)}</span>
+        <span>${escapeHtml(proof.guardrail)}</span>
+      </footer>
+    `;
+    elements.coachProofList.append(item);
+  });
+
+  elements.coachRewriteList.innerHTML = "";
+  coach.rewrites.forEach((rewrite) => {
+    const item = document.createElement("article");
+    item.className = "coach-rewrite-card";
+    item.innerHTML = `
+      <span>${escapeHtml(rewrite.question)}</span>
+      <strong>${escapeHtml(rewrite.title)}</strong>
+      <p>${escapeHtml(rewrite.before)}</p>
+      <p>${escapeHtml(rewrite.after)}</p>
+    `;
+    elements.coachRewriteList.append(item);
+  });
+
+  elements.coachRouteList.innerHTML = "";
+  coach.routes.forEach((route) => {
+    const item = document.createElement("article");
+    item.className = "coach-route-card";
+    item.innerHTML = `
+      <header>
+        <strong>${escapeHtml(route.owner)}</strong>
+        <span>${escapeHtml(route.due)}</span>
+      </header>
+      <p>${escapeHtml(route.reason)}</p>
+      <b>${escapeHtml(route.expectedProof)}</b>
+    `;
+    elements.coachRouteList.append(item);
+  });
+
+  elements.coachOutcomeList.innerHTML = "";
+  coach.outcomes.forEach((outcome) => {
+    const item = document.createElement("article");
+    item.className = "coach-outcome-card";
+    item.innerHTML = `
+      <span>${escapeHtml(outcome.signal)}</span>
+      <strong>${escapeHtml(outcome.weight)}</strong>
+      <p>${escapeHtml(outcome.tuning)}</p>
+    `;
+    elements.coachOutcomeList.append(item);
+  });
+
+  elements.coachReceiptList.innerHTML = "";
+  if (coach.receipts.length === 0) {
+    elements.coachReceiptList.append(emptyState("No coach receipts yet"));
+  }
+  coach.receipts.forEach((receipt) => {
+    const item = document.createElement("article");
+    item.className = "coach-receipt-card";
+    item.innerHTML = `
+      <span>${escapeHtml(formatAuditTime(receipt.at))}</span>
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+    `;
+    elements.coachReceiptList.append(item);
+  });
+}
+
+function adaptiveCoachSnapshot() {
+  const coverage = coverageSnapshot();
+  const connectors = connectorSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const run = autonomousRunSnapshot();
+  const launch = trustLaunchSnapshot();
+  const network = learningNetworkSnapshot();
+  const proofs = coachProofRecommendations({ coverage, connectors, gaps, launch, network });
+  const rewrites = coachRewriteSuggestions({ gaps });
+  const routes = coachRouteRecommendations({ gaps });
+  const outcomes = coachOutcomeTuning({ network, run, launch, gaps, connectors });
+  const score = Math.max(
+    0,
+    Math.min(100, Math.round(network.privacyScore * 0.24 + launch.score * 0.2 + run.score * 0.2 + coverage.score * 0.18 + connectors.score * 0.12 + Math.max(0, 100 - gaps.highRiskCount * 12) * 0.06)),
+  );
+  const statusLabel = state.coachActions.status === "Draft" ? (proofs.length && rewrites.length ? "Ready to coach" : "Needs signals") : state.coachActions.status;
+
+  return {
+    score,
+    statusLabel,
+    proofs,
+    rewrites,
+    routes,
+    outcomes,
+    receipts: state.coachActions.receipts.slice(-8).reverse(),
+    coverage,
+    connectors,
+    gaps,
+    run,
+    launch,
+    network,
+  };
+}
+
+function coachProofRecommendations({ coverage, connectors, gaps, launch, network }) {
+  const topGap = gaps.tasks[0];
+  const weakCoverage = coverage.items.find((item) => item.status !== "ready");
+  const staleConnector = connectors.connectors.find((item) => item.freshness === "Stale" || item.status === "Stale" || item.issues > 0);
+  const pattern = network.patterns.find((item) => item.ready) ?? network.patterns[0];
+  return [
+    {
+      id: topGap?.id ?? "",
+      priority: topGap?.severity ?? "Medium",
+      title: topGap ? topGap.request.title : "Promote launch-ready answer library",
+      owner: topGap ? topGap.owner.name : workspaceAccount.currentRole,
+      detail: topGap ? topGap.reason : `${launch.packetCount}/${launch.packets.length} launch packets are ready. Promote the highest-confidence answers into reusable buyer proof.`,
+      action: topGap ? topGap.request.sourceHint : "Turn approved answers into source-bound buyer snippets.",
+      guardrail: "Do not draft buyer-facing copy until the proof source is attached.",
+    },
+    {
+      id: weakCoverage?.category ?? "coverage",
+      priority: weakCoverage?.status === "missing" ? "High" : "Medium",
+      title: weakCoverage ? `Prepare ${weakCoverage.category} coverage` : "Maintain complete proof coverage",
+      owner: weakCoverage ? inferOwner(weakCoverage.category) : "Security",
+      detail: weakCoverage ? `${weakCoverage.category} coverage is ${formatCoverageStatus(weakCoverage.status).toLowerCase()} with ${weakCoverage.sources} source${weakCoverage.sources === 1 ? "" : "s"}.` : "All coverage categories are ready; keep freshness monitoring active.",
+      action: weakCoverage ? `Collect ${weakCoverage.category.toLowerCase()} policy, report, clause, or reviewer-approved note.` : "Review the next buyer category before it becomes urgent.",
+      guardrail: "Use category-level coaching; no network data contains source text.",
+    },
+    {
+      id: staleConnector?.id ?? "connectors",
+      priority: staleConnector ? "High" : "Low",
+      title: staleConnector ? `Refresh ${staleConnector.name}` : "Keep vault connectors healthy",
+      owner: staleConnector?.owner.name ?? "Operations",
+      detail: staleConnector ? `${staleConnector.name} has ${staleConnector.issues} issue${staleConnector.issues === 1 ? "" : "s"} and ${staleConnector.health}% health.` : "Connector health is stable; schedule periodic sync and owner review.",
+      action: staleConnector ? staleConnector.nextAction : "Keep Drive, SharePoint, Notion, and Confluence sources current.",
+      guardrail: "Coach source operations, not hidden answer changes.",
+    },
+    {
+      id: "network-pattern",
+      priority: pattern?.ready ? "Medium" : "Low",
+      title: pattern ? `Reuse ${pattern.title.toLowerCase()}` : "Wait for safe network patterns",
+      owner: "Trust Lead",
+      detail: pattern ? pattern.detail : "No safe network pattern is ready yet.",
+      action: pattern ? pattern.output : "Keep learning local until thresholds pass.",
+      guardrail: "Recommendations use abstract patterns and reward labels only.",
+    },
+  ];
+}
+
+function coachRewriteSuggestions({ gaps }) {
+  const active = getActiveQuestion();
+  const risky = gaps.tasks.map((task) => task.question).find(Boolean) ?? active;
+  const candidates = [active, risky, state.questions.find((question) => Number(question.confidence) < 85) ?? active]
+    .filter(Boolean)
+    .filter((question, index, items) => items.findIndex((item) => item.id === question.id) === index)
+    .slice(0, 3);
+
+  return candidates.map((question) => {
+    const docs = (question.sources ?? []).map(getEvidenceById).filter(Boolean);
+    const sourceLabel = docs[0]?.title ?? "approved evidence";
+    return {
+      question: shorten(question.text, 74),
+      title: question.status === "needs-evidence" ? "Use evidence-pending language" : "Make the answer citation-first",
+      before: shorten(question.answer || "No approved answer has been drafted yet.", 170),
+      after: coachRewriteText(question, sourceLabel),
+    };
+  });
+}
+
+function coachRewriteText(question, sourceLabel) {
+  if (!question.sources?.length) {
+    return `Safer draft: We cannot confirm this claim yet. Add approved ${question.category.toLowerCase()} evidence before sending a buyer-facing answer.`;
+  }
+  if (question.status === "needs-evidence") {
+    return `Safer draft: Based on ${sourceLabel}, we can answer part of this request, but final approval is pending stronger ${question.category.toLowerCase()} proof.`;
+  }
+  return `Safer draft: Based on ${sourceLabel}, the approved response is limited to the cited control language and should not add claims beyond the attached evidence.`;
+}
+
+function coachRouteRecommendations({ gaps }) {
+  const tasks = gaps.tasks.slice(0, 3);
+  const fallback = state.questions
+    .filter((question) => question.status !== "approved")
+    .slice(0, 3)
+    .map((question) => ({
+      question,
+      owner: memberForQuestion(question),
+      request: evidenceRequestForQuestion(question, ["Needs reviewer validation."]),
+      daysLeft: daysUntil(question.due),
+      reason: `${question.category} answer needs reviewer validation before buyer handoff.`,
+    }));
+
+  return (tasks.length ? tasks : fallback).map((task) => ({
+    owner: task.owner.name,
+    due: task.daysLeft <= 0 ? "Due now" : `${task.daysLeft}d left`,
+    reason: task.reason,
+    expectedProof: task.request.sourceHint,
+    questionId: task.question.id,
+  }));
+}
+
+function coachOutcomeTuning({ network, run, launch, gaps, connectors }) {
+  const reopened = state.audit.filter((entry) => entry.action === "Approval reopened").length;
+  return [
+    {
+      signal: "Approval reward",
+      weight: `${state.questions.filter((question) => question.status === "approved").length}/${state.questions.length}`,
+      tuning: "Prioritize answer shapes that reached human approval with citations and no claim conflicts.",
+    },
+    {
+      signal: "Buyer friction",
+      weight: `${gaps.taskCount} gaps`,
+      tuning: "Move repeated evidence gaps into pre-built proof assets before the next buyer review.",
+    },
+    {
+      signal: "Network safety",
+      weight: `${network.privacyScore}%`,
+      tuning: "Use network recommendations only when tenant guardrails and pattern thresholds stay healthy.",
+    },
+    {
+      signal: "Run quality",
+      weight: `${run.score}% run / ${launch.score}% launch`,
+      tuning: "Boost recommendations that improve autonomous run score and trust-center launch readiness together.",
+    },
+    {
+      signal: "Stability penalty",
+      weight: `${reopened + connectors.issueCount} events`,
+      tuning: "Lower confidence for reopened answers and unhealthy sources until owners resolve them.",
+    },
+  ];
+}
+
+function generateCoachPlan() {
+  const coach = adaptiveCoachSnapshot();
+  const top = coach.proofs[0];
+  const detail = `Adaptive coach plan generated with ${coach.proofs.length} proof recommendations, ${coach.rewrites.length} rewrite suggestions, ${coach.routes.length} reviewer routes, and ${coach.score}% coach score.`;
+  state.coachActions.status = "Plan generated";
+  state.coachActions.generatedAt = new Date().toISOString();
+  addCoachReceipt("Coach plan generated", top ? `${detail} Top action: ${top.title}.` : detail);
+  addAudit("Coach plan generated", detail);
+  render();
+  showToast("Adaptive proof coach plan generated.");
+}
+
+function applyCoachRecommendation() {
+  const coach = adaptiveCoachSnapshot();
+  const top = coach.proofs.find((proof) => proof.id && state.questions.some((question) => question.id === proof.id)) ?? coach.proofs[0];
+  const question = state.questions.find((item) => item.id === top?.id);
+  if (question) {
+    const action = state.gapActions[question.id] ?? {};
+    state.gapActions[question.id] = {
+      ...action,
+      status: "Routed",
+      routedAt: new Date().toISOString(),
+    };
+    question.routeStatus = "Routed";
+    question.routedAt = new Date().toISOString();
+  }
+  const detail = top ? `Applied coach recommendation: ${top.title}. ${top.action}` : "Applied coach recommendation from the current review signals.";
+  state.coachActions.status = "Recommendation applied";
+  state.coachActions.appliedAt = new Date().toISOString();
+  addCoachReceipt("Recommendation applied", detail);
+  addAudit("Coach recommendation applied", detail);
+  render();
+  showToast("Coach recommendation applied.");
+}
+
+function copyCoachDigest() {
+  const coach = adaptiveCoachSnapshot();
+  state.coachActions.lastCopiedAt = new Date().toISOString();
+  addCoachReceipt("Coach digest copied", "Adaptive proof coach digest copied.");
+  addAudit("Coach digest copied", "Adaptive proof coach digest copied.");
+  renderAdaptiveCoach();
+  copyText(coachDigestText(coach), "Adaptive proof coach digest copied.");
+}
+
+function addCoachReceipt(action, detail) {
+  state.coachActions.receipts = [
+    ...(state.coachActions.receipts ?? []),
+    {
+      id: `coach-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+}
+
+function coachDigestText(coach = adaptiveCoachSnapshot()) {
+  const proofLines = coach.proofs.map((proof, index) => `${index + 1}. ${proof.priority}: ${proof.title} | ${proof.owner} | ${proof.action}`).join("\n");
+  const rewriteLines = coach.rewrites.map((rewrite, index) => `${index + 1}. ${rewrite.title}: ${rewrite.question} - ${rewrite.after}`).join("\n");
+  const routeLines = coach.routes.map((route, index) => `${index + 1}. ${route.owner}: ${route.reason} | ${route.expectedProof}`).join("\n");
+  const outcomeLines = coach.outcomes.map((outcome, index) => `${index + 1}. ${outcome.signal}: ${outcome.weight} - ${outcome.tuning}`).join("\n");
+  const receiptLines = coach.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Adaptive Proof Coach",
+    `Build: ${BUILD_VERSION}`,
+    `Coach status: ${coach.statusLabel}`,
+    `Coach score: ${coach.score}%`,
+    `Proof recommendations: ${coach.proofs.length}`,
+    `Rewrite suggestions: ${coach.rewrites.length}`,
+    `Reviewer routes: ${coach.routes.length}`,
+    "",
+    "Next-best proof:",
+    proofLines,
+    "",
+    "Rewrite coach:",
+    rewriteLines,
+    "",
+    "Reviewer routing:",
+    routeLines,
+    "",
+    "Outcome tuning:",
+    outcomeLines,
+    "",
+    "Coach receipts:",
+    receiptLines || "No coach receipts yet.",
+    "",
+    "Coach guardrail:",
+    "- Recommendations explain the source signal, expected proof, and human approval gate.",
+    "- Network learning informs priority only through privacy-safe patterns and reward labels.",
+    "- Buyer-facing copy remains gated until evidence and reviewer approval are attached.",
   ].join("\n");
 }
 
@@ -7755,6 +8219,7 @@ function selectNextOpenQuestion() {
   renderAutonomousRuns();
   renderTrustLaunchpad();
   renderLearningNetwork();
+  renderAdaptiveCoach();
   renderPortalCopy();
   schedulePersist();
 }
@@ -8034,6 +8499,11 @@ function exportCsv() {
     "Network Privacy",
     "Network Patterns",
     "Network Rewards",
+    "Coach Status",
+    "Coach Score",
+    "Coach Proofs",
+    "Coach Rewrites",
+    "Coach Routes",
     "Trace",
     "Answer",
     "Sources",
@@ -8053,6 +8523,7 @@ function exportCsv() {
     const run = autonomousRunSnapshot();
     const launch = trustLaunchSnapshot();
     const network = learningNetworkSnapshot();
+    const coach = adaptiveCoachSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -8100,6 +8571,11 @@ function exportCsv() {
       `${network.privacyScore}%`,
       `${network.readyPatternCount}/${network.patterns.length}`,
       network.rewards.length,
+      coach.statusLabel,
+      `${coach.score}%`,
+      coach.proofs.length,
+      coach.rewrites.length,
+      coach.routes.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -8129,6 +8605,7 @@ function exportReviewPack() {
   const run = autonomousRunSnapshot();
   const launch = trustLaunchSnapshot();
   const network = learningNetworkSnapshot();
+  const coach = adaptiveCoachSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -8146,7 +8623,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v18</h1>
+        <h1>AnswerSeal Review Pack v19</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -8280,6 +8757,82 @@ function exportReviewPack() {
         </table>
         <h2>Network Digest</h2>
         <pre>${escapeHtml(networkDigestText(network))}</pre>
+        <h2>Adaptive Proof Coach</h2>
+        <p>Status: ${escapeHtml(coach.statusLabel)} | Coach score: ${coach.score}% | Proof recommendations: ${coach.proofs.length} | Rewrite suggestions: ${coach.rewrites.length} | Reviewer routes: ${coach.routes.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Recommendation</th>
+              <th>Priority</th>
+              <th>Owner</th>
+              <th>Action</th>
+              <th>Guardrail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${coach.proofs
+              .map(
+                (proof) => `
+                  <tr>
+                    <td>${escapeHtml(proof.title)}<br />${escapeHtml(proof.detail)}</td>
+                    <td>${escapeHtml(proof.priority)}</td>
+                    <td>${escapeHtml(proof.owner)}</td>
+                    <td>${escapeHtml(proof.action)}</td>
+                    <td>${escapeHtml(proof.guardrail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Coach Rewrite Guidance</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Guidance</th>
+              <th>Safer Draft</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${coach.rewrites
+              .map(
+                (rewrite) => `
+                  <tr>
+                    <td>${escapeHtml(rewrite.question)}</td>
+                    <td>${escapeHtml(rewrite.title)}</td>
+                    <td>${escapeHtml(rewrite.after)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Coach Outcome Tuning</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Weight</th>
+              <th>Tuning</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${coach.outcomes
+              .map(
+                (outcome) => `
+                  <tr>
+                    <td>${escapeHtml(outcome.signal)}</td>
+                    <td>${escapeHtml(outcome.weight)}</td>
+                    <td>${escapeHtml(outcome.tuning)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Coach Digest</h2>
+        <pre>${escapeHtml(coachDigestText(coach))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -8992,7 +9545,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v18 created with privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v19 created with adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -9001,12 +9554,13 @@ function exportReviewPack() {
   renderAutonomousRuns();
   renderTrustLaunchpad();
   renderLearningNetwork();
+  renderAdaptiveCoach();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v18 exported.");
+  showToast("Review Pack v19 exported.");
 }
 
 function toCsv(rows) {
@@ -9065,6 +9619,7 @@ function serializeWorkspace() {
     runActions: state.runActions,
     launchActions: state.launchActions,
     networkActions: state.networkActions,
+    coachActions: state.coachActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -9094,6 +9649,7 @@ function resetWorkspace() {
   closeAutonomousRuns(false);
   closeTrustLaunchpad(false);
   closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
   closeWorkspace(false);
   closeLibrary();
   render();

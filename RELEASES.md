@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.23 Alpha - Adaptive Proof Coach
+
+Phase: Adaptive Proof Coach
+
+- Added a Coach drawer with coach score, proof move count, rewrite count, reviewer route count, and coach status.
+- Added next-best proof recommendations for high-impact documents, clauses, reports, tests, or owner-approved notes.
+- Added safer rewrite guidance for weak, stale, unsupported, or buyer-sensitive claims.
+- Added reviewer routing cards with owner, due date, reason, and expected proof.
+- Added outcome tuning signals from approvals, buyer friction, network safety, run quality, and stability penalties.
+- Added coach receipts for generated plans, applied recommendations, and copied coach digests.
+- Added coach status, score, proof count, rewrite count, and route count to CSV exports.
+- Upgraded review pack export to Review Pack v19 with adaptive proof coach, rewrite guidance, outcome tuning, and coach digest.
+- Updated the build phases page with the v0.24 Governed Evidence Agent plan.
+
 ## v0.22 Alpha - Privacy-Safe Learning Network
 
 Phase: Privacy-Safe Learning Network

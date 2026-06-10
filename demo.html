@@ -123,6 +123,10 @@
             <svg aria-hidden="true"><use href="#icon-link"></use></svg>
             <span>Network</span>
           </button>
+          <button class="nav-item" id="coachNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Coach</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -185,8 +189,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.22 Alpha</strong>
-          <span>Privacy-Safe Learning Network</span>
+          <strong>v0.23 Alpha</strong>
+          <span>Adaptive Proof Coach</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -198,7 +202,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.22 Alpha</span>
+            <span class="label">Security questionnaire | v0.23 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1346,6 +1350,107 @@
             <span>Copyable privacy-safe learning note</span>
           </div>
           <pre class="network-digest" id="networkDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="coach-backdrop drawer-backdrop" id="coachBackdrop" hidden></div>
+    <aside class="workspace-drawer coach-drawer" id="coachDrawer" aria-label="Adaptive proof coach" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Adaptive Proof Coach</span>
+          <h2>Recommend the next proof move before the buyer asks again</h2>
+        </div>
+        <button class="icon-button" id="closeCoachButton" type="button" aria-label="Close coach" title="Close coach">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip coach-metrics" aria-label="Adaptive coach health">
+        <article>
+          <span class="label">Coach Score</span>
+          <strong id="coachScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Proof Moves</span>
+          <strong id="coachProofCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Rewrites</span>
+          <strong id="coachRewriteCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Routes</span>
+          <strong id="coachRouteCount">0</strong>
+        </article>
+      </section>
+
+      <section class="coach-actions" aria-label="Adaptive coach controls">
+        <div>
+          <span class="label">Coach Status</span>
+          <strong id="coachStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="generateCoachButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Generate Plan</span>
+        </button>
+        <button class="secondary-button" id="applyCoachButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Apply Top Move</span>
+        </button>
+        <button class="secondary-button" id="copyCoachDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="coach-body">
+        <section class="coach-section" aria-label="Next-best proof">
+          <div class="section-heading">
+            <span class="label">Next-Best Proof</span>
+            <span>Highest-impact assets to prepare</span>
+          </div>
+          <div class="coach-proof-list" id="coachProofList"></div>
+        </section>
+
+        <section class="coach-section" aria-label="Rewrite coach">
+          <div class="section-heading">
+            <span class="label">Rewrite Coach</span>
+            <span>Safer answer language</span>
+          </div>
+          <div class="coach-rewrite-list" id="coachRewriteList"></div>
+        </section>
+
+        <section class="coach-section" aria-label="Reviewer routing">
+          <div class="section-heading">
+            <span class="label">Reviewer Routing</span>
+            <span>Owner, proof, and timing</span>
+          </div>
+          <div class="coach-route-list" id="coachRouteList"></div>
+        </section>
+
+        <section class="coach-section" aria-label="Outcome tuning">
+          <div class="section-heading">
+            <span class="label">Outcome Tuning</span>
+            <span>Reward signals behind the advice</span>
+          </div>
+          <div class="coach-outcome-list" id="coachOutcomeList"></div>
+        </section>
+
+        <section class="coach-section" aria-label="Coach receipts">
+          <div class="section-heading">
+            <span class="label">Coach Receipts</span>
+            <span>Recorded guidance actions</span>
+          </div>
+          <div class="coach-receipt-list" id="coachReceiptList"></div>
+        </section>
+
+        <section class="coach-section" aria-label="Coach digest">
+          <div class="section-heading">
+            <span class="label">Coach Digest</span>
+            <span>Copyable action plan</span>
+          </div>
+          <pre class="coach-digest" id="coachDigest"></pre>
         </section>
       </section>
     </aside>

@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.22 Alpha
+**Current version:** v0.23 Alpha
 
-**Current phase:** Privacy-Safe Learning Network
+**Current phase:** Adaptive Proof Coach
 
 ## Brand
 
@@ -93,6 +93,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Tenant guardrails that keep raw answers, evidence, prompts, contracts, buyer names, and customer names inside each organization
 - Reward signals from human approvals, buyer engagement, review stability, operations friction, and launch readiness
 - Network receipts for prepared pattern exchange, applied reward signals, and copied network digests
+- Adaptive Proof Coach drawer with coach score, proof moves, rewrite count, reviewer routes, and coach status
+- Next-best proof recommendations for high-impact documents, clauses, reports, tests, or owner-approved notes
+- Safer rewrite guidance for weak, stale, unsupported, or buyer-sensitive claims
+- Reviewer routing with owner, due date, reason, and expected proof
+- Outcome tuning from approvals, buyer friction, network safety, run quality, and stability penalties
+- Coach receipts for generated plans, applied recommendations, and copied coach digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -113,7 +119,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v18 export with privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v19 export with adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -131,13 +137,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.23 Alpha - Adaptive Proof Coach
+## Next Phase: v0.24 Alpha - Governed Evidence Agent
 
-- Recommend the next-best proof asset before a repeated buyer question appears
-- Suggest safer answer rewrites for weak, stale, unsupported, or buyer-sensitive claims
-- Route reviewers with reason, expected proof, and SLA risk
-- Tune recommendations from approval outcomes, buyer follow-up friction, launch readiness, and network-safe reward signals
-- Keep every coaching action explainable with source, guardrail, and human approval context
+- Convert coach recommendations into governed evidence tasks with owner, due date, expected proof, and risk
+- Define agent permissions for draft, request, refresh, and suggestion-only actions
+- Record source-owner receipts for new or refreshed proof assets
+- Detect stale sources and prepare refresh tasks without automatically changing buyer-facing claims
+- Keep all autonomous evidence work behind human approval, audit receipts, and tenant guardrails
 
 ## License
 
