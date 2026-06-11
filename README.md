@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.30 Alpha
+**Current version:** v0.31 Alpha
 
-**Current phase:** Trust Policy Simulator
+**Current phase:** Reinforcement Control Room
 
 ## Brand
 
@@ -139,6 +139,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Simulation gates that keep rehearsals separate from production memory until reviewer approval
 - Recommended actions that queue the safest simulated move as governed work without silently changing buyer-facing answers
 - Counterfactual receipts and digest for explaining why the system recommends change, block, or wait decisions
+- Reinforcement Control Room drawer with loop score, prediction replays, reward signals, network-safe lift, learning boundaries, actions, and receipts
+- Prediction replay that compares simulator forecasts with accepted answers, buyer challenges, graph drift, and shareable outcome patterns
+- Reward tuning for accepted sealed answers, buyer challenges, simulator accuracy, network-safe patterns, and stale source penalties
+- Learning boundaries that separate tenant exact memory from aggregate network learning and block production mutation without review
+- Network-safe learning package that explains which aggregate patterns can help other organizations without exposing raw evidence
+- Reinforcement digest for explaining local memory, safe network learning, reward changes, and blocked boundaries
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -159,7 +165,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v26 export with trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v27 export with reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -177,13 +183,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.31 Alpha - Reinforcement Control Room
+## Next Phase: v0.32 Alpha - Evaluation Lab
 
-- Compare simulator predictions with actual approval, buyer challenge, and deal-progress outcomes
-- Tune reward weights based on which simulated moves truly helped
-- Track every recommendation, approval, outcome, reward change, and privacy gate in one control room
-- Show what each tenant learns locally and what aggregate lessons safely improve the wider network
-- Keep reward tuning explainable with receipts before any recommendation weight changes
+- Build answer evaluation sets for source coverage, citation quality, freshness, and reviewer decisions
+- Compare reward-policy changes before applying them to production recommendation queues
+- Detect regressions when a new answer, source, or model behavior performs worse than a prior approved pattern
+- Calibrate reviewer disagreement across security, legal, sales, and AI governance
+- Keep evaluation results tied to receipts, privacy boundaries, and human approval gates
 
 ## License
 

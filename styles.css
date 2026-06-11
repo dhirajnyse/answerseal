@@ -4912,6 +4912,212 @@ svg {
   white-space: pre-wrap;
 }
 
+.reinforcement-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1100px, calc(100vw - 250px));
+}
+
+.reinforcement-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.reinforcement-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #ecfffb, #f8fcff);
+}
+
+.reinforcement-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--mint-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.reinforcement-actions strong {
+  color: var(--green);
+}
+
+.reinforcement-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(236, 255, 251, 0.72), rgba(255, 255, 255, 0.98));
+}
+
+.reinforcement-section,
+.reinforcement-replay-card,
+.reinforcement-reward-card,
+.reinforcement-boundary-card,
+.reinforcement-action-card,
+.reinforcement-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.reinforcement-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.reinforcement-replay-list,
+.reinforcement-reward-list,
+.reinforcement-boundary-list,
+.reinforcement-action-list,
+.reinforcement-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.reinforcement-replay-list,
+.reinforcement-reward-list,
+.reinforcement-boundary-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.reinforcement-replay-card,
+.reinforcement-reward-card,
+.reinforcement-boundary-card,
+.reinforcement-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.reinforcement-replay-card {
+  border-color: rgba(24, 185, 166, 0.38);
+  background: linear-gradient(180deg, rgba(237, 255, 250, 0.94), #fff);
+}
+
+.reinforcement-replay-card.is-risk,
+.reinforcement-reward-card.is-risk,
+.reinforcement-boundary-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.reinforcement-reward-card,
+.reinforcement-boundary-card {
+  background: #fbfffd;
+}
+
+.reinforcement-action-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+}
+
+.reinforcement-action-card > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--green);
+  background: #dcfff8;
+  font-weight: 900;
+}
+
+.reinforcement-before-after {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.reinforcement-before-after span {
+  min-height: 38px;
+  padding: 9px;
+  border-radius: 8px;
+  color: var(--muted);
+  background: #f5fbf8;
+  font-size: 0.83rem;
+  font-weight: 750;
+}
+
+.reinforcement-replay-card header,
+.reinforcement-replay-card footer,
+.reinforcement-reward-card header,
+.reinforcement-boundary-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.reinforcement-replay-card header div,
+.reinforcement-reward-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.reinforcement-replay-card strong,
+.reinforcement-reward-card strong,
+.reinforcement-boundary-card strong,
+.reinforcement-action-card strong,
+.reinforcement-receipt-card strong {
+  color: var(--ink);
+}
+
+.reinforcement-replay-card b,
+.reinforcement-reward-card b,
+.reinforcement-boundary-card b,
+.reinforcement-action-card b {
+  color: var(--green);
+  font-size: 0.88rem;
+}
+
+.reinforcement-replay-card.is-risk b,
+.reinforcement-reward-card.is-risk b,
+.reinforcement-boundary-card.is-risk b {
+  color: var(--amber);
+}
+
+.reinforcement-replay-card p,
+.reinforcement-replay-card footer span,
+.reinforcement-reward-card p,
+.reinforcement-reward-card span,
+.reinforcement-boundary-card p,
+.reinforcement-boundary-card span,
+.reinforcement-action-card p,
+.reinforcement-receipt-card p,
+.reinforcement-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.reinforcement-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -7119,6 +7325,12 @@ svg {
     .simulator-forecast-list,
     .simulator-gate-list,
     .simulator-before-after,
+    .reinforcement-metrics,
+    .reinforcement-actions,
+    .reinforcement-replay-list,
+    .reinforcement-reward-list,
+    .reinforcement-boundary-list,
+    .reinforcement-before-after,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -7232,6 +7444,11 @@ svg {
     .simulator-forecast-card header,
     .simulator-gate-card header,
     .simulator-action-card,
+    .reinforcement-replay-card header,
+    .reinforcement-replay-card footer,
+    .reinforcement-reward-card header,
+    .reinforcement-boundary-card header,
+    .reinforcement-action-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -7251,6 +7468,10 @@ svg {
   }
 
   .simulator-action-card {
+    grid-template-columns: 1fr;
+  }
+
+  .reinforcement-action-card {
     grid-template-columns: 1fr;
   }
 

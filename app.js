@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.30 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v30";
+const BUILD_VERSION = "v0.31 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v31";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v30",
   "answerseal.workspace.v29",
   "answerseal.workspace.v28",
   "answerseal.workspace.v27",
@@ -702,6 +703,8 @@ function createInitialState() {
     graphActions: createInitialGraphActions(),
     simulatorOpen: false,
     simulatorActions: createInitialSimulatorActions(),
+    reinforcementOpen: false,
+    reinforcementActions: createInitialReinforcementActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -839,6 +842,17 @@ function createInitialSimulatorActions() {
   };
 }
 
+function createInitialReinforcementActions() {
+  return {
+    status: "Draft",
+    replayedAt: null,
+    tunedAt: null,
+    networkPreparedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -968,6 +982,7 @@ function loadWorkspaceState() {
       orchestratorActions: normalizeOrchestratorActions(workspace.orchestratorActions ?? fresh.orchestratorActions),
       graphActions: normalizeGraphActions(workspace.graphActions ?? fresh.graphActions),
       simulatorActions: normalizeSimulatorActions(workspace.simulatorActions ?? fresh.simulatorActions),
+      reinforcementActions: normalizeReinforcementActions(workspace.reinforcementActions ?? fresh.reinforcementActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -993,6 +1008,7 @@ function loadWorkspaceState() {
       orchestratorOpen: false,
       graphOpen: false,
       simulatorOpen: false,
+      reinforcementOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1456,6 +1472,27 @@ function normalizeSimulatorReceipt(receipt) {
   };
 }
 
+function normalizeReinforcementActions(actions) {
+  const status = ["Draft", "Replay complete", "Rewards tuned", "Network package prepared"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    replayedAt: actions?.replayedAt ?? null,
+    tunedAt: actions?.tunedAt ?? null,
+    networkPreparedAt: actions?.networkPreparedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeReinforcementReceipt) : [],
+  };
+}
+
+function normalizeReinforcementReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `reinforcement-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Reinforcement action"),
+    detail: String(receipt?.detail ?? "Reinforcement control action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1499,6 +1536,7 @@ const elements = {
   orchestratorNavButton: document.querySelector("#orchestratorNavButton"),
   graphNavButton: document.querySelector("#graphNavButton"),
   simulatorNavButton: document.querySelector("#simulatorNavButton"),
+  reinforcementNavButton: document.querySelector("#reinforcementNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1873,6 +1911,24 @@ const elements = {
   applySimulationButton: document.querySelector("#applySimulationButton"),
   approveSimulationGateButton: document.querySelector("#approveSimulationGateButton"),
   copySimulatorDigestButton: document.querySelector("#copySimulatorDigestButton"),
+  reinforcementBackdrop: document.querySelector("#reinforcementBackdrop"),
+  reinforcementDrawer: document.querySelector("#reinforcementDrawer"),
+  closeReinforcementButton: document.querySelector("#closeReinforcementButton"),
+  reinforcementScore: document.querySelector("#reinforcementScore"),
+  reinforcementReplayCount: document.querySelector("#reinforcementReplayCount"),
+  reinforcementRewardCount: document.querySelector("#reinforcementRewardCount"),
+  reinforcementNetworkLift: document.querySelector("#reinforcementNetworkLift"),
+  reinforcementStatus: document.querySelector("#reinforcementStatus"),
+  reinforcementReplayList: document.querySelector("#reinforcementReplayList"),
+  reinforcementRewardList: document.querySelector("#reinforcementRewardList"),
+  reinforcementBoundaryList: document.querySelector("#reinforcementBoundaryList"),
+  reinforcementActionList: document.querySelector("#reinforcementActionList"),
+  reinforcementReceiptList: document.querySelector("#reinforcementReceiptList"),
+  reinforcementDigest: document.querySelector("#reinforcementDigest"),
+  replayReinforcementButton: document.querySelector("#replayReinforcementButton"),
+  tuneRewardButton: document.querySelector("#tuneRewardButton"),
+  prepareNetworkLearningButton: document.querySelector("#prepareNetworkLearningButton"),
+  copyReinforcementDigestButton: document.querySelector("#copyReinforcementDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1988,6 +2044,7 @@ function bindEvents() {
   elements.orchestratorNavButton.addEventListener("click", openTrustOrchestrator);
   elements.graphNavButton.addEventListener("click", openFederatedGraph);
   elements.simulatorNavButton.addEventListener("click", openPolicySimulator);
+  elements.reinforcementNavButton.addEventListener("click", openReinforcementControl);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2048,6 +2105,7 @@ function bindEvents() {
     renderTrustOrchestrator();
     renderFederatedGraph();
     renderPolicySimulator();
+    renderReinforcementControl();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2152,6 +2210,12 @@ function bindEvents() {
   elements.applySimulationButton.addEventListener("click", applyPolicySimulation);
   elements.approveSimulationGateButton.addEventListener("click", approveSimulationGate);
   elements.copySimulatorDigestButton.addEventListener("click", copySimulatorDigest);
+  elements.closeReinforcementButton.addEventListener("click", closeReinforcementControl);
+  elements.reinforcementBackdrop.addEventListener("click", closeReinforcementControl);
+  elements.replayReinforcementButton.addEventListener("click", replayReinforcementPredictions);
+  elements.tuneRewardButton.addEventListener("click", tuneReinforcementRewards);
+  elements.prepareNetworkLearningButton.addEventListener("click", prepareReinforcementNetworkPackage);
+  elements.copyReinforcementDigestButton.addEventListener("click", copyReinforcementDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2212,6 +2276,7 @@ function bindEvents() {
     if (state.orchestratorOpen) closeTrustOrchestrator();
     if (state.graphOpen) closeFederatedGraph();
     if (state.simulatorOpen) closePolicySimulator();
+    if (state.reinforcementOpen) closeReinforcementControl();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2239,6 +2304,7 @@ function applyInitialHash() {
   if (hash === "orchestrator" || hash === "orchestration" || hash === "autonomous-orchestrator" || hash === "work-plan") openTrustOrchestrator();
   if (hash === "graph" || hash === "trust-graph" || hash === "federated-graph" || hash === "federation") openFederatedGraph();
   if (hash === "simulator" || hash === "policy-simulator" || hash === "simulation" || hash === "rehearsal") openPolicySimulator();
+  if (hash === "control" || hash === "reinforcement" || hash === "reinforcement-control" || hash === "control-room") openReinforcementControl();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2280,6 +2346,7 @@ function render() {
   renderTrustOrchestrator();
   renderFederatedGraph();
   renderPolicySimulator();
+  renderReinforcementControl();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -2360,6 +2427,7 @@ function renderQuestionList() {
       renderAdaptiveCoach();
       renderEvidenceAgent();
       renderOutcomeMemory();
+      renderReinforcementControl();
       renderAnalytics();
       schedulePersist();
     });
@@ -3004,6 +3072,7 @@ function activateWorkspaceNav(target) {
   closeTrustOrchestrator(false);
   closeFederatedGraph(false);
   closePolicySimulator(false);
+  closeReinforcementControl(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3034,6 +3103,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.simulatorNavButton && state.simulatorOpen) {
     closePolicySimulator(false);
   }
+  if (activeButton !== elements.reinforcementNavButton && state.reinforcementOpen) {
+    closeReinforcementControl(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3050,6 +3122,7 @@ function setActiveNav(activeButton) {
     elements.orchestratorNavButton,
     elements.graphNavButton,
     elements.simulatorNavButton,
+    elements.reinforcementNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3731,6 +3804,49 @@ function closePolicySimulator(activateReview = true) {
   elements.simulatorDrawer.classList.remove("is-open");
   elements.simulatorDrawer.setAttribute("aria-hidden", "true");
   elements.simulatorBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openReinforcementControl() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.reinforcementOpen = true;
+  setActiveNav(elements.reinforcementNavButton);
+  elements.reinforcementBackdrop.hidden = false;
+  elements.reinforcementDrawer.classList.add("is-open");
+  elements.reinforcementDrawer.setAttribute("aria-hidden", "false");
+  renderReinforcementControl();
+}
+
+function closeReinforcementControl(activateReview = true) {
+  if (!state.reinforcementOpen && elements.reinforcementDrawer.getAttribute("aria-hidden") === "true") return;
+  state.reinforcementOpen = false;
+  elements.reinforcementDrawer.classList.remove("is-open");
+  elements.reinforcementDrawer.setAttribute("aria-hidden", "true");
+  elements.reinforcementBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -10068,6 +10184,7 @@ function runPolicySimulations() {
   addSimulatorReceipt("Simulations run", detail);
   addAudit("Trust policy simulations run", detail);
   renderPolicySimulator();
+  renderReinforcementControl();
   renderAudit();
   showToast("Trust policy simulations run.");
 }
@@ -10103,6 +10220,7 @@ function approveSimulationGate() {
   addSimulatorReceipt("Gate approved", detail);
   addAudit("Simulation gate approved", detail);
   renderPolicySimulator();
+  renderReinforcementControl();
   renderAudit();
   showToast("Simulation gate approved.");
 }
@@ -10113,6 +10231,7 @@ function copySimulatorDigest() {
   addSimulatorReceipt("Simulator digest copied", "Trust policy simulator digest copied.");
   addAudit("Simulator digest copied", "Trust policy simulator digest copied.");
   renderPolicySimulator();
+  renderReinforcementControl();
   renderAudit();
   copyText(simulatorDigestText(simulator), "Trust policy simulator digest copied.");
 }
@@ -10165,6 +10284,409 @@ function simulatorDigestText(simulator = policySimulatorSnapshot()) {
     "- Simulations do not change production memory by themselves.",
     "- Recommended moves become governed tasks only after human approval.",
     "- Blocked counterfactuals are valuable because they teach the system what not to repeat.",
+  ].join("\n");
+}
+
+function renderReinforcementControl() {
+  const control = reinforcementControlSnapshot();
+
+  elements.reinforcementScore.textContent = `${control.score}%`;
+  elements.reinforcementReplayCount.textContent = control.replays.length;
+  elements.reinforcementRewardCount.textContent = control.rewards.length;
+  elements.reinforcementNetworkLift.textContent = `+${control.networkLift}`;
+  elements.reinforcementStatus.textContent = control.statusLabel;
+  elements.reinforcementDigest.textContent = reinforcementDigestText(control);
+
+  elements.reinforcementReplayList.innerHTML = "";
+  control.replays.forEach((replay) => {
+    const card = document.createElement("article");
+    card.className = `reinforcement-replay-card ${replay.accuracy === "Low" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(replay.source)}</span>
+          <strong>${escapeHtml(replay.title)}</strong>
+        </div>
+        <b>${escapeHtml(replay.accuracy)}</b>
+      </header>
+      <p>${escapeHtml(replay.detail)}</p>
+      <div class="reinforcement-before-after">
+        <span>${escapeHtml(replay.predicted)}</span>
+        <span>${escapeHtml(replay.actual)}</span>
+      </div>
+      <footer>
+        <span>${escapeHtml(replay.adjustment)}</span>
+        <span>${escapeHtml(replay.guardrail)}</span>
+      </footer>
+    `;
+    elements.reinforcementReplayList.append(card);
+  });
+
+  elements.reinforcementRewardList.innerHTML = "";
+  control.rewards.forEach((reward) => {
+    const card = document.createElement("article");
+    card.className = `reinforcement-reward-card ${String(reward.weight).startsWith("-") ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(reward.mode)}</span>
+          <strong>${escapeHtml(reward.signal)}</strong>
+        </div>
+        <b>${escapeHtml(reward.weight)}</b>
+      </header>
+      <p>${escapeHtml(reward.learning)}</p>
+      <span>${escapeHtml(reward.guardrail)}</span>
+    `;
+    elements.reinforcementRewardList.append(card);
+  });
+
+  elements.reinforcementBoundaryList.innerHTML = "";
+  control.boundaries.forEach((boundary) => {
+    const card = document.createElement("article");
+    card.className = `reinforcement-boundary-card ${boundary.status === "Blocked" || boundary.status === "Review" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(boundary.title)}</strong>
+        <b>${escapeHtml(boundary.status)}</b>
+      </header>
+      <p>${escapeHtml(boundary.detail)}</p>
+      <span>${escapeHtml(boundary.allowed)}</span>
+    `;
+    elements.reinforcementBoundaryList.append(card);
+  });
+
+  elements.reinforcementActionList.innerHTML = "";
+  control.actions.forEach((action) => {
+    const card = document.createElement("article");
+    card.className = "reinforcement-action-card";
+    card.innerHTML = `
+      <span>${escapeHtml(action.step)}</span>
+      <div>
+        <strong>${escapeHtml(action.title)}</strong>
+        <p>${escapeHtml(action.detail)}</p>
+      </div>
+      <b>${escapeHtml(action.mode)}</b>
+    `;
+    elements.reinforcementActionList.append(card);
+  });
+
+  elements.reinforcementReceiptList.innerHTML = "";
+  if (control.receipts.length === 0) {
+    elements.reinforcementReceiptList.append(emptyState("No reinforcement receipts yet"));
+  }
+  control.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "reinforcement-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.reinforcementReceiptList.append(card);
+  });
+}
+
+function reinforcementControlSnapshot() {
+  const simulator = policySimulatorSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const network = learningNetworkSnapshot();
+  const graph = federatedGraphSnapshot();
+  const orchestrator = trustOrchestratorSnapshot();
+  const coverage = coverageSnapshot();
+  const followUps = followUpSnapshot();
+  const connectors = connectorSnapshot();
+  const replays = reinforcementPredictionReplays({ simulator, outcomes, followUps, graph });
+  const rewards = reinforcementRewardSignals({ simulator, outcomes, network, coverage, connectors });
+  const boundaries = reinforcementLearningBoundaries({ network, graph, outcomes });
+  const actions = reinforcementControlActions({ replays, rewards, boundaries, orchestrator });
+  const networkLift = rewards
+    .filter((reward) => reward.mode === "Network-safe")
+    .reduce((sum, reward) => sum + Math.max(0, Number(String(reward.weight).replace(/[^\d-]/g, "")) || 0), 0);
+  const score = Math.min(
+    100,
+    Math.round(
+      simulator.score * 0.22
+        + outcomes.score * 0.24
+        + network.privacyScore * 0.2
+        + graph.score * 0.14
+        + coverage.score * 0.12
+        + Math.max(0, 100 - followUps.evidenceCount * 10 - connectors.staleCount * 5) * 0.08,
+    ),
+  );
+  const statusLabel = state.reinforcementActions.status === "Draft" ? "Ready to replay" : state.reinforcementActions.status;
+
+  return {
+    score,
+    statusLabel,
+    replays,
+    rewards,
+    boundaries,
+    actions,
+    networkLift,
+    blockedCount: boundaries.filter((boundary) => boundary.status === "Blocked").length,
+    receipts: state.reinforcementActions.receipts.slice(-8).reverse(),
+    simulator,
+    outcomes,
+    network,
+    graph,
+    orchestrator,
+  };
+}
+
+function reinforcementPredictionReplays({ simulator, outcomes, followUps, graph }) {
+  const topScenario = simulator.scenarios.find((scenario) => scenario.status === "Recommended") ?? simulator.scenarios[0];
+  const challenged = outcomes.events.find((event) => event.sentiment === "Negative");
+  const accepted = outcomes.events.find((event) => event.sentiment === "Positive");
+  const drift = graph.drift[0];
+  const eligiblePromotions = simulator.graph.promotions.filter((promotion) => promotion.status === "Eligible").length;
+  return [
+    {
+      source: "Simulator",
+      title: topScenario ? topScenario.title : "No simulator recommendation",
+      predicted: topScenario ? `Predicted ${topScenario.lift >= 0 ? "+" : ""}${topScenario.lift} lift` : "No forecast",
+      actual: accepted ? `${accepted.outcome}: ${accepted.title}` : "Waiting for accepted outcome",
+      accuracy: topScenario && accepted ? "High" : "Medium",
+      adjustment: "Reward source-backed moves that improve approval without weakening guardrails.",
+      guardrail: "Prediction cannot update approved language until reviewer action.",
+      detail: topScenario ? topScenario.detail : "Run simulations before evaluating outcome fit.",
+    },
+    {
+      source: "Buyer challenge",
+      title: challenged ? challenged.title : "No unresolved challenge",
+      predicted: followUps.evidenceCount > 0 ? "Forecast friction" : "Forecast low friction",
+      actual: challenged ? challenged.outcome : "No negative outcome captured",
+      accuracy: challenged ? "High" : "Medium",
+      adjustment: challenged ? "Penalize similar weak proof paths earlier." : "Keep challenge weight low until a buyer pushes back.",
+      guardrail: "Exact buyer comments stay tenant-private.",
+      detail: challenged ? challenged.detail : "No active buyer challenge needs reinforcement tuning.",
+    },
+    {
+      source: "Network pattern",
+      title: "Privacy-safe peer recommendation",
+      predicted: `${eligiblePromotions} eligible graph pattern${eligiblePromotions === 1 ? "" : "s"}`,
+      actual: `${outcomes.shareablePatterns}/${outcomes.patterns.length} outcome patterns shareable`,
+      accuracy: outcomes.shareablePatterns > 0 ? "High" : "Medium",
+      adjustment: "Promote only category, proof type, freshness band, and outcome label.",
+      guardrail: "No raw answers, files, prompts, buyer names, or contract text.",
+      detail: "Checks whether aggregate learning can help other tenants without exposing the local workspace.",
+    },
+    {
+      source: "Drift guard",
+      title: drift ? drift.title : "No graph drift detected",
+      predicted: drift ? "Forecast quarantine" : "Forecast safe reuse",
+      actual: drift ? drift.severity : "No drift event",
+      accuracy: drift?.severity === "High" ? "High" : "Medium",
+      adjustment: drift ? "Reduce confidence for stale, conflicting, or reopened source paths." : "Keep drift penalty light while sources are fresh.",
+      guardrail: "High-drift patterns cannot enter network learning.",
+      detail: drift ? drift.detail : "Current graph drift does not block reinforcement sharing.",
+    },
+  ];
+}
+
+function reinforcementRewardSignals({ simulator, outcomes, network, coverage, connectors }) {
+  return [
+    {
+      signal: "Accepted sealed answer",
+      weight: outcomes.events.some((event) => event.sentiment === "Positive") ? "+26" : "+12",
+      mode: "Tenant-local",
+      learning: "Exact approved wording, owner route, source links, and buyer result improve this workspace first.",
+      guardrail: "Exact answer memory remains inside the tenant.",
+    },
+    {
+      signal: "Buyer challenge",
+      weight: outcomes.events.some((event) => event.sentiment === "Negative") ? "-20" : "-6",
+      mode: "Tenant-local",
+      learning: "Weak proof, stale evidence, or reopened answers reduce confidence until an owner fixes the source.",
+      guardrail: "Raw challenge text is never exported to network learning.",
+    },
+    {
+      signal: "Simulator accuracy",
+      weight: `+${Math.min(18, Math.max(8, Math.round(simulator.bestLift / 2)))}`,
+      mode: "Control",
+      learning: "Forecasts earn trust only when replayed against approval, friction, and deal-progress outcomes.",
+      guardrail: "Simulation remains rehearsal until human approval.",
+    },
+    {
+      signal: "Network-safe pattern",
+      weight: `+${Math.min(18, network.readyPatternCount * 6 + Math.max(0, coverage.ready - connectors.staleCount))}`,
+      mode: "Network-safe",
+      learning: "Aggregate category, confidence band, proof type, freshness window, and outcome label can improve recommendations elsewhere.",
+      guardrail: `${network.privacyScore}% privacy score required before sharing.`,
+    },
+    {
+      signal: "Drift or stale source",
+      weight: connectors.staleCount > 0 ? `-${connectors.staleCount * 7}` : "+4",
+      mode: "Control",
+      learning: "Stale source paths reduce promotion confidence and trigger source-owner work.",
+      guardrail: "No silent production answer mutation.",
+    },
+  ];
+}
+
+function reinforcementLearningBoundaries({ network, graph, outcomes }) {
+  const highDrift = graph.drift.some((drift) => drift.severity === "High");
+  return [
+    {
+      title: "Tenant exact memory",
+      status: "Approved",
+      allowed: "Exact answer, source, owner, buyer, and outcome detail",
+      detail: "Used only inside the current workspace for reusable answer memory, owner routing, and proof quality.",
+    },
+    {
+      title: "Network learning threshold",
+      status: network.privacyScore >= 90 && outcomes.shareablePatterns > 0 ? "Approved" : "Review",
+      allowed: "Aggregate category, proof type, freshness band, confidence band, and outcome label",
+      detail: `${network.privacyScore}% privacy score with ${outcomes.shareablePatterns} shareable outcome pattern${outcomes.shareablePatterns === 1 ? "" : "s"}.`,
+    },
+    {
+      title: "Production mutation",
+      status: state.reinforcementActions.tunedAt ? "Review" : "Blocked",
+      allowed: "Only after reviewer approval and evidence trace",
+      detail: "Reward tuning can recommend priority changes, but it cannot edit buyer-facing answers or approved policies by itself.",
+    },
+    {
+      title: "Drift quarantine",
+      status: highDrift ? "Blocked" : "Approved",
+      allowed: "Low-drift aggregate patterns only",
+      detail: highDrift ? "High-drift graph signals remain quarantined until source freshness and conflicts are resolved." : "No high-drift graph signal is blocking aggregate learning.",
+    },
+  ];
+}
+
+function reinforcementControlActions({ replays, rewards, boundaries, orchestrator }) {
+  const blocked = boundaries.filter((boundary) => boundary.status === "Blocked");
+  const strongestReward = rewards
+    .filter((reward) => !String(reward.weight).startsWith("-"))
+    .sort((a, b) => (Number(String(b.weight).replace(/[^\d]/g, "")) || 0) - (Number(String(a.weight).replace(/[^\d]/g, "")) || 0))[0];
+  return [
+    {
+      step: "01",
+      title: "Replay predictions",
+      mode: "Replay",
+      detail: `Compare ${replays.length} simulator, buyer, network, and drift predictions against current outcome memory.`,
+    },
+    {
+      step: "02",
+      title: "Tune reward weights",
+      mode: "Tune",
+      detail: strongestReward ? `Strengthen ${strongestReward.signal.toLowerCase()} while preserving its guardrail.` : "No positive reward is strong enough to tune yet.",
+    },
+    {
+      step: "03",
+      title: "Route blocked learning",
+      mode: "Gate",
+      detail: blocked.length > 0 ? `${blocked.length} learning boundary needs reviewer or source-owner action.` : "All learning boundaries are ready for reviewer inspection.",
+    },
+    {
+      step: "04",
+      title: "Prepare network package",
+      mode: "Share",
+      detail: "Package only aggregate outcome labels, proof type, category, freshness, and confidence bands.",
+    },
+    {
+      step: "05",
+      title: "Send work to orchestrator",
+      mode: "Operate",
+      detail: `${orchestrator.priorities.length} governed work priorit${orchestrator.priorities.length === 1 ? "y" : "ies"} can absorb the tuned signal without automatic buyer-facing edits.`,
+    },
+  ];
+}
+
+function replayReinforcementPredictions() {
+  const control = reinforcementControlSnapshot();
+  const detail = `Replayed ${control.replays.length} predictions against ${control.outcomes.events.length} outcome events with ${control.score}% reinforcement score.`;
+  state.reinforcementActions.status = "Replay complete";
+  state.reinforcementActions.replayedAt = new Date().toISOString();
+  addReinforcementReceipt("Predictions replayed", detail);
+  addAudit("Reinforcement predictions replayed", detail);
+  renderReinforcementControl();
+  renderAudit();
+  showToast("Reinforcement predictions replayed.");
+}
+
+function tuneReinforcementRewards() {
+  const control = reinforcementControlSnapshot();
+  const positive = control.rewards.filter((reward) => !String(reward.weight).startsWith("-")).length;
+  const negative = control.rewards.length - positive;
+  const detail = `Reward tuning prepared with ${positive} positive signal${positive === 1 ? "" : "s"}, ${negative} penalty signal${negative === 1 ? "" : "s"}, and ${control.blockedCount} blocked boundar${control.blockedCount === 1 ? "y" : "ies"}.`;
+  state.reinforcementActions.status = "Rewards tuned";
+  state.reinforcementActions.tunedAt = new Date().toISOString();
+  addReinforcementReceipt("Rewards tuned", detail);
+  addAudit("Reinforcement rewards tuned", detail);
+  render();
+  showToast("Reinforcement rewards tuned.");
+}
+
+function prepareReinforcementNetworkPackage() {
+  const control = reinforcementControlSnapshot();
+  const detail = `Prepared network learning package with +${control.networkLift} safe lift, ${control.outcomes.shareablePatterns} shareable outcome patterns, and ${control.network.privacyScore}% privacy score.`;
+  state.reinforcementActions.status = "Network package prepared";
+  state.reinforcementActions.networkPreparedAt = new Date().toISOString();
+  addReinforcementReceipt("Network package prepared", detail);
+  addAudit("Network learning package prepared", detail);
+  render();
+  showToast("Network learning package prepared.");
+}
+
+function copyReinforcementDigest() {
+  const control = reinforcementControlSnapshot();
+  state.reinforcementActions.lastCopiedAt = new Date().toISOString();
+  addReinforcementReceipt("Reinforcement digest copied", "Reinforcement control digest copied.");
+  addAudit("Reinforcement digest copied", "Reinforcement control digest copied.");
+  renderReinforcementControl();
+  renderAudit();
+  copyText(reinforcementDigestText(control), "Reinforcement digest copied.");
+}
+
+function addReinforcementReceipt(action, detail) {
+  state.reinforcementActions.receipts = [
+    ...(state.reinforcementActions.receipts ?? []),
+    {
+      id: `reinforcement-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function reinforcementDigestText(control = reinforcementControlSnapshot()) {
+  const replayLines = control.replays.map((replay, index) => `${index + 1}. ${replay.accuracy}: ${replay.title} | ${replay.predicted} -> ${replay.actual} | ${replay.adjustment}`).join("\n");
+  const rewardLines = control.rewards.map((reward, index) => `${index + 1}. ${reward.mode}: ${reward.signal} ${reward.weight} | ${reward.guardrail}`).join("\n");
+  const boundaryLines = control.boundaries.map((boundary, index) => `${index + 1}. ${boundary.title}: ${boundary.status} | ${boundary.allowed} | ${boundary.detail}`).join("\n");
+  const actionLines = control.actions.map((action) => `${action.step}. ${action.title} | ${action.mode} | ${action.detail}`).join("\n");
+  const receiptLines = control.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Reinforcement Control Room",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${control.statusLabel}`,
+    `Reinforcement score: ${control.score}%`,
+    `Prediction replays: ${control.replays.length}`,
+    `Reward signals: ${control.rewards.length}`,
+    `Network-safe lift: +${control.networkLift}`,
+    `Blocked boundaries: ${control.blockedCount}`,
+    "",
+    "Prediction replay:",
+    replayLines,
+    "",
+    "Reward tuning:",
+    rewardLines,
+    "",
+    "Learning boundaries:",
+    boundaryLines,
+    "",
+    "Control actions:",
+    actionLines,
+    "",
+    "Receipts:",
+    receiptLines || "No reinforcement receipts yet.",
+    "",
+    "Closed-loop rule:",
+    "- Local tenant memory may learn exact answers, sources, owners, buyer outcomes, and approval trails.",
+    "- Network learning may use only aggregate categories, proof types, freshness bands, confidence bands, and outcome labels.",
+    "- Reward tuning cannot change buyer-facing answers, approved evidence, or production policy without human approval.",
   ].join("\n");
 }
 
@@ -12377,6 +12899,13 @@ function exportCsv() {
     "Simulator Best Lift",
     "Simulator Blocks",
     "Simulator Receipts",
+    "Reinforcement Status",
+    "Reinforcement Score",
+    "Prediction Replays",
+    "Reward Signals",
+    "Network-Safe Lift",
+    "Learning Boundary Blocks",
+    "Reinforcement Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -12404,6 +12933,7 @@ function exportCsv() {
     const orchestrator = trustOrchestratorSnapshot();
     const graph = federatedGraphSnapshot();
     const simulator = policySimulatorSnapshot();
+    const reinforcement = reinforcementControlSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -12494,6 +13024,13 @@ function exportCsv() {
       `+${simulator.bestLift}`,
       simulator.blockedCount,
       simulator.receipts.length,
+      reinforcement.statusLabel,
+      `${reinforcement.score}%`,
+      reinforcement.replays.length,
+      reinforcement.rewards.length,
+      `+${reinforcement.networkLift}`,
+      reinforcement.blockedCount,
+      reinforcement.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -12531,6 +13068,7 @@ function exportReviewPack() {
   const orchestrator = trustOrchestratorSnapshot();
   const graph = federatedGraphSnapshot();
   const simulator = policySimulatorSnapshot();
+  const reinforcement = reinforcementControlSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -12548,7 +13086,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v26</h1>
+        <h1>AnswerSeal Review Pack v27</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -13425,6 +13963,90 @@ function exportReviewPack() {
         </table>
         <h2>Simulator Digest</h2>
         <pre>${escapeHtml(simulatorDigestText(simulator))}</pre>
+        <h2>Reinforcement Control Room</h2>
+        <p>Status: ${escapeHtml(reinforcement.statusLabel)} | Reinforcement score: ${reinforcement.score}% | Prediction replays: ${reinforcement.replays.length} | Reward signals: ${reinforcement.rewards.length} | Network-safe lift: +${reinforcement.networkLift} | Boundary blocks: ${reinforcement.blockedCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Replay</th>
+              <th>Accuracy</th>
+              <th>Prediction</th>
+              <th>Outcome</th>
+              <th>Adjustment</th>
+              <th>Guardrail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${reinforcement.replays
+              .map(
+                (replay) => `
+                  <tr>
+                    <td>${escapeHtml(replay.source)}<br />${escapeHtml(replay.title)}</td>
+                    <td class="${replay.accuracy === "Low" ? "risk" : "ok"}">${escapeHtml(replay.accuracy)}</td>
+                    <td>${escapeHtml(replay.predicted)}</td>
+                    <td>${escapeHtml(replay.actual)}</td>
+                    <td>${escapeHtml(replay.adjustment)}</td>
+                    <td>${escapeHtml(replay.guardrail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Reinforcement Reward Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Weight</th>
+              <th>Mode</th>
+              <th>Learning</th>
+              <th>Guardrail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${reinforcement.rewards
+              .map(
+                (reward) => `
+                  <tr>
+                    <td>${escapeHtml(reward.signal)}</td>
+                    <td class="${String(reward.weight).startsWith("-") ? "risk" : "ok"}">${escapeHtml(reward.weight)}</td>
+                    <td>${escapeHtml(reward.mode)}</td>
+                    <td>${escapeHtml(reward.learning)}</td>
+                    <td>${escapeHtml(reward.guardrail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Reinforcement Learning Boundaries</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Boundary</th>
+              <th>Status</th>
+              <th>Allowed Learning</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${reinforcement.boundaries
+              .map(
+                (boundary) => `
+                  <tr>
+                    <td>${escapeHtml(boundary.title)}</td>
+                    <td class="${boundary.status === "Blocked" || boundary.status === "Review" ? "risk" : "ok"}">${escapeHtml(boundary.status)}</td>
+                    <td>${escapeHtml(boundary.allowed)}</td>
+                    <td>${escapeHtml(boundary.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Reinforcement Digest</h2>
+        <pre>${escapeHtml(reinforcementDigestText(reinforcement))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -14137,7 +14759,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v26 created with trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v27 created with reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -14154,12 +14776,13 @@ function exportReviewPack() {
   renderTrustOrchestrator();
   renderFederatedGraph();
   renderPolicySimulator();
+  renderReinforcementControl();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v26 exported.");
+  showToast("Review Pack v27 exported.");
 }
 
 function toCsv(rows) {
@@ -14226,6 +14849,7 @@ function serializeWorkspace() {
     orchestratorActions: state.orchestratorActions,
     graphActions: state.graphActions,
     simulatorActions: state.simulatorActions,
+    reinforcementActions: state.reinforcementActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,

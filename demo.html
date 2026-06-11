@@ -155,6 +155,10 @@
             <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
             <span>Simulator</span>
           </button>
+          <button class="nav-item" id="reinforcementNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Control</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -217,8 +221,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.30 Alpha</strong>
-          <span>Trust Policy Simulator</span>
+          <strong>v0.31 Alpha</strong>
+          <span>Reinforcement Control Room</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -230,7 +234,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.30 Alpha</span>
+            <span class="label">Security questionnaire | v0.31 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -2203,6 +2207,111 @@
             <span>Copyable change, block, or wait note</span>
           </div>
           <pre class="simulator-digest" id="simulatorDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="reinforcement-backdrop drawer-backdrop" id="reinforcementBackdrop" hidden></div>
+    <aside class="workspace-drawer reinforcement-drawer" id="reinforcementDrawer" aria-label="Reinforcement control room" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Reinforcement Control Room</span>
+          <h2>Replay outcomes before learning changes production behavior</h2>
+        </div>
+        <button class="icon-button" id="closeReinforcementButton" type="button" aria-label="Close reinforcement control" title="Close reinforcement control">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip reinforcement-metrics" aria-label="Reinforcement control health">
+        <article>
+          <span class="label">Loop Score</span>
+          <strong id="reinforcementScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Replays</span>
+          <strong id="reinforcementReplayCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Rewards</span>
+          <strong id="reinforcementRewardCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Network Lift</span>
+          <strong id="reinforcementNetworkLift">+0</strong>
+        </article>
+      </section>
+
+      <section class="reinforcement-actions" aria-label="Reinforcement controls">
+        <div>
+          <span class="label">Control Status</span>
+          <strong id="reinforcementStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="replayReinforcementButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Replay Outcomes</span>
+        </button>
+        <button class="secondary-button" id="tuneRewardButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Tune Rewards</span>
+        </button>
+        <button class="secondary-button" id="prepareNetworkLearningButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+          <span>Prepare Network</span>
+        </button>
+        <button class="secondary-button" id="copyReinforcementDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="reinforcement-body">
+        <section class="reinforcement-section" aria-label="Prediction replay">
+          <div class="section-heading">
+            <span class="label">Prediction Replay</span>
+            <span>Forecasts compared with buyer, graph, and outcome memory</span>
+          </div>
+          <div class="reinforcement-replay-list" id="reinforcementReplayList"></div>
+        </section>
+
+        <section class="reinforcement-section" aria-label="Reward tuning">
+          <div class="section-heading">
+            <span class="label">Reward Tuning</span>
+            <span>What the system should strengthen, penalize, or quarantine</span>
+          </div>
+          <div class="reinforcement-reward-list" id="reinforcementRewardList"></div>
+        </section>
+
+        <section class="reinforcement-section" aria-label="Learning boundaries">
+          <div class="section-heading">
+            <span class="label">Learning Boundaries</span>
+            <span>Tenant exact memory versus aggregate network learning</span>
+          </div>
+          <div class="reinforcement-boundary-list" id="reinforcementBoundaryList"></div>
+        </section>
+
+        <section class="reinforcement-section" aria-label="Control actions">
+          <div class="section-heading">
+            <span class="label">Control Actions</span>
+            <span>How learning becomes governed work</span>
+          </div>
+          <div class="reinforcement-action-list" id="reinforcementActionList"></div>
+        </section>
+
+        <section class="reinforcement-section" aria-label="Reinforcement receipts">
+          <div class="section-heading">
+            <span class="label">Reinforcement Receipts</span>
+            <span>Recorded reward and learning decisions</span>
+          </div>
+          <div class="reinforcement-receipt-list" id="reinforcementReceiptList"></div>
+        </section>
+
+        <section class="reinforcement-section" aria-label="Reinforcement digest">
+          <div class="section-heading">
+            <span class="label">Reinforcement Digest</span>
+            <span>Copyable closed-loop learning note</span>
+          </div>
+          <pre class="reinforcement-digest" id="reinforcementDigest"></pre>
         </section>
       </section>
     </aside>

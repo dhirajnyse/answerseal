@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.31 Alpha - Reinforcement Control Room
+
+Phase: Reinforcement Control Room
+
+- Added a Control drawer with loop score, prediction replay count, reward signal count, network-safe lift, control status, and reinforcement receipts.
+- Added prediction replay across simulator forecasts, buyer challenges, outcome memory, network-safe patterns, and graph drift.
+- Added reward tuning for accepted sealed answers, buyer challenges, simulator accuracy, network-safe patterns, and stale source penalties.
+- Added learning boundaries that distinguish tenant exact memory, network-safe aggregate learning, production mutation, and drift quarantine.
+- Added control actions for replaying predictions, tuning reward weights, routing blocked learning, preparing network packages, and handing work to the orchestrator.
+- Added reinforcement status, score, replay count, reward count, network-safe lift, boundary block count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v27 with reinforcement replays, reward signals, learning boundaries, and digest.
+- Updated the build phases page with the v0.32 Evaluation Lab plan.
+
 ## v0.30 Alpha - Trust Policy Simulator
 
 Phase: Trust Policy Simulator

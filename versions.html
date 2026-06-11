@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.30 Alpha</strong>
+        <strong>v0.31 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -41,15 +41,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.30 Alpha</h1>
+          <h1>AnswerSeal v0.31 Alpha</h1>
           <p>
-            This release turns the trust graph into a rehearsal layer: teams can simulate policy, source, answer, and network-learning changes before production memory or buyer-facing claims move.
+            This release closes the learning loop: teams can replay predictions against real outcomes, tune reward signals, and prove which lessons stay tenant-local versus which aggregate patterns can safely improve the network.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Trust Policy Simulator</h2>
+          <h2>Reinforcement Control Room</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -57,11 +57,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Counterfactual scenarios, forecast deltas, simulation gates, recommended actions, and Review Pack v26</dd>
+              <dd>Prediction replay, reward tuning, learning boundaries, network-safe lift, and Review Pack v27</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.31 Alpha - Reinforcement Control Room</dd>
+              <dd>v0.32 Alpha - Evaluation Lab</dd>
             </div>
           </dl>
         </aside>
@@ -77,6 +77,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.31 Alpha</strong>
+            </header>
+            <h3>Reinforcement Control Room</h3>
+            <p>Added Control drawer, prediction replay, reward tuning, learning boundaries, network-safe lift, reinforcement receipts, CSV reinforcement context, and Review Pack v27.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.30 Alpha</strong>
             </header>
             <h3>Trust Policy Simulator</h3>
@@ -349,39 +358,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.31 Alpha - Reinforcement Control Room</h2>
+          <h2>v0.32 Alpha - Evaluation Lab</h2>
           <p>
-            The next release should close the loop after action: compare simulated forecasts to real outcomes, tune reward weights, and show which recommendations actually improved buyer trust.
+            The next release should turn the learning loop into a measurable evaluation system: score answer quality, test reward changes, and compare model recommendations before they affect live buyer workflows.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Forecast replay</h3>
-            <p>Compare simulator predictions with actual approval, buyer challenge, and deal-progress outcomes.</p>
+            <h3>Answer eval sets</h3>
+            <p>Benchmark generated answers against expected source coverage, citation quality, freshness, and reviewer decisions.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Reward tuning</h3>
-            <p>Raise or lower recommendation weights based on which simulated moves truly helped.</p>
+            <h3>Reward A/B tests</h3>
+            <p>Compare tuned reward policies before applying them to production recommendation queues.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Learning ledger</h3>
-            <p>Track every recommendation, approval, outcome, reward change, and privacy gate in one control room.</p>
+            <h3>Regression watch</h3>
+            <p>Warn when a new answer, source, or model behavior performs worse than a prior approved pattern.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Network benefit score</h3>
-            <p>Show what each tenant learns locally and what aggregate lessons safely improve the wider network.</p>
+            <h3>Reviewer calibration</h3>
+            <p>Show where security, legal, sales, and AI governance reviewers disagree so training improves over time.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.30 Alpha</span>
+      <span>AnswerSeal v0.31 Alpha</span>
       <a href="./">Home</a>
       <a href="demo.html">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>
