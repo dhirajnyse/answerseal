@@ -147,6 +147,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Orchestrator</span>
           </button>
+          <button class="nav-item" id="graphNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Graph</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -209,8 +213,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.28 Alpha</strong>
-          <span>Autonomous Trust Orchestrator</span>
+          <strong>v0.29 Alpha</strong>
+          <span>Federated Trust Graph</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -222,7 +226,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.28 Alpha</span>
+            <span class="label">Security questionnaire | v0.29 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1977,6 +1981,119 @@
             <span>Copyable governed autonomy note</span>
           </div>
           <pre class="orchestrator-digest" id="orchestratorDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="graph-backdrop drawer-backdrop" id="graphBackdrop" hidden></div>
+    <aside class="workspace-drawer graph-drawer" id="graphDrawer" aria-label="Federated trust graph" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Federated Trust Graph</span>
+          <h2>Learn locally, recommend safely across tenants</h2>
+        </div>
+        <button class="icon-button" id="closeGraphButton" type="button" aria-label="Close federated graph" title="Close federated graph">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip graph-metrics" aria-label="Federated trust graph health">
+        <article>
+          <span class="label">Graph Score</span>
+          <strong id="graphScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Nodes</span>
+          <strong id="graphNodeCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Edges</span>
+          <strong id="graphEdgeCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Drift</span>
+          <strong id="graphDriftCount">0</strong>
+        </article>
+      </section>
+
+      <section class="graph-actions" aria-label="Federated trust graph controls">
+        <div>
+          <span class="label">Graph Status</span>
+          <strong id="graphStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="mapGraphButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Map Graph</span>
+        </button>
+        <button class="secondary-button" id="promoteGraphButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+          <span>Promote Pattern</span>
+        </button>
+        <button class="secondary-button" id="approveGraphGateButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve Gate</span>
+        </button>
+        <button class="secondary-button" id="copyGraphDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="graph-body">
+        <section class="graph-section" aria-label="Graph nodes">
+          <div class="section-heading">
+            <span class="label">Graph Nodes</span>
+            <span>What stays local, what can become aggregate intelligence</span>
+          </div>
+          <div class="graph-node-list" id="graphNodeList"></div>
+        </section>
+
+        <section class="graph-section" aria-label="Learning edges">
+          <div class="section-heading">
+            <span class="label">Learning Edges</span>
+            <span>How questions, proof, outcomes, and recommendations connect</span>
+          </div>
+          <div class="graph-edge-list" id="graphEdgeList"></div>
+        </section>
+
+        <section class="graph-section" aria-label="Promotion candidates">
+          <div class="section-heading">
+            <span class="label">Promotion Candidates</span>
+            <span>Only abstract patterns can cross the tenant boundary</span>
+          </div>
+          <div class="graph-promotion-list" id="graphPromotionList"></div>
+        </section>
+
+        <section class="graph-section" aria-label="Drift quarantine">
+          <div class="section-heading">
+            <span class="label">Drift Quarantine</span>
+            <span>Risks that keep learning local until proof improves</span>
+          </div>
+          <div class="graph-drift-list" id="graphDriftList"></div>
+        </section>
+
+        <section class="graph-section" aria-label="Graph gates">
+          <div class="section-heading">
+            <span class="label">Graph Gates</span>
+            <span>Consent, privacy, readiness, and drift controls</span>
+          </div>
+          <div class="graph-gate-list" id="graphGateList"></div>
+        </section>
+
+        <section class="graph-section" aria-label="Graph receipts">
+          <div class="section-heading">
+            <span class="label">Graph Receipts</span>
+            <span>Recorded graph actions</span>
+          </div>
+          <div class="graph-receipt-list" id="graphReceiptList"></div>
+        </section>
+
+        <section class="graph-section" aria-label="Graph digest">
+          <div class="section-heading">
+            <span class="label">Graph Digest</span>
+            <span>Copyable federated learning note</span>
+          </div>
+          <pre class="graph-digest" id="graphDigest"></pre>
         </section>
       </section>
     </aside>

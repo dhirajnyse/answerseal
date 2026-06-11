@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.29 Alpha - Federated Trust Graph
+
+Phase: Federated Trust Graph
+
+- Added a Graph drawer with graph score, node count, edge count, drift count, graph status, and graph receipts.
+- Added tenant-local graph nodes for questions, claims, evidence, owners, approval gates, outcome memory, benchmark bands, orchestration, and network patterns.
+- Added learning edges that connect source binding, source freshness, owner gates, outcome rewards, benchmark proof investments, governed work, and privacy thresholds.
+- Added privacy-safe promotion candidates that distinguish eligible aggregate patterns, local-only proof gaps, and held freshness patterns.
+- Added drift quarantine for stale sources, legacy evidence, high-risk proof gaps, buyer challenges, benchmark drift, and open gates.
+- Added graph gates for tenant-local exact memory, reviewer consent, privacy threshold, pattern readiness, and drift quarantine.
+- Added graph status, score, node count, edge count, drift count, promotion count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v25 with federated trust graph nodes, edges, promotion candidates, drift quarantine, gates, and digest.
+- Updated the build phases page with the v0.30 Trust Policy Simulator plan.
+
 ## v0.28 Alpha - Autonomous Trust Orchestrator
 
 Phase: Autonomous Trust Orchestrator

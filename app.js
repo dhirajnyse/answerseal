@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.28 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v28";
+const BUILD_VERSION = "v0.29 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v29";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v28",
   "answerseal.workspace.v27",
   "answerseal.workspace.v26",
   "answerseal.workspace.v25",
@@ -696,6 +697,8 @@ function createInitialState() {
     benchmarkActions: createInitialBenchmarkActions(),
     orchestratorOpen: false,
     orchestratorActions: createInitialOrchestratorActions(),
+    graphOpen: false,
+    graphActions: createInitialGraphActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -805,6 +808,17 @@ function createInitialOrchestratorActions() {
     status: "Draft",
     plannedAt: null,
     executedAt: null,
+    gateApprovedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialGraphActions() {
+  return {
+    status: "Draft",
+    mappedAt: null,
+    promotedAt: null,
     gateApprovedAt: null,
     lastCopiedAt: null,
     receipts: [],
@@ -938,6 +952,7 @@ function loadWorkspaceState() {
       playbookActions: normalizePlaybookActions(workspace.playbookActions ?? fresh.playbookActions),
       benchmarkActions: normalizeBenchmarkActions(workspace.benchmarkActions ?? fresh.benchmarkActions),
       orchestratorActions: normalizeOrchestratorActions(workspace.orchestratorActions ?? fresh.orchestratorActions),
+      graphActions: normalizeGraphActions(workspace.graphActions ?? fresh.graphActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -961,6 +976,7 @@ function loadWorkspaceState() {
       playbookOpen: false,
       benchmarkOpen: false,
       orchestratorOpen: false,
+      graphOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1382,6 +1398,27 @@ function normalizeOrchestratorReceipt(receipt) {
   };
 }
 
+function normalizeGraphActions(actions) {
+  const status = ["Draft", "Graph mapped", "Pattern promoted", "Gate approved"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    mappedAt: actions?.mappedAt ?? null,
+    promotedAt: actions?.promotedAt ?? null,
+    gateApprovedAt: actions?.gateApprovedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeGraphReceipt) : [],
+  };
+}
+
+function normalizeGraphReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `graph-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Trust graph action"),
+    detail: String(receipt?.detail ?? "Federated trust graph action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1423,6 +1460,7 @@ const elements = {
   playbookNavButton: document.querySelector("#playbookNavButton"),
   benchmarkNavButton: document.querySelector("#benchmarkNavButton"),
   orchestratorNavButton: document.querySelector("#orchestratorNavButton"),
+  graphNavButton: document.querySelector("#graphNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1760,6 +1798,25 @@ const elements = {
   executeOrchestratorButton: document.querySelector("#executeOrchestratorButton"),
   approveOrchestratorGateButton: document.querySelector("#approveOrchestratorGateButton"),
   copyOrchestratorDigestButton: document.querySelector("#copyOrchestratorDigestButton"),
+  graphBackdrop: document.querySelector("#graphBackdrop"),
+  graphDrawer: document.querySelector("#graphDrawer"),
+  closeGraphButton: document.querySelector("#closeGraphButton"),
+  graphScore: document.querySelector("#graphScore"),
+  graphNodeCount: document.querySelector("#graphNodeCount"),
+  graphEdgeCount: document.querySelector("#graphEdgeCount"),
+  graphDriftCount: document.querySelector("#graphDriftCount"),
+  graphStatus: document.querySelector("#graphStatus"),
+  graphNodeList: document.querySelector("#graphNodeList"),
+  graphEdgeList: document.querySelector("#graphEdgeList"),
+  graphPromotionList: document.querySelector("#graphPromotionList"),
+  graphDriftList: document.querySelector("#graphDriftList"),
+  graphGateList: document.querySelector("#graphGateList"),
+  graphReceiptList: document.querySelector("#graphReceiptList"),
+  graphDigest: document.querySelector("#graphDigest"),
+  mapGraphButton: document.querySelector("#mapGraphButton"),
+  promoteGraphButton: document.querySelector("#promoteGraphButton"),
+  approveGraphGateButton: document.querySelector("#approveGraphGateButton"),
+  copyGraphDigestButton: document.querySelector("#copyGraphDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1873,6 +1930,7 @@ function bindEvents() {
   elements.playbookNavButton.addEventListener("click", openAdaptivePlaybooks);
   elements.benchmarkNavButton.addEventListener("click", openTrustBenchmarks);
   elements.orchestratorNavButton.addEventListener("click", openTrustOrchestrator);
+  elements.graphNavButton.addEventListener("click", openFederatedGraph);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1931,6 +1989,7 @@ function bindEvents() {
     renderAdaptivePlaybooks();
     renderTrustBenchmarks();
     renderTrustOrchestrator();
+    renderFederatedGraph();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2023,6 +2082,12 @@ function bindEvents() {
   elements.executeOrchestratorButton.addEventListener("click", executeTrustOrchestrator);
   elements.approveOrchestratorGateButton.addEventListener("click", approveOrchestratorGate);
   elements.copyOrchestratorDigestButton.addEventListener("click", copyOrchestratorDigest);
+  elements.closeGraphButton.addEventListener("click", closeFederatedGraph);
+  elements.graphBackdrop.addEventListener("click", closeFederatedGraph);
+  elements.mapGraphButton.addEventListener("click", mapFederatedGraph);
+  elements.promoteGraphButton.addEventListener("click", promoteGraphPattern);
+  elements.approveGraphGateButton.addEventListener("click", approveGraphGate);
+  elements.copyGraphDigestButton.addEventListener("click", copyGraphDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2081,6 +2146,7 @@ function bindEvents() {
     if (state.playbookOpen) closeAdaptivePlaybooks();
     if (state.benchmarkOpen) closeTrustBenchmarks();
     if (state.orchestratorOpen) closeTrustOrchestrator();
+    if (state.graphOpen) closeFederatedGraph();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2106,6 +2172,7 @@ function applyInitialHash() {
   if (hash === "playbooks" || hash === "trust-playbooks" || hash === "adaptive-playbooks" || hash === "strategy") openAdaptivePlaybooks();
   if (hash === "benchmarks" || hash === "benchmark" || hash === "trust-benchmarks" || hash === "readiness") openTrustBenchmarks();
   if (hash === "orchestrator" || hash === "orchestration" || hash === "autonomous-orchestrator" || hash === "work-plan") openTrustOrchestrator();
+  if (hash === "graph" || hash === "trust-graph" || hash === "federated-graph" || hash === "federation") openFederatedGraph();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2145,6 +2212,7 @@ function render() {
   renderAdaptivePlaybooks();
   renderTrustBenchmarks();
   renderTrustOrchestrator();
+  renderFederatedGraph();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -2867,6 +2935,7 @@ function activateWorkspaceNav(target) {
   closeAdaptivePlaybooks(false);
   closeTrustBenchmarks(false);
   closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -2891,6 +2960,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.orchestratorNavButton && state.orchestratorOpen) {
     closeTrustOrchestrator(false);
   }
+  if (activeButton !== elements.graphNavButton && state.graphOpen) {
+    closeFederatedGraph(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -2905,6 +2977,7 @@ function setActiveNav(activeButton) {
     elements.playbookNavButton,
     elements.benchmarkNavButton,
     elements.orchestratorNavButton,
+    elements.graphNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3477,6 +3550,7 @@ function openTrustOrchestrator() {
   closeOutcomeMemory(false);
   closeAdaptivePlaybooks(false);
   closeTrustBenchmarks(false);
+  closeFederatedGraph(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3503,6 +3577,46 @@ function closeTrustOrchestrator(activateReview = true) {
   elements.orchestratorDrawer.classList.remove("is-open");
   elements.orchestratorDrawer.setAttribute("aria-hidden", "true");
   elements.orchestratorBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openFederatedGraph() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.graphOpen = true;
+  setActiveNav(elements.graphNavButton);
+  elements.graphBackdrop.hidden = false;
+  elements.graphDrawer.classList.add("is-open");
+  elements.graphDrawer.setAttribute("aria-hidden", "false");
+  renderFederatedGraph();
+}
+
+function closeFederatedGraph(activateReview = true) {
+  if (!state.graphOpen && elements.graphDrawer.getAttribute("aria-hidden") === "true") return;
+  state.graphOpen = false;
+  elements.graphDrawer.classList.remove("is-open");
+  elements.graphDrawer.setAttribute("aria-hidden", "true");
+  elements.graphBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -8929,6 +9043,541 @@ function orchestratorDigestText(orchestration = trustOrchestratorSnapshot()) {
   ].join("\n");
 }
 
+function renderFederatedGraph() {
+  const graph = federatedGraphSnapshot();
+
+  elements.graphScore.textContent = `${graph.score}%`;
+  elements.graphNodeCount.textContent = graph.nodes.length;
+  elements.graphEdgeCount.textContent = graph.edges.length;
+  elements.graphDriftCount.textContent = graph.drift.length;
+  elements.graphStatus.textContent = graph.statusLabel;
+  elements.graphDigest.textContent = graphDigestText(graph);
+  elements.promoteGraphButton.disabled = !graph.promotions.some((promotion) => promotion.status === "Eligible");
+
+  elements.graphNodeList.innerHTML = "";
+  graph.nodes.forEach((node) => {
+    const card = document.createElement("article");
+    card.className = `graph-node-card ${node.boundary === "Private" ? "is-private" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(node.scope)}</span>
+          <strong>${escapeHtml(node.title)}</strong>
+        </div>
+        <b>${escapeHtml(node.boundary)}</b>
+      </header>
+      <p>${escapeHtml(node.detail)}</p>
+      <footer>
+        <span>${escapeHtml(node.signal)}</span>
+        <span>${escapeHtml(node.share)}</span>
+      </footer>
+    `;
+    elements.graphNodeList.append(card);
+  });
+
+  elements.graphEdgeList.innerHTML = "";
+  graph.edges.forEach((edge) => {
+    const card = document.createElement("article");
+    card.className = "graph-edge-card";
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(edge.source)} -> ${escapeHtml(edge.target)}</strong>
+        <b>${escapeHtml(edge.strength)}</b>
+      </header>
+      <p>${escapeHtml(edge.detail)}</p>
+      <span>${escapeHtml(edge.mode)}</span>
+    `;
+    elements.graphEdgeList.append(card);
+  });
+
+  elements.graphPromotionList.innerHTML = "";
+  graph.promotions.forEach((promotion) => {
+    const card = document.createElement("article");
+    card.className = `graph-promotion-card ${promotion.status === "Eligible" ? "is-ready" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(promotion.kind)}</span>
+          <strong>${escapeHtml(promotion.title)}</strong>
+        </div>
+        <b>${escapeHtml(promotion.status)}</b>
+      </header>
+      <p>${escapeHtml(promotion.detail)}</p>
+      <footer>
+        <span>${escapeHtml(promotion.evidence)}</span>
+        <span>${escapeHtml(promotion.guardrail)}</span>
+      </footer>
+    `;
+    elements.graphPromotionList.append(card);
+  });
+
+  elements.graphDriftList.innerHTML = "";
+  if (graph.drift.length === 0) {
+    elements.graphDriftList.append(emptyState("No graph drift detected"));
+  }
+  graph.drift.forEach((drift) => {
+    const card = document.createElement("article");
+    card.className = `graph-drift-card ${drift.severity === "High" ? "is-high" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(drift.severity)} drift</span>
+          <strong>${escapeHtml(drift.title)}</strong>
+        </div>
+        <b>${escapeHtml(drift.owner)}</b>
+      </header>
+      <p>${escapeHtml(drift.detail)}</p>
+      <span>${escapeHtml(drift.action)}</span>
+    `;
+    elements.graphDriftList.append(card);
+  });
+
+  elements.graphGateList.innerHTML = "";
+  graph.gates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `graph-gate-card ${gate.status === "Blocked" || gate.status === "Review" ? "is-blocked" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <b>${escapeHtml(gate.status)}</b>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+    `;
+    elements.graphGateList.append(card);
+  });
+
+  elements.graphReceiptList.innerHTML = "";
+  if (graph.receipts.length === 0) {
+    elements.graphReceiptList.append(emptyState("No graph receipts yet"));
+  }
+  graph.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "graph-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.graphReceiptList.append(card);
+  });
+}
+
+function federatedGraphSnapshot() {
+  const coverage = coverageSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const connectors = connectorSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const network = learningNetworkSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const benchmarks = trustBenchmarkSnapshot();
+  const orchestrator = trustOrchestratorSnapshot();
+  const nodes = graphNodes({ coverage, routing, network, outcomes, benchmarks, orchestrator });
+  const edges = graphEdges({ coverage, routing, connectors, gaps, network, outcomes, benchmarks, orchestrator });
+  const promotions = graphPromotions({ network, outcomes, benchmarks, connectors, gaps });
+  const drift = graphDrift({ connectors, gaps, benchmarks, outcomes, orchestrator });
+  const gates = graphGates({ network, promotions, drift });
+  const eligible = promotions.filter((promotion) => promotion.status === "Eligible").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        network.privacyScore * 0.24
+          + outcomes.score * 0.2
+          + benchmarks.score * 0.18
+          + orchestrator.score * 0.16
+          + coverage.score * 0.12
+          + Math.min(100, eligible * 24) * 0.06
+          + Math.max(0, 100 - drift.length * 11) * 0.04,
+      ),
+    ),
+  );
+  const statusLabel = state.graphActions.status === "Draft" ? (eligible > 0 && network.privacyScore >= 90 ? "Promotion candidate" : "Mapping local graph") : state.graphActions.status;
+
+  return {
+    score,
+    statusLabel,
+    nodes,
+    edges,
+    promotions,
+    drift,
+    gates,
+    receipts: state.graphActions.receipts.slice(-8).reverse(),
+    coverage,
+    routing,
+    connectors,
+    gaps,
+    network,
+    outcomes,
+    benchmarks,
+    orchestrator,
+  };
+}
+
+function graphNodes({ coverage, routing, network, outcomes, benchmarks, orchestrator }) {
+  const categories = [...new Set(state.questions.map((question) => question.category))];
+  return [
+    {
+      scope: "Tenant-local",
+      title: "Questions and claims",
+      boundary: "Private",
+      signal: `${state.questions.length} questions / ${categories.length} categories`,
+      share: "Only category bands can aggregate",
+      detail: "Exact buyer text, claim wording, answer drafts, and reviewer notes stay inside this workspace.",
+    },
+    {
+      scope: "Tenant-local",
+      title: "Evidence and source freshness",
+      boundary: "Private",
+      signal: `${state.evidence.length} sources / ${coverage.score}% coverage`,
+      share: "Proof type and freshness band only",
+      detail: "Policy text, SOC excerpts, DPAs, and file names remain tenant-private while freshness windows can become aggregate guidance.",
+    },
+    {
+      scope: "Tenant-local",
+      title: "Owners and approval gates",
+      boundary: "Organization",
+      signal: `${routing.routed}/${state.questions.length} routed`,
+      share: "Role and gate label only",
+      detail: "Named reviewers remain private; aggregate learning can use role categories such as Security, Legal, or AI Governance.",
+    },
+    {
+      scope: "Outcome memory",
+      title: "Accepted and challenged outcomes",
+      boundary: "Hybrid",
+      signal: `${outcomes.events.length} events / ${outcomes.rewards.length} rewards`,
+      share: "Outcome label only",
+      detail: "Local memory keeps exact buyer outcomes while the network learns only accepted, challenged, delayed, reused, or blocked labels.",
+    },
+    {
+      scope: "Peer-safe",
+      title: "Trust benchmark bands",
+      boundary: "Aggregate",
+      signal: `${benchmarks.aheadCount}/${benchmarks.bands.length} at peer band`,
+      share: "Category band",
+      detail: "Benchmark nodes compare category readiness to peer medians without raw answers, files, prompts, contracts, or buyer names.",
+    },
+    {
+      scope: "Autonomy",
+      title: "Governed work plan",
+      boundary: "Governed",
+      signal: `${orchestrator.priorities.length} priorities / ${orchestrator.gates.length} gates`,
+      share: "Action type and gate status",
+      detail: "The graph can recommend work, but buyer-facing claims, external sharing, and network promotion remain gated.",
+    },
+    {
+      scope: "Federated",
+      title: "Pattern network",
+      boundary: "Aggregate",
+      signal: `${network.readyPatternCount}/${network.patterns.length} ready patterns`,
+      share: "Threshold-gated patterns",
+      detail: "Cross-organization recommendations activate only after abstraction, privacy checks, reviewer consent, and enough similar tenants.",
+    },
+  ];
+}
+
+function graphEdges({ coverage, routing, connectors, gaps, network, outcomes, benchmarks, orchestrator }) {
+  const topGap = gaps.tasks[0];
+  const topBand = benchmarks.bands.find((band) => band.status === "Behind") ?? benchmarks.bands[0];
+  return [
+    {
+      source: "Question",
+      target: "Evidence",
+      strength: `${coverage.score}%`,
+      mode: "Local binding",
+      detail: "Each answer edge points to selected sources and claim trace before approval.",
+    },
+    {
+      source: "Evidence",
+      target: "Freshness",
+      strength: `${connectors.score}%`,
+      mode: "Private source health",
+      detail: `${connectors.staleCount} stale source signal${connectors.staleCount === 1 ? "" : "s"} affect graph confidence before promotion.`,
+    },
+    {
+      source: "Owner",
+      target: "Approval gate",
+      strength: `${routing.routed}/${state.questions.length}`,
+      mode: "Organization gate",
+      detail: "Owner routing connects trust categories to accountable reviewers before buyer handoff.",
+    },
+    {
+      source: "Outcome",
+      target: "Recommendation",
+      strength: `${outcomes.score}%`,
+      mode: "Reward edge",
+      detail: "Accepted, challenged, and delayed outcomes tune local recommendations without exposing exact buyer content.",
+    },
+    {
+      source: "Benchmark",
+      target: "Proof investment",
+      strength: topBand ? `${topBand.localScore}%` : "0%",
+      mode: "Aggregate comparison",
+      detail: topBand ? `${topBand.category} uses peer-safe bands to suggest proof improvement.` : "No benchmark band is available yet.",
+    },
+    {
+      source: "Orchestrator",
+      target: topGap ? topGap.owner.name : "Trust Lead",
+      strength: `${orchestrator.score}%`,
+      mode: "Governed work",
+      detail: topGap ? `Routes ${topGap.question.category} evidence work before weak proof leaves the tenant.` : "Routes the next safest task from graph priorities.",
+    },
+    {
+      source: "Local graph",
+      target: "Federated pattern",
+      strength: `${network.privacyScore}%`,
+      mode: "Privacy threshold",
+      detail: "Only abstract labels, role types, proof categories, readiness bands, and outcome labels can cross the tenant boundary.",
+    },
+  ];
+}
+
+function graphPromotions({ network, outcomes, benchmarks, connectors, gaps }) {
+  const acceptedPattern = outcomes.patterns.find((pattern) => pattern.shareable) ?? outcomes.patterns[0];
+  const behindBand = benchmarks.bands.find((band) => band.status === "Behind") ?? benchmarks.bands[0];
+  return [
+    {
+      kind: "Outcome pattern",
+      title: acceptedPattern ? acceptedPattern.title : "Accepted answer pattern",
+      status: acceptedPattern?.shareable && network.privacyScore >= 90 ? "Eligible" : "Hold",
+      evidence: `${outcomes.shareablePatterns}/${outcomes.patterns.length} shareable`,
+      guardrail: "Outcome label only",
+      detail: acceptedPattern ? acceptedPattern.detail : "Wait for a shareable outcome pattern before promotion.",
+    },
+    {
+      kind: "Benchmark pattern",
+      title: behindBand ? `${behindBand.category} readiness band` : "Readiness band",
+      status: benchmarks.score >= 70 ? "Eligible" : "Hold",
+      evidence: `${benchmarks.aheadCount}/${benchmarks.bands.length} peer-ready`,
+      guardrail: "Category band only",
+      detail: behindBand ? `${behindBand.recommendation} The graph shares only aggregate readiness and friction labels.` : "No benchmark band is ready.",
+    },
+    {
+      kind: "Freshness pattern",
+      title: "Source freshness window",
+      status: connectors.staleCount === 0 && connectors.issueCount <= 1 ? "Eligible" : "Hold",
+      evidence: `${connectors.score}% source health`,
+      guardrail: "No file names or excerpts",
+      detail: "Freshness windows can help similar tenants prepare source refreshes earlier without exposing documents.",
+    },
+    {
+      kind: "Gap prevention",
+      title: gaps.tasks[0] ? `${gaps.tasks[0].question.category} gap prevention` : "Proof gap prevention",
+      status: gaps.highRiskCount > 0 ? "Local only" : "Eligible",
+      evidence: `${gaps.taskCount} gap tasks`,
+      guardrail: "Reviewer consent required",
+      detail: gaps.tasks[0] ? `Keep the exact blocker private while sharing abstract proof type and friction label.` : "No high-risk blocker is currently restricting promotion.",
+    },
+  ];
+}
+
+function graphDrift({ connectors, gaps, benchmarks, outcomes, orchestrator }) {
+  const rows = [];
+  const staleDocs = state.evidence.filter((doc) => daysSince(doc.updated) > 120 || doc.type === "Legacy");
+  const staleConnector = connectors.connectors.find((item) => item.freshness === "Stale" || item.status === "Stale" || item.issues > 0);
+  const behindBand = benchmarks.bands.find((band) => band.status === "Behind");
+  const openGate = orchestrator.gates.find((gate) => gate.status === "Blocked" || gate.status === "Review");
+
+  if (staleDocs.length) {
+    rows.push({
+      severity: staleDocs.some((doc) => doc.type === "Legacy") ? "High" : "Medium",
+      title: "Source age drift",
+      owner: "Evidence owner",
+      detail: `${staleDocs.length} source${staleDocs.length === 1 ? "" : "s"} are old or legacy and can weaken repeated graph recommendations.`,
+      action: "Refresh source metadata before promoting related patterns.",
+    });
+  }
+
+  if (staleConnector) {
+    rows.push({
+      severity: "High",
+      title: `${staleConnector.name} connector drift`,
+      owner: staleConnector.owner.name,
+      detail: `${staleConnector.provider} has ${staleConnector.issues} issue${staleConnector.issues === 1 ? "" : "s"} and ${staleConnector.health}% health.`,
+      action: staleConnector.nextAction,
+    });
+  }
+
+  if (gaps.highRiskCount > 0) {
+    rows.push({
+      severity: "High",
+      title: "Evidence gap drift",
+      owner: gaps.tasks[0]?.owner.name ?? "Trust Lead",
+      detail: `${gaps.highRiskCount} high-risk proof gap${gaps.highRiskCount === 1 ? "" : "s"} can pollute local memory if answers are reused too early.`,
+      action: "Keep pattern local until stronger proof is attached.",
+    });
+  }
+
+  if (behindBand) {
+    rows.push({
+      severity: "Medium",
+      title: `${behindBand.category} peer-band drift`,
+      owner: inferOwner(behindBand.category),
+      detail: `${behindBand.category} is ${behindBand.deltaLabel.toLowerCase()} versus peer-safe benchmark medians.`,
+      action: behindBand.recommendation,
+    });
+  }
+
+  if (outcomes.events.some((event) => event.sentiment === "Negative")) {
+    rows.push({
+      severity: "Medium",
+      title: "Buyer challenge drift",
+      owner: "Reviewer",
+      detail: "A challenged outcome should reduce confidence for similar future answers until the evidence path improves.",
+      action: "Convert the challenge into a local proof task before network promotion.",
+    });
+  }
+
+  if (openGate) {
+    rows.push({
+      severity: openGate.status === "Blocked" ? "High" : "Medium",
+      title: `${openGate.title} gate still open`,
+      owner: "Trust Lead",
+      detail: openGate.detail,
+      action: "Resolve the gate before external sharing or federated promotion.",
+    });
+  }
+
+  return rows.slice(0, 6);
+}
+
+function graphGates({ network, promotions, drift }) {
+  const eligibleCount = promotions.filter((promotion) => promotion.status === "Eligible").length;
+  return [
+    {
+      title: "Tenant-local exact graph",
+      status: "Enforced",
+      detail: "Raw documents, answers, prompts, buyer names, reviewer names, and contracts stay inside the organization.",
+    },
+    {
+      title: "Reviewer consent",
+      status: state.graphActions.gateApprovedAt ? "Approved" : "Review",
+      detail: "Pattern promotion needs an explicit human receipt before any cross-tenant recommendation can use it.",
+    },
+    {
+      title: "Privacy threshold",
+      status: network.privacyScore >= 90 ? "Approved" : "Review",
+      detail: `${network.privacyScore}% privacy score; only aggregate labels, proof types, freshness windows, and outcome bands are eligible.`,
+    },
+    {
+      title: "Pattern readiness",
+      status: eligibleCount >= 2 ? "Approved" : "Review",
+      detail: `${eligibleCount}/${promotions.length} patterns are eligible for promotion after abstraction and threshold checks.`,
+    },
+    {
+      title: "Drift quarantine",
+      status: drift.some((item) => item.severity === "High") ? "Blocked" : "Approved",
+      detail: "High drift keeps related patterns local until stale sources, proof gaps, or open gates are resolved.",
+    },
+  ];
+}
+
+function mapFederatedGraph() {
+  const graph = federatedGraphSnapshot();
+  const detail = `Federated graph mapped with ${graph.nodes.length} nodes, ${graph.edges.length} edges, ${graph.promotions.length} promotion candidates, and ${graph.drift.length} drift alerts.`;
+  state.graphActions.status = "Graph mapped";
+  state.graphActions.mappedAt = new Date().toISOString();
+  addGraphReceipt("Graph mapped", detail);
+  addAudit("Federated trust graph mapped", detail);
+  renderFederatedGraph();
+  renderAudit();
+  showToast("Federated trust graph mapped.");
+}
+
+function promoteGraphPattern() {
+  const graph = federatedGraphSnapshot();
+  const promotion = graph.promotions.find((item) => item.status === "Eligible");
+  if (!promotion) return;
+  const detail = `Promotion prepared: ${promotion.title}. ${promotion.detail} Guardrail: ${promotion.guardrail}.`;
+  state.graphActions.status = "Pattern promoted";
+  state.graphActions.promotedAt = new Date().toISOString();
+  state.networkActions.status = "Signal applied";
+  state.networkActions.signalAppliedAt = new Date().toISOString();
+  addGraphReceipt("Pattern promoted", detail);
+  addNetworkReceipt("Graph pattern promoted", detail);
+  addAudit("Federated pattern promoted", detail);
+  render();
+  showToast("Privacy-safe graph pattern promoted.");
+}
+
+function approveGraphGate() {
+  const graph = federatedGraphSnapshot();
+  const gate = graph.gates.find((item) => item.status === "Review" || item.status === "Blocked");
+  const detail = gate ? `Federated graph gate reviewed: ${gate.title}. ${gate.detail}` : "All federated graph gates already passed.";
+  state.graphActions.status = "Gate approved";
+  state.graphActions.gateApprovedAt = new Date().toISOString();
+  addGraphReceipt("Gate approved", detail);
+  addAudit("Federated graph gate approved", detail);
+  renderFederatedGraph();
+  renderAudit();
+  showToast("Federated graph gate approved.");
+}
+
+function copyGraphDigest() {
+  const graph = federatedGraphSnapshot();
+  state.graphActions.lastCopiedAt = new Date().toISOString();
+  addGraphReceipt("Graph digest copied", "Federated trust graph digest copied.");
+  addAudit("Federated graph digest copied", "Federated trust graph digest copied.");
+  renderFederatedGraph();
+  renderAudit();
+  copyText(graphDigestText(graph), "Federated graph digest copied.");
+}
+
+function addGraphReceipt(action, detail) {
+  state.graphActions.receipts = [
+    ...(state.graphActions.receipts ?? []),
+    {
+      id: `graph-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function graphDigestText(graph = federatedGraphSnapshot()) {
+  const nodeLines = graph.nodes.map((node, index) => `${index + 1}. ${node.scope}: ${node.title} | ${node.boundary} | ${node.signal} | ${node.share}`).join("\n");
+  const edgeLines = graph.edges.map((edge, index) => `${index + 1}. ${edge.source} -> ${edge.target}: ${edge.strength} | ${edge.mode} | ${edge.detail}`).join("\n");
+  const promotionLines = graph.promotions.map((promotion, index) => `${index + 1}. ${promotion.status}: ${promotion.title} | ${promotion.evidence} | ${promotion.guardrail}`).join("\n");
+  const driftLines = graph.drift.map((drift, index) => `${index + 1}. ${drift.severity}: ${drift.title} | ${drift.owner} | ${drift.action}`).join("\n");
+  const gateLines = graph.gates.map((gate, index) => `${index + 1}. ${gate.title}: ${gate.status} - ${gate.detail}`).join("\n");
+  const receiptLines = graph.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Federated Trust Graph",
+    `Build: ${BUILD_VERSION}`,
+    `Graph status: ${graph.statusLabel}`,
+    `Graph score: ${graph.score}%`,
+    `Nodes: ${graph.nodes.length}`,
+    `Edges: ${graph.edges.length}`,
+    `Drift alerts: ${graph.drift.length}`,
+    "",
+    "Tenant and network nodes:",
+    nodeLines,
+    "",
+    "Learning edges:",
+    edgeLines,
+    "",
+    "Promotion candidates:",
+    promotionLines,
+    "",
+    "Drift alerts:",
+    driftLines || "No graph drift detected.",
+    "",
+    "Human and privacy gates:",
+    gateLines,
+    "",
+    "Receipts:",
+    receiptLines || "No graph receipts yet.",
+    "",
+    "Federation rule:",
+    "- Exact organizational memory stays tenant-local.",
+    "- Cross-tenant benefit uses only aggregate labels, bands, role types, proof categories, and outcome classes.",
+    "- High drift quarantines related patterns until human review and stronger proof resolve the risk.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -11125,6 +11774,13 @@ function exportCsv() {
     "Orchestrator Priorities",
     "Orchestrator Gates",
     "Orchestrator Receipts",
+    "Graph Status",
+    "Graph Score",
+    "Graph Nodes",
+    "Graph Edges",
+    "Graph Drift",
+    "Graph Promotions",
+    "Graph Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -11150,6 +11806,7 @@ function exportCsv() {
     const playbooks = adaptivePlaybookSnapshot();
     const benchmarks = trustBenchmarkSnapshot();
     const orchestrator = trustOrchestratorSnapshot();
+    const graph = federatedGraphSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -11227,6 +11884,13 @@ function exportCsv() {
       orchestrator.priorities.length,
       orchestrator.gates.filter((gate) => gate.status !== "Approved").length,
       orchestrator.receipts.length,
+      graph.statusLabel,
+      `${graph.score}%`,
+      graph.nodes.length,
+      graph.edges.length,
+      graph.drift.length,
+      graph.promotions.filter((promotion) => promotion.status === "Eligible").length,
+      graph.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -11262,6 +11926,7 @@ function exportReviewPack() {
   const playbooks = adaptivePlaybookSnapshot();
   const benchmarks = trustBenchmarkSnapshot();
   const orchestrator = trustOrchestratorSnapshot();
+  const graph = federatedGraphSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -11279,7 +11944,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v24</h1>
+        <h1>AnswerSeal Review Pack v25</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -11921,6 +12586,138 @@ function exportReviewPack() {
         </table>
         <h2>Orchestrator Digest</h2>
         <pre>${escapeHtml(orchestratorDigestText(orchestrator))}</pre>
+        <h2>Federated Trust Graph</h2>
+        <p>Status: ${escapeHtml(graph.statusLabel)} | Graph score: ${graph.score}% | Nodes: ${graph.nodes.length} | Edges: ${graph.edges.length} | Drift alerts: ${graph.drift.length} | Eligible promotions: ${graph.promotions.filter((promotion) => promotion.status === "Eligible").length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Node</th>
+              <th>Boundary</th>
+              <th>Signal</th>
+              <th>Share Rule</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${graph.nodes
+              .map(
+                (node) => `
+                  <tr>
+                    <td>${escapeHtml(node.scope)}<br />${escapeHtml(node.title)}</td>
+                    <td class="${node.boundary === "Private" ? "risk" : "ok"}">${escapeHtml(node.boundary)}</td>
+                    <td>${escapeHtml(node.signal)}</td>
+                    <td>${escapeHtml(node.share)}</td>
+                    <td>${escapeHtml(node.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Graph Learning Edges</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Edge</th>
+              <th>Strength</th>
+              <th>Mode</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${graph.edges
+              .map(
+                (edge) => `
+                  <tr>
+                    <td>${escapeHtml(edge.source)} -> ${escapeHtml(edge.target)}</td>
+                    <td>${escapeHtml(edge.strength)}</td>
+                    <td>${escapeHtml(edge.mode)}</td>
+                    <td>${escapeHtml(edge.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Graph Promotion Candidates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Status</th>
+              <th>Evidence</th>
+              <th>Guardrail</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${graph.promotions
+              .map(
+                (promotion) => `
+                  <tr>
+                    <td>${escapeHtml(promotion.kind)}<br />${escapeHtml(promotion.title)}</td>
+                    <td class="${promotion.status === "Eligible" ? "ok" : "risk"}">${escapeHtml(promotion.status)}</td>
+                    <td>${escapeHtml(promotion.evidence)}</td>
+                    <td>${escapeHtml(promotion.guardrail)}</td>
+                    <td>${escapeHtml(promotion.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Graph Drift Quarantine</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Drift</th>
+              <th>Severity</th>
+              <th>Owner</th>
+              <th>Action</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${graph.drift
+              .map(
+                (drift) => `
+                  <tr>
+                    <td>${escapeHtml(drift.title)}</td>
+                    <td class="${drift.severity === "High" ? "risk" : "ok"}">${escapeHtml(drift.severity)}</td>
+                    <td>${escapeHtml(drift.owner)}</td>
+                    <td>${escapeHtml(drift.action)}</td>
+                    <td>${escapeHtml(drift.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Graph Human Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${graph.gates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Blocked" || gate.status === "Review" ? "risk" : "ok"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Graph Digest</h2>
+        <pre>${escapeHtml(graphDigestText(graph))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -12633,7 +13430,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v24 created with autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v25 created with federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -12648,12 +13445,13 @@ function exportReviewPack() {
   renderAdaptivePlaybooks();
   renderTrustBenchmarks();
   renderTrustOrchestrator();
+  renderFederatedGraph();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v24 exported.");
+  showToast("Review Pack v25 exported.");
 }
 
 function toCsv(rows) {
@@ -12718,6 +13516,7 @@ function serializeWorkspace() {
     playbookActions: state.playbookActions,
     benchmarkActions: state.benchmarkActions,
     orchestratorActions: state.orchestratorActions,
+    graphActions: state.graphActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -12753,6 +13552,7 @@ function resetWorkspace() {
   closeAdaptivePlaybooks(false);
   closeTrustBenchmarks(false);
   closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
   closeWorkspace(false);
   closeLibrary();
   render();
