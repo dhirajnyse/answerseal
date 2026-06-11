@@ -139,6 +139,10 @@
             <svg aria-hidden="true"><use href="#icon-check"></use></svg>
             <span>Playbooks</span>
           </button>
+          <button class="nav-item" id="benchmarkNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Benchmarks</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -201,8 +205,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.26 Alpha</strong>
-          <span>Adaptive Trust Playbooks</span>
+          <strong>v0.27 Alpha</strong>
+          <span>Trust Benchmark Network</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -214,7 +218,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.26 Alpha</span>
+            <span class="label">Security questionnaire | v0.27 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1762,6 +1766,107 @@
             <span>Copyable strategy note</span>
           </div>
           <pre class="playbook-digest" id="playbookDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="benchmark-backdrop drawer-backdrop" id="benchmarkBackdrop" hidden></div>
+    <aside class="workspace-drawer benchmark-drawer" id="benchmarkDrawer" aria-label="Trust benchmark network" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Trust Benchmark Network</span>
+          <h2>Compare readiness without exposing raw proof</h2>
+        </div>
+        <button class="icon-button" id="closeBenchmarkButton" type="button" aria-label="Close benchmarks" title="Close benchmarks">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip benchmark-metrics" aria-label="Benchmark readiness health">
+        <article>
+          <span class="label">Readiness</span>
+          <strong id="benchmarkReadinessScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">At/Above Peer</span>
+          <strong id="benchmarkBandCount">0/0</strong>
+        </article>
+        <article>
+          <span class="label">Friction</span>
+          <strong id="benchmarkFrictionCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="benchmarkReceiptCount">0</strong>
+        </article>
+      </section>
+
+      <section class="benchmark-actions" aria-label="Trust benchmark controls">
+        <div>
+          <span class="label">Benchmark Status</span>
+          <strong id="benchmarkStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="prepareBenchmarkButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Prepare Benchmarks</span>
+        </button>
+        <button class="secondary-button" id="applyBenchmarkButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Apply Insight</span>
+        </button>
+        <button class="secondary-button" id="copyBenchmarkDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="benchmark-body">
+        <section class="benchmark-section" aria-label="Readiness bands">
+          <div class="section-heading">
+            <span class="label">Readiness Bands</span>
+            <span>Local category strength compared to privacy-safe peer medians</span>
+          </div>
+          <div class="benchmark-band-list" id="benchmarkBandList"></div>
+        </section>
+
+        <section class="benchmark-section" aria-label="Friction signals">
+          <div class="section-heading">
+            <span class="label">Friction Signals</span>
+            <span>Where buyers may reopen, challenge, or slow review</span>
+          </div>
+          <div class="benchmark-friction-list" id="benchmarkFrictionList"></div>
+        </section>
+
+        <section class="benchmark-section" aria-label="Proof investments">
+          <div class="section-heading">
+            <span class="label">Proof Investments</span>
+            <span>Next evidence moves that can lift readiness bands</span>
+          </div>
+          <div class="benchmark-investment-list" id="benchmarkInvestmentList"></div>
+        </section>
+
+        <section class="benchmark-section" aria-label="Benchmark guardrails">
+          <div class="section-heading">
+            <span class="label">Benchmark Guardrails</span>
+            <span>How learning stays useful without sharing customer material</span>
+          </div>
+          <div class="benchmark-guardrail-list" id="benchmarkGuardrailList"></div>
+        </section>
+
+        <section class="benchmark-section" aria-label="Benchmark receipts">
+          <div class="section-heading">
+            <span class="label">Benchmark Receipts</span>
+            <span>Recorded benchmark actions</span>
+          </div>
+          <div class="benchmark-receipt-list" id="benchmarkReceiptList"></div>
+        </section>
+
+        <section class="benchmark-section" aria-label="Benchmark digest">
+          <div class="section-heading">
+            <span class="label">Benchmark Digest</span>
+            <span>Copyable privacy-safe network note</span>
+          </div>
+          <pre class="benchmark-digest" id="benchmarkDigest"></pre>
         </section>
       </section>
     </aside>

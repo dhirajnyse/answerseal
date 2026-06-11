@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.26 Alpha
+**Current version:** v0.27 Alpha
 
-**Current phase:** Adaptive Trust Playbooks
+**Current phase:** Trust Benchmark Network
 
 ## Brand
 
@@ -116,6 +116,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Proof sequence that orders source binding, owner approval, buyer-safe handoff, and outcome capture
 - Human gates for buyer-facing answer changes, raw evidence sharing, network learning promotion, agent execution, trust room sharing, and deadline overrides
 - Playbook receipts for generated strategies, applied strategies, and copied playbook digests
+- Trust Benchmark Network drawer with readiness score, at/above peer bands, friction signals, benchmark status, and receipts
+- Privacy-safe readiness bands comparing local categories to peer medians without sharing raw answers, files, prompts, contracts, or buyer names
+- Friction signals for deadline pressure, proof gaps, stale sources, and category benchmark gaps
+- Proof investment recommendations that show which evidence moves can lift categories into peer bands
+- Benchmark guardrails, receipts, and copyable digest for explaining the closed-loop learning boundary
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -136,7 +141,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v22 export with adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v23 export with trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -154,13 +159,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.27 Alpha - Trust Benchmark Network
+## Next Phase: v0.28 Alpha - Autonomous Trust Orchestrator
 
-- Compare answers against privacy-safe category, freshness, confidence, and friction benchmark bands
-- Warn when a proof path resembles patterns that often create buyer challenges or reopen cycles
-- Score AI, privacy, incident, access, and continuity readiness using only abstract network signals
-- Show which proof investments reduce deal friction across buyer segments
-- Keep every benchmark grounded in local memory plus anonymized aggregate labels
+- Turn benchmark gaps, buyer deadlines, owner load, and trust-room activity into a governed review plan
+- Route requests, refreshes, and proof checks while preserving human approval for every claim and external share
+- Prioritize work across multiple buyers using deal value, SLA pressure, category risk, and proof reuse
+- Record orchestration receipts so closed-loop learning improves without silent action
+- Keep autonomous execution bounded by policy, tenant privacy, and reviewer consent
 
 ## License
 

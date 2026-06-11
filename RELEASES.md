@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.27 Alpha - Trust Benchmark Network
+
+Phase: Trust Benchmark Network
+
+- Added a Benchmarks drawer with readiness score, peer-band count, friction count, receipt count, and benchmark status.
+- Added privacy-safe readiness bands that compare local trust categories to peer medians without sharing raw answers, evidence, prompts, contracts, or buyer names.
+- Added friction signals for benchmark gaps, deadline pressure, stale sources, and open evidence work.
+- Added proof investment recommendations that show which evidence moves can lift categories into stronger peer bands.
+- Added benchmark guardrails, receipts, and a copyable digest that explain the local learning and network learning boundary.
+- Added benchmark status, score, category band count, friction count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v23 with trust benchmark network bands, friction signals, proof investments, guardrails, and benchmark digest.
+- Updated the build phases page with the v0.28 Autonomous Trust Orchestrator plan.
+
 ## v0.26 Alpha - Adaptive Trust Playbooks
 
 Phase: Adaptive Trust Playbooks

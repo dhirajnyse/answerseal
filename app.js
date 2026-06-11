@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.26 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v26";
+const BUILD_VERSION = "v0.27 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v27";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v26",
   "answerseal.workspace.v25",
   "answerseal.workspace.v24",
   "answerseal.workspace.v23",
@@ -690,6 +691,8 @@ function createInitialState() {
     outcomeActions: createInitialOutcomeActions(),
     playbookOpen: false,
     playbookActions: createInitialPlaybookActions(),
+    benchmarkOpen: false,
+    benchmarkActions: createInitialBenchmarkActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -778,6 +781,16 @@ function createInitialPlaybookActions() {
   return {
     status: "Draft",
     generatedAt: null,
+    appliedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialBenchmarkActions() {
+  return {
+    status: "Draft",
+    preparedAt: null,
     appliedAt: null,
     lastCopiedAt: null,
     receipts: [],
@@ -909,6 +922,7 @@ function loadWorkspaceState() {
       agentActions: normalizeAgentActions(workspace.agentActions ?? fresh.agentActions),
       outcomeActions: normalizeOutcomeActions(workspace.outcomeActions ?? fresh.outcomeActions),
       playbookActions: normalizePlaybookActions(workspace.playbookActions ?? fresh.playbookActions),
+      benchmarkActions: normalizeBenchmarkActions(workspace.benchmarkActions ?? fresh.benchmarkActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -930,6 +944,7 @@ function loadWorkspaceState() {
       agentOpen: false,
       outcomeOpen: false,
       playbookOpen: false,
+      benchmarkOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1310,6 +1325,26 @@ function normalizePlaybookReceipt(receipt) {
   };
 }
 
+function normalizeBenchmarkActions(actions) {
+  const status = ["Draft", "Benchmarks prepared", "Benchmark applied"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    preparedAt: actions?.preparedAt ?? null,
+    appliedAt: actions?.appliedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeBenchmarkReceipt) : [],
+  };
+}
+
+function normalizeBenchmarkReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `benchmark-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Benchmark action"),
+    detail: String(receipt?.detail ?? "Trust benchmark network action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1349,6 +1384,7 @@ const elements = {
   agentNavButton: document.querySelector("#agentNavButton"),
   outcomeNavButton: document.querySelector("#outcomeNavButton"),
   playbookNavButton: document.querySelector("#playbookNavButton"),
+  benchmarkNavButton: document.querySelector("#benchmarkNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1651,6 +1687,23 @@ const elements = {
   generatePlaybookButton: document.querySelector("#generatePlaybookButton"),
   applyPlaybookButton: document.querySelector("#applyPlaybookButton"),
   copyPlaybookDigestButton: document.querySelector("#copyPlaybookDigestButton"),
+  benchmarkBackdrop: document.querySelector("#benchmarkBackdrop"),
+  benchmarkDrawer: document.querySelector("#benchmarkDrawer"),
+  closeBenchmarkButton: document.querySelector("#closeBenchmarkButton"),
+  benchmarkReadinessScore: document.querySelector("#benchmarkReadinessScore"),
+  benchmarkBandCount: document.querySelector("#benchmarkBandCount"),
+  benchmarkFrictionCount: document.querySelector("#benchmarkFrictionCount"),
+  benchmarkReceiptCount: document.querySelector("#benchmarkReceiptCount"),
+  benchmarkStatus: document.querySelector("#benchmarkStatus"),
+  benchmarkBandList: document.querySelector("#benchmarkBandList"),
+  benchmarkFrictionList: document.querySelector("#benchmarkFrictionList"),
+  benchmarkInvestmentList: document.querySelector("#benchmarkInvestmentList"),
+  benchmarkGuardrailList: document.querySelector("#benchmarkGuardrailList"),
+  benchmarkReceiptList: document.querySelector("#benchmarkReceiptList"),
+  benchmarkDigest: document.querySelector("#benchmarkDigest"),
+  prepareBenchmarkButton: document.querySelector("#prepareBenchmarkButton"),
+  applyBenchmarkButton: document.querySelector("#applyBenchmarkButton"),
+  copyBenchmarkDigestButton: document.querySelector("#copyBenchmarkDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1762,6 +1815,7 @@ function bindEvents() {
   elements.agentNavButton.addEventListener("click", openEvidenceAgent);
   elements.outcomeNavButton.addEventListener("click", openOutcomeMemory);
   elements.playbookNavButton.addEventListener("click", openAdaptivePlaybooks);
+  elements.benchmarkNavButton.addEventListener("click", openTrustBenchmarks);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1899,6 +1953,11 @@ function bindEvents() {
   elements.generatePlaybookButton.addEventListener("click", generateTrustPlaybooks);
   elements.applyPlaybookButton.addEventListener("click", applyTopPlaybook);
   elements.copyPlaybookDigestButton.addEventListener("click", copyPlaybookDigest);
+  elements.closeBenchmarkButton.addEventListener("click", closeTrustBenchmarks);
+  elements.benchmarkBackdrop.addEventListener("click", closeTrustBenchmarks);
+  elements.prepareBenchmarkButton.addEventListener("click", prepareTrustBenchmarks);
+  elements.applyBenchmarkButton.addEventListener("click", applyBenchmarkInsight);
+  elements.copyBenchmarkDigestButton.addEventListener("click", copyBenchmarkDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1955,6 +2014,7 @@ function bindEvents() {
     if (state.agentOpen) closeEvidenceAgent();
     if (state.outcomeOpen) closeOutcomeMemory();
     if (state.playbookOpen) closeAdaptivePlaybooks();
+    if (state.benchmarkOpen) closeTrustBenchmarks();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1978,6 +2038,7 @@ function applyInitialHash() {
   if (hash === "agent" || hash === "evidence-agent" || hash === "governed-agent") openEvidenceAgent();
   if (hash === "outcomes" || hash === "outcome-memory" || hash === "trust-memory" || hash === "memory") openOutcomeMemory();
   if (hash === "playbooks" || hash === "trust-playbooks" || hash === "adaptive-playbooks" || hash === "strategy") openAdaptivePlaybooks();
+  if (hash === "benchmarks" || hash === "benchmark" || hash === "trust-benchmarks" || hash === "readiness") openTrustBenchmarks();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2015,6 +2076,7 @@ function render() {
   renderEvidenceAgent();
   renderOutcomeMemory();
   renderAdaptivePlaybooks();
+  renderTrustBenchmarks();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -2735,6 +2797,7 @@ function activateWorkspaceNav(target) {
   closeDataRoom(false);
   closePortal(false);
   closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -2753,6 +2816,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.playbookNavButton && state.playbookOpen) {
     closeAdaptivePlaybooks(false);
   }
+  if (activeButton !== elements.benchmarkNavButton && state.benchmarkOpen) {
+    closeTrustBenchmarks(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -2765,6 +2831,7 @@ function setActiveNav(activeButton) {
     elements.agentNavButton,
     elements.outcomeNavButton,
     elements.playbookNavButton,
+    elements.benchmarkNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3284,6 +3351,45 @@ function closeAdaptivePlaybooks(activateReview = true) {
   elements.playbookDrawer.classList.remove("is-open");
   elements.playbookDrawer.setAttribute("aria-hidden", "true");
   elements.playbookBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openTrustBenchmarks() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.benchmarkOpen = true;
+  setActiveNav(elements.benchmarkNavButton);
+  elements.benchmarkBackdrop.hidden = false;
+  elements.benchmarkDrawer.classList.add("is-open");
+  elements.benchmarkDrawer.setAttribute("aria-hidden", "false");
+  renderTrustBenchmarks();
+  elements.prepareBenchmarkButton.focus();
+}
+
+function closeTrustBenchmarks(activateReview = true) {
+  if (!state.benchmarkOpen && elements.benchmarkDrawer.getAttribute("aria-hidden") === "true") return;
+  state.benchmarkOpen = false;
+  elements.benchmarkDrawer.classList.remove("is-open");
+  elements.benchmarkDrawer.setAttribute("aria-hidden", "true");
+  elements.benchmarkBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -7820,6 +7926,441 @@ function playbookDigestText(strategy = adaptivePlaybookSnapshot()) {
   ].join("\n");
 }
 
+function renderTrustBenchmarks() {
+  const benchmark = trustBenchmarkSnapshot();
+
+  elements.benchmarkReadinessScore.textContent = `${benchmark.score}%`;
+  elements.benchmarkBandCount.textContent = `${benchmark.aheadCount}/${benchmark.bands.length}`;
+  elements.benchmarkFrictionCount.textContent = benchmark.frictionRows.length;
+  elements.benchmarkReceiptCount.textContent = benchmark.receipts.length;
+  elements.benchmarkStatus.textContent = benchmark.statusLabel;
+  elements.benchmarkDigest.textContent = benchmarkDigestText(benchmark);
+  elements.applyBenchmarkButton.disabled = benchmark.investments.length === 0;
+
+  elements.benchmarkBandList.innerHTML = "";
+  benchmark.bands.forEach((band) => {
+    const card = document.createElement("article");
+    card.className = `benchmark-band-card ${band.statusClass}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(band.category)}</span>
+          <strong>${escapeHtml(band.statusLabel)}</strong>
+        </div>
+        <b>${band.localScore}%</b>
+      </header>
+      <div class="benchmark-range" aria-label="${escapeHtml(band.category)} benchmark">
+        <div><span style="width: ${Math.max(0, Math.min(100, band.localScore))}%"></span></div>
+        <em>Strong peer band ${band.peerStrong}%</em>
+      </div>
+      <p>${escapeHtml(band.detail)}</p>
+      <footer>
+        <span>Peer median ${band.peerMedian}%</span>
+        <span>${escapeHtml(band.deltaLabel)}</span>
+      </footer>
+    `;
+    elements.benchmarkBandList.append(card);
+  });
+
+  elements.benchmarkFrictionList.innerHTML = "";
+  benchmark.frictionRows.forEach((row) => {
+    const card = document.createElement("article");
+    card.className = `benchmark-friction-card ${row.severity === "High" ? "is-high" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(row.title)}</strong>
+        <b>${escapeHtml(row.severity)}</b>
+      </header>
+      <p>${escapeHtml(row.detail)}</p>
+      <span>${escapeHtml(row.signal)}</span>
+    `;
+    elements.benchmarkFrictionList.append(card);
+  });
+
+  elements.benchmarkInvestmentList.innerHTML = "";
+  benchmark.investments.forEach((investment) => {
+    const card = document.createElement("article");
+    card.className = "benchmark-investment-card";
+    card.innerHTML = `
+      <span>${escapeHtml(investment.category)}</span>
+      <strong>${escapeHtml(investment.title)}</strong>
+      <p>${escapeHtml(investment.detail)}</p>
+      <b>${escapeHtml(investment.impact)}</b>
+    `;
+    elements.benchmarkInvestmentList.append(card);
+  });
+
+  elements.benchmarkGuardrailList.innerHTML = "";
+  benchmark.guardrails.forEach((guardrail) => {
+    const card = document.createElement("article");
+    card.className = "benchmark-guardrail-card";
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(guardrail.title)}</strong>
+        <span>${escapeHtml(guardrail.status)}</span>
+      </header>
+      <p>${escapeHtml(guardrail.detail)}</p>
+    `;
+    elements.benchmarkGuardrailList.append(card);
+  });
+
+  elements.benchmarkReceiptList.innerHTML = "";
+  if (benchmark.receipts.length === 0) {
+    elements.benchmarkReceiptList.append(emptyState("No benchmark receipts yet"));
+  }
+  benchmark.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "benchmark-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.benchmarkReceiptList.append(card);
+  });
+}
+
+function trustBenchmarkSnapshot() {
+  const coverage = coverageSnapshot();
+  const network = learningNetworkSnapshot();
+  const playbooks = adaptivePlaybookSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const connectors = connectorSnapshot();
+  const followUps = followUpSnapshot();
+  const pipeline = pipelineSnapshot();
+  const trustRoom = trustRoomSnapshot();
+  const bands = benchmarkBands({ coverage, gaps, connectors, outcomes });
+  const frictionRows = benchmarkFrictionRows({ bands, gaps, followUps, pipeline, connectors });
+  const investments = benchmarkInvestments({ bands, gaps, connectors, trustRoom, playbooks });
+  const guardrails = benchmarkGuardrails({ network, bands });
+  const aheadCount = bands.filter((band) => band.delta >= 0 && band.localScore >= 75).length;
+  const frictionPenalty = Math.min(32, frictionRows.filter((row) => row.severity === "High").length * 9 + frictionRows.length * 3);
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(coverage.score * 0.28 + network.privacyScore * 0.22 + playbooks.score * 0.18 + connectors.score * 0.14 + trustRoom.score * 0.1 + Math.max(0, 100 - frictionPenalty) * 0.08),
+    ),
+  );
+  const statusLabel = state.benchmarkActions.status === "Draft" ? "Ready to benchmark" : state.benchmarkActions.status;
+
+  return {
+    score,
+    statusLabel,
+    bands,
+    aheadCount,
+    frictionRows,
+    investments,
+    guardrails,
+    receipts: state.benchmarkActions.receipts.slice(-8).reverse(),
+    coverage,
+    network,
+    playbooks,
+    outcomes,
+    gaps,
+    connectors,
+    followUps,
+    pipeline,
+    trustRoom,
+  };
+}
+
+function benchmarkBands({ coverage, gaps, connectors, outcomes }) {
+  return coverage.items.map((item) => {
+    const peer = peerBenchmarkForCategory(item.category);
+    const categoryGaps = gaps.tasks.filter((task) => task.question.category === item.category);
+    const localScore = Math.max(0, Math.min(100, Math.round(item.score - categoryGaps.length * 4 - (item.status === "stale" ? 8 : 0))));
+    const delta = localScore - peer.median;
+    const friction = benchmarkFrictionLabel({ item, categoryGaps, connectors, outcomes });
+    const statusLabel = delta >= 8 ? "Ahead of peer band" : delta >= -6 ? "Inside peer band" : "Below peer band";
+    const statusClass = delta >= 8 ? "is-ahead" : delta >= -6 ? "is-even" : "is-behind";
+    const deltaLabel = delta >= 0 ? `+${delta} vs peer` : `${delta} vs peer`;
+    return {
+      category: item.category,
+      localScore,
+      peerMedian: peer.median,
+      peerStrong: peer.strong,
+      delta,
+      deltaLabel,
+      friction,
+      statusLabel,
+      statusClass,
+      detail: `${formatCoverageStatus(item.status)} coverage with ${item.sources} source${item.sources === 1 ? "" : "s"}, ${item.openRisks} open risk${item.openRisks === 1 ? "" : "s"}, and ${friction}.`,
+      recommendation: peer.recommendation,
+      proofType: peer.proofType,
+    };
+  });
+}
+
+function peerBenchmarkForCategory(category) {
+  const peerBands = {
+    "AI Governance": {
+      median: 78,
+      strong: 92,
+      proofType: "AI usage policy and model-training language",
+      recommendation: "Keep no-training language current and pair it with human approval evidence.",
+    },
+    Privacy: {
+      median: 74,
+      strong: 90,
+      proofType: "DPA, retention, deletion, and subprocessors",
+      recommendation: "Attach DPA and deletion evidence before legal review.",
+    },
+    Incident: {
+      median: 71,
+      strong: 88,
+      proofType: "Incident notification SLA",
+      recommendation: "Refresh customer-facing incident notification proof before buyer escalation.",
+    },
+    Access: {
+      median: 82,
+      strong: 94,
+      proofType: "SSO, MFA, and access review",
+      recommendation: "Show current access review evidence with SSO/MFA policy language.",
+    },
+    Encryption: {
+      median: 84,
+      strong: 95,
+      proofType: "Encryption at rest and transit controls",
+      recommendation: "Pair SOC 2 control evidence with concise encryption claims.",
+    },
+    Continuity: {
+      median: 76,
+      strong: 90,
+      proofType: "BCP, backups, RTO, and RPO",
+      recommendation: "Prepare RTO/RPO proof before continuity questions enter buyer portals.",
+    },
+    "Security Testing": {
+      median: 79,
+      strong: 91,
+      proofType: "Pen test and vulnerability management",
+      recommendation: "Attach latest testing evidence and remediation cadence.",
+    },
+  };
+
+  return (
+    peerBands[category] ?? {
+      median: 75,
+      strong: 88,
+      proofType: "Approved policy evidence",
+      recommendation: "Attach current source evidence and owner approval before buyer handoff.",
+    }
+  );
+}
+
+function benchmarkFrictionLabel({ item, categoryGaps, connectors, outcomes }) {
+  if (categoryGaps.some((gap) => gap.severity === "High")) return "high challenge likelihood";
+  if (item.status === "missing") return "missing proof friction";
+  if (item.status === "stale" || connectors.staleCount > 0) return "freshness friction";
+  if (item.openRisks > 0) return "reviewer friction";
+  if (outcomes.shareablePatterns >= 3 && item.status === "ready") return "low friction pattern";
+  return "normal buyer friction";
+}
+
+function benchmarkFrictionRows({ bands, gaps, followUps, pipeline, connectors }) {
+  const rows = bands
+    .filter((band) => band.delta < -6 || band.friction.includes("friction") || band.friction.includes("challenge"))
+    .map((band) => ({
+      title: `${band.category} benchmark gap`,
+      severity: band.delta < -16 || band.friction.includes("high") ? "High" : "Medium",
+      detail: `${band.category} is ${band.deltaLabel}; ${band.recommendation}`,
+      signal: `${band.proofType} | ${band.friction}`,
+      category: band.category,
+    }));
+
+  if (followUps.slaCount > 0 || pipeline.slaRiskCount > 0) {
+    rows.unshift({
+      title: "Deadline friction signal",
+      severity: "High",
+      detail: `${followUps.slaCount + pipeline.slaRiskCount} SLA risk signal${followUps.slaCount + pipeline.slaRiskCount === 1 ? "" : "s"} could force weak answers into buyer portals.`,
+      signal: "Peer-safe label: deadline pressure",
+      category: "SLA",
+    });
+  }
+
+  if (connectors.staleCount > 0) {
+    rows.push({
+      title: "Source freshness signal",
+      severity: connectors.staleCount > 1 ? "High" : "Medium",
+      detail: `${connectors.staleCount} stale source signal${connectors.staleCount === 1 ? "" : "s"} may lower benchmark readiness before the next buyer review.`,
+      signal: "Peer-safe label: stale proof",
+      category: "Evidence",
+    });
+  }
+
+  if (gaps.highRiskCount > 0) {
+    rows.unshift({
+      title: "High-risk proof gap signal",
+      severity: "High",
+      detail: `${gaps.highRiskCount} high-risk proof gap${gaps.highRiskCount === 1 ? "" : "s"} should be fixed before the pattern is promoted.`,
+      signal: "Peer-safe label: proof gap",
+      category: gaps.tasks[0]?.question.category ?? "Evidence",
+    });
+  }
+
+  return rows.slice(0, 6);
+}
+
+function benchmarkInvestments({ bands, gaps, connectors, trustRoom, playbooks }) {
+  const behind = bands.filter((band) => band.delta < -6).sort((a, b) => a.delta - b.delta);
+  const investments = behind.map((band) => ({
+    category: band.category,
+    title: `Lift ${band.category} into peer band`,
+    detail: band.recommendation,
+    impact: `Expected lift ${Math.min(24, Math.max(8, Math.abs(band.delta)))} pts`,
+    questionId: state.questions.find((question) => question.category === band.category)?.id ?? getActiveQuestion().id,
+  }));
+
+  if (gaps.tasks[0]) {
+    investments.unshift({
+      category: gaps.tasks[0].question.category,
+      title: gaps.tasks[0].request.title,
+      detail: `Route ${gaps.tasks[0].owner.name} to collect ${gaps.tasks[0].request.sourceHint}.`,
+      impact: `Removes ${gaps.tasks[0].score}% proof risk`,
+      questionId: gaps.tasks[0].question.id,
+    });
+  }
+
+  if (connectors.staleCount > 0) {
+    investments.push({
+      category: "Evidence",
+      title: "Refresh stale benchmark sources",
+      detail: "Refresh stale connector-backed documents before their weak freshness band becomes a buyer challenge.",
+      impact: `${connectors.staleCount} freshness signal${connectors.staleCount === 1 ? "" : "s"}`,
+      questionId: getActiveQuestion().id,
+    });
+  }
+
+  if (trustRoom.score >= 80 && playbooks.playbooks.some((playbook) => playbook.motion === "Open trust room")) {
+    investments.push({
+      category: "Trust Room",
+      title: "Promote trust room benchmark",
+      detail: "Use scoped room handoff when multiple sealed answers are ready; record views and copies as private outcome signals.",
+      impact: `${trustRoom.score}% room readiness`,
+      questionId: getActiveQuestion().id,
+    });
+  }
+
+  return investments.slice(0, 5);
+}
+
+function benchmarkGuardrails({ network, bands }) {
+  return [
+    {
+      title: "No raw proof leaves tenant",
+      status: "Enforced",
+      detail: "Benchmarking uses categories, bands, friction labels, and outcome labels. It never uses raw answers, files, prompts, contracts, or buyer names.",
+    },
+    {
+      title: "Cohort threshold",
+      status: "Simulated",
+      detail: "Peer comparisons are shown as readiness bands only after enough similar organizations produce the same abstract pattern.",
+    },
+    {
+      title: "Reviewer control",
+      status: "Human gate",
+      detail: "Benchmarks can suggest proof investments, but cannot approve buyer-facing claims or share evidence.",
+    },
+    {
+      title: "Network privacy",
+      status: `${network.privacyScore}%`,
+      detail: `${bands.filter((band) => band.delta >= 0).length}/${bands.length} categories are at or above peer median without exposing customer data.`,
+    },
+  ];
+}
+
+function prepareTrustBenchmarks() {
+  const benchmark = trustBenchmarkSnapshot();
+  const detail = `Trust benchmarks prepared with ${benchmark.aheadCount}/${benchmark.bands.length} categories at or above peer band, ${benchmark.frictionRows.length} friction signals, and ${benchmark.score}% readiness.`;
+  state.benchmarkActions.status = "Benchmarks prepared";
+  state.benchmarkActions.preparedAt = new Date().toISOString();
+  addBenchmarkReceipt("Benchmarks prepared", detail);
+  addAudit("Trust benchmarks prepared", detail);
+  renderTrustBenchmarks();
+  renderAudit();
+  showToast("Trust benchmark network prepared.");
+}
+
+function applyBenchmarkInsight() {
+  const benchmark = trustBenchmarkSnapshot();
+  const investment = benchmark.investments[0];
+  if (!investment) return;
+  const question = state.questions.find((item) => item.id === investment.questionId) ?? getActiveQuestion();
+  state.activeQuestionId = question.id;
+  question.routeStatus = "Owner review";
+  question.routedAt = new Date().toISOString();
+  if (question.status === "draft" && question.confidence < 85) question.status = "needs-evidence";
+
+  const detail = `Applied benchmark insight: ${investment.title}. ${investment.detail}`;
+  state.benchmarkActions.status = "Benchmark applied";
+  state.benchmarkActions.appliedAt = new Date().toISOString();
+  addBenchmarkReceipt("Benchmark applied", detail);
+  addAudit("Benchmark insight applied", detail);
+  render();
+  showToast("Benchmark insight applied.");
+}
+
+function copyBenchmarkDigest() {
+  const benchmark = trustBenchmarkSnapshot();
+  state.benchmarkActions.lastCopiedAt = new Date().toISOString();
+  addBenchmarkReceipt("Benchmark digest copied", "Trust benchmark network digest copied.");
+  addAudit("Benchmark digest copied", "Trust benchmark network digest copied.");
+  renderTrustBenchmarks();
+  renderAudit();
+  copyText(benchmarkDigestText(benchmark), "Trust benchmark digest copied.");
+}
+
+function addBenchmarkReceipt(action, detail) {
+  state.benchmarkActions.receipts = [
+    ...(state.benchmarkActions.receipts ?? []),
+    {
+      id: `benchmark-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function benchmarkDigestText(benchmark = trustBenchmarkSnapshot()) {
+  const bandLines = benchmark.bands.map((band, index) => `${index + 1}. ${band.category}: ${band.localScore}% local | peer ${band.peerMedian}% | ${band.deltaLabel} | ${band.friction}`).join("\n");
+  const frictionLines = benchmark.frictionRows.map((row, index) => `${index + 1}. ${row.severity}: ${row.title} - ${row.detail}`).join("\n");
+  const investmentLines = benchmark.investments.map((investment, index) => `${index + 1}. ${investment.category}: ${investment.title} | ${investment.impact} | ${investment.detail}`).join("\n");
+  const guardrailLines = benchmark.guardrails.map((guardrail, index) => `${index + 1}. ${guardrail.title}: ${guardrail.status} - ${guardrail.detail}`).join("\n");
+  const receiptLines = benchmark.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Trust Benchmark Network",
+    `Build: ${BUILD_VERSION}`,
+    `Benchmark status: ${benchmark.statusLabel}`,
+    `Readiness score: ${benchmark.score}%`,
+    `Categories at or above peer band: ${benchmark.aheadCount}/${benchmark.bands.length}`,
+    `Friction signals: ${benchmark.frictionRows.length}`,
+    "",
+    "Readiness bands:",
+    bandLines,
+    "",
+    "Friction signals:",
+    frictionLines || "No severe friction signals.",
+    "",
+    "Proof investments:",
+    investmentLines || "No benchmark investments needed.",
+    "",
+    "Guardrails:",
+    guardrailLines,
+    "",
+    "Benchmark receipts:",
+    receiptLines || "No benchmark receipts yet.",
+    "",
+    "Benchmark rule:",
+    "- Local tenant learns exact source, owner, answer, and outcome details.",
+    "- Network benchmarks learn only privacy-safe bands, friction labels, proof types, and outcome labels.",
+    "- Benchmarks guide investment; human reviewers decide what ships.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -10006,6 +10547,11 @@ function exportCsv() {
     "Playbooks",
     "Playbook Gates",
     "Playbook Receipts",
+    "Benchmark Status",
+    "Benchmark Score",
+    "Benchmark Bands",
+    "Benchmark Friction",
+    "Benchmark Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -10029,6 +10575,7 @@ function exportCsv() {
     const agent = governedAgentSnapshot();
     const outcomes = trustOutcomeMemorySnapshot();
     const playbooks = adaptivePlaybookSnapshot();
+    const benchmarks = trustBenchmarkSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -10096,6 +10643,11 @@ function exportCsv() {
       playbooks.playbooks.length,
       playbooks.gates.length,
       playbooks.receipts.length,
+      benchmarks.statusLabel,
+      `${benchmarks.score}%`,
+      `${benchmarks.aheadCount}/${benchmarks.bands.length}`,
+      benchmarks.frictionRows.length,
+      benchmarks.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -10129,6 +10681,7 @@ function exportReviewPack() {
   const agent = governedAgentSnapshot();
   const outcomes = trustOutcomeMemorySnapshot();
   const playbooks = adaptivePlaybookSnapshot();
+  const benchmarks = trustBenchmarkSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -10146,7 +10699,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v22</h1>
+        <h1>AnswerSeal Review Pack v23</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -10586,6 +11139,109 @@ function exportReviewPack() {
         </table>
         <h2>Playbook Digest</h2>
         <pre>${escapeHtml(playbookDigestText(playbooks))}</pre>
+        <h2>Trust Benchmark Network</h2>
+        <p>Status: ${escapeHtml(benchmarks.statusLabel)} | Readiness score: ${benchmarks.score}% | At or above peer band: ${benchmarks.aheadCount}/${benchmarks.bands.length} | Friction signals: ${benchmarks.frictionRows.length} | Receipts: ${benchmarks.receipts.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Local</th>
+              <th>Peer Median</th>
+              <th>Delta</th>
+              <th>Friction</th>
+              <th>Recommendation</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${benchmarks.bands
+              .map(
+                (band) => `
+                  <tr>
+                    <td>${escapeHtml(band.category)}</td>
+                    <td>${band.localScore}%</td>
+                    <td>${band.peerMedian}%</td>
+                    <td class="${band.status === "Behind" ? "risk" : "ok"}">${escapeHtml(band.deltaLabel)}</td>
+                    <td>${escapeHtml(band.friction)}</td>
+                    <td>${escapeHtml(band.recommendation)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Benchmark Friction Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Severity</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${benchmarks.frictionRows
+              .map(
+                (row) => `
+                  <tr>
+                    <td>${escapeHtml(row.title)}</td>
+                    <td class="${row.severity === "High" ? "risk" : "ok"}">${escapeHtml(row.severity)}</td>
+                    <td>${escapeHtml(row.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Benchmark Proof Investments</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Investment</th>
+              <th>Impact</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${benchmarks.investments
+              .map(
+                (investment) => `
+                  <tr>
+                    <td>${escapeHtml(investment.category)}</td>
+                    <td>${escapeHtml(investment.title)}</td>
+                    <td>${escapeHtml(investment.impact)}</td>
+                    <td>${escapeHtml(investment.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Benchmark Guardrails</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Guardrail</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${benchmarks.guardrails
+              .map(
+                (guardrail) => `
+                  <tr>
+                    <td>${escapeHtml(guardrail.title)}</td>
+                    <td>${escapeHtml(guardrail.status)}</td>
+                    <td>${escapeHtml(guardrail.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Benchmark Digest</h2>
+        <pre>${escapeHtml(benchmarkDigestText(benchmarks))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -11298,7 +11954,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v22 created with adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v23 created with trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -11311,12 +11967,13 @@ function exportReviewPack() {
   renderEvidenceAgent();
   renderOutcomeMemory();
   renderAdaptivePlaybooks();
+  renderTrustBenchmarks();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v22 exported.");
+  showToast("Review Pack v23 exported.");
 }
 
 function toCsv(rows) {
@@ -11379,6 +12036,7 @@ function serializeWorkspace() {
     agentActions: state.agentActions,
     outcomeActions: state.outcomeActions,
     playbookActions: state.playbookActions,
+    benchmarkActions: state.benchmarkActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -11412,6 +12070,7 @@ function resetWorkspace() {
   closeEvidenceAgent(false);
   closeOutcomeMemory(false);
   closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
   closeWorkspace(false);
   closeLibrary();
   render();
