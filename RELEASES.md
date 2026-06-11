@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.30 Alpha - Trust Policy Simulator
+
+Phase: Trust Policy Simulator
+
+- Added a Simulator drawer with simulator score, scenario count, best forecast lift, blocked signal count, simulator status, and simulation receipts.
+- Added counterfactual scenarios for AI policy wording, incident/source refreshes, network-safe pattern promotion, legacy-source quarantine, deadline overrides, freshness windows, and buyer challenge recovery.
+- Added forecast deltas for approval odds, buyer friction, network shareability, drift risk, and blocked shortcut risk.
+- Added simulation gates that separate rehearsal from production memory, approved answers, and network learning until human review passes.
+- Added recommended actions that turn the safest simulated move into governed owner-routed work without silently changing buyer-facing claims.
+- Added simulator status, score, scenario count, best forecast lift, blocked signal count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v26 with trust policy simulator scenarios, forecasts, gates, recommended actions, and digest.
+- Updated the build phases page with the v0.31 Reinforcement Control Room plan.
+
 ## v0.29 Alpha - Federated Trust Graph
 
 Phase: Federated Trust Graph

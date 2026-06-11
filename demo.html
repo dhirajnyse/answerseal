@@ -151,6 +151,10 @@
             <svg aria-hidden="true"><use href="#icon-link"></use></svg>
             <span>Graph</span>
           </button>
+          <button class="nav-item" id="simulatorNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+            <span>Simulator</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -213,8 +217,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.29 Alpha</strong>
-          <span>Federated Trust Graph</span>
+          <strong>v0.30 Alpha</strong>
+          <span>Trust Policy Simulator</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -226,7 +230,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.29 Alpha</span>
+            <span class="label">Security questionnaire | v0.30 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -2094,6 +2098,111 @@
             <span>Copyable federated learning note</span>
           </div>
           <pre class="graph-digest" id="graphDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="simulator-backdrop drawer-backdrop" id="simulatorBackdrop" hidden></div>
+    <aside class="workspace-drawer simulator-drawer" id="simulatorDrawer" aria-label="Trust policy simulator" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Trust Policy Simulator</span>
+          <h2>Rehearse trust changes before production memory updates</h2>
+        </div>
+        <button class="icon-button" id="closeSimulatorButton" type="button" aria-label="Close simulator" title="Close simulator">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip simulator-metrics" aria-label="Trust policy simulator health">
+        <article>
+          <span class="label">Score</span>
+          <strong id="simulatorScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Scenarios</span>
+          <strong id="simulatorScenarioCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Best Lift</span>
+          <strong id="simulatorLift">+0</strong>
+        </article>
+        <article>
+          <span class="label">Blocked</span>
+          <strong id="simulatorBlockCount">0</strong>
+        </article>
+      </section>
+
+      <section class="simulator-actions" aria-label="Trust policy simulator controls">
+        <div>
+          <span class="label">Simulator Status</span>
+          <strong id="simulatorStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="runSimulatorButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Run Simulations</span>
+        </button>
+        <button class="secondary-button" id="applySimulationButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Queue Best Move</span>
+        </button>
+        <button class="secondary-button" id="approveSimulationGateButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+          <span>Approve Gate</span>
+        </button>
+        <button class="secondary-button" id="copySimulatorDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="simulator-body">
+        <section class="simulator-section" aria-label="Counterfactual scenarios">
+          <div class="section-heading">
+            <span class="label">Counterfactual Scenarios</span>
+            <span>Change, block, or wait before any buyer-facing action</span>
+          </div>
+          <div class="simulator-scenario-list" id="simulatorScenarioList"></div>
+        </section>
+
+        <section class="simulator-section" aria-label="Forecast deltas">
+          <div class="section-heading">
+            <span class="label">Forecast Deltas</span>
+            <span>Expected approval, friction, network, and drift impact</span>
+          </div>
+          <div class="simulator-forecast-list" id="simulatorForecastList"></div>
+        </section>
+
+        <section class="simulator-section" aria-label="Simulation gates">
+          <div class="section-heading">
+            <span class="label">Simulation Gates</span>
+            <span>Why rehearsal does not mutate production memory</span>
+          </div>
+          <div class="simulator-gate-list" id="simulatorGateList"></div>
+        </section>
+
+        <section class="simulator-section" aria-label="Recommended actions">
+          <div class="section-heading">
+            <span class="label">Recommended Actions</span>
+            <span>How a simulated move becomes governed work</span>
+          </div>
+          <div class="simulator-action-list" id="simulatorActionList"></div>
+        </section>
+
+        <section class="simulator-section" aria-label="Simulation receipts">
+          <div class="section-heading">
+            <span class="label">Simulation Receipts</span>
+            <span>Recorded counterfactual decisions</span>
+          </div>
+          <div class="simulator-receipt-list" id="simulatorReceiptList"></div>
+        </section>
+
+        <section class="simulator-section" aria-label="Simulator digest">
+          <div class="section-heading">
+            <span class="label">Simulator Digest</span>
+            <span>Copyable change, block, or wait note</span>
+          </div>
+          <pre class="simulator-digest" id="simulatorDigest"></pre>
         </section>
       </section>
     </aside>

@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.29 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v29";
+const BUILD_VERSION = "v0.30 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v30";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v29",
   "answerseal.workspace.v28",
   "answerseal.workspace.v27",
   "answerseal.workspace.v26",
@@ -699,6 +700,8 @@ function createInitialState() {
     orchestratorActions: createInitialOrchestratorActions(),
     graphOpen: false,
     graphActions: createInitialGraphActions(),
+    simulatorOpen: false,
+    simulatorActions: createInitialSimulatorActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -819,6 +822,17 @@ function createInitialGraphActions() {
     status: "Draft",
     mappedAt: null,
     promotedAt: null,
+    gateApprovedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialSimulatorActions() {
+  return {
+    status: "Draft",
+    simulatedAt: null,
+    appliedAt: null,
     gateApprovedAt: null,
     lastCopiedAt: null,
     receipts: [],
@@ -953,6 +967,7 @@ function loadWorkspaceState() {
       benchmarkActions: normalizeBenchmarkActions(workspace.benchmarkActions ?? fresh.benchmarkActions),
       orchestratorActions: normalizeOrchestratorActions(workspace.orchestratorActions ?? fresh.orchestratorActions),
       graphActions: normalizeGraphActions(workspace.graphActions ?? fresh.graphActions),
+      simulatorActions: normalizeSimulatorActions(workspace.simulatorActions ?? fresh.simulatorActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -977,6 +992,7 @@ function loadWorkspaceState() {
       benchmarkOpen: false,
       orchestratorOpen: false,
       graphOpen: false,
+      simulatorOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1419,6 +1435,27 @@ function normalizeGraphReceipt(receipt) {
   };
 }
 
+function normalizeSimulatorActions(actions) {
+  const status = ["Draft", "Simulated", "Recommendation queued", "Gate approved"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    simulatedAt: actions?.simulatedAt ?? null,
+    appliedAt: actions?.appliedAt ?? null,
+    gateApprovedAt: actions?.gateApprovedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeSimulatorReceipt) : [],
+  };
+}
+
+function normalizeSimulatorReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `simulator-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Simulation action"),
+    detail: String(receipt?.detail ?? "Trust policy simulation action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1461,6 +1498,7 @@ const elements = {
   benchmarkNavButton: document.querySelector("#benchmarkNavButton"),
   orchestratorNavButton: document.querySelector("#orchestratorNavButton"),
   graphNavButton: document.querySelector("#graphNavButton"),
+  simulatorNavButton: document.querySelector("#simulatorNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1817,6 +1855,24 @@ const elements = {
   promoteGraphButton: document.querySelector("#promoteGraphButton"),
   approveGraphGateButton: document.querySelector("#approveGraphGateButton"),
   copyGraphDigestButton: document.querySelector("#copyGraphDigestButton"),
+  simulatorBackdrop: document.querySelector("#simulatorBackdrop"),
+  simulatorDrawer: document.querySelector("#simulatorDrawer"),
+  closeSimulatorButton: document.querySelector("#closeSimulatorButton"),
+  simulatorScore: document.querySelector("#simulatorScore"),
+  simulatorScenarioCount: document.querySelector("#simulatorScenarioCount"),
+  simulatorLift: document.querySelector("#simulatorLift"),
+  simulatorBlockCount: document.querySelector("#simulatorBlockCount"),
+  simulatorStatus: document.querySelector("#simulatorStatus"),
+  simulatorScenarioList: document.querySelector("#simulatorScenarioList"),
+  simulatorForecastList: document.querySelector("#simulatorForecastList"),
+  simulatorGateList: document.querySelector("#simulatorGateList"),
+  simulatorActionList: document.querySelector("#simulatorActionList"),
+  simulatorReceiptList: document.querySelector("#simulatorReceiptList"),
+  simulatorDigest: document.querySelector("#simulatorDigest"),
+  runSimulatorButton: document.querySelector("#runSimulatorButton"),
+  applySimulationButton: document.querySelector("#applySimulationButton"),
+  approveSimulationGateButton: document.querySelector("#approveSimulationGateButton"),
+  copySimulatorDigestButton: document.querySelector("#copySimulatorDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1931,6 +1987,7 @@ function bindEvents() {
   elements.benchmarkNavButton.addEventListener("click", openTrustBenchmarks);
   elements.orchestratorNavButton.addEventListener("click", openTrustOrchestrator);
   elements.graphNavButton.addEventListener("click", openFederatedGraph);
+  elements.simulatorNavButton.addEventListener("click", openPolicySimulator);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1990,6 +2047,7 @@ function bindEvents() {
     renderTrustBenchmarks();
     renderTrustOrchestrator();
     renderFederatedGraph();
+    renderPolicySimulator();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2088,6 +2146,12 @@ function bindEvents() {
   elements.promoteGraphButton.addEventListener("click", promoteGraphPattern);
   elements.approveGraphGateButton.addEventListener("click", approveGraphGate);
   elements.copyGraphDigestButton.addEventListener("click", copyGraphDigest);
+  elements.closeSimulatorButton.addEventListener("click", closePolicySimulator);
+  elements.simulatorBackdrop.addEventListener("click", closePolicySimulator);
+  elements.runSimulatorButton.addEventListener("click", runPolicySimulations);
+  elements.applySimulationButton.addEventListener("click", applyPolicySimulation);
+  elements.approveSimulationGateButton.addEventListener("click", approveSimulationGate);
+  elements.copySimulatorDigestButton.addEventListener("click", copySimulatorDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2147,6 +2211,7 @@ function bindEvents() {
     if (state.benchmarkOpen) closeTrustBenchmarks();
     if (state.orchestratorOpen) closeTrustOrchestrator();
     if (state.graphOpen) closeFederatedGraph();
+    if (state.simulatorOpen) closePolicySimulator();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2173,6 +2238,7 @@ function applyInitialHash() {
   if (hash === "benchmarks" || hash === "benchmark" || hash === "trust-benchmarks" || hash === "readiness") openTrustBenchmarks();
   if (hash === "orchestrator" || hash === "orchestration" || hash === "autonomous-orchestrator" || hash === "work-plan") openTrustOrchestrator();
   if (hash === "graph" || hash === "trust-graph" || hash === "federated-graph" || hash === "federation") openFederatedGraph();
+  if (hash === "simulator" || hash === "policy-simulator" || hash === "simulation" || hash === "rehearsal") openPolicySimulator();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2213,6 +2279,7 @@ function render() {
   renderTrustBenchmarks();
   renderTrustOrchestrator();
   renderFederatedGraph();
+  renderPolicySimulator();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -2936,6 +3003,7 @@ function activateWorkspaceNav(target) {
   closeTrustBenchmarks(false);
   closeTrustOrchestrator(false);
   closeFederatedGraph(false);
+  closePolicySimulator(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -2963,6 +3031,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.graphNavButton && state.graphOpen) {
     closeFederatedGraph(false);
   }
+  if (activeButton !== elements.simulatorNavButton && state.simulatorOpen) {
+    closePolicySimulator(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -2978,6 +3049,7 @@ function setActiveNav(activeButton) {
     elements.benchmarkNavButton,
     elements.orchestratorNavButton,
     elements.graphNavButton,
+    elements.simulatorNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3592,6 +3664,7 @@ function openFederatedGraph() {
   closeAdaptivePlaybooks(false);
   closeTrustBenchmarks(false);
   closeTrustOrchestrator(false);
+  closePolicySimulator(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3617,6 +3690,47 @@ function closeFederatedGraph(activateReview = true) {
   elements.graphDrawer.classList.remove("is-open");
   elements.graphDrawer.setAttribute("aria-hidden", "true");
   elements.graphBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openPolicySimulator() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.simulatorOpen = true;
+  setActiveNav(elements.simulatorNavButton);
+  elements.simulatorBackdrop.hidden = false;
+  elements.simulatorDrawer.classList.add("is-open");
+  elements.simulatorDrawer.setAttribute("aria-hidden", "false");
+  renderPolicySimulator();
+}
+
+function closePolicySimulator(activateReview = true) {
+  if (!state.simulatorOpen && elements.simulatorDrawer.getAttribute("aria-hidden") === "true") return;
+  state.simulatorOpen = false;
+  elements.simulatorDrawer.classList.remove("is-open");
+  elements.simulatorDrawer.setAttribute("aria-hidden", "true");
+  elements.simulatorBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -9578,6 +9692,482 @@ function graphDigestText(graph = federatedGraphSnapshot()) {
   ].join("\n");
 }
 
+function renderPolicySimulator() {
+  const simulator = policySimulatorSnapshot();
+
+  elements.simulatorScore.textContent = `${simulator.score}%`;
+  elements.simulatorScenarioCount.textContent = simulator.scenarios.length;
+  elements.simulatorLift.textContent = `+${simulator.bestLift}`;
+  elements.simulatorBlockCount.textContent = simulator.blockedCount;
+  elements.simulatorStatus.textContent = simulator.statusLabel;
+  elements.simulatorDigest.textContent = simulatorDigestText(simulator);
+  elements.applySimulationButton.disabled = !simulator.scenarios.some((scenario) => scenario.status === "Recommended");
+
+  elements.simulatorScenarioList.innerHTML = "";
+  simulator.scenarios.forEach((scenario) => {
+    const card = document.createElement("article");
+    card.className = `simulator-scenario-card ${scenario.status === "Blocked" ? "is-blocked" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(scenario.type)}</span>
+          <strong>${escapeHtml(scenario.title)}</strong>
+        </div>
+        <b>${escapeHtml(scenario.status)}</b>
+      </header>
+      <p>${escapeHtml(scenario.detail)}</p>
+      <div class="simulator-before-after">
+        <span>${escapeHtml(scenario.before)}</span>
+        <span>${escapeHtml(scenario.after)}</span>
+      </div>
+      <footer>
+        <span>${escapeHtml(scenario.owner)}</span>
+        <span>${scenario.lift >= 0 ? "+" : ""}${scenario.lift} forecast</span>
+        <span>${escapeHtml(scenario.guardrail)}</span>
+      </footer>
+    `;
+    elements.simulatorScenarioList.append(card);
+  });
+
+  elements.simulatorForecastList.innerHTML = "";
+  simulator.forecasts.forEach((forecast) => {
+    const card = document.createElement("article");
+    card.className = `simulator-forecast-card ${forecast.direction === "Risk" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(forecast.metric)}</strong>
+        <b>${escapeHtml(forecast.delta)}</b>
+      </header>
+      <p>${escapeHtml(forecast.detail)}</p>
+    `;
+    elements.simulatorForecastList.append(card);
+  });
+
+  elements.simulatorGateList.innerHTML = "";
+  simulator.gates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `simulator-gate-card ${gate.status === "Blocked" || gate.status === "Review" ? "is-blocked" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <b>${escapeHtml(gate.status)}</b>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+    `;
+    elements.simulatorGateList.append(card);
+  });
+
+  elements.simulatorActionList.innerHTML = "";
+  simulator.actions.forEach((action) => {
+    const card = document.createElement("article");
+    card.className = "simulator-action-card";
+    card.innerHTML = `
+      <span>${escapeHtml(action.step)}</span>
+      <div>
+        <strong>${escapeHtml(action.title)}</strong>
+        <p>${escapeHtml(action.detail)}</p>
+      </div>
+      <b>${escapeHtml(action.mode)}</b>
+    `;
+    elements.simulatorActionList.append(card);
+  });
+
+  elements.simulatorReceiptList.innerHTML = "";
+  if (simulator.receipts.length === 0) {
+    elements.simulatorReceiptList.append(emptyState("No simulation receipts yet"));
+  }
+  simulator.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "simulator-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.simulatorReceiptList.append(card);
+  });
+}
+
+function policySimulatorSnapshot() {
+  const coverage = coverageSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const connectors = connectorSnapshot();
+  const network = learningNetworkSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const benchmarks = trustBenchmarkSnapshot();
+  const graph = federatedGraphSnapshot();
+  const orchestrator = trustOrchestratorSnapshot();
+  const scenarios = policySimulationScenarios({ coverage, gaps, connectors, network, outcomes, benchmarks, graph, orchestrator });
+  const forecasts = policySimulationForecasts({ scenarios, gaps, connectors, network, graph, outcomes });
+  const gates = policySimulationGates({ scenarios, graph, network, gaps });
+  const actions = policySimulationActions({ scenarios, forecasts, gates });
+  const bestLift = Math.max(0, ...scenarios.filter((scenario) => scenario.status === "Recommended").map((scenario) => scenario.lift));
+  const blockedCount = scenarios.filter((scenario) => scenario.status === "Blocked").length + gates.filter((gate) => gate.status === "Blocked").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        graph.score * 0.24
+          + network.privacyScore * 0.18
+          + outcomes.score * 0.16
+          + benchmarks.score * 0.14
+          + coverage.score * 0.12
+          + Math.min(100, bestLift * 4) * 0.08
+          + Math.max(0, 100 - blockedCount * 10) * 0.08,
+      ),
+    ),
+  );
+  const statusLabel = state.simulatorActions.status === "Draft" ? "Ready to simulate" : state.simulatorActions.status;
+
+  return {
+    score,
+    statusLabel,
+    scenarios,
+    forecasts,
+    gates,
+    actions,
+    bestLift,
+    blockedCount,
+    receipts: state.simulatorActions.receipts.slice(-8).reverse(),
+    coverage,
+    gaps,
+    connectors,
+    network,
+    outcomes,
+    benchmarks,
+    graph,
+    orchestrator,
+  };
+}
+
+function policySimulationScenarios({ coverage, gaps, connectors, network, outcomes, benchmarks, graph, orchestrator }) {
+  const active = getActiveQuestion();
+  const aiQuestion = state.questions.find((question) => question.category === "AI Governance") ?? active;
+  const incidentGap = gaps.tasks.find((task) => task.question.category === "Incident") ?? gaps.tasks[0];
+  const staleConnector = connectors.connectors.find((item) => item.freshness === "Stale" || item.status === "Stale" || item.issues > 0);
+  const promotion = graph.promotions.find((item) => item.status === "Eligible") ?? graph.promotions[0];
+  const behindBand = benchmarks.bands.find((band) => band.status === "Behind") ?? benchmarks.bands[0];
+  const challenged = outcomes.events.find((event) => event.sentiment === "Negative");
+  const openGate = orchestrator.gates.find((gate) => gate.status === "Blocked" || gate.status === "Review");
+
+  return [
+    {
+      id: "ai-policy-tighten",
+      type: "Policy rehearsal",
+      title: "Tighten AI model-training language",
+      status: aiQuestion.sources?.length ? "Recommended" : "Review",
+      lift: aiQuestion.sources?.length ? 18 : 9,
+      confidence: aiQuestion.confidence,
+      owner: memberForQuestion(aiQuestion).name,
+      questionId: aiQuestion.id,
+      before: shorten(aiQuestion.answer || "No answer drafted.", 130),
+      after: "No customer content trains foundation models; customer-facing AI answers require human approval and redaction controls.",
+      detail: "Rehearses the approved AI Usage Standard wording before it becomes reusable local memory or a network-safe outcome label.",
+      guardrail: "Human approval before buyer-facing reuse",
+    },
+    {
+      id: "incident-proof-refresh",
+      type: "Source refresh",
+      title: incidentGap ? `Refresh ${incidentGap.question.category} proof before reuse` : "Refresh incident response proof",
+      status: incidentGap ? "Recommended" : "Review",
+      lift: incidentGap ? 16 : 6,
+      confidence: incidentGap ? incidentGap.score : coverage.score,
+      owner: incidentGap ? incidentGap.owner.name : "Security",
+      questionId: incidentGap?.question.id ?? active.id,
+      before: incidentGap ? incidentGap.reason : "No critical incident gap is active.",
+      after: incidentGap ? `Attach ${incidentGap.request.sourceHint} before approving similar buyer answers.` : "Keep source freshness monitoring active.",
+      detail: "Forecasts whether adding the missing proof will reduce buyer challenge risk and improve benchmark readiness.",
+      guardrail: "Proof source required",
+    },
+    {
+      id: "network-pattern-promotion",
+      type: "Federated learning",
+      title: promotion ? `Promote ${promotion.title.toLowerCase()}` : "Promote network-safe pattern",
+      status: promotion?.status === "Eligible" && network.privacyScore >= 90 ? "Recommended" : "Review",
+      lift: promotion?.status === "Eligible" ? 12 : 4,
+      confidence: network.privacyScore,
+      owner: "Trust Lead",
+      questionId: active.id,
+      before: promotion ? promotion.detail : "No promotion candidate has passed abstraction.",
+      after: "Share only aggregate label, proof type, readiness band, role type, and outcome class.",
+      detail: "Tests whether a graph pattern can improve peer recommendations without raw evidence, buyer text, prompts, or contract language.",
+      guardrail: "Privacy threshold and reviewer consent",
+    },
+    {
+      id: "legacy-terms-block",
+      type: "Counterfactual block",
+      title: "Block legacy pilot terms from answer memory",
+      status: "Blocked",
+      lift: -24,
+      confidence: 96,
+      owner: "Legal",
+      questionId: aiQuestion.id,
+      before: "Legacy pilot terms allowed anonymized usage data for service-quality improvement.",
+      after: "Keep archived terms quarantined from new enterprise security answers.",
+      detail: "Shows the system can rehearse a bad option and explain why it must not influence local or federated learning.",
+      guardrail: "Legacy source quarantine",
+    },
+    {
+      id: "deadline-override-block",
+      type: "Deadline rehearsal",
+      title: "Reject deadline override without proof",
+      status: gaps.highRiskCount > 0 || openGate ? "Blocked" : "Review",
+      lift: gaps.highRiskCount > 0 ? -18 : 2,
+      confidence: orchestrator.score,
+      owner: "Sales Engineering",
+      questionId: active.id,
+      before: "Submit quickly because the buyer deadline is close.",
+      after: "Route proof first; deadline pressure cannot bypass claim trace, source freshness, or human approval.",
+      detail: "Simulates the tempting shortcut and keeps the recommendation from becoming a production action.",
+      guardrail: "No proof bypass",
+    },
+    {
+      id: "source-freshness-window",
+      type: "Drift rehearsal",
+      title: staleConnector ? `Refresh ${staleConnector.name} before graph promotion` : "Keep source freshness window current",
+      status: staleConnector ? "Recommended" : "Review",
+      lift: staleConnector ? 11 : 5,
+      confidence: connectors.score,
+      owner: staleConnector?.owner.name ?? "Operations",
+      questionId: active.id,
+      before: staleConnector ? `${staleConnector.provider} source health is ${staleConnector.health}%.` : "Connector health is stable.",
+      after: staleConnector ? staleConnector.nextAction : "Schedule periodic freshness review before source age drift appears.",
+      detail: behindBand ? `Also protects ${behindBand.category} readiness against peer-band drift.` : "Keeps source drift from weakening repeated answer memory.",
+      guardrail: "Refresh metadata, not answer claims",
+    },
+    {
+      id: "challenge-recovery",
+      type: "Outcome rehearsal",
+      title: challenged ? "Convert buyer challenge into prevention rule" : "Wait for stronger buyer outcome signal",
+      status: challenged ? "Recommended" : "Review",
+      lift: challenged ? 13 : 3,
+      confidence: outcomes.score,
+      owner: "Reviewer",
+      questionId: active.id,
+      before: challenged ? challenged.detail : "No buyer challenge needs recovery.",
+      after: challenged ? "Create a local prevention rule and share only abstract friction type after approval." : "Keep outcome learning local until a stronger signal exists.",
+      detail: "Forecasts how challenged outcomes should penalize future recommendations before weak proof repeats.",
+      guardrail: "Exact buyer text stays private",
+    },
+  ].sort((a, b) => b.lift - a.lift);
+}
+
+function policySimulationForecasts({ scenarios, gaps, connectors, network, graph, outcomes }) {
+  const recommendedLift = scenarios.filter((scenario) => scenario.status === "Recommended").reduce((total, scenario) => total + Math.max(0, scenario.lift), 0);
+  const blockedRisk = Math.abs(scenarios.filter((scenario) => scenario.status === "Blocked").reduce((total, scenario) => total + Math.min(0, scenario.lift), 0));
+  const eligiblePromotions = graph.promotions.filter((promotion) => promotion.status === "Eligible").length;
+  const challengeCount = outcomes.events.filter((event) => event.sentiment === "Negative").length;
+
+  return [
+    {
+      metric: "Approval odds",
+      delta: `+${Math.min(34, Math.round(recommendedLift / 2))}%`,
+      direction: "Lift",
+      detail: "Recommended simulations improve approval odds when source refresh, AI wording, and challenge recovery pass proof gates.",
+    },
+    {
+      metric: "Buyer friction",
+      delta: `-${Math.min(28, gaps.highRiskCount * 8 + challengeCount * 6)}%`,
+      direction: "Lift",
+      detail: "Pre-routing weak proof and challenged categories should reduce buyer follow-up loops.",
+    },
+    {
+      metric: "Network shareability",
+      delta: `+${Math.min(22, eligiblePromotions * 7 + (network.privacyScore >= 90 ? 6 : 0))}%`,
+      direction: "Lift",
+      detail: "Only abstract labels, proof types, readiness bands, and outcome classes become safer for federation.",
+    },
+    {
+      metric: "Drift risk",
+      delta: `-${Math.min(30, connectors.staleCount * 9 + graph.drift.length * 4)}%`,
+      direction: "Lift",
+      detail: "Refreshing stale sources and quarantining legacy evidence lowers the chance of bad memory reuse.",
+    },
+    {
+      metric: "Blocked shortcut risk",
+      delta: `${blockedRisk}`,
+      direction: "Risk",
+      detail: "Blocked counterfactuals show the cost of deadline overrides, legacy evidence reuse, or unsupported claim changes.",
+    },
+  ];
+}
+
+function policySimulationGates({ scenarios, graph, network, gaps }) {
+  return [
+    {
+      title: "Simulation is not production",
+      status: "Enforced",
+      detail: "Counterfactual recommendations do not change buyer-facing answers, approved memory, or network learning until a reviewer acts.",
+    },
+    {
+      title: "Reviewer approval",
+      status: state.simulatorActions.gateApprovedAt ? "Approved" : "Review",
+      detail: "A human must approve the rehearsal result before applying the recommendation to a route, answer, or graph promotion.",
+    },
+    {
+      title: "Proof freshness",
+      status: scenarios.some((scenario) => scenario.id === "source-freshness-window" && scenario.status === "Recommended") ? "Review" : "Approved",
+      detail: "Source refresh simulations can queue owner work, but they cannot silently alter approved answer language.",
+    },
+    {
+      title: "Privacy threshold",
+      status: network.privacyScore >= 90 ? "Approved" : "Review",
+      detail: `${network.privacyScore}% privacy score; federated learning remains aggregate-only.`,
+    },
+    {
+      title: "Drift quarantine",
+      status: graph.drift.some((drift) => drift.severity === "High") || gaps.highRiskCount > 0 ? "Blocked" : "Approved",
+      detail: "High drift or high-risk proof gaps keep related patterns local until proof improves.",
+    },
+  ];
+}
+
+function policySimulationActions({ scenarios, forecasts, gates }) {
+  const best = scenarios.find((scenario) => scenario.status === "Recommended");
+  const blocked = gates.find((gate) => gate.status === "Blocked");
+  return [
+    {
+      step: "01",
+      title: best ? `Queue ${best.title.toLowerCase()}` : "Wait for a stronger recommendation",
+      detail: best ? `${best.owner} owns the safest simulated move with ${best.lift >= 0 ? "+" : ""}${best.lift} forecast lift.` : "No recommended scenario is strong enough to queue.",
+      mode: "Queue",
+    },
+    {
+      step: "02",
+      title: "Keep blocked shortcuts visible",
+      detail: `${scenarios.filter((scenario) => scenario.status === "Blocked").length} blocked scenario${scenarios.filter((scenario) => scenario.status === "Blocked").length === 1 ? "" : "s"} explain why speed cannot bypass proof.`,
+      mode: "Block",
+    },
+    {
+      step: "03",
+      title: "Review forecast deltas",
+      detail: forecasts.slice(0, 3).map((forecast) => `${forecast.metric} ${forecast.delta}`).join(", "),
+      mode: "Forecast",
+    },
+    {
+      step: "04",
+      title: blocked ? `Resolve ${blocked.title.toLowerCase()}` : "Approve rehearsal gate",
+      detail: blocked ? blocked.detail : "Once approval passes, the best simulated move can become a governed task.",
+      mode: blocked ? "Resolve" : "Approve",
+    },
+    {
+      step: "05",
+      title: "Write counterfactual receipt",
+      detail: "Record why the system recommended change, block, or wait before any production memory is updated.",
+      mode: "Receipt",
+    },
+  ];
+}
+
+function runPolicySimulations() {
+  const simulator = policySimulatorSnapshot();
+  const detail = `Policy simulator ran ${simulator.scenarios.length} scenarios with +${simulator.bestLift} best lift, ${simulator.blockedCount} blocked signals, and ${simulator.score}% simulator score.`;
+  state.simulatorActions.status = "Simulated";
+  state.simulatorActions.simulatedAt = new Date().toISOString();
+  addSimulatorReceipt("Simulations run", detail);
+  addAudit("Trust policy simulations run", detail);
+  renderPolicySimulator();
+  renderAudit();
+  showToast("Trust policy simulations run.");
+}
+
+function applyPolicySimulation() {
+  const simulator = policySimulatorSnapshot();
+  const scenario = simulator.scenarios.find((item) => item.status === "Recommended");
+  if (!scenario) return;
+  const question = state.questions.find((item) => item.id === scenario.questionId) ?? getActiveQuestion();
+  state.activeQuestionId = question.id;
+  question.routeStatus = "Simulation queued";
+  question.assigneeId = ownerToMemberId(question.owner);
+  question.routedAt = new Date().toISOString();
+  if (question.status === "draft" && scenario.id !== "ai-policy-tighten") {
+    question.status = "needs-evidence";
+  }
+
+  const detail = `Queued simulated recommendation: ${scenario.title}. Owner: ${scenario.owner}. Forecast lift: ${scenario.lift >= 0 ? "+" : ""}${scenario.lift}.`;
+  state.simulatorActions.status = "Recommendation queued";
+  state.simulatorActions.appliedAt = new Date().toISOString();
+  addSimulatorReceipt("Recommendation queued", detail);
+  addAudit("Simulation recommendation queued", detail);
+  render();
+  showToast("Simulation recommendation queued.");
+}
+
+function approveSimulationGate() {
+  const simulator = policySimulatorSnapshot();
+  const gate = simulator.gates.find((item) => item.status === "Review" || item.status === "Blocked");
+  const detail = gate ? `Simulation gate reviewed: ${gate.title}. ${gate.detail}` : "All simulation gates already passed.";
+  state.simulatorActions.status = "Gate approved";
+  state.simulatorActions.gateApprovedAt = new Date().toISOString();
+  addSimulatorReceipt("Gate approved", detail);
+  addAudit("Simulation gate approved", detail);
+  renderPolicySimulator();
+  renderAudit();
+  showToast("Simulation gate approved.");
+}
+
+function copySimulatorDigest() {
+  const simulator = policySimulatorSnapshot();
+  state.simulatorActions.lastCopiedAt = new Date().toISOString();
+  addSimulatorReceipt("Simulator digest copied", "Trust policy simulator digest copied.");
+  addAudit("Simulator digest copied", "Trust policy simulator digest copied.");
+  renderPolicySimulator();
+  renderAudit();
+  copyText(simulatorDigestText(simulator), "Trust policy simulator digest copied.");
+}
+
+function addSimulatorReceipt(action, detail) {
+  state.simulatorActions.receipts = [
+    ...(state.simulatorActions.receipts ?? []),
+    {
+      id: `simulator-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function simulatorDigestText(simulator = policySimulatorSnapshot()) {
+  const scenarioLines = simulator.scenarios.map((scenario, index) => `${index + 1}. ${scenario.status}: ${scenario.title} | ${scenario.type} | ${scenario.lift >= 0 ? "+" : ""}${scenario.lift} | ${scenario.guardrail}`).join("\n");
+  const forecastLines = simulator.forecasts.map((forecast, index) => `${index + 1}. ${forecast.metric}: ${forecast.delta} - ${forecast.detail}`).join("\n");
+  const gateLines = simulator.gates.map((gate, index) => `${index + 1}. ${gate.title}: ${gate.status} - ${gate.detail}`).join("\n");
+  const actionLines = simulator.actions.map((action) => `${action.step}. ${action.title} | ${action.mode} | ${action.detail}`).join("\n");
+  const receiptLines = simulator.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Trust Policy Simulator",
+    `Build: ${BUILD_VERSION}`,
+    `Simulator status: ${simulator.statusLabel}`,
+    `Simulator score: ${simulator.score}%`,
+    `Scenarios: ${simulator.scenarios.length}`,
+    `Best forecast lift: +${simulator.bestLift}`,
+    `Blocked signals: ${simulator.blockedCount}`,
+    "",
+    "Counterfactual scenarios:",
+    scenarioLines,
+    "",
+    "Forecast deltas:",
+    forecastLines,
+    "",
+    "Human and privacy gates:",
+    gateLines,
+    "",
+    "Recommended actions:",
+    actionLines,
+    "",
+    "Receipts:",
+    receiptLines || "No simulation receipts yet.",
+    "",
+    "Simulation rule:",
+    "- Simulations do not change production memory by themselves.",
+    "- Recommended moves become governed tasks only after human approval.",
+    "- Blocked counterfactuals are valuable because they teach the system what not to repeat.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -11229,7 +11819,7 @@ function ownerRoutingSnapshot() {
   const groups = workspaceAccount.members.map((member) => {
     const questions = state.questions.filter((question) => memberForQuestion(question).id === member.id);
     const openRisks = questions.filter((question) => question.status === "needs-evidence" || (question.risks ?? []).length > 0).length;
-    const needsOwner = questions.filter((question) => ["Needs owner", "Owner review"].includes(question.routeStatus)).length;
+    const needsOwner = questions.filter((question) => ["Needs owner", "Owner review", "Simulation queued"].includes(question.routeStatus)).length;
     const approved = questions.filter((question) => question.status === "approved").length;
     return {
       member,
@@ -11781,6 +12371,12 @@ function exportCsv() {
     "Graph Drift",
     "Graph Promotions",
     "Graph Receipts",
+    "Simulator Status",
+    "Simulator Score",
+    "Simulator Scenarios",
+    "Simulator Best Lift",
+    "Simulator Blocks",
+    "Simulator Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -11807,6 +12403,7 @@ function exportCsv() {
     const benchmarks = trustBenchmarkSnapshot();
     const orchestrator = trustOrchestratorSnapshot();
     const graph = federatedGraphSnapshot();
+    const simulator = policySimulatorSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -11891,6 +12488,12 @@ function exportCsv() {
       graph.drift.length,
       graph.promotions.filter((promotion) => promotion.status === "Eligible").length,
       graph.receipts.length,
+      simulator.statusLabel,
+      `${simulator.score}%`,
+      simulator.scenarios.length,
+      `+${simulator.bestLift}`,
+      simulator.blockedCount,
+      simulator.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -11927,6 +12530,7 @@ function exportReviewPack() {
   const benchmarks = trustBenchmarkSnapshot();
   const orchestrator = trustOrchestratorSnapshot();
   const graph = federatedGraphSnapshot();
+  const simulator = policySimulatorSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -11944,7 +12548,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v25</h1>
+        <h1>AnswerSeal Review Pack v26</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -12718,6 +13322,109 @@ function exportReviewPack() {
         </table>
         <h2>Graph Digest</h2>
         <pre>${escapeHtml(graphDigestText(graph))}</pre>
+        <h2>Trust Policy Simulator</h2>
+        <p>Status: ${escapeHtml(simulator.statusLabel)} | Simulator score: ${simulator.score}% | Scenarios: ${simulator.scenarios.length} | Best lift: +${simulator.bestLift} | Blocked signals: ${simulator.blockedCount} | Receipts: ${simulator.receipts.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Forecast</th>
+              <th>Guardrail</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${simulator.scenarios
+              .map(
+                (scenario) => `
+                  <tr>
+                    <td>${escapeHtml(scenario.type)}<br />${escapeHtml(scenario.title)}</td>
+                    <td class="${scenario.status === "Blocked" ? "risk" : "ok"}">${escapeHtml(scenario.status)}</td>
+                    <td>${escapeHtml(scenario.owner)}</td>
+                    <td>${scenario.lift >= 0 ? "+" : ""}${scenario.lift}</td>
+                    <td>${escapeHtml(scenario.guardrail)}</td>
+                    <td>${escapeHtml(scenario.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Simulator Forecast Deltas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Delta</th>
+              <th>Direction</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${simulator.forecasts
+              .map(
+                (forecast) => `
+                  <tr>
+                    <td>${escapeHtml(forecast.metric)}</td>
+                    <td>${escapeHtml(forecast.delta)}</td>
+                    <td class="${forecast.direction === "Risk" ? "risk" : "ok"}">${escapeHtml(forecast.direction)}</td>
+                    <td>${escapeHtml(forecast.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Simulator Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${simulator.gates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Blocked" || gate.status === "Review" ? "risk" : "ok"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Simulator Recommended Actions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Mode</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${simulator.actions
+              .map(
+                (action) => `
+                  <tr>
+                    <td>${escapeHtml(action.step)} ${escapeHtml(action.title)}</td>
+                    <td>${escapeHtml(action.mode)}</td>
+                    <td>${escapeHtml(action.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Simulator Digest</h2>
+        <pre>${escapeHtml(simulatorDigestText(simulator))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -13430,7 +14137,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v25 created with federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v26 created with trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -13446,12 +14153,13 @@ function exportReviewPack() {
   renderTrustBenchmarks();
   renderTrustOrchestrator();
   renderFederatedGraph();
+  renderPolicySimulator();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v25 exported.");
+  showToast("Review Pack v26 exported.");
 }
 
 function toCsv(rows) {
@@ -13517,6 +14225,7 @@ function serializeWorkspace() {
     benchmarkActions: state.benchmarkActions,
     orchestratorActions: state.orchestratorActions,
     graphActions: state.graphActions,
+    simulatorActions: state.simulatorActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -13553,6 +14262,7 @@ function resetWorkspace() {
   closeTrustBenchmarks(false);
   closeTrustOrchestrator(false);
   closeFederatedGraph(false);
+  closePolicySimulator(false);
   closeWorkspace(false);
   closeLibrary();
   render();
@@ -13616,6 +14326,7 @@ function routeStatusLabel(status) {
     Assigned: "Assigned",
     "Needs owner": "Needs owner",
     "Owner review": "Owner review",
+    "Simulation queued": "Simulation queued",
   };
   return labels[status] ?? "Assigned";
 }
@@ -13623,6 +14334,7 @@ function routeStatusLabel(status) {
 function routeStatusClass(status) {
   if (status === "Needs owner") return "is-needed";
   if (status === "Owner review") return "is-review";
+  if (status === "Simulation queued") return "is-simulation";
   return "is-assigned";
 }
 

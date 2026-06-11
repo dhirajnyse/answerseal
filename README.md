@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.29 Alpha
+**Current version:** v0.30 Alpha
 
-**Current phase:** Federated Trust Graph
+**Current phase:** Trust Policy Simulator
 
 ## Brand
 
@@ -133,6 +133,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Drift quarantine for stale sources, legacy evidence, proof gaps, buyer challenges, benchmark drift, and open gates before network promotion
 - Federated graph gates for tenant boundary, reviewer consent, privacy threshold, pattern readiness, and drift quarantine
 - Graph receipts and digest for explaining when learning is local, when it can aggregate, and why high-drift patterns stay quarantined
+- Trust Policy Simulator drawer with simulator score, scenario count, best forecast lift, blocked counterfactual count, and receipts
+- Counterfactual scenarios for policy wording, source refreshes, network promotion, legacy-source quarantine, deadline overrides, source freshness, and buyer challenge recovery
+- Forecast deltas for approval odds, buyer friction, network shareability, drift risk, and blocked shortcut risk
+- Simulation gates that keep rehearsals separate from production memory until reviewer approval
+- Recommended actions that queue the safest simulated move as governed work without silently changing buyer-facing answers
+- Counterfactual receipts and digest for explaining why the system recommends change, block, or wait decisions
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -153,7 +159,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v25 export with federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v26 export with trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -171,13 +177,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.30 Alpha - Trust Policy Simulator
+## Next Phase: v0.31 Alpha - Reinforcement Control Room
 
-- Preview how policy, source, or answer changes affect claims, gates, and buyer readiness before the team acts
-- Forecast whether a proof move will improve approval odds, reduce buyer friction, or stay quarantined
-- Rehearse AI, privacy, incident, access, and continuity answer changes behind human gates
-- Record counterfactual receipts explaining why the system recommends change, block, or wait decisions
-- Keep simulated learning separated from production memory until a reviewer approves the outcome
+- Compare simulator predictions with actual approval, buyer challenge, and deal-progress outcomes
+- Tune reward weights based on which simulated moves truly helped
+- Track every recommendation, approval, outcome, reward change, and privacy gate in one control room
+- Show what each tenant learns locally and what aggregate lessons safely improve the wider network
+- Keep reward tuning explainable with receipts before any recommendation weight changes
 
 ## License
 
