@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.26 Alpha - Adaptive Trust Playbooks
+
+Phase: Adaptive Trust Playbooks
+
+- Added a Playbooks drawer with strategy score, playbook count, human gate count, receipt count, and playbook status.
+- Added buyer-specific trust motions for answer now, request proof, route owner, open trust room, block claim, and sequenced agent/coach work.
+- Added proof sequence cards that order source binding, owner review, human gate, buyer-safe handoff, and outcome capture.
+- Added human gates for buyer-facing answer changes, raw evidence sharing, network learning promotion, agent execution, external trust room sharing, and deadline overrides.
+- Added playbook receipts for generated strategies, applied strategies, and copied playbook digests.
+- Added playbook status, strategy score, playbook count, gate count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v22 with adaptive trust playbooks, proof sequence, human gates, and playbook digest.
+- Updated the build phases page with the v0.27 Trust Benchmark Network plan.
+
 ## v0.25 Alpha - Trust Outcome Memory
 
 Phase: Trust Outcome Memory

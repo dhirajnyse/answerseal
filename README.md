@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.25 Alpha
+**Current version:** v0.26 Alpha
 
-**Current phase:** Trust Outcome Memory
+**Current phase:** Adaptive Trust Playbooks
 
 ## Brand
 
@@ -111,6 +111,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Privacy guardrails that separate local exact learning from aggregate cross-tenant patterns
 - Adaptive playbooks that recommend next-best proof paths from successful and challenged review outcomes
 - Outcome receipts for captured outcomes, tuned memory, and copied outcome digests
+- Adaptive Trust Playbooks drawer with strategy score, recommended buyer motions, human gates, and playbook status
+- Buyer-specific playbooks that choose answer now, request proof, route owner, open trust room, block claim, or sequence governed work
+- Proof sequence that orders source binding, owner approval, buyer-safe handoff, and outcome capture
+- Human gates for buyer-facing answer changes, raw evidence sharing, network learning promotion, agent execution, trust room sharing, and deadline overrides
+- Playbook receipts for generated strategies, applied strategies, and copied playbook digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -131,7 +136,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v21 export with trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v22 export with adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -149,13 +154,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.26 Alpha - Adaptive Trust Playbooks
+## Next Phase: v0.27 Alpha - Trust Benchmark Network
 
-- Recommend buyer-specific trust workflows for healthcare, fintech, AI, procurement, and security-heavy reviews
-- Choose answer, route, defer, request proof, or open trust room strategy based on SLA and proof risk
-- Sequence sources, owners, and approvals by historical outcome impact
-- Record playbook receipts that explain why a strategy was recommended and which result improved
-- Keep playbooks grounded in local memory and privacy-safe aggregate patterns
+- Compare answers against privacy-safe category, freshness, confidence, and friction benchmark bands
+- Warn when a proof path resembles patterns that often create buyer challenges or reopen cycles
+- Score AI, privacy, incident, access, and continuity readiness using only abstract network signals
+- Show which proof investments reduce deal friction across buyer segments
+- Keep every benchmark grounded in local memory plus anonymized aggregate labels
 
 ## License
 

@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.25 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v25";
+const BUILD_VERSION = "v0.26 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v26";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v25",
   "answerseal.workspace.v24",
   "answerseal.workspace.v23",
   "answerseal.workspace.v22",
@@ -687,6 +688,8 @@ function createInitialState() {
     agentActions: createInitialAgentActions(),
     outcomeOpen: false,
     outcomeActions: createInitialOutcomeActions(),
+    playbookOpen: false,
+    playbookActions: createInitialPlaybookActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -766,6 +769,16 @@ function createInitialOutcomeActions() {
     status: "Draft",
     capturedAt: null,
     tunedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialPlaybookActions() {
+  return {
+    status: "Draft",
+    generatedAt: null,
+    appliedAt: null,
     lastCopiedAt: null,
     receipts: [],
   };
@@ -895,6 +908,7 @@ function loadWorkspaceState() {
       coachActions: normalizeCoachActions(workspace.coachActions ?? fresh.coachActions),
       agentActions: normalizeAgentActions(workspace.agentActions ?? fresh.agentActions),
       outcomeActions: normalizeOutcomeActions(workspace.outcomeActions ?? fresh.outcomeActions),
+      playbookActions: normalizePlaybookActions(workspace.playbookActions ?? fresh.playbookActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -915,6 +929,7 @@ function loadWorkspaceState() {
       coachOpen: false,
       agentOpen: false,
       outcomeOpen: false,
+      playbookOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1275,6 +1290,26 @@ function normalizeOutcomeReceipt(receipt) {
   };
 }
 
+function normalizePlaybookActions(actions) {
+  const status = ["Draft", "Playbooks generated", "Strategy applied"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    generatedAt: actions?.generatedAt ?? null,
+    appliedAt: actions?.appliedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizePlaybookReceipt) : [],
+  };
+}
+
+function normalizePlaybookReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `playbook-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Playbook action"),
+    detail: String(receipt?.detail ?? "Adaptive trust playbook action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1313,6 +1348,7 @@ const elements = {
   coachNavButton: document.querySelector("#coachNavButton"),
   agentNavButton: document.querySelector("#agentNavButton"),
   outcomeNavButton: document.querySelector("#outcomeNavButton"),
+  playbookNavButton: document.querySelector("#playbookNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1599,6 +1635,22 @@ const elements = {
   captureOutcomeButton: document.querySelector("#captureOutcomeButton"),
   tuneMemoryButton: document.querySelector("#tuneMemoryButton"),
   copyOutcomeDigestButton: document.querySelector("#copyOutcomeDigestButton"),
+  playbookBackdrop: document.querySelector("#playbookBackdrop"),
+  playbookDrawer: document.querySelector("#playbookDrawer"),
+  closePlaybookButton: document.querySelector("#closePlaybookButton"),
+  playbookStrategyScore: document.querySelector("#playbookStrategyScore"),
+  playbookCount: document.querySelector("#playbookCount"),
+  playbookGateCount: document.querySelector("#playbookGateCount"),
+  playbookReceiptCount: document.querySelector("#playbookReceiptCount"),
+  playbookStatus: document.querySelector("#playbookStatus"),
+  playbookList: document.querySelector("#playbookList"),
+  playbookSequenceList: document.querySelector("#playbookSequenceList"),
+  playbookGateList: document.querySelector("#playbookGateList"),
+  playbookReceiptList: document.querySelector("#playbookReceiptList"),
+  playbookDigest: document.querySelector("#playbookDigest"),
+  generatePlaybookButton: document.querySelector("#generatePlaybookButton"),
+  applyPlaybookButton: document.querySelector("#applyPlaybookButton"),
+  copyPlaybookDigestButton: document.querySelector("#copyPlaybookDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1709,6 +1761,7 @@ function bindEvents() {
   elements.coachNavButton.addEventListener("click", openAdaptiveCoach);
   elements.agentNavButton.addEventListener("click", openEvidenceAgent);
   elements.outcomeNavButton.addEventListener("click", openOutcomeMemory);
+  elements.playbookNavButton.addEventListener("click", openAdaptivePlaybooks);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1764,6 +1817,7 @@ function bindEvents() {
     renderAdaptiveCoach();
     renderEvidenceAgent();
     renderOutcomeMemory();
+    renderAdaptivePlaybooks();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1840,6 +1894,11 @@ function bindEvents() {
   elements.captureOutcomeButton.addEventListener("click", captureOutcomes);
   elements.tuneMemoryButton.addEventListener("click", tuneOutcomeMemory);
   elements.copyOutcomeDigestButton.addEventListener("click", copyOutcomeDigest);
+  elements.closePlaybookButton.addEventListener("click", closeAdaptivePlaybooks);
+  elements.playbookBackdrop.addEventListener("click", closeAdaptivePlaybooks);
+  elements.generatePlaybookButton.addEventListener("click", generateTrustPlaybooks);
+  elements.applyPlaybookButton.addEventListener("click", applyTopPlaybook);
+  elements.copyPlaybookDigestButton.addEventListener("click", copyPlaybookDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1895,6 +1954,7 @@ function bindEvents() {
     if (state.coachOpen) closeAdaptiveCoach();
     if (state.agentOpen) closeEvidenceAgent();
     if (state.outcomeOpen) closeOutcomeMemory();
+    if (state.playbookOpen) closeAdaptivePlaybooks();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1917,6 +1977,7 @@ function applyInitialHash() {
   if (hash === "coach" || hash === "proof-coach" || hash === "adaptive-coach") openAdaptiveCoach();
   if (hash === "agent" || hash === "evidence-agent" || hash === "governed-agent") openEvidenceAgent();
   if (hash === "outcomes" || hash === "outcome-memory" || hash === "trust-memory" || hash === "memory") openOutcomeMemory();
+  if (hash === "playbooks" || hash === "trust-playbooks" || hash === "adaptive-playbooks" || hash === "strategy") openAdaptivePlaybooks();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1953,6 +2014,7 @@ function render() {
   renderAdaptiveCoach();
   renderEvidenceAgent();
   renderOutcomeMemory();
+  renderAdaptivePlaybooks();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -2672,6 +2734,7 @@ function activateWorkspaceNav(target) {
   closeIntake(false);
   closeDataRoom(false);
   closePortal(false);
+  closeAdaptivePlaybooks(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -2687,6 +2750,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.outcomeNavButton && state.outcomeOpen) {
     closeOutcomeMemory(false);
   }
+  if (activeButton !== elements.playbookNavButton && state.playbookOpen) {
+    closeAdaptivePlaybooks(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -2698,6 +2764,7 @@ function setActiveNav(activeButton) {
     elements.coachNavButton,
     elements.agentNavButton,
     elements.outcomeNavButton,
+    elements.playbookNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3179,6 +3246,44 @@ function closeOutcomeMemory(activateReview = true) {
   elements.outcomeDrawer.classList.remove("is-open");
   elements.outcomeDrawer.setAttribute("aria-hidden", "true");
   elements.outcomeBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openAdaptivePlaybooks() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.playbookOpen = true;
+  setActiveNav(elements.playbookNavButton);
+  elements.playbookBackdrop.hidden = false;
+  elements.playbookDrawer.classList.add("is-open");
+  elements.playbookDrawer.setAttribute("aria-hidden", "false");
+  renderAdaptivePlaybooks();
+  elements.generatePlaybookButton.focus();
+}
+
+function closeAdaptivePlaybooks(activateReview = true) {
+  if (!state.playbookOpen && elements.playbookDrawer.getAttribute("aria-hidden") === "true") return;
+  state.playbookOpen = false;
+  elements.playbookDrawer.classList.remove("is-open");
+  elements.playbookDrawer.setAttribute("aria-hidden", "true");
+  elements.playbookBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -5127,6 +5232,7 @@ function copyGapFallback(id) {
   renderAdaptiveCoach();
   renderEvidenceAgent();
   renderOutcomeMemory();
+  renderAdaptivePlaybooks();
   copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
 }
 
@@ -7236,6 +7342,7 @@ function captureOutcomes() {
   addOutcomeReceipt("Outcomes captured", detail);
   addAudit("Outcome memory captured", detail);
   renderOutcomeMemory();
+  renderAdaptivePlaybooks();
   renderLearningNetwork();
   renderAdaptiveCoach();
   showToast("Trust outcomes captured.");
@@ -7253,6 +7360,7 @@ function tuneOutcomeMemory() {
   renderAdaptiveCoach();
   renderEvidenceAgent();
   renderOutcomeMemory();
+  renderAdaptivePlaybooks();
   showToast("Outcome memory tuned.");
 }
 
@@ -7262,6 +7370,7 @@ function copyOutcomeDigest() {
   addOutcomeReceipt("Outcome digest copied", "Trust outcome memory digest copied.");
   addAudit("Outcome digest copied", "Trust outcome memory digest copied.");
   renderOutcomeMemory();
+  renderAdaptivePlaybooks();
   copyText(outcomeDigestText(memory), "Outcome memory digest copied.");
 }
 
@@ -7317,6 +7426,397 @@ function outcomeDigestText(memory = trustOutcomeMemorySnapshot()) {
     "- Local workspace may learn exact approved wording, owner route, source, and buyer outcome.",
     "- Network may learn only aggregate category, freshness, confidence, friction, and reward labels.",
     "- Raw evidence, buyer text, contracts, prompts, and customer names remain tenant-private.",
+  ].join("\n");
+}
+
+function renderAdaptivePlaybooks() {
+  const strategy = adaptivePlaybookSnapshot();
+
+  elements.playbookStrategyScore.textContent = `${strategy.score}%`;
+  elements.playbookCount.textContent = strategy.playbooks.length;
+  elements.playbookGateCount.textContent = strategy.gates.length;
+  elements.playbookReceiptCount.textContent = strategy.receipts.length;
+  elements.playbookStatus.textContent = strategy.statusLabel;
+  elements.playbookDigest.textContent = playbookDigestText(strategy);
+  elements.applyPlaybookButton.disabled = strategy.playbooks.length === 0;
+
+  elements.playbookList.innerHTML = "";
+  strategy.playbooks.forEach((playbook) => {
+    const card = document.createElement("article");
+    card.className = "playbook-card";
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(playbook.motion)}</span>
+          <strong>${escapeHtml(playbook.title)}</strong>
+        </div>
+        <b>${playbook.confidence}%</b>
+      </header>
+      <p>${escapeHtml(playbook.action)}</p>
+      <footer>
+        <span>${escapeHtml(playbook.trigger)}</span>
+        <span>${escapeHtml(playbook.learning)}</span>
+      </footer>
+    `;
+    elements.playbookList.append(card);
+  });
+
+  elements.playbookSequenceList.innerHTML = "";
+  strategy.sequence.forEach((step) => {
+    const card = document.createElement("article");
+    card.className = "playbook-step-card";
+    card.innerHTML = `
+      <span>${escapeHtml(step.step)}</span>
+      <div>
+        <strong>${escapeHtml(step.title)}</strong>
+        <p>${escapeHtml(step.detail)}</p>
+      </div>
+      <b>${escapeHtml(step.owner)}</b>
+    `;
+    elements.playbookSequenceList.append(card);
+  });
+
+  elements.playbookGateList.innerHTML = "";
+  strategy.gates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `playbook-gate-card ${gate.status === "Blocked" ? "is-blocked" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <b>${escapeHtml(gate.status)}</b>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+    `;
+    elements.playbookGateList.append(card);
+  });
+
+  elements.playbookReceiptList.innerHTML = "";
+  if (strategy.receipts.length === 0) {
+    elements.playbookReceiptList.append(emptyState("No playbook receipts yet"));
+  }
+  strategy.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "playbook-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.playbookReceiptList.append(card);
+  });
+}
+
+function adaptivePlaybookSnapshot() {
+  const coverage = coverageSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const run = autonomousRunSnapshot();
+  const launch = trustLaunchSnapshot();
+  const network = learningNetworkSnapshot();
+  const coach = adaptiveCoachSnapshot();
+  const agent = governedAgentSnapshot();
+  const trustRoom = trustRoomSnapshot();
+  const followUps = followUpSnapshot();
+  const pipeline = pipelineSnapshot();
+  const playbooks = trustPlaybooks({ coverage, outcomes, gaps, run, launch, network, coach, agent, trustRoom, followUps, pipeline });
+  const sequence = proofSequence(playbooks[0], { gaps, agent, trustRoom, outcomes });
+  const gates = playbookGates({ network, agent, trustRoom, pipeline, gaps });
+  const score = Math.min(
+    100,
+    Math.round(
+      coverage.score * 0.2 +
+        outcomes.score * 0.22 +
+        network.privacyScore * 0.18 +
+        agent.controlScore * 0.14 +
+        trustRoom.score * 0.12 +
+        Math.max(0, 100 - gaps.highRiskCount * 10 - followUps.slaCount * 6) * 0.1 +
+        Math.min(100, playbooks.length * 16) * 0.04,
+    ),
+  );
+  const statusLabel = state.playbookActions.status === "Draft" ? "Ready to generate" : state.playbookActions.status;
+
+  return {
+    score,
+    statusLabel,
+    playbooks,
+    sequence,
+    gates,
+    receipts: state.playbookActions.receipts.slice(-8).reverse(),
+    coverage,
+    outcomes,
+    gaps,
+    run,
+    launch,
+    network,
+    coach,
+    agent,
+    trustRoom,
+    followUps,
+    pipeline,
+  };
+}
+
+function trustPlaybooks({ coverage, outcomes, gaps, network, coach, agent, trustRoom, followUps, pipeline }) {
+  const aiQuestion = state.questions.find((question) => question.category === "AI Governance") ?? getActiveQuestion();
+  const topGap = gaps.tasks[0];
+  const challenged = outcomes.events.find((event) => event.sentiment === "Negative");
+  const activeTrace = claimTraceSnapshot(getActiveQuestion());
+  const staleCount = state.evidence.filter((doc) => daysSince(doc.updated) >= 365).length;
+
+  const playbooks = [
+    {
+      id: "ai-fast-answer",
+      title: "AI governance fast-answer motion",
+      motion: "Answer now",
+      buyer: workspaceAccount.company,
+      confidence: Math.min(97, Math.round(76 + coverage.score / 5 + outcomes.shareablePatterns * 2)),
+      trigger: "Accepted AI answer plus current source coverage",
+      action: `Reuse the approved ${aiQuestion.category} answer with citations, then keep human approval before release.`,
+      learning: "Local memory reuses exact approved wording; network memory learns only category and outcome band.",
+      questionId: aiQuestion.id,
+      priority: 82,
+    },
+    {
+      id: "proof-recovery",
+      title: "Evidence gap recovery motion",
+      motion: "Request proof",
+      buyer: workspaceAccount.company,
+      confidence: topGap ? Math.min(96, 84 + gaps.highRiskCount * 3) : 68,
+      trigger: topGap ? `${topGap.severity} gap in ${topGap.question.category}` : "No severe gap currently open",
+      action: topGap
+        ? `Ask ${topGap.owner.name} for ${topGap.request.title.toLowerCase()} before answering "${topGap.question.text}".`
+        : "Keep a proof request ready only when the confidence or freshness gate weakens.",
+      learning: challenged ? challenged.signal : "Weak proof paths are routed earlier before buyer friction appears.",
+      questionId: topGap?.question.id ?? getActiveQuestion().id,
+      priority: topGap ? 96 : 52,
+    },
+    {
+      id: "trust-room-accelerator",
+      title: "Trust room acceleration motion",
+      motion: "Open trust room",
+      buyer: trustRoom.buyer,
+      confidence: Math.min(95, Math.round(70 + trustRoom.score / 4 + trustRoom.sharedCount * 2)),
+      trigger: `${trustRoom.sharedCount}/${trustRoom.answers.length} sealed answers are room-ready`,
+      action: "Send a scoped trust room instead of scattered attachments when the buyer needs multiple approved answers.",
+      learning: "Room views, copies, and reopened questions become private outcome signals.",
+      questionId: aiQuestion.id,
+      priority: trustRoom.score >= 80 ? 88 : 64,
+    },
+    {
+      id: "sla-owner-route",
+      title: "SLA rescue motion",
+      motion: "Route owner",
+      buyer: pipeline.accounts[0]?.company ?? workspaceAccount.company,
+      confidence: Math.min(94, 72 + followUps.slaCount * 8 + pipeline.slaRiskCount * 5),
+      trigger: `${followUps.slaCount + pipeline.slaRiskCount} deadline risks across reviews`,
+      action: "Route owner before the draft is edited again, then attach the needed source or fallback wording.",
+      learning: "Outcome memory rewards earlier owner routing when it prevents buyer reopen cycles.",
+      questionId: topGap?.question.id ?? aiQuestion.id,
+      priority: followUps.slaCount || pipeline.slaRiskCount ? 90 : 58,
+    },
+    {
+      id: "unsupported-claim-block",
+      title: "Unsupported claim block motion",
+      motion: "Block claim",
+      buyer: workspaceAccount.company,
+      confidence: Math.min(96, 70 + activeTrace.conflicts * 12 + staleCount * 3 + (network.privacyScore < 90 ? 6 : 0)),
+      trigger: `${activeTrace.conflicts} conflicts and ${staleCount} stale sources detected`,
+      action: "Block buyer-ready copy until a fresh source, owner approval, and claim trace agree.",
+      learning: "The system learns that blocked claims are wins when they prevent unsupported security commitments.",
+      questionId: getActiveQuestion().id,
+      priority: activeTrace.conflicts ? 94 : 60,
+    },
+  ];
+
+  if (agent.controlScore >= 88 || coach.score >= 80) {
+    playbooks.push({
+      id: "agent-coach-loop",
+      title: "Agent and coach closed-loop motion",
+      motion: "Sequence work",
+      buyer: workspaceAccount.company,
+      confidence: Math.min(95, Math.round((agent.controlScore + coach.score) / 2)),
+      trigger: "Governed agent and adaptive coach both have usable signals",
+      action: "Let the agent queue internal evidence work, then let the coach rewrite only after sources pass approval gates.",
+      learning: "Reinforcement stays useful because every action has owner, permission, and result receipts.",
+      questionId: getActiveQuestion().id,
+      priority: 86,
+    });
+  }
+
+  return playbooks.sort((a, b) => b.priority - a.priority || b.confidence - a.confidence).slice(0, 5);
+}
+
+function proofSequence(playbook, { gaps, agent, trustRoom, outcomes }) {
+  const topGap = gaps.tasks[0];
+  const topTask = agent.tasks[0];
+  return [
+    {
+      step: "01",
+      title: "Pick the trust motion",
+      owner: "AnswerSeal",
+      detail: playbook ? `${playbook.motion}: ${playbook.title} at ${playbook.confidence}% confidence.` : "Generate playbooks from current workspace signals.",
+    },
+    {
+      step: "02",
+      title: "Bind the proof",
+      owner: topGap?.owner.name ?? workspaceAccount.currentRole,
+      detail: topGap ? `Resolve ${topGap.question.category} proof gap with ${topGap.request.title}.` : "Use the highest-authority source already attached to the answer.",
+    },
+    {
+      step: "03",
+      title: "Run the human gate",
+      owner: topTask?.owner ?? workspaceAccount.currentRole,
+      detail: topTask ? `${topTask.mode}: ${topTask.action}` : "Reviewer approves or blocks buyer-facing copy before submission.",
+    },
+    {
+      step: "04",
+      title: "Ship buyer-safe handoff",
+      owner: "Trust Lead",
+      detail: trustRoom.sharedCount > 1 ? "Use the trust room or portal copy with citations attached." : "Use portal-ready copy only after source confidence is healthy.",
+    },
+    {
+      step: "05",
+      title: "Record the outcome",
+      owner: "Learning loop",
+      detail: `${outcomes.events.length} outcome events feed local memory; only privacy-safe labels can improve network recommendations.`,
+    },
+  ];
+}
+
+function playbookGates({ network, agent, trustRoom, pipeline, gaps }) {
+  return [
+    {
+      title: "Buyer-facing answer change",
+      status: "Human gate",
+      detail: "Any changed answer must keep a reviewer, source citation, and approval receipt before buyer submission.",
+    },
+    {
+      title: "Raw evidence sharing",
+      status: "Blocked",
+      detail: "Policies, SOC excerpts, customer names, contracts, prompts, and buyer text stay tenant-private.",
+    },
+    {
+      title: "Network learning promotion",
+      status: network.privacyScore >= 90 ? "Allowed" : "Review",
+      detail: "Only category, freshness band, confidence band, friction label, and outcome label may aggregate.",
+    },
+    {
+      title: "Agent execution",
+      status: agent.controlScore >= 85 ? "Human gate" : "Review",
+      detail: "The agent can queue internal work, but cannot alter buyer-facing commitments without approval.",
+    },
+    {
+      title: "External trust room share",
+      status: trustRoom.score >= 80 ? "Allowed" : "Review",
+      detail: `${trustRoom.sharedCount}/${trustRoom.answers.length} answers are sealed for room handoff.`,
+    },
+    {
+      title: "Deadline override",
+      status: pipeline.slaRiskCount || gaps.highRiskCount ? "Review" : "Allowed",
+      detail: "SLA pressure cannot bypass evidence gaps, owner routing, or conflict checks.",
+    },
+  ];
+}
+
+function generateTrustPlaybooks() {
+  const strategy = adaptivePlaybookSnapshot();
+  const top = strategy.playbooks[0];
+  const detail = top
+    ? `Generated ${strategy.playbooks.length} playbooks. Recommended ${top.motion}: ${top.title} at ${top.confidence}% confidence.`
+    : "Generated adaptive trust playbooks from the current workspace.";
+  state.playbookActions.status = "Playbooks generated";
+  state.playbookActions.generatedAt = new Date().toISOString();
+  addPlaybookReceipt("Playbooks generated", detail);
+  addAudit("Adaptive playbooks generated", detail);
+  renderAdaptivePlaybooks();
+  renderAudit();
+  showToast("Adaptive trust playbooks generated.");
+}
+
+function applyTopPlaybook() {
+  const strategy = adaptivePlaybookSnapshot();
+  const top = strategy.playbooks[0];
+  if (!top) return;
+
+  const question = state.questions.find((item) => item.id === top.questionId) ?? getActiveQuestion();
+  state.activeQuestionId = question.id;
+  question.routedAt = new Date().toISOString();
+
+  if (top.motion === "Request proof") {
+    question.status = "needs-evidence";
+    question.routeStatus = "Needs owner";
+  } else if (top.motion === "Route owner") {
+    question.routeStatus = "Assigned";
+  } else if (top.motion === "Block claim") {
+    question.status = "blocked";
+    question.routeStatus = "Needs owner";
+  } else if (top.motion === "Open trust room") {
+    state.trustRoom.status = "Live";
+    state.trustRoom.preparedAt = state.trustRoom.preparedAt ?? new Date().toISOString();
+  }
+
+  const detail = `Applied ${top.motion}: ${top.title}. ${top.action}`;
+  state.playbookActions.status = "Strategy applied";
+  state.playbookActions.appliedAt = new Date().toISOString();
+  addPlaybookReceipt("Strategy applied", detail);
+  addAudit("Adaptive playbook applied", detail);
+  render();
+  showToast("Top trust playbook applied.");
+}
+
+function copyPlaybookDigest() {
+  const strategy = adaptivePlaybookSnapshot();
+  state.playbookActions.lastCopiedAt = new Date().toISOString();
+  addPlaybookReceipt("Playbook digest copied", "Adaptive trust playbook digest copied.");
+  addAudit("Playbook digest copied", "Adaptive trust playbook digest copied.");
+  renderAdaptivePlaybooks();
+  renderAudit();
+  copyText(playbookDigestText(strategy), "Adaptive trust playbook digest copied.");
+}
+
+function addPlaybookReceipt(action, detail) {
+  state.playbookActions.receipts = [
+    ...(state.playbookActions.receipts ?? []),
+    {
+      id: `playbook-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function playbookDigestText(strategy = adaptivePlaybookSnapshot()) {
+  const playbookLines = strategy.playbooks.map((playbook, index) => `${index + 1}. ${playbook.motion}: ${playbook.title} | ${playbook.confidence}% | ${playbook.action}`).join("\n");
+  const sequenceLines = strategy.sequence.map((step) => `${step.step}. ${step.title} | ${step.owner} | ${step.detail}`).join("\n");
+  const gateLines = strategy.gates.map((gate, index) => `${index + 1}. ${gate.status}: ${gate.title} - ${gate.detail}`).join("\n");
+  const receiptLines = strategy.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Adaptive Trust Playbooks",
+    `Build: ${BUILD_VERSION}`,
+    `Strategy status: ${strategy.statusLabel}`,
+    `Strategy score: ${strategy.score}%`,
+    `Recommended playbooks: ${strategy.playbooks.length}`,
+    `Human gates: ${strategy.gates.length}`,
+    "",
+    "Buyer playbooks:",
+    playbookLines,
+    "",
+    "Proof sequence:",
+    sequenceLines,
+    "",
+    "Human gates:",
+    gateLines,
+    "",
+    "Playbook receipts:",
+    receiptLines || "No playbook receipts yet.",
+    "",
+    "Closed-loop rule:",
+    "- Local workspace learns exact approved wording, owner route, and outcome.",
+    "- Network learning receives only privacy-safe bands and labels.",
+    "- A strategy can recommend action, but proof and human approval decide what ships.",
   ].join("\n");
 }
 
@@ -9501,6 +10001,11 @@ function exportCsv() {
     "Outcome Events",
     "Outcome Rewards",
     "Outcome Patterns",
+    "Playbook Status",
+    "Playbook Score",
+    "Playbooks",
+    "Playbook Gates",
+    "Playbook Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -9523,6 +10028,7 @@ function exportCsv() {
     const coach = adaptiveCoachSnapshot();
     const agent = governedAgentSnapshot();
     const outcomes = trustOutcomeMemorySnapshot();
+    const playbooks = adaptivePlaybookSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -9585,6 +10091,11 @@ function exportCsv() {
       outcomes.events.length,
       outcomes.rewards.length,
       `${outcomes.shareablePatterns}/${outcomes.patterns.length}`,
+      playbooks.statusLabel,
+      `${playbooks.score}%`,
+      playbooks.playbooks.length,
+      playbooks.gates.length,
+      playbooks.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -9617,6 +10128,7 @@ function exportReviewPack() {
   const coach = adaptiveCoachSnapshot();
   const agent = governedAgentSnapshot();
   const outcomes = trustOutcomeMemorySnapshot();
+  const playbooks = adaptivePlaybookSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -9634,7 +10146,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v21</h1>
+        <h1>AnswerSeal Review Pack v22</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -9998,6 +10510,82 @@ function exportReviewPack() {
         </table>
         <h2>Outcome Digest</h2>
         <pre>${escapeHtml(outcomeDigestText(outcomes))}</pre>
+        <h2>Adaptive Trust Playbooks</h2>
+        <p>Status: ${escapeHtml(playbooks.statusLabel)} | Strategy score: ${playbooks.score}% | Playbooks: ${playbooks.playbooks.length} | Human gates: ${playbooks.gates.length} | Receipts: ${playbooks.receipts.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Playbook</th>
+              <th>Motion</th>
+              <th>Buyer</th>
+              <th>Confidence</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${playbooks.playbooks
+              .map(
+                (playbook) => `
+                  <tr>
+                    <td>${escapeHtml(playbook.title)}<br />${escapeHtml(playbook.trigger)}</td>
+                    <td>${escapeHtml(playbook.motion)}</td>
+                    <td>${escapeHtml(playbook.buyer)}</td>
+                    <td>${playbook.confidence}%</td>
+                    <td>${escapeHtml(playbook.action)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Proof Sequence</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${playbooks.sequence
+              .map(
+                (step) => `
+                  <tr>
+                    <td>${escapeHtml(step.step)} ${escapeHtml(step.title)}</td>
+                    <td>${escapeHtml(step.owner)}</td>
+                    <td>${escapeHtml(step.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Human Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${playbooks.gates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Blocked" || gate.status === "Review" ? "risk" : "ok"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Digest</h2>
+        <pre>${escapeHtml(playbookDigestText(playbooks))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -10710,7 +11298,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v21 created with trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v22 created with adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -10722,12 +11310,13 @@ function exportReviewPack() {
   renderAdaptiveCoach();
   renderEvidenceAgent();
   renderOutcomeMemory();
+  renderAdaptivePlaybooks();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v21 exported.");
+  showToast("Review Pack v22 exported.");
 }
 
 function toCsv(rows) {
@@ -10789,6 +11378,7 @@ function serializeWorkspace() {
     coachActions: state.coachActions,
     agentActions: state.agentActions,
     outcomeActions: state.outcomeActions,
+    playbookActions: state.playbookActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -10821,6 +11411,7 @@ function resetWorkspace() {
   closeAdaptiveCoach(false);
   closeEvidenceAgent(false);
   closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
   closeWorkspace(false);
   closeLibrary();
   render();

@@ -3891,6 +3891,190 @@ svg {
   white-space: pre-wrap;
 }
 
+.playbook-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1040px, 100vw);
+}
+
+.playbook-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.playbook-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(3, minmax(0, 180px));
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: #fbfffd;
+}
+
+.playbook-actions > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 168, 137, 0.22);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.playbook-actions strong {
+  color: var(--accent-dark);
+  overflow-wrap: anywhere;
+}
+
+.playbook-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(226, 255, 248, 0.78) 0%, rgba(255, 255, 255, 0.96) 46%),
+    #ffffff;
+}
+
+.playbook-section,
+.playbook-card,
+.playbook-step-card,
+.playbook-gate-card,
+.playbook-receipt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.playbook-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.playbook-list,
+.playbook-sequence-list,
+.playbook-gate-list,
+.playbook-receipt-list {
+  display: grid;
+  gap: 8px;
+}
+
+.playbook-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.playbook-gate-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.playbook-card,
+.playbook-gate-card,
+.playbook-receipt-card {
+  display: grid;
+  gap: 9px;
+  padding: 11px;
+  background: #fbfcfb;
+}
+
+.playbook-card {
+  border-left: 4px solid #1e88e5;
+}
+
+.playbook-card header,
+.playbook-card footer,
+.playbook-gate-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.playbook-card header div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.playbook-card strong,
+.playbook-step-card strong,
+.playbook-gate-card strong,
+.playbook-receipt-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.playbook-card b,
+.playbook-step-card b,
+.playbook-gate-card b {
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.playbook-card p,
+.playbook-card footer span,
+.playbook-step-card p,
+.playbook-gate-card p,
+.playbook-receipt-card p,
+.playbook-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.playbook-step-card {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) minmax(110px, auto);
+  gap: 12px;
+  align-items: start;
+  padding: 11px;
+  background: #f8fdff;
+}
+
+.playbook-step-card > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #006d77;
+  background: #d9fff7;
+  font-weight: 950;
+}
+
+.playbook-gate-card {
+  border-left: 4px solid var(--accent);
+  background: #fbfffd;
+}
+
+.playbook-gate-card.is-blocked {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.playbook-digest {
+  min-height: 260px;
+  max-height: 380px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -6070,6 +6254,10 @@ svg {
     .outcome-actions,
     .outcome-reward-list,
     .outcome-guardrail-list,
+    .playbook-metrics,
+    .playbook-actions,
+    .playbook-list,
+    .playbook-gate-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -6157,6 +6345,10 @@ svg {
     .outcome-guardrail-card header,
     .outcome-playbook-card header,
     .outcome-playbook-card footer,
+    .playbook-card header,
+    .playbook-card footer,
+    .playbook-step-card,
+    .playbook-gate-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -6165,6 +6357,10 @@ svg {
     .source-card header,
     .evidence-item header {
     display: grid;
+  }
+
+  .playbook-step-card {
+    grid-template-columns: 1fr;
   }
 
   .landing-nav {

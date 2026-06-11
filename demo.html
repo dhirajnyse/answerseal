@@ -135,6 +135,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Outcomes</span>
           </button>
+          <button class="nav-item" id="playbookNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Playbooks</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -197,8 +201,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.25 Alpha</strong>
-          <span>Trust Outcome Memory</span>
+          <strong>v0.26 Alpha</strong>
+          <span>Adaptive Trust Playbooks</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -210,7 +214,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.25 Alpha</span>
+            <span class="label">Security questionnaire | v0.26 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1665,6 +1669,99 @@
             <span>Copyable closed-loop memory note</span>
           </div>
           <pre class="outcome-digest" id="outcomeDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="playbook-backdrop drawer-backdrop" id="playbookBackdrop" hidden></div>
+    <aside class="workspace-drawer playbook-drawer" id="playbookDrawer" aria-label="Adaptive trust playbooks" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Adaptive Trust Playbooks</span>
+          <h2>Choose the safest trust motion for each buyer</h2>
+        </div>
+        <button class="icon-button" id="closePlaybookButton" type="button" aria-label="Close playbooks" title="Close playbooks">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip playbook-metrics" aria-label="Playbook strategy health">
+        <article>
+          <span class="label">Strategy Score</span>
+          <strong id="playbookStrategyScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Playbooks</span>
+          <strong id="playbookCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Gates</span>
+          <strong id="playbookGateCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="playbookReceiptCount">0</strong>
+        </article>
+      </section>
+
+      <section class="playbook-actions" aria-label="Adaptive trust playbook controls">
+        <div>
+          <span class="label">Playbook Status</span>
+          <strong id="playbookStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="generatePlaybookButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Generate Playbooks</span>
+        </button>
+        <button class="secondary-button" id="applyPlaybookButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Apply Strategy</span>
+        </button>
+        <button class="secondary-button" id="copyPlaybookDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="playbook-body">
+        <section class="playbook-section" aria-label="Buyer playbooks">
+          <div class="section-heading">
+            <span class="label">Buyer Playbooks</span>
+            <span>Recommended trust motions for this review</span>
+          </div>
+          <div class="playbook-list" id="playbookList"></div>
+        </section>
+
+        <section class="playbook-section" aria-label="Proof sequence">
+          <div class="section-heading">
+            <span class="label">Proof Sequence</span>
+            <span>Source, owner, gate, handoff, outcome</span>
+          </div>
+          <div class="playbook-sequence-list" id="playbookSequenceList"></div>
+        </section>
+
+        <section class="playbook-section" aria-label="Human gates">
+          <div class="section-heading">
+            <span class="label">Human Gates</span>
+            <span>Where AI must stop for approval</span>
+          </div>
+          <div class="playbook-gate-list" id="playbookGateList"></div>
+        </section>
+
+        <section class="playbook-section" aria-label="Playbook receipts">
+          <div class="section-heading">
+            <span class="label">Playbook Receipts</span>
+            <span>Recorded strategy actions</span>
+          </div>
+          <div class="playbook-receipt-list" id="playbookReceiptList"></div>
+        </section>
+
+        <section class="playbook-section" aria-label="Playbook digest">
+          <div class="section-heading">
+            <span class="label">Playbook Digest</span>
+            <span>Copyable strategy note</span>
+          </div>
+          <pre class="playbook-digest" id="playbookDigest"></pre>
         </section>
       </section>
     </aside>
