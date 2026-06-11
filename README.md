@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.27 Alpha
+**Current version:** v0.28 Alpha
 
-**Current phase:** Trust Benchmark Network
+**Current phase:** Autonomous Trust Orchestrator
 
 ## Brand
 
@@ -121,6 +121,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Friction signals for deadline pressure, proof gaps, stale sources, and category benchmark gaps
 - Proof investment recommendations that show which evidence moves can lift categories into peer bands
 - Benchmark guardrails, receipts, and copyable digest for explaining the closed-loop learning boundary
+- Autonomous Trust Orchestrator drawer with orchestration score, priority queue, governed plan, human gates, learning boundary, and receipts
+- Priority queue that combines benchmark gaps, proof risks, deadline pressure, connector freshness, trust room readiness, agent work, and buyer motion
+- Governed work plan that routes, requests, approves, packages, and records learning without silently changing buyer-facing claims
+- Human gates for claim changes, agent execution, external trust room sharing, deadline overrides, and network learning promotion
+- Orchestrator receipts and digest for explaining how local exact memory and aggregate network learning stay separated
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -141,7 +146,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v23 export with trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v24 export with autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -159,13 +164,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.28 Alpha - Autonomous Trust Orchestrator
+## Next Phase: v0.29 Alpha - Federated Trust Graph
 
-- Turn benchmark gaps, buyer deadlines, owner load, and trust-room activity into a governed review plan
-- Route requests, refreshes, and proof checks while preserving human approval for every claim and external share
-- Prioritize work across multiple buyers using deal value, SLA pressure, category risk, and proof reuse
-- Record orchestration receipts so closed-loop learning improves without silent action
-- Keep autonomous execution bounded by policy, tenant privacy, and reviewer consent
+- Map questions, claims, owners, evidence, outcomes, and gates inside each organization
+- Promote only high-confidence aggregate labels after privacy thresholds and reviewer consent are met
+- Improve proof suggestions using similar category, buyer, and outcome patterns without sharing raw proof
+- Warn when older approved answers, stale sources, or changing buyer expectations weaken the trust graph
+- Keep exact organizational memory private while aggregate learning improves recommendations across customers
 
 ## License
 

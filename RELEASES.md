@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.28 Alpha - Autonomous Trust Orchestrator
+
+Phase: Autonomous Trust Orchestrator
+
+- Added an Orchestrator drawer with orchestration score, governed plan count, open gate count, receipt count, and orchestrator status.
+- Added a priority queue that combines benchmark gaps, high-risk proof gaps, deadline pressure, stale sources, playbook motion, trust room readiness, and governed agent work.
+- Added a governed work plan that routes, requests, approves, packages, and records learning while keeping buyer-facing actions behind human gates.
+- Added human gates for claim changes, agent execution, trust room sharing, deadline overrides, and network learning promotion.
+- Added a closed-loop learning boundary that separates local exact memory from aggregate cross-tenant learning.
+- Added orchestration status, score, priority count, open gate count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v24 with autonomous trust orchestration priorities, work plan, human gates, learning boundary, and digest.
+- Updated the build phases page with the v0.29 Federated Trust Graph plan.
+
 ## v0.27 Alpha - Trust Benchmark Network
 
 Phase: Trust Benchmark Network

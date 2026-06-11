@@ -143,6 +143,10 @@
             <svg aria-hidden="true"><use href="#icon-link"></use></svg>
             <span>Benchmarks</span>
           </button>
+          <button class="nav-item" id="orchestratorNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Orchestrator</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -205,8 +209,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.27 Alpha</strong>
-          <span>Trust Benchmark Network</span>
+          <strong>v0.28 Alpha</strong>
+          <span>Autonomous Trust Orchestrator</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -218,7 +222,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.27 Alpha</span>
+            <span class="label">Security questionnaire | v0.28 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1872,6 +1876,111 @@
     </aside>
 
     <div class="analytics-backdrop drawer-backdrop" id="analyticsBackdrop" hidden></div>
+    <div class="orchestrator-backdrop drawer-backdrop" id="orchestratorBackdrop" hidden></div>
+    <aside class="workspace-drawer orchestrator-drawer" id="orchestratorDrawer" aria-label="Autonomous trust orchestrator" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Autonomous Trust Orchestrator</span>
+          <h2>Route the next safest move with human gates</h2>
+        </div>
+        <button class="icon-button" id="closeOrchestratorButton" type="button" aria-label="Close orchestrator" title="Close orchestrator">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip orchestrator-metrics" aria-label="Orchestration health">
+        <article>
+          <span class="label">Score</span>
+          <strong id="orchestratorScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Plan</span>
+          <strong id="orchestratorPlanCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Open Gates</span>
+          <strong id="orchestratorGateCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="orchestratorReceiptCount">0</strong>
+        </article>
+      </section>
+
+      <section class="orchestrator-actions" aria-label="Autonomous trust orchestration controls">
+        <div>
+          <span class="label">Orchestrator Status</span>
+          <strong id="orchestratorStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="prepareOrchestratorButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Prepare Plan</span>
+        </button>
+        <button class="secondary-button" id="executeOrchestratorButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+          <span>Route Work</span>
+        </button>
+        <button class="secondary-button" id="approveOrchestratorGateButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve Gate</span>
+        </button>
+        <button class="secondary-button" id="copyOrchestratorDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="orchestrator-body">
+        <section class="orchestrator-section" aria-label="Priority queue">
+          <div class="section-heading">
+            <span class="label">Priority Queue</span>
+            <span>Benchmark gaps, proof risks, deadlines, and buyer motion</span>
+          </div>
+          <div class="orchestrator-priority-list" id="orchestratorPriorityList"></div>
+        </section>
+
+        <section class="orchestrator-section" aria-label="Governed plan">
+          <div class="section-heading">
+            <span class="label">Governed Plan</span>
+            <span>Route, request, approve, package, learn</span>
+          </div>
+          <div class="orchestrator-plan-list" id="orchestratorPlanList"></div>
+        </section>
+
+        <section class="orchestrator-section" aria-label="Human approval gates">
+          <div class="section-heading">
+            <span class="label">Human Gates</span>
+            <span>Where autonomy must stop</span>
+          </div>
+          <div class="orchestrator-gate-list" id="orchestratorGateList"></div>
+        </section>
+
+        <section class="orchestrator-section" aria-label="Closed-loop learning boundary">
+          <div class="section-heading">
+            <span class="label">Learning Boundary</span>
+            <span>Local exact memory, aggregate network benefit</span>
+          </div>
+          <div class="orchestrator-learning-list" id="orchestratorLearningList"></div>
+        </section>
+
+        <section class="orchestrator-section" aria-label="Orchestration receipts">
+          <div class="section-heading">
+            <span class="label">Orchestration Receipts</span>
+            <span>Recorded autonomous planning actions</span>
+          </div>
+          <div class="orchestrator-receipt-list" id="orchestratorReceiptList"></div>
+        </section>
+
+        <section class="orchestrator-section" aria-label="Orchestrator digest">
+          <div class="section-heading">
+            <span class="label">Orchestrator Digest</span>
+            <span>Copyable governed autonomy note</span>
+          </div>
+          <pre class="orchestrator-digest" id="orchestratorDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
     <aside class="workspace-drawer analytics-drawer" id="analyticsDrawer" aria-label="Deal desk analytics" aria-hidden="true">
       <header class="drawer-header">
         <div>

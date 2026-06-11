@@ -4295,6 +4295,205 @@ svg {
   white-space: pre-wrap;
 }
 
+.orchestrator-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, 100vw);
+}
+
+.orchestrator-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.orchestrator-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(4, minmax(0, 170px));
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: #fbfffd;
+}
+
+.orchestrator-actions > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 168, 137, 0.22);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.orchestrator-actions strong {
+  color: var(--accent-dark);
+  overflow-wrap: anywhere;
+}
+
+.orchestrator-body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px 18px 18px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(235, 255, 249, 0.82) 0%, rgba(255, 255, 255, 0.96) 48%),
+    #ffffff;
+}
+
+.orchestrator-section,
+.orchestrator-priority-card,
+.orchestrator-step-card,
+.orchestrator-gate-card,
+.orchestrator-learning-card,
+.orchestrator-receipt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.orchestrator-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.orchestrator-priority-list,
+.orchestrator-plan-list,
+.orchestrator-gate-list,
+.orchestrator-learning-list,
+.orchestrator-receipt-list {
+  display: grid;
+  gap: 8px;
+}
+
+.orchestrator-priority-list,
+.orchestrator-gate-list,
+.orchestrator-learning-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.orchestrator-priority-card,
+.orchestrator-gate-card,
+.orchestrator-learning-card,
+.orchestrator-receipt-card {
+  display: grid;
+  gap: 9px;
+  padding: 11px;
+  background: #fbfcfb;
+}
+
+.orchestrator-priority-card {
+  border-left: 4px solid #1e88e5;
+}
+
+.orchestrator-priority-card.is-high,
+.orchestrator-gate-card.is-blocked {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.orchestrator-priority-card header,
+.orchestrator-priority-card footer,
+.orchestrator-gate-card header,
+.orchestrator-learning-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.orchestrator-priority-card header div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.orchestrator-priority-card strong,
+.orchestrator-step-card strong,
+.orchestrator-gate-card strong,
+.orchestrator-learning-card strong,
+.orchestrator-receipt-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.orchestrator-priority-card b,
+.orchestrator-step-card b,
+.orchestrator-gate-card b {
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.orchestrator-priority-card p,
+.orchestrator-priority-card footer span,
+.orchestrator-step-card p,
+.orchestrator-gate-card p,
+.orchestrator-learning-card p,
+.orchestrator-learning-card span,
+.orchestrator-receipt-card p,
+.orchestrator-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.orchestrator-step-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) minmax(90px, auto);
+  gap: 12px;
+  align-items: start;
+  padding: 11px;
+  background: #f8fdff;
+}
+
+.orchestrator-step-card > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #006d77;
+  background: #d9fff7;
+  font-weight: 950;
+}
+
+.orchestrator-gate-card {
+  border-left: 4px solid var(--accent);
+  background: #fbfffd;
+}
+
+.orchestrator-learning-card {
+  border-left: 4px solid #16a5c8;
+  background: #f8fdff;
+}
+
+.orchestrator-receipt-card {
+  background: #fbfcfb;
+}
+
+.orchestrator-digest {
+  min-height: 280px;
+  max-height: 420px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -6484,6 +6683,11 @@ svg {
     .benchmark-friction-list,
     .benchmark-investment-list,
     .benchmark-guardrail-list,
+    .orchestrator-metrics,
+    .orchestrator-actions,
+    .orchestrator-priority-list,
+    .orchestrator-gate-list,
+    .orchestrator-learning-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -6580,6 +6784,11 @@ svg {
     .benchmark-friction-card header,
     .benchmark-investment-card header,
     .benchmark-guardrail-card header,
+    .orchestrator-priority-card header,
+    .orchestrator-priority-card footer,
+    .orchestrator-step-card,
+    .orchestrator-gate-card header,
+    .orchestrator-learning-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -6591,6 +6800,10 @@ svg {
   }
 
   .playbook-step-card {
+    grid-template-columns: 1fr;
+  }
+
+  .orchestrator-step-card {
     grid-template-columns: 1fr;
   }
 

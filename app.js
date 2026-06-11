@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.27 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v27";
+const BUILD_VERSION = "v0.28 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v28";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v27",
   "answerseal.workspace.v26",
   "answerseal.workspace.v25",
   "answerseal.workspace.v24",
@@ -693,6 +694,8 @@ function createInitialState() {
     playbookActions: createInitialPlaybookActions(),
     benchmarkOpen: false,
     benchmarkActions: createInitialBenchmarkActions(),
+    orchestratorOpen: false,
+    orchestratorActions: createInitialOrchestratorActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -792,6 +795,17 @@ function createInitialBenchmarkActions() {
     status: "Draft",
     preparedAt: null,
     appliedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialOrchestratorActions() {
+  return {
+    status: "Draft",
+    plannedAt: null,
+    executedAt: null,
+    gateApprovedAt: null,
     lastCopiedAt: null,
     receipts: [],
   };
@@ -923,6 +937,7 @@ function loadWorkspaceState() {
       outcomeActions: normalizeOutcomeActions(workspace.outcomeActions ?? fresh.outcomeActions),
       playbookActions: normalizePlaybookActions(workspace.playbookActions ?? fresh.playbookActions),
       benchmarkActions: normalizeBenchmarkActions(workspace.benchmarkActions ?? fresh.benchmarkActions),
+      orchestratorActions: normalizeOrchestratorActions(workspace.orchestratorActions ?? fresh.orchestratorActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -945,6 +960,7 @@ function loadWorkspaceState() {
       outcomeOpen: false,
       playbookOpen: false,
       benchmarkOpen: false,
+      orchestratorOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1345,6 +1361,27 @@ function normalizeBenchmarkReceipt(receipt) {
   };
 }
 
+function normalizeOrchestratorActions(actions) {
+  const status = ["Draft", "Plan prepared", "Work routed", "Gate approved"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    plannedAt: actions?.plannedAt ?? null,
+    executedAt: actions?.executedAt ?? null,
+    gateApprovedAt: actions?.gateApprovedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeOrchestratorReceipt) : [],
+  };
+}
+
+function normalizeOrchestratorReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `orchestrator-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Orchestrator action"),
+    detail: String(receipt?.detail ?? "Autonomous trust orchestration action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1385,6 +1422,7 @@ const elements = {
   outcomeNavButton: document.querySelector("#outcomeNavButton"),
   playbookNavButton: document.querySelector("#playbookNavButton"),
   benchmarkNavButton: document.querySelector("#benchmarkNavButton"),
+  orchestratorNavButton: document.querySelector("#orchestratorNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1704,6 +1742,24 @@ const elements = {
   prepareBenchmarkButton: document.querySelector("#prepareBenchmarkButton"),
   applyBenchmarkButton: document.querySelector("#applyBenchmarkButton"),
   copyBenchmarkDigestButton: document.querySelector("#copyBenchmarkDigestButton"),
+  orchestratorBackdrop: document.querySelector("#orchestratorBackdrop"),
+  orchestratorDrawer: document.querySelector("#orchestratorDrawer"),
+  closeOrchestratorButton: document.querySelector("#closeOrchestratorButton"),
+  orchestratorScore: document.querySelector("#orchestratorScore"),
+  orchestratorPlanCount: document.querySelector("#orchestratorPlanCount"),
+  orchestratorGateCount: document.querySelector("#orchestratorGateCount"),
+  orchestratorReceiptCount: document.querySelector("#orchestratorReceiptCount"),
+  orchestratorStatus: document.querySelector("#orchestratorStatus"),
+  orchestratorPriorityList: document.querySelector("#orchestratorPriorityList"),
+  orchestratorPlanList: document.querySelector("#orchestratorPlanList"),
+  orchestratorGateList: document.querySelector("#orchestratorGateList"),
+  orchestratorLearningList: document.querySelector("#orchestratorLearningList"),
+  orchestratorReceiptList: document.querySelector("#orchestratorReceiptList"),
+  orchestratorDigest: document.querySelector("#orchestratorDigest"),
+  prepareOrchestratorButton: document.querySelector("#prepareOrchestratorButton"),
+  executeOrchestratorButton: document.querySelector("#executeOrchestratorButton"),
+  approveOrchestratorGateButton: document.querySelector("#approveOrchestratorGateButton"),
+  copyOrchestratorDigestButton: document.querySelector("#copyOrchestratorDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1816,6 +1872,7 @@ function bindEvents() {
   elements.outcomeNavButton.addEventListener("click", openOutcomeMemory);
   elements.playbookNavButton.addEventListener("click", openAdaptivePlaybooks);
   elements.benchmarkNavButton.addEventListener("click", openTrustBenchmarks);
+  elements.orchestratorNavButton.addEventListener("click", openTrustOrchestrator);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1872,6 +1929,8 @@ function bindEvents() {
     renderEvidenceAgent();
     renderOutcomeMemory();
     renderAdaptivePlaybooks();
+    renderTrustBenchmarks();
+    renderTrustOrchestrator();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1958,6 +2017,12 @@ function bindEvents() {
   elements.prepareBenchmarkButton.addEventListener("click", prepareTrustBenchmarks);
   elements.applyBenchmarkButton.addEventListener("click", applyBenchmarkInsight);
   elements.copyBenchmarkDigestButton.addEventListener("click", copyBenchmarkDigest);
+  elements.closeOrchestratorButton.addEventListener("click", closeTrustOrchestrator);
+  elements.orchestratorBackdrop.addEventListener("click", closeTrustOrchestrator);
+  elements.prepareOrchestratorButton.addEventListener("click", prepareTrustOrchestrator);
+  elements.executeOrchestratorButton.addEventListener("click", executeTrustOrchestrator);
+  elements.approveOrchestratorGateButton.addEventListener("click", approveOrchestratorGate);
+  elements.copyOrchestratorDigestButton.addEventListener("click", copyOrchestratorDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2015,6 +2080,7 @@ function bindEvents() {
     if (state.outcomeOpen) closeOutcomeMemory();
     if (state.playbookOpen) closeAdaptivePlaybooks();
     if (state.benchmarkOpen) closeTrustBenchmarks();
+    if (state.orchestratorOpen) closeTrustOrchestrator();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2039,6 +2105,7 @@ function applyInitialHash() {
   if (hash === "outcomes" || hash === "outcome-memory" || hash === "trust-memory" || hash === "memory") openOutcomeMemory();
   if (hash === "playbooks" || hash === "trust-playbooks" || hash === "adaptive-playbooks" || hash === "strategy") openAdaptivePlaybooks();
   if (hash === "benchmarks" || hash === "benchmark" || hash === "trust-benchmarks" || hash === "readiness") openTrustBenchmarks();
+  if (hash === "orchestrator" || hash === "orchestration" || hash === "autonomous-orchestrator" || hash === "work-plan") openTrustOrchestrator();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2077,6 +2144,7 @@ function render() {
   renderOutcomeMemory();
   renderAdaptivePlaybooks();
   renderTrustBenchmarks();
+  renderTrustOrchestrator();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -2798,6 +2866,7 @@ function activateWorkspaceNav(target) {
   closePortal(false);
   closeAdaptivePlaybooks(false);
   closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -2819,6 +2888,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.benchmarkNavButton && state.benchmarkOpen) {
     closeTrustBenchmarks(false);
   }
+  if (activeButton !== elements.orchestratorNavButton && state.orchestratorOpen) {
+    closeTrustOrchestrator(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -2832,6 +2904,7 @@ function setActiveNav(activeButton) {
     elements.outcomeNavButton,
     elements.playbookNavButton,
     elements.benchmarkNavButton,
+    elements.orchestratorNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3390,6 +3463,46 @@ function closeTrustBenchmarks(activateReview = true) {
   elements.benchmarkDrawer.classList.remove("is-open");
   elements.benchmarkDrawer.setAttribute("aria-hidden", "true");
   elements.benchmarkBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openTrustOrchestrator() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.orchestratorOpen = true;
+  setActiveNav(elements.orchestratorNavButton);
+  elements.orchestratorBackdrop.hidden = false;
+  elements.orchestratorDrawer.classList.add("is-open");
+  elements.orchestratorDrawer.setAttribute("aria-hidden", "false");
+  renderTrustOrchestrator();
+  elements.prepareOrchestratorButton.focus();
+}
+
+function closeTrustOrchestrator(activateReview = true) {
+  if (!state.orchestratorOpen && elements.orchestratorDrawer.getAttribute("aria-hidden") === "true") return;
+  state.orchestratorOpen = false;
+  elements.orchestratorDrawer.classList.remove("is-open");
+  elements.orchestratorDrawer.setAttribute("aria-hidden", "true");
+  elements.orchestratorBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -8361,6 +8474,461 @@ function benchmarkDigestText(benchmark = trustBenchmarkSnapshot()) {
   ].join("\n");
 }
 
+function renderTrustOrchestrator() {
+  const orchestration = trustOrchestratorSnapshot();
+
+  elements.orchestratorScore.textContent = `${orchestration.score}%`;
+  elements.orchestratorPlanCount.textContent = orchestration.plan.length;
+  elements.orchestratorGateCount.textContent = orchestration.gates.filter((gate) => gate.status !== "Approved").length;
+  elements.orchestratorReceiptCount.textContent = orchestration.receipts.length;
+  elements.orchestratorStatus.textContent = orchestration.statusLabel;
+  elements.orchestratorDigest.textContent = orchestratorDigestText(orchestration);
+  elements.executeOrchestratorButton.disabled = orchestration.priorities.length === 0;
+
+  elements.orchestratorPriorityList.innerHTML = "";
+  orchestration.priorities.forEach((priority) => {
+    const card = document.createElement("article");
+    card.className = `orchestrator-priority-card ${priority.severity === "High" ? "is-high" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(priority.signal)}</span>
+          <strong>${escapeHtml(priority.title)}</strong>
+        </div>
+        <b>${priority.impact}</b>
+      </header>
+      <p>${escapeHtml(priority.detail)}</p>
+      <footer>
+        <span>${escapeHtml(priority.owner)}</span>
+        <span>${escapeHtml(priority.gate)}</span>
+      </footer>
+    `;
+    elements.orchestratorPriorityList.append(card);
+  });
+
+  elements.orchestratorPlanList.innerHTML = "";
+  orchestration.plan.forEach((step) => {
+    const card = document.createElement("article");
+    card.className = "orchestrator-step-card";
+    card.innerHTML = `
+      <span>${escapeHtml(step.step)}</span>
+      <div>
+        <strong>${escapeHtml(step.title)}</strong>
+        <p>${escapeHtml(step.detail)}</p>
+      </div>
+      <b>${escapeHtml(step.mode)}</b>
+    `;
+    elements.orchestratorPlanList.append(card);
+  });
+
+  elements.orchestratorGateList.innerHTML = "";
+  orchestration.gates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `orchestrator-gate-card ${gate.status === "Blocked" || gate.status === "Review" ? "is-blocked" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <b>${escapeHtml(gate.status)}</b>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+    `;
+    elements.orchestratorGateList.append(card);
+  });
+
+  elements.orchestratorLearningList.innerHTML = "";
+  orchestration.learningRows.forEach((row) => {
+    const card = document.createElement("article");
+    card.className = "orchestrator-learning-card";
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(row.scope)}</strong>
+        <span>${escapeHtml(row.boundary)}</span>
+      </header>
+      <p>${escapeHtml(row.detail)}</p>
+    `;
+    elements.orchestratorLearningList.append(card);
+  });
+
+  elements.orchestratorReceiptList.innerHTML = "";
+  if (orchestration.receipts.length === 0) {
+    elements.orchestratorReceiptList.append(emptyState("No orchestration receipts yet"));
+  }
+  orchestration.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "orchestrator-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.orchestratorReceiptList.append(card);
+  });
+}
+
+function trustOrchestratorSnapshot() {
+  const benchmarks = trustBenchmarkSnapshot();
+  const playbooks = adaptivePlaybookSnapshot();
+  const run = autonomousRunSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const agent = governedAgentSnapshot();
+  const followUps = followUpSnapshot();
+  const pipeline = pipelineSnapshot();
+  const trustRoom = trustRoomSnapshot();
+  const connectors = connectorSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const coverage = coverageSnapshot();
+  const network = learningNetworkSnapshot();
+  const priorities = orchestrationPriorities({ benchmarks, gaps, followUps, pipeline, connectors, playbooks, trustRoom, agent });
+  const plan = orchestrationPlan(priorities, { benchmarks, run, gaps, agent, trustRoom, network });
+  const gates = orchestrationGates({ benchmarks, run, gaps, agent, trustRoom, network, pipeline });
+  const learningRows = orchestrationLearningRows({ benchmarks, priorities, network, coverage, routing });
+  const blockedPenalty = gates.filter((gate) => gate.status === "Blocked").length * 10;
+  const highPriorityPenalty = priorities.filter((priority) => priority.severity === "High").length * 8;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        benchmarks.score * 0.26
+          + agent.controlScore * 0.18
+          + coverage.score * 0.16
+          + network.privacyScore * 0.18
+          + Math.max(0, 100 - blockedPenalty) * 0.12
+          + Math.max(0, 100 - highPriorityPenalty) * 0.1,
+      ),
+    ),
+  );
+  const statusLabel = state.orchestratorActions.status === "Draft" ? "Ready to orchestrate" : state.orchestratorActions.status;
+
+  return {
+    score,
+    statusLabel,
+    priorities,
+    plan,
+    gates,
+    learningRows,
+    receipts: state.orchestratorActions.receipts.slice(-8).reverse(),
+    benchmarks,
+    playbooks,
+    run,
+    gaps,
+    agent,
+    followUps,
+    pipeline,
+    trustRoom,
+    connectors,
+    routing,
+    coverage,
+    network,
+  };
+}
+
+function orchestrationPriorities({ benchmarks, gaps, followUps, pipeline, connectors, playbooks, trustRoom, agent }) {
+  const priorities = [];
+
+  if (gaps.tasks[0]) {
+    const task = gaps.tasks[0];
+    priorities.push({
+      title: task.request.title,
+      detail: `Collect ${task.request.sourceHint} for ${task.question.category} before this answer reaches the buyer.`,
+      signal: "Proof gap",
+      severity: task.severity,
+      impact: `${task.score}% risk`,
+      owner: task.owner.name,
+      gate: "Human evidence approval",
+      questionId: task.question.id,
+      priority: 100 + task.score,
+    });
+  }
+
+  if (benchmarks.investments[0]) {
+    const investment = benchmarks.investments[0];
+    priorities.push({
+      title: investment.title,
+      detail: investment.detail,
+      signal: "Benchmark gap",
+      severity: investment.impact.includes("24") ? "High" : "Medium",
+      impact: investment.impact,
+      owner: memberForQuestion(state.questions.find((question) => question.id === investment.questionId) ?? getActiveQuestion()).name,
+      gate: "Reviewer approves proof investment",
+      questionId: investment.questionId,
+      priority: 92,
+    });
+  }
+
+  if (followUps.slaCount > 0 || pipeline.slaRiskCount > 0) {
+    const account = pipeline.accounts.find((item) => item.slaRisk) ?? pipeline.accounts[0];
+    priorities.push({
+      title: "Protect buyer deadline",
+      detail: `${followUps.slaCount + pipeline.slaRiskCount} deadline signal${followUps.slaCount + pipeline.slaRiskCount === 1 ? "" : "s"} require owner routing before weak answers are submitted.`,
+      signal: "SLA pressure",
+      severity: "High",
+      impact: `${account?.daysLeft ?? 0} days`,
+      owner: account?.owner ?? "Sales engineering",
+      gate: "Deadline override approval",
+      questionId: getActiveQuestion().id,
+      priority: 88,
+    });
+  }
+
+  if (connectors.staleCount > 0) {
+    priorities.push({
+      title: "Refresh stale evidence sources",
+      detail: `${connectors.staleCount} source freshness signal${connectors.staleCount === 1 ? "" : "s"} should be refreshed before network learning promotes the pattern.`,
+      signal: "Source freshness",
+      severity: connectors.staleCount > 1 ? "High" : "Medium",
+      impact: `${connectors.staleCount} stale`,
+      owner: "Evidence owner",
+      gate: "No silent answer changes",
+      questionId: getActiveQuestion().id,
+      priority: 76,
+    });
+  }
+
+  if (playbooks.playbooks[0]) {
+    const playbook = playbooks.playbooks[0];
+    priorities.push({
+      title: playbook.title,
+      detail: playbook.action,
+      signal: playbook.motion,
+      severity: playbook.confidence >= 86 ? "Medium" : "High",
+      impact: `${playbook.confidence}%`,
+      owner: playbook.buyer,
+      gate: "Trust motion approval",
+      questionId: getActiveQuestion().id,
+      priority: 70 + Math.round(playbook.confidence / 10),
+    });
+  }
+
+  if (trustRoom.score >= 80) {
+    priorities.push({
+      title: "Use scoped trust room handoff",
+      detail: "Package sealed answers, source-safe excerpts, and receipt trail when multiple buyer answers are ready.",
+      signal: "Buyer room",
+      severity: "Medium",
+      impact: `${trustRoom.score}% ready`,
+      owner: "Sales engineering",
+      gate: "External sharing approval",
+      questionId: getActiveQuestion().id,
+      priority: 64,
+    });
+  }
+
+  if (agent.tasks[0]) {
+    priorities.push({
+      title: agent.tasks[0].title,
+      detail: agent.tasks[0].detail,
+      signal: "Governed agent",
+      severity: agent.tasks[0].risk,
+      impact: agent.tasks[0].mode,
+      owner: agent.tasks[0].owner,
+      gate: agent.tasks[0].mode,
+      questionId: getActiveQuestion().id,
+      priority: 62,
+    });
+  }
+
+  return priorities.sort((a, b) => b.priority - a.priority).slice(0, 6);
+}
+
+function orchestrationPlan(priorities, { benchmarks, run, gaps, agent, trustRoom, network }) {
+  const top = priorities[0];
+  return [
+    {
+      step: "01",
+      title: top ? `Route ${top.signal.toLowerCase()} work` : "Wait for the next buyer signal",
+      detail: top ? `${top.title}: ${top.detail}` : "No urgent orchestration priority is currently active.",
+      mode: "Route",
+    },
+    {
+      step: "02",
+      title: "Collect governed proof",
+      detail: gaps.tasks[0] ? `${gaps.tasks[0].owner.name} collects ${gaps.tasks[0].request.sourceHint}.` : "Use approved evidence and connector freshness before changing any buyer-facing answer.",
+      mode: "Request",
+    },
+    {
+      step: "03",
+      title: "Run human approval gates",
+      detail: `${run.openGateCount} run gate${run.openGateCount === 1 ? "" : "s"} and ${agent.tasks.length} governed agent task${agent.tasks.length === 1 ? "" : "s"} remain controlled by reviewers.`,
+      mode: "Approve",
+    },
+    {
+      step: "04",
+      title: "Prepare buyer-safe handoff",
+      detail: trustRoom.score >= 80 ? "Use the scoped trust room and source-safe excerpts for approved answers." : "Keep answers in review until trust room readiness and source confidence improve.",
+      mode: "Package",
+    },
+    {
+      step: "05",
+      title: "Write closed-loop learning receipt",
+      detail: `Local memory keeps exact outcomes; network learning receives only ${benchmarks.bands.length} category bands, friction labels, proof types, and outcome labels at ${network.privacyScore}% privacy.`,
+      mode: "Learn",
+    },
+  ];
+}
+
+function orchestrationGates({ benchmarks, run, gaps, agent, trustRoom, network, pipeline }) {
+  return [
+    {
+      title: "Buyer-facing claim changes",
+      status: gaps.highRiskCount > 0 || benchmarks.frictionRows.some((row) => row.severity === "High") ? "Blocked" : "Review",
+      detail: "No drafted answer can change externally until evidence is attached and a reviewer approves the claim.",
+    },
+    {
+      title: "Agent execution",
+      status: state.orchestratorActions.gateApprovedAt || agent.statusLabel === "Human approved" ? "Approved" : "Review",
+      detail: "The agent can prepare requests and refresh queues, but cannot submit buyer-facing text without approval.",
+    },
+    {
+      title: "External trust room share",
+      status: trustRoom.score >= 80 ? "Review" : "Blocked",
+      detail: "Scoped trust rooms require buyer-safe source excerpts, access policy, and receipt trail.",
+    },
+    {
+      title: "Deadline override",
+      status: pipeline.slaRiskCount > 0 || run.openGateCount > 0 ? "Review" : "Approved",
+      detail: "Deadline pressure cannot bypass proof quality, claim trace, or reviewer approval.",
+    },
+    {
+      title: "Network learning promotion",
+      status: network.privacyScore >= 90 ? "Approved" : "Review",
+      detail: "Only abstract labels, readiness bands, proof types, and outcomes can enter cross-tenant learning.",
+    },
+  ];
+}
+
+function orchestrationLearningRows({ benchmarks, priorities, network, coverage, routing }) {
+  return [
+    {
+      scope: "Local exact memory",
+      boundary: "Private",
+      detail: `Learns approved wording, owner route, evidence source, and outcome for ${routing.routed} routed question${routing.routed === 1 ? "" : "s"}.`,
+    },
+    {
+      scope: "Workspace improvement",
+      boundary: "Organization",
+      detail: `Uses ${priorities.length} priority signal${priorities.length === 1 ? "" : "s"} to improve coverage, owner load, deadline handling, and reuse.`,
+    },
+    {
+      scope: "Network benchmark",
+      boundary: "Aggregate",
+      detail: `${benchmarks.aheadCount}/${benchmarks.bands.length} categories are at or above peer band; shared learning remains category and friction only.`,
+    },
+    {
+      scope: "Safety feedback",
+      boundary: "Governed",
+      detail: `${network.privacyScore}% privacy score with ${coverage.score}% coverage; no raw customer material is promoted.`,
+    },
+  ];
+}
+
+function prepareTrustOrchestrator() {
+  const orchestration = trustOrchestratorSnapshot();
+  const detail = `Autonomous trust plan prepared with ${orchestration.plan.length} steps, ${orchestration.priorities.length} priorities, ${orchestration.gates.length} gates, and ${orchestration.score}% orchestration score.`;
+  state.orchestratorActions.status = "Plan prepared";
+  state.orchestratorActions.plannedAt = new Date().toISOString();
+  addOrchestratorReceipt("Plan prepared", detail);
+  addAudit("Trust orchestrator prepared", detail);
+  renderTrustOrchestrator();
+  renderAudit();
+  showToast("Autonomous trust plan prepared.");
+}
+
+function executeTrustOrchestrator() {
+  const orchestration = trustOrchestratorSnapshot();
+  const priority = orchestration.priorities[0];
+  if (!priority) return;
+  const question = state.questions.find((item) => item.id === priority.questionId) ?? getActiveQuestion();
+  state.activeQuestionId = question.id;
+  question.routeStatus = "Owner review";
+  question.assigneeId = ownerToMemberId(question.owner);
+  question.routedAt = new Date().toISOString();
+  if (question.status === "draft" && (question.confidence < 90 || priority.severity === "High")) {
+    question.status = "needs-evidence";
+  }
+
+  const detail = `Routed top orchestration priority: ${priority.title}. Owner: ${priority.owner}. Gate: ${priority.gate}.`;
+  state.orchestratorActions.status = "Work routed";
+  state.orchestratorActions.executedAt = new Date().toISOString();
+  addOrchestratorReceipt("Work routed", detail);
+  addAudit("Trust orchestrator routed work", detail);
+  render();
+  showToast("Top orchestration work routed.");
+}
+
+function approveOrchestratorGate() {
+  const orchestration = trustOrchestratorSnapshot();
+  const gate = orchestration.gates.find((item) => item.status !== "Approved");
+  const detail = gate ? `Human gate approved for orchestration: ${gate.title}. ${gate.detail}` : "All orchestration gates already approved.";
+  state.orchestratorActions.status = "Gate approved";
+  state.orchestratorActions.gateApprovedAt = new Date().toISOString();
+  addOrchestratorReceipt("Gate approved", detail);
+  addAudit("Orchestration gate approved", detail);
+  renderTrustOrchestrator();
+  renderAudit();
+  showToast("Orchestration gate approved.");
+}
+
+function copyOrchestratorDigest() {
+  const orchestration = trustOrchestratorSnapshot();
+  state.orchestratorActions.lastCopiedAt = new Date().toISOString();
+  addOrchestratorReceipt("Orchestrator digest copied", "Autonomous trust orchestration digest copied.");
+  addAudit("Orchestrator digest copied", "Autonomous trust orchestration digest copied.");
+  renderTrustOrchestrator();
+  renderAudit();
+  copyText(orchestratorDigestText(orchestration), "Autonomous trust digest copied.");
+}
+
+function addOrchestratorReceipt(action, detail) {
+  state.orchestratorActions.receipts = [
+    ...(state.orchestratorActions.receipts ?? []),
+    {
+      id: `orchestrator-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function orchestratorDigestText(orchestration = trustOrchestratorSnapshot()) {
+  const priorityLines = orchestration.priorities.map((priority, index) => `${index + 1}. ${priority.signal}: ${priority.title} | ${priority.impact} | ${priority.owner} | ${priority.gate}`).join("\n");
+  const planLines = orchestration.plan.map((step) => `${step.step}. ${step.title} | ${step.mode} | ${step.detail}`).join("\n");
+  const gateLines = orchestration.gates.map((gate, index) => `${index + 1}. ${gate.title}: ${gate.status} - ${gate.detail}`).join("\n");
+  const learningLines = orchestration.learningRows.map((row, index) => `${index + 1}. ${row.scope}: ${row.boundary} - ${row.detail}`).join("\n");
+  const receiptLines = orchestration.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Autonomous Trust Orchestrator",
+    `Build: ${BUILD_VERSION}`,
+    `Orchestration status: ${orchestration.statusLabel}`,
+    `Orchestration score: ${orchestration.score}%`,
+    `Plan steps: ${orchestration.plan.length}`,
+    `Open gates: ${orchestration.gates.filter((gate) => gate.status !== "Approved").length}`,
+    "",
+    "Priority queue:",
+    priorityLines || "No orchestration priorities yet.",
+    "",
+    "Governed plan:",
+    planLines,
+    "",
+    "Human gates:",
+    gateLines,
+    "",
+    "Closed-loop learning:",
+    learningLines,
+    "",
+    "Receipts:",
+    receiptLines || "No orchestration receipts yet.",
+    "",
+    "Autonomy boundary:",
+    "- The orchestrator can route work, prepare requests, and explain next actions.",
+    "- It cannot submit buyer-facing claims, share evidence, or promote network learning without human-approved gates.",
+    "- Local exact learning stays inside the organization; cross-tenant benefit uses only aggregate labels and bands.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -10552,6 +11120,11 @@ function exportCsv() {
     "Benchmark Bands",
     "Benchmark Friction",
     "Benchmark Receipts",
+    "Orchestrator Status",
+    "Orchestrator Score",
+    "Orchestrator Priorities",
+    "Orchestrator Gates",
+    "Orchestrator Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -10576,6 +11149,7 @@ function exportCsv() {
     const outcomes = trustOutcomeMemorySnapshot();
     const playbooks = adaptivePlaybookSnapshot();
     const benchmarks = trustBenchmarkSnapshot();
+    const orchestrator = trustOrchestratorSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -10648,6 +11222,11 @@ function exportCsv() {
       `${benchmarks.aheadCount}/${benchmarks.bands.length}`,
       benchmarks.frictionRows.length,
       benchmarks.receipts.length,
+      orchestrator.statusLabel,
+      `${orchestrator.score}%`,
+      orchestrator.priorities.length,
+      orchestrator.gates.filter((gate) => gate.status !== "Approved").length,
+      orchestrator.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -10682,6 +11261,7 @@ function exportReviewPack() {
   const outcomes = trustOutcomeMemorySnapshot();
   const playbooks = adaptivePlaybookSnapshot();
   const benchmarks = trustBenchmarkSnapshot();
+  const orchestrator = trustOrchestratorSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -10699,7 +11279,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v23</h1>
+        <h1>AnswerSeal Review Pack v24</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -11242,6 +11822,105 @@ function exportReviewPack() {
         </table>
         <h2>Benchmark Digest</h2>
         <pre>${escapeHtml(benchmarkDigestText(benchmarks))}</pre>
+        <h2>Autonomous Trust Orchestrator</h2>
+        <p>Status: ${escapeHtml(orchestrator.statusLabel)} | Orchestration score: ${orchestrator.score}% | Priorities: ${orchestrator.priorities.length} | Plan steps: ${orchestrator.plan.length} | Open gates: ${orchestrator.gates.filter((gate) => gate.status !== "Approved").length} | Receipts: ${orchestrator.receipts.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>Signal</th>
+              <th>Owner</th>
+              <th>Impact</th>
+              <th>Gate</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orchestrator.priorities
+              .map(
+                (priority) => `
+                  <tr>
+                    <td>${escapeHtml(priority.title)}<br />${escapeHtml(priority.detail)}</td>
+                    <td>${escapeHtml(priority.signal)}</td>
+                    <td>${escapeHtml(priority.owner)}</td>
+                    <td>${escapeHtml(priority.impact)}</td>
+                    <td>${escapeHtml(priority.gate)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Orchestrator Governed Plan</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Mode</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orchestrator.plan
+              .map(
+                (step) => `
+                  <tr>
+                    <td>${escapeHtml(step.step)} ${escapeHtml(step.title)}</td>
+                    <td>${escapeHtml(step.mode)}</td>
+                    <td>${escapeHtml(step.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Orchestrator Human Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orchestrator.gates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Blocked" || gate.status === "Review" ? "risk" : "ok"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Orchestrator Learning Boundary</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Scope</th>
+              <th>Boundary</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orchestrator.learningRows
+              .map(
+                (row) => `
+                  <tr>
+                    <td>${escapeHtml(row.scope)}</td>
+                    <td>${escapeHtml(row.boundary)}</td>
+                    <td>${escapeHtml(row.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Orchestrator Digest</h2>
+        <pre>${escapeHtml(orchestratorDigestText(orchestrator))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -11954,7 +12633,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v23 created with trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v24 created with autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -11968,12 +12647,13 @@ function exportReviewPack() {
   renderOutcomeMemory();
   renderAdaptivePlaybooks();
   renderTrustBenchmarks();
+  renderTrustOrchestrator();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v23 exported.");
+  showToast("Review Pack v24 exported.");
 }
 
 function toCsv(rows) {
@@ -12037,6 +12717,7 @@ function serializeWorkspace() {
     outcomeActions: state.outcomeActions,
     playbookActions: state.playbookActions,
     benchmarkActions: state.benchmarkActions,
+    orchestratorActions: state.orchestratorActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -12071,6 +12752,7 @@ function resetWorkspace() {
   closeOutcomeMemory(false);
   closeAdaptivePlaybooks(false);
   closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
   closeWorkspace(false);
   closeLibrary();
   render();
