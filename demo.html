@@ -131,6 +131,10 @@
             <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
             <span>Agent</span>
           </button>
+          <button class="nav-item" id="outcomeNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Outcomes</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -193,8 +197,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.24 Alpha</strong>
-          <span>Governed Evidence Agent</span>
+          <strong>v0.25 Alpha</strong>
+          <span>Trust Outcome Memory</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -206,7 +210,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.24 Alpha</span>
+            <span class="label">Security questionnaire | v0.25 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -1560,6 +1564,107 @@
             <span>Copyable controlled-execution note</span>
           </div>
           <pre class="agent-digest" id="agentDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="outcome-backdrop drawer-backdrop" id="outcomeBackdrop" hidden></div>
+    <aside class="workspace-drawer outcome-drawer" id="outcomeDrawer" aria-label="Trust outcome memory" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Trust Outcome Memory</span>
+          <h2>Turn buyer results into safe learning signals</h2>
+        </div>
+        <button class="icon-button" id="closeOutcomeButton" type="button" aria-label="Close outcomes" title="Close outcomes">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip outcome-metrics" aria-label="Outcome memory health">
+        <article>
+          <span class="label">Memory Score</span>
+          <strong id="outcomeMemoryScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Events</span>
+          <strong id="outcomeEventCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Rewards</span>
+          <strong id="outcomeRewardCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Patterns</span>
+          <strong id="outcomePatternCount">0/0</strong>
+        </article>
+      </section>
+
+      <section class="outcome-actions" aria-label="Outcome memory controls">
+        <div>
+          <span class="label">Memory Status</span>
+          <strong id="outcomeStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="captureOutcomeButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Capture Outcomes</span>
+        </button>
+        <button class="secondary-button" id="tuneMemoryButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Tune Memory</span>
+        </button>
+        <button class="secondary-button" id="copyOutcomeDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="outcome-body">
+        <section class="outcome-section" aria-label="Outcome events">
+          <div class="section-heading">
+            <span class="label">Outcome Events</span>
+            <span>Accepted, challenged, delayed, reused, or blocked</span>
+          </div>
+          <div class="outcome-event-list" id="outcomeEventList"></div>
+        </section>
+
+        <section class="outcome-section" aria-label="Reward signals">
+          <div class="section-heading">
+            <span class="label">Reward Signals</span>
+            <span>What improves or weakens future recommendations</span>
+          </div>
+          <div class="outcome-reward-list" id="outcomeRewardList"></div>
+        </section>
+
+        <section class="outcome-section" aria-label="Privacy guardrails">
+          <div class="section-heading">
+            <span class="label">Privacy Guardrails</span>
+            <span>What stays local and what may aggregate</span>
+          </div>
+          <div class="outcome-guardrail-list" id="outcomeGuardrailList"></div>
+        </section>
+
+        <section class="outcome-section" aria-label="Adaptive playbooks">
+          <div class="section-heading">
+            <span class="label">Adaptive Playbooks</span>
+            <span>Next best paths from proven outcomes</span>
+          </div>
+          <div class="outcome-playbook-list" id="outcomePlaybookList"></div>
+        </section>
+
+        <section class="outcome-section" aria-label="Outcome receipts">
+          <div class="section-heading">
+            <span class="label">Outcome Receipts</span>
+            <span>Recorded learning actions</span>
+          </div>
+          <div class="outcome-receipt-list" id="outcomeReceiptList"></div>
+        </section>
+
+        <section class="outcome-section" aria-label="Outcome digest">
+          <div class="section-heading">
+            <span class="label">Outcome Digest</span>
+            <span>Copyable closed-loop memory note</span>
+          </div>
+          <pre class="outcome-digest" id="outcomeDigest"></pre>
         </section>
       </section>
     </aside>

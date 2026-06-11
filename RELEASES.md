@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.25 Alpha - Trust Outcome Memory
+
+Phase: Trust Outcome Memory
+
+- Added an Outcomes drawer with memory score, outcome event count, reward signal count, shareable pattern count, and memory status.
+- Added outcome events for accepted answers, buyer challenges, governed agent actions, and adaptive coach guidance.
+- Added reward signals that promote accepted sealed answers, penalize weak proof paths, and reinforce human-approved agent work.
+- Added privacy guardrails that separate local exact memory from aggregate cross-tenant learning patterns.
+- Added adaptive playbooks that recommend next proof paths from successful and challenged review outcomes.
+- Added outcome receipts for captured outcomes, tuned memory, and copied outcome digests.
+- Added outcome status, memory score, event count, reward count, and shareable pattern count to CSV exports.
+- Upgraded review pack export to Review Pack v21 with trust outcome memory, reward signals, privacy guardrails, and outcome digest.
+- Updated the build phases page with the v0.26 Adaptive Trust Playbooks plan.
+
 ## v0.24 Alpha - Governed Evidence Agent
 
 Phase: Governed Evidence Agent

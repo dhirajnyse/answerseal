@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.24 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v24";
+const BUILD_VERSION = "v0.25 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v25";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v24",
   "answerseal.workspace.v23",
   "answerseal.workspace.v22",
   "answerseal.workspace.v21",
@@ -684,6 +685,8 @@ function createInitialState() {
     coachActions: createInitialCoachActions(),
     agentOpen: false,
     agentActions: createInitialAgentActions(),
+    outcomeOpen: false,
+    outcomeActions: createInitialOutcomeActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -753,6 +756,16 @@ function createInitialAgentActions() {
     plannedAt: null,
     approvedAt: null,
     refreshedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
+function createInitialOutcomeActions() {
+  return {
+    status: "Draft",
+    capturedAt: null,
+    tunedAt: null,
     lastCopiedAt: null,
     receipts: [],
   };
@@ -881,6 +894,7 @@ function loadWorkspaceState() {
       networkActions: normalizeNetworkActions(workspace.networkActions ?? fresh.networkActions),
       coachActions: normalizeCoachActions(workspace.coachActions ?? fresh.coachActions),
       agentActions: normalizeAgentActions(workspace.agentActions ?? fresh.agentActions),
+      outcomeActions: normalizeOutcomeActions(workspace.outcomeActions ?? fresh.outcomeActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -900,6 +914,7 @@ function loadWorkspaceState() {
       networkOpen: false,
       coachOpen: false,
       agentOpen: false,
+      outcomeOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1240,6 +1255,26 @@ function normalizeAgentReceipt(receipt) {
   };
 }
 
+function normalizeOutcomeActions(actions) {
+  const status = ["Draft", "Outcomes captured", "Memory tuned"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    capturedAt: actions?.capturedAt ?? null,
+    tunedAt: actions?.tunedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeOutcomeReceipt) : [],
+  };
+}
+
+function normalizeOutcomeReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `outcome-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Outcome memory action"),
+    detail: String(receipt?.detail ?? "Trust outcome memory action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1277,6 +1312,7 @@ const elements = {
   networkNavButton: document.querySelector("#networkNavButton"),
   coachNavButton: document.querySelector("#coachNavButton"),
   agentNavButton: document.querySelector("#agentNavButton"),
+  outcomeNavButton: document.querySelector("#outcomeNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1546,6 +1582,23 @@ const elements = {
   approveAgentButton: document.querySelector("#approveAgentButton"),
   queueRefreshButton: document.querySelector("#queueRefreshButton"),
   copyAgentDigestButton: document.querySelector("#copyAgentDigestButton"),
+  outcomeBackdrop: document.querySelector("#outcomeBackdrop"),
+  outcomeDrawer: document.querySelector("#outcomeDrawer"),
+  closeOutcomeButton: document.querySelector("#closeOutcomeButton"),
+  outcomeMemoryScore: document.querySelector("#outcomeMemoryScore"),
+  outcomeEventCount: document.querySelector("#outcomeEventCount"),
+  outcomeRewardCount: document.querySelector("#outcomeRewardCount"),
+  outcomePatternCount: document.querySelector("#outcomePatternCount"),
+  outcomeStatus: document.querySelector("#outcomeStatus"),
+  outcomeEventList: document.querySelector("#outcomeEventList"),
+  outcomeRewardList: document.querySelector("#outcomeRewardList"),
+  outcomeGuardrailList: document.querySelector("#outcomeGuardrailList"),
+  outcomePlaybookList: document.querySelector("#outcomePlaybookList"),
+  outcomeReceiptList: document.querySelector("#outcomeReceiptList"),
+  outcomeDigest: document.querySelector("#outcomeDigest"),
+  captureOutcomeButton: document.querySelector("#captureOutcomeButton"),
+  tuneMemoryButton: document.querySelector("#tuneMemoryButton"),
+  copyOutcomeDigestButton: document.querySelector("#copyOutcomeDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -1655,6 +1708,7 @@ function bindEvents() {
   elements.networkNavButton.addEventListener("click", openLearningNetwork);
   elements.coachNavButton.addEventListener("click", openAdaptiveCoach);
   elements.agentNavButton.addEventListener("click", openEvidenceAgent);
+  elements.outcomeNavButton.addEventListener("click", openOutcomeMemory);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -1709,6 +1763,7 @@ function bindEvents() {
     renderLearningNetwork();
     renderAdaptiveCoach();
     renderEvidenceAgent();
+    renderOutcomeMemory();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -1780,6 +1835,11 @@ function bindEvents() {
   elements.approveAgentButton.addEventListener("click", approveAgentPlan);
   elements.queueRefreshButton.addEventListener("click", queueAgentRefresh);
   elements.copyAgentDigestButton.addEventListener("click", copyAgentDigest);
+  elements.closeOutcomeButton.addEventListener("click", closeOutcomeMemory);
+  elements.outcomeBackdrop.addEventListener("click", closeOutcomeMemory);
+  elements.captureOutcomeButton.addEventListener("click", captureOutcomes);
+  elements.tuneMemoryButton.addEventListener("click", tuneOutcomeMemory);
+  elements.copyOutcomeDigestButton.addEventListener("click", copyOutcomeDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -1834,6 +1894,7 @@ function bindEvents() {
     if (state.networkOpen) closeLearningNetwork();
     if (state.coachOpen) closeAdaptiveCoach();
     if (state.agentOpen) closeEvidenceAgent();
+    if (state.outcomeOpen) closeOutcomeMemory();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -1855,6 +1916,7 @@ function applyInitialHash() {
   if (hash === "network" || hash === "learning-network" || hash === "privacy-network") openLearningNetwork();
   if (hash === "coach" || hash === "proof-coach" || hash === "adaptive-coach") openAdaptiveCoach();
   if (hash === "agent" || hash === "evidence-agent" || hash === "governed-agent") openEvidenceAgent();
+  if (hash === "outcomes" || hash === "outcome-memory" || hash === "trust-memory" || hash === "memory") openOutcomeMemory();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -1890,6 +1952,7 @@ function render() {
   renderLearningNetwork();
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -1969,6 +2032,7 @@ function renderQuestionList() {
       renderLearningNetwork();
       renderAdaptiveCoach();
       renderEvidenceAgent();
+      renderOutcomeMemory();
       renderAnalytics();
       schedulePersist();
     });
@@ -2620,6 +2684,10 @@ function activateWorkspaceNav(target) {
 }
 
 function setActiveNav(activeButton) {
+  if (activeButton !== elements.outcomeNavButton && state.outcomeOpen) {
+    closeOutcomeMemory(false);
+  }
+
   [
     elements.reviewNavButton,
     elements.importNavButton,
@@ -2629,6 +2697,7 @@ function setActiveNav(activeButton) {
     elements.networkNavButton,
     elements.coachNavButton,
     elements.agentNavButton,
+    elements.outcomeNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3073,6 +3142,43 @@ function closeEvidenceAgent(activateReview = true) {
   elements.agentDrawer.classList.remove("is-open");
   elements.agentDrawer.setAttribute("aria-hidden", "true");
   elements.agentBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openOutcomeMemory() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeIntake(false);
+  closeDataRoom(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.outcomeOpen = true;
+  setActiveNav(elements.outcomeNavButton);
+  elements.outcomeBackdrop.hidden = false;
+  elements.outcomeDrawer.classList.add("is-open");
+  elements.outcomeDrawer.setAttribute("aria-hidden", "false");
+  renderOutcomeMemory();
+  elements.captureOutcomeButton.focus();
+}
+
+function closeOutcomeMemory(activateReview = true) {
+  if (!state.outcomeOpen && elements.outcomeDrawer.getAttribute("aria-hidden") === "true") return;
+  state.outcomeOpen = false;
+  elements.outcomeDrawer.classList.remove("is-open");
+  elements.outcomeDrawer.setAttribute("aria-hidden", "true");
+  elements.outcomeBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -5020,6 +5126,7 @@ function copyGapFallback(id) {
   renderLearningNetwork();
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   copyText(gapFallbackText(task), "Buyer-safe fallback copied.");
 }
 
@@ -5409,6 +5516,7 @@ function copyRunDigest() {
   renderLearningNetwork();
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   copyText(runDigestText(run), "Autonomous run digest copied.");
 }
 
@@ -5749,6 +5857,7 @@ function copyLaunchDigest() {
   renderLearningNetwork();
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   copyText(launchDigestText(launch), "Trust launch digest copied.");
 }
 
@@ -6065,6 +6174,7 @@ function copyNetworkDigest() {
   renderLearningNetwork();
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   copyText(networkDigestText(network), "Learning network digest copied.");
 }
 
@@ -6409,6 +6519,7 @@ function copyCoachDigest() {
   addAudit("Coach digest copied", "Adaptive proof coach digest copied.");
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   copyText(coachDigestText(coach), "Adaptive proof coach digest copied.");
 }
 
@@ -6756,6 +6867,7 @@ function copyAgentDigest() {
   addAgentReceipt("Agent digest copied", "Governed evidence agent digest copied.");
   addAudit("Agent digest copied", "Governed evidence agent digest copied.");
   renderEvidenceAgent();
+  renderOutcomeMemory();
   copyText(agentDigestText(agent), "Governed evidence agent digest copied.");
 }
 
@@ -6805,6 +6917,406 @@ function agentDigestText(agent = governedAgentSnapshot()) {
     "- The agent may draft internal evidence work and queue refreshes.",
     "- The agent may not change buyer-facing claims without evidence and human approval.",
     "- Every governed action needs an owner, permission mode, and receipt.",
+  ].join("\n");
+}
+
+function renderOutcomeMemory() {
+  const memory = trustOutcomeMemorySnapshot();
+
+  elements.outcomeMemoryScore.textContent = `${memory.score}%`;
+  elements.outcomeEventCount.textContent = memory.events.length;
+  elements.outcomeRewardCount.textContent = memory.rewards.length;
+  elements.outcomePatternCount.textContent = `${memory.shareablePatterns}/${memory.patterns.length}`;
+  elements.outcomeStatus.textContent = memory.statusLabel;
+  elements.outcomeDigest.textContent = outcomeDigestText(memory);
+  elements.tuneMemoryButton.disabled = state.outcomeActions.status === "Memory tuned";
+
+  elements.outcomeEventList.innerHTML = "";
+  memory.events.forEach((event) => {
+    const item = document.createElement("article");
+    item.className = `outcome-event-card ${event.sentiment === "Negative" ? "is-risk" : ""}`;
+    item.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${event.scope}</span>
+          <strong>${event.title}</strong>
+        </div>
+        <b>${event.outcome}</b>
+      </header>
+      <p>${event.detail}</p>
+      <footer>
+        <span>${event.signal}</span>
+        <span>${event.memory}</span>
+      </footer>
+    `;
+    elements.outcomeEventList.append(item);
+  });
+
+  elements.outcomeRewardList.innerHTML = "";
+  memory.rewards.forEach((reward) => {
+    const item = document.createElement("article");
+    item.className = "outcome-reward-card";
+    item.innerHTML = `
+      <header>
+        <strong>${reward.signal}</strong>
+        <b>${reward.weight}</b>
+      </header>
+      <p>${reward.learning}</p>
+      <span>${reward.apply}</span>
+    `;
+    elements.outcomeRewardList.append(item);
+  });
+
+  elements.outcomeGuardrailList.innerHTML = "";
+  memory.guardrails.forEach((guardrail) => {
+    const item = document.createElement("article");
+    item.className = `outcome-guardrail-card ${guardrail.status === "Blocked" ? "is-blocked" : ""}`;
+    item.innerHTML = `
+      <header>
+        <strong>${guardrail.title}</strong>
+        <b>${guardrail.status}</b>
+      </header>
+      <p>${guardrail.detail}</p>
+    `;
+    elements.outcomeGuardrailList.append(item);
+  });
+
+  elements.outcomePlaybookList.innerHTML = "";
+  memory.playbooks.forEach((playbook) => {
+    const item = document.createElement("article");
+    item.className = "outcome-playbook-card";
+    item.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${playbook.trigger}</span>
+          <strong>${playbook.title}</strong>
+        </div>
+        <b>${playbook.confidence}%</b>
+      </header>
+      <p>${playbook.action}</p>
+      <footer>
+        <span>${playbook.privateUse}</span>
+        <span>${playbook.networkUse}</span>
+      </footer>
+    `;
+    elements.outcomePlaybookList.append(item);
+  });
+
+  elements.outcomeReceiptList.innerHTML = "";
+  if (memory.receipts.length === 0) {
+    elements.outcomeReceiptList.append(emptyState("No outcome receipts yet"));
+  }
+  memory.receipts.forEach((receipt) => {
+    const item = document.createElement("article");
+    item.className = "outcome-receipt-card";
+    item.innerHTML = `
+      <strong>${receipt.action}</strong>
+      <p>${receipt.detail}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.outcomeReceiptList.append(item);
+  });
+}
+
+function trustOutcomeMemorySnapshot() {
+  const coverage = coverageSnapshot();
+  const trustRoom = trustRoomSnapshot();
+  const followUps = followUpSnapshot();
+  const network = learningNetworkSnapshot();
+  const coach = adaptiveCoachSnapshot();
+  const agent = governedAgentSnapshot();
+  const events = outcomeEvents({ trustRoom, followUps, agent, coach });
+  const rewards = outcomeRewards({ events, coverage, trustRoom, followUps, agent, network });
+  const guardrails = outcomeGuardrails({ network, agent });
+  const patterns = outcomePatterns({ events, rewards, guardrails });
+  const playbooks = outcomePlaybooks({ events, rewards, coverage, agent, network });
+  const shareablePatterns = patterns.filter((pattern) => pattern.shareable).length;
+  const score = Math.min(
+    100,
+    Math.round(
+      coverage.score * 0.22 +
+        trustRoom.score * 0.22 +
+        agent.controlScore * 0.2 +
+        network.privacyScore * 0.18 +
+        Math.max(0, 100 - followUps.slaCount * 12) * 0.1 +
+        Math.min(100, rewards.length * 18) * 0.08,
+    ),
+  );
+  const statusLabel = state.outcomeActions.status === "Draft" ? "Ready to capture" : state.outcomeActions.status;
+
+  return {
+    score,
+    events,
+    rewards,
+    guardrails,
+    patterns,
+    playbooks,
+    shareablePatterns,
+    statusLabel,
+    receipts: state.outcomeActions.receipts.slice(-8).reverse(),
+    trustRoom,
+    followUps,
+    network,
+    agent,
+  };
+}
+
+function outcomeEvents({ trustRoom, followUps, agent, coach }) {
+  const challenged = followUps.items.find((item) => item.status === "Needs evidence") ?? followUps.items[0];
+  return [
+    {
+      id: "accepted-room",
+      scope: "Private workspace",
+      title: "Buyer reused sealed AI answer",
+      outcome: trustRoom.views > 1 ? "Accepted" : "Viewed",
+      sentiment: "Positive",
+      detail: `${trustRoom.buyer} viewed the scoped room and copied ${trustRoom.copies} sealed answer packet.`,
+      signal: "Reward source-backed AI governance language.",
+      memory: "Local memory strengthens AI Usage Standard for similar buyer questions.",
+    },
+    {
+      id: "challenged-proof",
+      scope: "Private workspace",
+      title: challenged ? `Buyer challenged ${challenged.category.toLowerCase()} proof` : "Buyer challenged proof",
+      outcome: challenged?.status ?? "Needs evidence",
+      sentiment: challenged?.status === "Needs evidence" ? "Negative" : "Neutral",
+      detail: challenged ? challenged.comment : "No unresolved buyer challenge is currently open.",
+      signal: "Penalize weak or stale proof paths before the next review.",
+      memory: "Local memory routes similar questions earlier to the evidence owner.",
+    },
+    {
+      id: "agent-approved",
+      scope: "Governed agent",
+      title: "Human-approved agent task",
+      outcome: state.agentActions.status,
+      sentiment: state.agentActions.status === "Human approved" ? "Positive" : "Neutral",
+      detail: `${agent.tasks.length} governed tasks and ${agent.refreshes.length} refresh checks are available with permission limits.`,
+      signal: "Reward human-approved execution, not silent automation.",
+      memory: "Local memory keeps agent actions behind approval gates for buyer-facing claims.",
+    },
+    {
+      id: "coach-improved",
+      scope: "Adaptive coach",
+      title: "Coach guidance became outcome-aware",
+      outcome: `${coach.score}% coach score`,
+      sentiment: "Positive",
+      detail: `${coach.proofs.length} proof moves, ${coach.rewrites.length} rewrites, and ${coach.routes.length} routes now feed outcome memory.`,
+      signal: "Tune future recommendations using accepted, challenged, and delayed outcomes.",
+      memory: "Local memory ranks next-best proof by actual review result.",
+    },
+  ];
+}
+
+function outcomeRewards({ events, coverage, trustRoom, followUps, agent, network }) {
+  return [
+    {
+      signal: "Accepted sealed answer",
+      weight: trustRoom.sharedCount > 0 ? "+24" : "+12",
+      learning: "Answers with citations and current source coverage should be promoted for similar buyer questions.",
+      apply: "Increase approved-answer reuse when claim trace and source freshness are healthy.",
+    },
+    {
+      signal: "Buyer challenge",
+      weight: followUps.evidenceCount ? "-18" : "-6",
+      learning: "Open evidence comments should reduce confidence until the owner adds stronger proof.",
+      apply: "Route similar categories earlier and require fresh source review before approval.",
+    },
+    {
+      signal: "Human-approved agent action",
+      weight: state.agentActions.status === "Human approved" ? "+18" : "+8",
+      learning: "Governed execution improves trust when each task has owner, permission mode, and receipt.",
+      apply: "Prefer agent tasks that preserve human approval before buyer-facing changes.",
+    },
+    {
+      signal: "Network-safe pattern",
+      weight: `${network.readyPatternCount}/${network.patterns.length}`,
+      learning: "Only aggregate category, freshness, confidence, and friction labels can improve cross-tenant recommendations.",
+      apply: `Share ${coverage.ready} ready categories as abstract patterns, never raw evidence or buyer text.`,
+    },
+  ];
+}
+
+function outcomeGuardrails({ network, agent }) {
+  return [
+    {
+      title: "Raw evidence stays tenant-private",
+      status: "Enforced",
+      detail: "Policies, SOC excerpts, prompts, buyer names, and customer names do not enter cross-organization memory.",
+    },
+    {
+      title: "Outcome labels can aggregate",
+      status: network.privacyScore >= 90 ? "Allowed" : "Review",
+      detail: "Accepted, challenged, delayed, reused, and blocked labels may improve pattern recommendations after privacy checks.",
+    },
+    {
+      title: "Buyer-facing claims need approval",
+      status: "Blocked",
+      detail: "Outcome memory may suggest a playbook, but it cannot approve new buyer-facing claims without evidence and a human reviewer.",
+    },
+    {
+      title: "Agent actions remain receipted",
+      status: agent.controlScore >= 80 ? "Enforced" : "Review",
+      detail: "Every governed execution signal must retain owner, permission, timestamp, and reason.",
+    },
+  ];
+}
+
+function outcomePatterns({ events, rewards, guardrails }) {
+  return [
+    {
+      title: "AI governance accepted answer pattern",
+      shareable: true,
+      detail: "Questions about model training respond well to concise no-training language plus human approval proof.",
+    },
+    {
+      title: "Incident timeline evidence gap pattern",
+      shareable: true,
+      detail: "Incident notification answers need current policy plus customer-facing escalation wording.",
+    },
+    {
+      title: "Owner routing friction pattern",
+      shareable: true,
+      detail: "Security-owned access and encryption answers move faster when routed before questionnaire import is complete.",
+    },
+    {
+      title: "Raw buyer challenge text",
+      shareable: false,
+      detail: `${events.length} local events and ${rewards.length} reward signals remain private when guardrails block raw text sharing.`,
+    },
+  ].map((pattern) => ({
+    ...pattern,
+    guardrail: guardrails.find((item) => item.status === "Blocked")?.title ?? "Privacy checked",
+  }));
+}
+
+function outcomePlaybooks({ events, rewards, coverage, agent, network }) {
+  const challenge = events.find((event) => event.sentiment === "Negative");
+  const accepted = events.find((event) => event.outcome === "Accepted" || event.outcome === "Viewed");
+  return [
+    {
+      trigger: "Accepted answer",
+      title: "Promote sealed answer memory",
+      confidence: Math.min(96, 74 + coverage.score / 5),
+      action: accepted ? `Reuse the accepted pattern behind "${accepted.title}" when source freshness and claim trace stay healthy.` : "Wait for accepted buyer outcome before promoting reusable answer memory.",
+      privateUse: "Local workspace can reuse exact approved wording.",
+      networkUse: "Network can learn only category and outcome label.",
+    },
+    {
+      trigger: "Buyer challenge",
+      title: "Pre-route weak proof before next review",
+      confidence: challenge ? 88 : 68,
+      action: challenge ? `Route similar ${challenge.title.toLowerCase()} to the owner before approval.` : "No active challenge is severe enough to change routing.",
+      privateUse: "Local workspace sees exact buyer issue and owner.",
+      networkUse: "Network receives abstract friction type only.",
+    },
+    {
+      trigger: "Governed execution",
+      title: "Prefer approved agent tasks",
+      confidence: agent.controlScore,
+      action: "Rank agent-created evidence requests higher when a human approved the task and a receipt exists.",
+      privateUse: "Local workspace can use task owner and source details.",
+      networkUse: "Network can learn permission mode and outcome band.",
+    },
+    {
+      trigger: "Peer-safe pattern",
+      title: "Apply aggregate trust benchmark",
+      confidence: network.privacyScore,
+      action: "Use peer-safe freshness and confidence bands to warn when an answer is likely to be challenged.",
+      privateUse: "Local workspace keeps source text private.",
+      networkUse: "Network shares only aggregate benchmark ranges.",
+    },
+  ];
+}
+
+function captureOutcomes() {
+  const memory = trustOutcomeMemorySnapshot();
+  const detail = `Captured ${memory.events.length} outcome events, ${memory.rewards.length} reward signals, and ${memory.shareablePatterns}/${memory.patterns.length} privacy-safe patterns.`;
+  state.outcomeActions.status = "Outcomes captured";
+  state.outcomeActions.capturedAt = new Date().toISOString();
+  addOutcomeReceipt("Outcomes captured", detail);
+  addAudit("Outcome memory captured", detail);
+  renderOutcomeMemory();
+  renderLearningNetwork();
+  renderAdaptiveCoach();
+  showToast("Trust outcomes captured.");
+}
+
+function tuneOutcomeMemory() {
+  const memory = trustOutcomeMemorySnapshot();
+  const playbook = memory.playbooks[0];
+  state.outcomeActions.status = "Memory tuned";
+  state.outcomeActions.tunedAt = new Date().toISOString();
+  const detail = playbook ? `Outcome memory tuned: ${playbook.title}. ${playbook.action}` : "Outcome memory tuned from current buyer review signals.";
+  addOutcomeReceipt("Memory tuned", detail);
+  addAudit("Outcome memory tuned", detail);
+  renderLearningNetwork();
+  renderAdaptiveCoach();
+  renderEvidenceAgent();
+  renderOutcomeMemory();
+  showToast("Outcome memory tuned.");
+}
+
+function copyOutcomeDigest() {
+  const memory = trustOutcomeMemorySnapshot();
+  state.outcomeActions.lastCopiedAt = new Date().toISOString();
+  addOutcomeReceipt("Outcome digest copied", "Trust outcome memory digest copied.");
+  addAudit("Outcome digest copied", "Trust outcome memory digest copied.");
+  renderOutcomeMemory();
+  copyText(outcomeDigestText(memory), "Outcome memory digest copied.");
+}
+
+function addOutcomeReceipt(action, detail) {
+  state.outcomeActions.receipts = [
+    ...(state.outcomeActions.receipts ?? []),
+    {
+      id: `outcome-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ];
+  schedulePersist();
+}
+
+function outcomeDigestText(memory = trustOutcomeMemorySnapshot()) {
+  const eventLines = memory.events.map((event, index) => `${index + 1}. ${event.outcome}: ${event.title} | ${event.signal}`).join("\n");
+  const rewardLines = memory.rewards.map((reward, index) => `${index + 1}. ${reward.signal}: ${reward.weight} - ${reward.learning}`).join("\n");
+  const guardrailLines = memory.guardrails.map((guardrail, index) => `${index + 1}. ${guardrail.title}: ${guardrail.status} - ${guardrail.detail}`).join("\n");
+  const patternLines = memory.patterns.map((pattern, index) => `${index + 1}. ${pattern.shareable ? "SHAREABLE" : "PRIVATE"}: ${pattern.title} - ${pattern.detail}`).join("\n");
+  const playbookLines = memory.playbooks.map((playbook, index) => `${index + 1}. ${playbook.title}: ${playbook.confidence}% - ${playbook.action}`).join("\n");
+  const receiptLines = memory.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Trust Outcome Memory",
+    `Build: ${BUILD_VERSION}`,
+    `Memory status: ${memory.statusLabel}`,
+    `Memory score: ${memory.score}%`,
+    `Outcome events: ${memory.events.length}`,
+    `Reward signals: ${memory.rewards.length}`,
+    `Shareable patterns: ${memory.shareablePatterns}/${memory.patterns.length}`,
+    "",
+    "Outcome events:",
+    eventLines,
+    "",
+    "Reward signals:",
+    rewardLines,
+    "",
+    "Privacy guardrails:",
+    guardrailLines,
+    "",
+    "Pattern memory:",
+    patternLines,
+    "",
+    "Adaptive playbooks:",
+    playbookLines,
+    "",
+    "Outcome receipts:",
+    receiptLines || "No outcome receipts yet.",
+    "",
+    "Learning boundary:",
+    "- Local workspace may learn exact approved wording, owner route, source, and buyer outcome.",
+    "- Network may learn only aggregate category, freshness, confidence, friction, and reward labels.",
+    "- Raw evidence, buyer text, contracts, prompts, and customer names remain tenant-private.",
   ].join("\n");
 }
 
@@ -8694,6 +9206,7 @@ function selectNextOpenQuestion() {
   renderLearningNetwork();
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   renderPortalCopy();
   schedulePersist();
 }
@@ -8983,6 +9496,11 @@ function exportCsv() {
     "Agent Tasks",
     "Agent Refreshes",
     "Agent Receipts",
+    "Outcome Status",
+    "Outcome Memory",
+    "Outcome Events",
+    "Outcome Rewards",
+    "Outcome Patterns",
     "Trace",
     "Answer",
     "Sources",
@@ -9004,6 +9522,7 @@ function exportCsv() {
     const network = learningNetworkSnapshot();
     const coach = adaptiveCoachSnapshot();
     const agent = governedAgentSnapshot();
+    const outcomes = trustOutcomeMemorySnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -9061,6 +9580,11 @@ function exportCsv() {
       agent.tasks.length,
       agent.refreshes.length,
       agent.receipts.length,
+      outcomes.statusLabel,
+      `${outcomes.score}%`,
+      outcomes.events.length,
+      outcomes.rewards.length,
+      `${outcomes.shareablePatterns}/${outcomes.patterns.length}`,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -9092,6 +9616,7 @@ function exportReviewPack() {
   const network = learningNetworkSnapshot();
   const coach = adaptiveCoachSnapshot();
   const agent = governedAgentSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -9109,7 +9634,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v20</h1>
+        <h1>AnswerSeal Review Pack v21</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -9397,6 +9922,82 @@ function exportReviewPack() {
         </table>
         <h2>Agent Digest</h2>
         <pre>${escapeHtml(agentDigestText(agent))}</pre>
+        <h2>Trust Outcome Memory</h2>
+        <p>Status: ${escapeHtml(outcomes.statusLabel)} | Memory score: ${outcomes.score}% | Outcome events: ${outcomes.events.length} | Reward signals: ${outcomes.rewards.length} | Shareable patterns: ${outcomes.shareablePatterns}/${outcomes.patterns.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Outcome</th>
+              <th>Scope</th>
+              <th>Signal</th>
+              <th>Memory</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomes.events
+              .map(
+                (event) => `
+                  <tr>
+                    <td class="${event.sentiment === "Negative" ? "risk" : "ok"}">${escapeHtml(event.outcome)}<br />${escapeHtml(event.title)}</td>
+                    <td>${escapeHtml(event.scope)}</td>
+                    <td>${escapeHtml(event.signal)}</td>
+                    <td>${escapeHtml(event.memory)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Outcome Reward Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Weight</th>
+              <th>Learning</th>
+              <th>Apply</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomes.rewards
+              .map(
+                (reward) => `
+                  <tr>
+                    <td>${escapeHtml(reward.signal)}</td>
+                    <td>${escapeHtml(reward.weight)}</td>
+                    <td>${escapeHtml(reward.learning)}</td>
+                    <td>${escapeHtml(reward.apply)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Outcome Privacy Guardrails</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Guardrail</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomes.guardrails
+              .map(
+                (guardrail) => `
+                  <tr>
+                    <td>${escapeHtml(guardrail.title)}</td>
+                    <td class="${guardrail.status === "Blocked" ? "risk" : "ok"}">${escapeHtml(guardrail.status)}</td>
+                    <td>${escapeHtml(guardrail.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Outcome Digest</h2>
+        <pre>${escapeHtml(outcomeDigestText(outcomes))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -10109,7 +10710,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v20 created with governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v21 created with trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -10120,12 +10721,13 @@ function exportReviewPack() {
   renderLearningNetwork();
   renderAdaptiveCoach();
   renderEvidenceAgent();
+  renderOutcomeMemory();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v20 exported.");
+  showToast("Review Pack v21 exported.");
 }
 
 function toCsv(rows) {
@@ -10186,6 +10788,7 @@ function serializeWorkspace() {
     networkActions: state.networkActions,
     coachActions: state.coachActions,
     agentActions: state.agentActions,
+    outcomeActions: state.outcomeActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -10217,6 +10820,7 @@ function resetWorkspace() {
   closeLearningNetwork(false);
   closeAdaptiveCoach(false);
   closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
   closeWorkspace(false);
   closeLibrary();
   render();
