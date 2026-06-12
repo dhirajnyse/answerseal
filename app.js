@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.35 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v35";
+const BUILD_VERSION = "v0.36 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v36";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v35",
   "answerseal.workspace.v34",
   "answerseal.workspace.v33",
   "answerseal.workspace.v32",
@@ -717,6 +718,8 @@ function createInitialState() {
     policyActions: createInitialPolicyActions(),
     enforcementOpen: false,
     enforcementActions: createInitialEnforcementActions(),
+    feedbackOpen: false,
+    feedbackActions: createInitialFeedbackActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -909,6 +912,17 @@ function createInitialEnforcementActions() {
   };
 }
 
+function createInitialFeedbackActions() {
+  return {
+    status: "Draft",
+    capturedAt: null,
+    tunedAt: null,
+    publishedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1043,6 +1057,7 @@ function loadWorkspaceState() {
       ledgerActions: normalizeLedgerActions(workspace.ledgerActions ?? fresh.ledgerActions),
       policyActions: normalizePolicyActions(workspace.policyActions ?? fresh.policyActions),
       enforcementActions: normalizeEnforcementActions(workspace.enforcementActions ?? fresh.enforcementActions),
+      feedbackActions: normalizeFeedbackActions(workspace.feedbackActions ?? fresh.feedbackActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1073,6 +1088,7 @@ function loadWorkspaceState() {
       ledgerOpen: false,
       policyOpen: false,
       enforcementOpen: false,
+      feedbackOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1641,6 +1657,27 @@ function normalizeEnforcementReceipt(receipt) {
   };
 }
 
+function normalizeFeedbackActions(actions) {
+  const status = ["Draft", "Outcomes captured", "Policy tuning proposed", "Aggregate feedback published"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    capturedAt: actions?.capturedAt ?? null,
+    tunedAt: actions?.tunedAt ?? null,
+    publishedAt: actions?.publishedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeFeedbackReceipt) : [],
+  };
+}
+
+function normalizeFeedbackReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `feedback-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Feedback action"),
+    detail: String(receipt?.detail ?? "Governance feedback action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1689,6 +1726,7 @@ const elements = {
   ledgerNavButton: document.querySelector("#ledgerNavButton"),
   policyNavButton: document.querySelector("#policyNavButton"),
   enforcementNavButton: document.querySelector("#enforcementNavButton"),
+  feedbackNavButton: document.querySelector("#feedbackNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2159,6 +2197,25 @@ const elements = {
   escalateEnforcementButton: document.querySelector("#escalateEnforcementButton"),
   approveEnforcementButton: document.querySelector("#approveEnforcementButton"),
   copyEnforcementDigestButton: document.querySelector("#copyEnforcementDigestButton"),
+  feedbackBackdrop: document.querySelector("#feedbackBackdrop"),
+  feedbackDrawer: document.querySelector("#feedbackDrawer"),
+  closeFeedbackButton: document.querySelector("#closeFeedbackButton"),
+  feedbackScore: document.querySelector("#feedbackScore"),
+  feedbackOutcomeCount: document.querySelector("#feedbackOutcomeCount"),
+  feedbackTuningCount: document.querySelector("#feedbackTuningCount"),
+  feedbackBenefitLift: document.querySelector("#feedbackBenefitLift"),
+  feedbackStatus: document.querySelector("#feedbackStatus"),
+  feedbackOutcomeList: document.querySelector("#feedbackOutcomeList"),
+  feedbackTuningList: document.querySelector("#feedbackTuningList"),
+  feedbackBenefitList: document.querySelector("#feedbackBenefitList"),
+  feedbackNetworkList: document.querySelector("#feedbackNetworkList"),
+  feedbackActionList: document.querySelector("#feedbackActionList"),
+  feedbackReceiptList: document.querySelector("#feedbackReceiptList"),
+  feedbackDigest: document.querySelector("#feedbackDigest"),
+  captureFeedbackButton: document.querySelector("#captureFeedbackButton"),
+  tuneFeedbackButton: document.querySelector("#tuneFeedbackButton"),
+  publishFeedbackButton: document.querySelector("#publishFeedbackButton"),
+  copyFeedbackDigestButton: document.querySelector("#copyFeedbackDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2279,6 +2336,7 @@ function bindEvents() {
   elements.ledgerNavButton.addEventListener("click", openLearningLedger);
   elements.policyNavButton.addEventListener("click", openLearningPolicyGovernor);
   elements.enforcementNavButton.addEventListener("click", openPolicyEnforcementAgent);
+  elements.feedbackNavButton.addEventListener("click", openGovernanceFeedbackLoop);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2344,6 +2402,7 @@ function bindEvents() {
     renderLearningLedger();
     renderLearningPolicyGovernor();
     renderPolicyEnforcementAgent();
+    renderGovernanceFeedbackLoop();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2478,6 +2537,12 @@ function bindEvents() {
   elements.escalateEnforcementButton.addEventListener("click", escalatePolicyEnforcement);
   elements.approveEnforcementButton.addEventListener("click", approvePolicyEnforcement);
   elements.copyEnforcementDigestButton.addEventListener("click", copyPolicyEnforcementDigest);
+  elements.closeFeedbackButton.addEventListener("click", closeGovernanceFeedbackLoop);
+  elements.feedbackBackdrop.addEventListener("click", closeGovernanceFeedbackLoop);
+  elements.captureFeedbackButton.addEventListener("click", captureGovernanceFeedback);
+  elements.tuneFeedbackButton.addEventListener("click", proposeGovernanceTuning);
+  elements.publishFeedbackButton.addEventListener("click", publishGovernanceFeedback);
+  elements.copyFeedbackDigestButton.addEventListener("click", copyGovernanceFeedbackDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2543,6 +2608,7 @@ function bindEvents() {
     if (state.ledgerOpen) closeLearningLedger();
     if (state.policyOpen) closeLearningPolicyGovernor();
     if (state.enforcementOpen) closePolicyEnforcementAgent();
+    if (state.feedbackOpen) closeGovernanceFeedbackLoop();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2575,6 +2641,7 @@ function applyInitialHash() {
   if (hash === "ledger" || hash === "learning-ledger" || hash === "learning-receipts" || hash === "closed-loop-ledger") openLearningLedger();
   if (hash === "policy" || hash === "learning-policy" || hash === "policy-governor" || hash === "governor") openLearningPolicyGovernor();
   if (hash === "enforce" || hash === "enforcement" || hash === "policy-enforcement" || hash === "enforcement-agent") openPolicyEnforcementAgent();
+  if (hash === "feedback" || hash === "governance-feedback" || hash === "feedback-loop" || hash === "governance-loop") openGovernanceFeedbackLoop();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2621,6 +2688,7 @@ function render() {
   renderLearningLedger();
   renderLearningPolicyGovernor();
   renderPolicyEnforcementAgent();
+  renderGovernanceFeedbackLoop();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3351,6 +3419,7 @@ function activateWorkspaceNav(target) {
   closeLearningLedger(false);
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3396,6 +3465,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.enforcementNavButton && state.enforcementOpen) {
     closePolicyEnforcementAgent(false);
   }
+  if (activeButton !== elements.feedbackNavButton && state.feedbackOpen) {
+    closeGovernanceFeedbackLoop(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3417,6 +3489,7 @@ function setActiveNav(activeButton) {
     elements.ledgerNavButton,
     elements.policyNavButton,
     elements.enforcementNavButton,
+    elements.feedbackNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4252,6 +4325,7 @@ function openLearningPolicyGovernor() {
   closeEvaluationLab(false);
   closeLearningLedger(false);
   closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4326,6 +4400,53 @@ function closePolicyEnforcementAgent(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openGovernanceFeedbackLoop() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.feedbackOpen = true;
+  setActiveNav(elements.feedbackNavButton);
+  elements.feedbackBackdrop.hidden = false;
+  elements.feedbackDrawer.classList.add("is-open");
+  elements.feedbackDrawer.setAttribute("aria-hidden", "false");
+  renderGovernanceFeedbackLoop();
+}
+
+function closeGovernanceFeedbackLoop(activateReview = true) {
+  if (!state.feedbackOpen && elements.feedbackDrawer.getAttribute("aria-hidden") === "true") return;
+  state.feedbackOpen = false;
+  elements.feedbackDrawer.classList.remove("is-open");
+  elements.feedbackDrawer.setAttribute("aria-hidden", "true");
+  elements.feedbackBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -4336,6 +4457,7 @@ function openAnalytics() {
   closeEvidenceAgent(false);
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -13133,6 +13255,500 @@ function policyEnforcementDigestText(enforcement = policyEnforcementSnapshot()) 
   ].join("\n");
 }
 
+function renderGovernanceFeedbackLoop() {
+  const feedback = governanceFeedbackSnapshot();
+
+  elements.feedbackScore.textContent = `${feedback.score}%`;
+  elements.feedbackOutcomeCount.textContent = feedback.outcomes.length;
+  elements.feedbackTuningCount.textContent = feedback.tunings.length;
+  elements.feedbackBenefitLift.textContent = `+${feedback.benefitLift}`;
+  elements.feedbackStatus.textContent = feedback.statusLabel;
+  elements.feedbackDigest.textContent = governanceFeedbackDigestText(feedback);
+
+  elements.feedbackOutcomeList.innerHTML = "";
+  feedback.outcomes.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `feedback-outcome-card ${item.result === "Needs tuning" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.source)}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+        </div>
+        <b>${escapeHtml(item.result)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.metric)}</span>
+        <span>${escapeHtml(item.learning)}</span>
+      </footer>
+    `;
+    elements.feedbackOutcomeList.append(card);
+  });
+
+  elements.feedbackTuningList.innerHTML = "";
+  feedback.tunings.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `feedback-tuning-card ${item.priority === "High" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.policy)}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+        </div>
+        <b>${escapeHtml(item.priority)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.owner)}</span>
+        <span>${escapeHtml(item.expectedImpact)}</span>
+      </footer>
+    `;
+    elements.feedbackTuningList.append(card);
+  });
+
+  elements.feedbackBenefitList.innerHTML = "";
+  feedback.benefits.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "feedback-benefit-card";
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.title)}</strong>
+        <b>${escapeHtml(item.value)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <span>${escapeHtml(item.source)}</span>
+    `;
+    elements.feedbackBenefitList.append(card);
+  });
+
+  elements.feedbackNetworkList.innerHTML = "";
+  feedback.networkSignals.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `feedback-network-card ${item.status !== "Shareable" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.signal)}</strong>
+        <b>${escapeHtml(item.status)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.scope)}</span>
+        <span>${escapeHtml(item.guardrail)}</span>
+      </footer>
+    `;
+    elements.feedbackNetworkList.append(card);
+  });
+
+  elements.feedbackActionList.innerHTML = "";
+  feedback.actions.forEach((action) => {
+    const card = document.createElement("article");
+    card.className = "feedback-action-card";
+    card.innerHTML = `
+      <span>${escapeHtml(action.step)}</span>
+      <div>
+        <strong>${escapeHtml(action.title)}</strong>
+        <p>${escapeHtml(action.detail)}</p>
+      </div>
+      <b>${escapeHtml(action.mode)}</b>
+    `;
+    elements.feedbackActionList.append(card);
+  });
+
+  elements.feedbackReceiptList.innerHTML = "";
+  if (feedback.receipts.length === 0) {
+    elements.feedbackReceiptList.append(emptyState("No governance feedback receipts yet"));
+  }
+  feedback.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "feedback-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.feedbackReceiptList.append(card);
+  });
+}
+
+function governanceFeedbackSnapshot() {
+  const enforcement = policyEnforcementSnapshot();
+  const policy = enforcement.policy;
+  const outcomes = trustOutcomeMemorySnapshot();
+  const evaluation = enforcement.evaluation;
+  const network = enforcement.network;
+  const graph = enforcement.graph;
+  const connectors = connectorSnapshot();
+  const ledger = enforcement.ledger;
+  const decisionOutcomes = governanceFeedbackDecisionOutcomes({ enforcement, outcomes, evaluation, network, graph, connectors });
+  const tunings = governanceFeedbackTuningSuggestions({ enforcement, policy, outcomes: decisionOutcomes, evaluation, network, graph, connectors });
+  const benefits = governanceFeedbackBenefits({ enforcement, policy, outcomes: decisionOutcomes, tunings, ledger, evaluation, network });
+  const networkSignals = governanceFeedbackNetworkSignals({ enforcement, outcomes: decisionOutcomes, benefits, network, graph, connectors });
+  const actions = governanceFeedbackActions({ outcomes: decisionOutcomes, tunings, benefits, networkSignals, enforcement });
+  const benefitLift = Math.max(0, benefits.reduce((sum, item) => sum + item.lift, 0));
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        enforcement.score * 0.3
+          + Math.min(100, decisionOutcomes.filter((item) => item.result === "Worked").length * 18) * 0.22
+          + Math.max(0, 100 - tunings.filter((item) => item.priority === "High").length * 18) * 0.2
+          + Math.min(100, benefitLift * 9) * 0.16
+          + Math.min(100, networkSignals.filter((item) => item.status === "Shareable").length * 25) * 0.12,
+      ),
+    ),
+  );
+  const statusLabel = state.feedbackActions.status === "Draft" ? "Ready to learn from enforcement" : state.feedbackActions.status;
+
+  return {
+    score,
+    statusLabel,
+    outcomes: decisionOutcomes,
+    tunings,
+    benefits,
+    networkSignals,
+    actions,
+    benefitLift,
+    receipts: state.feedbackActions.receipts.slice(-8).reverse(),
+    enforcement,
+    policy,
+  };
+}
+
+function governanceFeedbackDecisionOutcomes({ enforcement, outcomes, evaluation, network, graph, connectors }) {
+  return [
+    {
+      title: "Blocked network promotion prevented unsafe sharing",
+      source: "Enforcement",
+      result: enforcement.blocked.some((item) => item.action.includes("network") || item.action.includes("Promote")) ? "Worked" : "Clear",
+      metric: `${enforcement.blockedCount} blocked or gated actions`,
+      learning: "Keep privacy and drift gates strict",
+      detail: "The enforcement agent held network learning when privacy, drift, or stop conditions were not fully clear.",
+    },
+    {
+      title: "Allowed local memory improved response speed",
+      source: "Local memory",
+      result: enforcement.allowedCount > 0 ? "Worked" : "Needs tuning",
+      metric: `${enforcement.allowedCount} allowed actions`,
+      learning: "Promote source-backed local memory faster",
+      detail: "Allowed actions can safely improve tenant exact memory when evals, owners, and evidence gates pass.",
+    },
+    {
+      title: "Owner escalations exposed policy friction",
+      source: "Owner routing",
+      result: enforcement.escalations.length > 3 ? "Needs tuning" : "Worked",
+      metric: `${enforcement.escalations.length} escalations`,
+      learning: "Tune thresholds where repeat escalations create avoidable delay",
+      detail: "Escalation volume shows where a policy may be too broad, too strict, or missing a clearer owner.",
+    },
+    {
+      title: "Reviewer calibration protected reward learning",
+      source: "Evaluation",
+      result: evaluation.calibrationScore >= 82 ? "Worked" : "Needs tuning",
+      metric: `${evaluation.calibrationScore}% calibration`,
+      learning: "Use reviewer agreement as a reward-quality signal",
+      detail: "Reviewer agreement decides whether feedback can become reinforcement learning or must stay as review evidence.",
+    },
+    {
+      title: "Source freshness shaped policy outcome",
+      source: "Evidence ops",
+      result: connectors.staleCount > 0 ? "Needs tuning" : "Worked",
+      metric: `${connectors.staleCount} stale sources`,
+      learning: "Refresh sources before positive learning",
+      detail: "Stale evidence can teach the system to lower confidence, but it cannot teach a positive answer pattern.",
+    },
+    {
+      title: "Buyer outcomes produced safe feedback",
+      source: "Outcome memory",
+      result: outcomes.shareablePatterns > 0 && network.privacyScore >= 90 ? "Worked" : "Clear",
+      metric: `${outcomes.shareablePatterns}/${outcomes.patterns.length} shareable outcomes`,
+      learning: "Use aggregate outcome class, not buyer text",
+      detail: "Accepted answers and buyer challenges can improve future recommendations only as aggregate, privacy-safe labels.",
+    },
+    {
+      title: "Graph drift remains a feedback penalty",
+      source: "Federated graph",
+      result: graph.drift.length > 0 ? "Needs tuning" : "Worked",
+      metric: `${graph.drift.length} drift signals`,
+      learning: "Drift should reduce network confidence until repaired",
+      detail: "Drift, stale proof, and benchmark movement are negative feedback signals for network promotion.",
+    },
+  ];
+}
+
+function governanceFeedbackTuningSuggestions({ enforcement, policy, outcomes, evaluation, network, graph, connectors }) {
+  return [
+    {
+      title: enforcement.escalations.length > 3 ? "Split repeated owner escalations by risk class" : "Keep escalation thresholds stable",
+      policy: "Owner escalation",
+      priority: enforcement.escalations.length > 3 ? "High" : "Medium",
+      owner: "AI Governance",
+      expectedImpact: enforcement.escalations.length > 3 ? "Lower avoidable delay" : "Maintain consistency",
+      detail: `${enforcement.escalations.length} escalations show whether policy decisions are too concentrated on the same owner path.`,
+    },
+    {
+      title: network.privacyScore >= 90 ? "Allow aggregate outcome labels after receipt" : "Raise privacy threshold evidence",
+      policy: "Network learning",
+      priority: network.privacyScore >= 90 ? "Medium" : "High",
+      owner: "Legal",
+      expectedImpact: network.privacyScore >= 90 ? "More safe network benefit" : "Reduce network blocks",
+      detail: `${network.privacyScore}% privacy score controls whether aggregate feedback can benefit other customers.`,
+    },
+    {
+      title: evaluation.calibrationScore >= 90 ? "Use reviewer agreement as positive reward" : "Require calibration before reward tuning",
+      policy: "Reward policy",
+      priority: evaluation.calibrationScore >= 90 ? "Low" : "High",
+      owner: "AI Governance",
+      expectedImpact: "Higher answer consistency",
+      detail: `${evaluation.calibrationScore}% reviewer calibration decides whether feedback should strengthen or pause reward learning.`,
+    },
+    {
+      title: connectors.staleCount > 0 ? "Lower confidence faster on stale sources" : "Keep freshness penalty unchanged",
+      policy: "Freshness penalty",
+      priority: connectors.staleCount > 0 ? "High" : "Low",
+      owner: "Operations",
+      expectedImpact: connectors.staleCount > 0 ? "Fewer weak claims" : "Stable source quality",
+      detail: `${connectors.staleCount} stale sources can only become a penalty until refreshed.`,
+    },
+    {
+      title: graph.drift.length > 0 ? "Increase drift quarantine weight" : "Keep graph drift threshold",
+      policy: "Graph guardrail",
+      priority: graph.drift.length > 0 ? "Medium" : "Low",
+      owner: "AI Governance",
+      expectedImpact: graph.drift.length > 0 ? "Safer network promotion" : "No added friction",
+      detail: `${graph.drift.length} drift signals should reduce aggregate promotion confidence.`,
+    },
+    {
+      title: policy.openStopCount > 2 ? "Convert repeat stop conditions into tasks" : "Keep stop conditions observable",
+      policy: "Stop conditions",
+      priority: policy.openStopCount > 2 ? "High" : "Medium",
+      owner: workspaceAccount.currentRole,
+      expectedImpact: "Faster recovery from blocked learning",
+      detail: `${policy.openStopCount} stop conditions determine how much recovery work the policy loop should create.`,
+    },
+  ];
+}
+
+function governanceFeedbackBenefits({ enforcement, policy, outcomes, tunings, ledger, evaluation, network }) {
+  return [
+    {
+      title: "Local speed benefit",
+      value: `+${Math.max(1, enforcement.allowedCount)}`,
+      lift: Math.max(1, enforcement.allowedCount),
+      source: "Allowed local actions",
+      detail: "Allowed source-backed local learning shortens future drafts without changing network behavior.",
+    },
+    {
+      title: "Risk avoided",
+      value: `${enforcement.blockedCount} held`,
+      lift: enforcement.blockedCount,
+      source: "Blocked action monitor",
+      detail: "Blocked or gated actions are counted as avoided risk instead of invisible failure.",
+    },
+    {
+      title: "Proof quality",
+      value: `${evaluation.score}%`,
+      lift: Math.max(0, Math.round((evaluation.score - 80) / 4)),
+      source: "Evaluation feedback",
+      detail: "Eval score and reviewer calibration decide whether feedback can reinforce future recommendations.",
+    },
+    {
+      title: "Policy clarity",
+      value: `${tunings.length} tunings`,
+      lift: tunings.filter((item) => item.priority !== "High").length,
+      source: "Tuning suggestions",
+      detail: "Tuning suggestions turn enforcement friction into policy improvements.",
+    },
+    {
+      title: "Network-safe benefit",
+      value: `${network.readyPatternCount} patterns`,
+      lift: network.privacyScore >= 90 ? network.readyPatternCount : 0,
+      source: "Aggregate labels",
+      detail: "Only aggregate categories, policy outcomes, and benefit classes can improve other organizations.",
+    },
+    {
+      title: "Learning ledger value",
+      value: `+${ledger.networkLift}`,
+      lift: Math.max(0, Math.min(ledger.networkLift, 5)),
+      source: "Measured ledger lift",
+      detail: "Ledgered learning benefit is attributed only after source, eval, policy, and enforcement receipts exist.",
+    },
+  ];
+}
+
+function governanceFeedbackNetworkSignals({ enforcement, outcomes, benefits, network, graph, connectors }) {
+  return [
+    {
+      signal: "Blocked-action class",
+      status: enforcement.blockedCount > 0 && network.privacyScore >= 90 ? "Shareable" : "Held",
+      scope: "Aggregate only",
+      guardrail: "No buyer text",
+      detail: "Share only the class of blocked action and recovery type, never the customer-specific action or source.",
+    },
+    {
+      signal: "Policy tuning pattern",
+      status: network.privacyScore >= 90 ? "Shareable" : "Held",
+      scope: "Threshold band",
+      guardrail: "No rule text",
+      detail: "Share aggregate threshold movement, priority, and impact class without revealing customer policy language.",
+    },
+    {
+      signal: "Benefit attribution band",
+      status: benefits.some((item) => item.lift > 0) && graph.drift.length === 0 ? "Shareable" : "Held",
+      scope: "Benefit class",
+      guardrail: "No raw metric",
+      detail: "Share whether a governance decision improved speed, proof quality, risk avoidance, or network readiness.",
+    },
+    {
+      signal: "Source freshness penalty",
+      status: connectors.staleCount > 0 ? "Shareable" : "Held",
+      scope: "Penalty label",
+      guardrail: "No document name",
+      detail: "Share that stale sources should reduce confidence, not which customer document was stale.",
+    },
+  ];
+}
+
+function governanceFeedbackActions({ outcomes, tunings, benefits, networkSignals, enforcement }) {
+  const highTuning = tunings.find((item) => item.priority === "High");
+  const shareable = networkSignals.filter((item) => item.status === "Shareable").length;
+  return [
+    {
+      step: "01",
+      title: "Capture enforcement outcomes",
+      mode: "Capture",
+      detail: `${outcomes.length} decision outcomes explain whether allowed, blocked, or escalated actions worked.`,
+    },
+    {
+      step: "02",
+      title: highTuning ? `Review ${highTuning.policy.toLowerCase()} tuning` : "Keep policy thresholds stable",
+      mode: highTuning ? "Tune" : "Stable",
+      detail: highTuning ? highTuning.detail : "No high-priority policy tuning is currently required.",
+    },
+    {
+      step: "03",
+      title: "Attribute governance benefit",
+      mode: "Measure",
+      detail: `${benefits.length} benefit rows separate speed, risk avoidance, proof quality, policy clarity, and network-safe value.`,
+    },
+    {
+      step: "04",
+      title: shareable > 0 ? "Publish aggregate feedback labels" : "Hold network feedback",
+      mode: shareable > 0 ? "Publish" : "Hold",
+      detail: `${shareable}/${networkSignals.length} feedback signals are safe enough for aggregate network learning.`,
+    },
+    {
+      step: "05",
+      title: "Close the governance loop",
+      mode: "Learn",
+      detail: `${enforcement.score}% enforcement score is used to improve the next policy run without exposing raw customer material.`,
+    },
+  ];
+}
+
+function captureGovernanceFeedback() {
+  const feedback = governanceFeedbackSnapshot();
+  const detail = `Captured ${feedback.outcomes.length} enforcement outcomes with ${feedback.score}% feedback score and +${feedback.benefitLift} attributed benefit.`;
+  state.feedbackActions.status = "Outcomes captured";
+  state.feedbackActions.capturedAt = new Date().toISOString();
+  addFeedbackReceipt("Outcomes captured", detail);
+  addAudit("Governance feedback captured", detail);
+  renderGovernanceFeedbackLoop();
+  renderAudit();
+  showToast("Governance outcomes captured.");
+}
+
+function proposeGovernanceTuning() {
+  const feedback = governanceFeedbackSnapshot();
+  const high = feedback.tunings.filter((item) => item.priority === "High").length;
+  const detail = `Proposed ${feedback.tunings.length} policy tunings with ${high} high-priority changes and ${feedback.networkSignals.filter((item) => item.status === "Shareable").length} shareable feedback signals.`;
+  state.feedbackActions.status = "Policy tuning proposed";
+  state.feedbackActions.tunedAt = new Date().toISOString();
+  addFeedbackReceipt("Policy tuning proposed", detail);
+  addAudit("Governance tuning proposed", detail);
+  render();
+  showToast("Governance tuning proposed.");
+}
+
+function publishGovernanceFeedback() {
+  const feedback = governanceFeedbackSnapshot();
+  const shareable = feedback.networkSignals.filter((item) => item.status === "Shareable").length;
+  const detail = `Published ${shareable}/${feedback.networkSignals.length} aggregate feedback signals with no raw evidence, buyer text, prompts, or customer names.`;
+  state.feedbackActions.status = "Aggregate feedback published";
+  state.feedbackActions.publishedAt = new Date().toISOString();
+  addFeedbackReceipt("Aggregate feedback published", detail);
+  addAudit("Governance feedback published", detail);
+  render();
+  showToast("Aggregate governance feedback published.");
+}
+
+function copyGovernanceFeedbackDigest() {
+  const feedback = governanceFeedbackSnapshot();
+  state.feedbackActions.lastCopiedAt = new Date().toISOString();
+  addFeedbackReceipt("Feedback digest copied", "Governance feedback digest copied.");
+  addAudit("Governance feedback copied", "Governance feedback digest copied.");
+  renderGovernanceFeedbackLoop();
+  renderAudit();
+  copyText(governanceFeedbackDigestText(feedback), "Governance feedback digest copied.");
+}
+
+function addFeedbackReceipt(action, detail) {
+  state.feedbackActions.receipts = [
+    ...(state.feedbackActions.receipts ?? []),
+    {
+      id: `feedback-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function governanceFeedbackDigestText(feedback = governanceFeedbackSnapshot()) {
+  const outcomeLines = feedback.outcomes.map((item, index) => `${index + 1}. ${item.result}: ${item.title} | ${item.metric} | ${item.learning}`).join("\n");
+  const tuningLines = feedback.tunings.map((item, index) => `${index + 1}. ${item.priority}: ${item.title} | ${item.policy} | ${item.owner} | ${item.expectedImpact}`).join("\n");
+  const benefitLines = feedback.benefits.map((item, index) => `${index + 1}. ${item.title}: ${item.value} | ${item.source} | ${item.detail}`).join("\n");
+  const networkLines = feedback.networkSignals.map((item, index) => `${index + 1}. ${item.status}: ${item.signal} | ${item.scope} | ${item.guardrail}`).join("\n");
+  const actionLines = feedback.actions.map((action) => `${action.step}. ${action.title} | ${action.mode} | ${action.detail}`).join("\n");
+  const receiptLines = feedback.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Governance Feedback Loop",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${feedback.statusLabel}`,
+    `Feedback score: ${feedback.score}%`,
+    `Decision outcomes: ${feedback.outcomes.length}`,
+    `Policy tunings: ${feedback.tunings.length}`,
+    `Attributed benefit: +${feedback.benefitLift}`,
+    `Shareable feedback: ${feedback.networkSignals.filter((item) => item.status === "Shareable").length}/${feedback.networkSignals.length}`,
+    "",
+    "Decision outcomes:",
+    outcomeLines,
+    "",
+    "Policy tuning suggestions:",
+    tuningLines,
+    "",
+    "Benefit attribution:",
+    benefitLines,
+    "",
+    "Network-safe feedback:",
+    networkLines,
+    "",
+    "Feedback actions:",
+    actionLines,
+    "",
+    "Receipts:",
+    receiptLines || "No governance feedback receipts yet.",
+    "",
+    "Feedback rule:",
+    "- Governance decisions should improve policy only after their outcomes are measured.",
+    "- Local feedback can use exact customer history inside the tenant.",
+    "- Network feedback can use only aggregate decision class, threshold band, benefit class, and guardrail label.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -15375,6 +15991,13 @@ function exportCsv() {
     "Enforcement Blocked",
     "Enforcement Escalations",
     "Enforcement Receipts",
+    "Feedback Status",
+    "Feedback Score",
+    "Feedback Outcomes",
+    "Feedback Tunings",
+    "Feedback Benefit Lift",
+    "Feedback Network Signals",
+    "Feedback Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -15407,6 +16030,7 @@ function exportCsv() {
     const ledger = learningLedgerSnapshot();
     const policy = learningPolicySnapshot();
     const enforcement = policyEnforcementSnapshot();
+    const feedback = governanceFeedbackSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -15530,6 +16154,13 @@ function exportCsv() {
       enforcement.blockedCount,
       enforcement.escalations.length,
       enforcement.receipts.length,
+      feedback.statusLabel,
+      `${feedback.score}%`,
+      feedback.outcomes.length,
+      feedback.tunings.length,
+      `+${feedback.benefitLift}`,
+      feedback.networkSignals.filter((item) => item.status === "Shareable").length,
+      feedback.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -15572,6 +16203,7 @@ function exportReviewPack() {
   const ledger = learningLedgerSnapshot();
   const policy = learningPolicySnapshot();
   const enforcement = policyEnforcementSnapshot();
+  const feedback = governanceFeedbackSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -15589,7 +16221,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v31</h1>
+        <h1>AnswerSeal Review Pack v32</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -16990,6 +17622,117 @@ function exportReviewPack() {
         </table>
         <h2>Enforcement Digest</h2>
         <pre>${escapeHtml(policyEnforcementDigestText(enforcement))}</pre>
+        <h2>Governance Feedback Loop</h2>
+        <p>Status: ${escapeHtml(feedback.statusLabel)} | Feedback score: ${feedback.score}% | Decision outcomes: ${feedback.outcomes.length} | Policy tunings: ${feedback.tunings.length} | Attributed benefit: +${feedback.benefitLift} | Shareable signals: ${feedback.networkSignals.filter((item) => item.status === "Shareable").length}/${feedback.networkSignals.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Outcome</th>
+              <th>Source</th>
+              <th>Result</th>
+              <th>Metric</th>
+              <th>Learning</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${feedback.outcomes
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.source)}</td>
+                    <td class="${item.result === "Needs tuning" ? "risk" : "ok"}">${escapeHtml(item.result)}</td>
+                    <td>${escapeHtml(item.metric)}</td>
+                    <td>${escapeHtml(item.learning)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Policy Tuning Suggestions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Tuning</th>
+              <th>Policy</th>
+              <th>Priority</th>
+              <th>Owner</th>
+              <th>Expected Impact</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${feedback.tunings
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.policy)}</td>
+                    <td class="${item.priority === "High" ? "risk" : "ok"}">${escapeHtml(item.priority)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.expectedImpact)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Benefit Attribution</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Benefit</th>
+              <th>Value</th>
+              <th>Lift</th>
+              <th>Source</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${feedback.benefits
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.value)}</td>
+                    <td>+${item.lift}</td>
+                    <td>${escapeHtml(item.source)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network-Safe Feedback</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Status</th>
+              <th>Scope</th>
+              <th>Guardrail</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${feedback.networkSignals
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.signal)}</td>
+                    <td class="${item.status === "Shareable" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.scope)}</td>
+                    <td>${escapeHtml(item.guardrail)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Feedback Digest</h2>
+        <pre>${escapeHtml(governanceFeedbackDigestText(feedback))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -17702,7 +18445,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v31 created with policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v32 created with governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -17722,12 +18465,13 @@ function exportReviewPack() {
   renderReinforcementControl();
   renderEvaluationLab();
   renderLearningLedger();
+  renderGovernanceFeedbackLoop();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v31 exported.");
+  showToast("Review Pack v32 exported.");
 }
 
 function toCsv(rows) {
@@ -17799,6 +18543,7 @@ function serializeWorkspace() {
     ledgerActions: state.ledgerActions,
     policyActions: state.policyActions,
     enforcementActions: state.enforcementActions,
+    feedbackActions: state.feedbackActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -17841,6 +18586,7 @@ function resetWorkspace() {
   closeLearningLedger(false);
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
   closeWorkspace(false);
   closeLibrary();
   render();

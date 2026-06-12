@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.35 Alpha
+**Current version:** v0.36 Alpha
 
-**Current phase:** Policy Enforcement Agent
+**Current phase:** Governance Feedback Loop
 
 ## Brand
 
@@ -171,6 +171,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Owner escalations for security, legal, AI governance, operations, and sales engineering decisions
 - Recovery paths that turn blocked learning into accountable work across eval repair, privacy clearance, drift quarantine, source refresh, and owner receipts
 - Enforcement digest for proving customer policy was applied before local memory, reward weights, buyer-facing language, or network learning changed
+- Governance Feedback Loop drawer with feedback score, decision outcomes, policy tuning suggestions, benefit attribution, network-safe signals, actions, digest, and receipts
+- Decision outcomes that measure whether allowed, blocked, and escalated learning actions improved proof quality, answer speed, buyer trust, or network safety
+- Policy tuning suggestions that recommend safer threshold movement only after evidence, owner context, reviewer calibration, and enforcement receipts
+- Benefit attribution that separates local speed, avoided risk, proof quality, policy clarity, network-safe value, and ledgered learning lift
+- Network-safe feedback that shares only aggregate decision class, threshold band, benefit class, and guardrail label across organizations
+- Feedback digest for explaining the closed-loop boundary between tenant-local exact learning and aggregate network learning
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -191,7 +197,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v31 export with policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v32 export with governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -209,13 +215,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.36 Alpha - Governance Feedback Loop
+## Next Phase: v0.37 Alpha - Continuous Trust Optimizer
 
-- Track whether blocked, allowed, and escalated actions improved proof quality, answer speed, and buyer trust
-- Recommend safer policy thresholds when enforcement repeatedly blocks or escalates the same learning pattern
-- Attribute benefit to governance decisions that created faster answers, better evidence coverage, or safer network learning
-- Share only aggregate enforcement outcomes so every customer benefits without exposing raw evidence or buyer text
-- Keep the closed-loop SaaS promise measurable, controlled, and privacy-safe across organizations
+- Rank the safest optimization candidates from feedback score, benefit lift, policy tuning priority, and network-safe readiness
+- Run controlled policy experiments before changes touch live answers, evidence, rewards, or buyer-facing handoff language
+- Promote improvements only when speed, proof quality, reviewer calibration, and privacy boundaries all remain healthy
+- Roll improvements from draft to pilot to production with owner receipts, rollback paths, and audit-ready reasoning
+- Keep the closed-loop SaaS promise measurable, controlled, and privacy-safe as usage grows across organizations
 
 ## License
 

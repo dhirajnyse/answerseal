@@ -5947,6 +5947,209 @@ svg {
   white-space: pre-wrap;
 }
 
+.feedback-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, calc(100vw - 250px));
+}
+
+.feedback-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.feedback-actions {
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #e9fff8, #eef8ff);
+}
+
+.feedback-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.feedback-actions strong {
+  color: var(--accent-dark);
+}
+
+.feedback-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(233, 255, 248, 0.78), rgba(255, 255, 255, 0.98));
+}
+
+.feedback-section,
+.feedback-outcome-card,
+.feedback-tuning-card,
+.feedback-benefit-card,
+.feedback-network-card,
+.feedback-action-card,
+.feedback-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.feedback-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.feedback-outcome-list,
+.feedback-tuning-list,
+.feedback-benefit-list,
+.feedback-network-list,
+.feedback-action-list,
+.feedback-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.feedback-outcome-list,
+.feedback-tuning-list,
+.feedback-benefit-list,
+.feedback-network-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.feedback-outcome-card,
+.feedback-tuning-card,
+.feedback-benefit-card,
+.feedback-network-card,
+.feedback-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.feedback-outcome-card {
+  border-color: rgba(0, 168, 137, 0.34);
+  background: linear-gradient(180deg, rgba(238, 255, 250, 0.95), #fff);
+}
+
+.feedback-outcome-card.is-risk,
+.feedback-tuning-card.is-risk,
+.feedback-network-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.feedback-tuning-card,
+.feedback-benefit-card,
+.feedback-network-card {
+  background: #fbfffd;
+}
+
+.feedback-action-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+}
+
+.feedback-action-card > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfff8;
+  font-weight: 900;
+}
+
+.feedback-outcome-card header,
+.feedback-outcome-card footer,
+.feedback-tuning-card header,
+.feedback-tuning-card footer,
+.feedback-benefit-card header,
+.feedback-network-card header,
+.feedback-network-card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.feedback-outcome-card header div,
+.feedback-tuning-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.feedback-outcome-card strong,
+.feedback-tuning-card strong,
+.feedback-benefit-card strong,
+.feedback-network-card strong,
+.feedback-action-card strong,
+.feedback-receipt-card strong {
+  color: var(--ink);
+}
+
+.feedback-outcome-card b,
+.feedback-tuning-card b,
+.feedback-benefit-card b,
+.feedback-network-card b,
+.feedback-action-card b {
+  color: var(--accent-dark);
+  font-size: 0.88rem;
+  text-align: right;
+}
+
+.feedback-outcome-card.is-risk b,
+.feedback-tuning-card.is-risk b,
+.feedback-network-card.is-risk b {
+  color: var(--amber);
+}
+
+.feedback-outcome-card p,
+.feedback-outcome-card footer span,
+.feedback-tuning-card p,
+.feedback-tuning-card footer span,
+.feedback-benefit-card p,
+.feedback-benefit-card span,
+.feedback-network-card p,
+.feedback-network-card footer span,
+.feedback-action-card p,
+.feedback-receipt-card p,
+.feedback-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.feedback-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -8184,6 +8387,12 @@ svg {
     .enforcement-queue-list,
     .enforcement-blocked-list,
     .enforcement-escalation-list,
+    .feedback-metrics,
+    .feedback-actions,
+    .feedback-outcome-list,
+    .feedback-tuning-list,
+    .feedback-benefit-list,
+    .feedback-network-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -8333,6 +8542,14 @@ svg {
     .enforcement-escalation-card footer,
     .enforcement-recovery-card,
     .enforcement-action-card,
+    .feedback-outcome-card header,
+    .feedback-outcome-card footer,
+    .feedback-tuning-card header,
+    .feedback-tuning-card footer,
+    .feedback-benefit-card header,
+    .feedback-network-card header,
+    .feedback-network-card footer,
+    .feedback-action-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

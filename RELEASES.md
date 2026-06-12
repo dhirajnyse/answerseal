@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.36 Alpha - Governance Feedback Loop
+
+Phase: Governance Feedback Loop
+
+- Added a Feedback drawer with feedback score, decision outcome count, policy tuning count, benefit lift, loop status, actions, digest, and receipts.
+- Added decision outcomes that measure whether blocked, allowed, escalated, evaluated, stale, buyer-outcome, and graph-drift signals worked or need tuning.
+- Added policy tuning suggestions for owner escalation, network learning, reward policy, freshness penalty, graph guardrails, and stop conditions.
+- Added benefit attribution for local speed, avoided risk, proof quality, policy clarity, network-safe value, and ledgered learning lift.
+- Added network-safe feedback signals that distinguish tenant-local exact feedback from aggregate feedback safe enough to help other organizations.
+- Added governance feedback status, score, outcome count, tuning count, benefit lift, safe network signals, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v32 with governance feedback outcomes, tuning suggestions, benefit attribution, network-safe signals, and digest.
+- Updated the build phases page with the v0.37 Continuous Trust Optimizer plan.
+
 ## v0.35 Alpha - Policy Enforcement Agent
 
 Phase: Policy Enforcement Agent

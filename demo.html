@@ -175,6 +175,10 @@
             <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
             <span>Enforce</span>
           </button>
+          <button class="nav-item" id="feedbackNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Feedback</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -237,8 +241,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.35 Alpha</strong>
-          <span>Policy Enforcement Agent</span>
+          <strong>v0.36 Alpha</strong>
+          <span>Governance Feedback Loop</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -250,7 +254,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.35 Alpha</span>
+            <span class="label">Security questionnaire | v0.36 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -2796,6 +2800,119 @@
             <span>Copyable proof for security, legal, AI governance, and buyers</span>
           </div>
           <pre class="enforcement-digest" id="enforcementDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="feedback-backdrop drawer-backdrop" id="feedbackBackdrop" hidden></div>
+    <aside class="workspace-drawer feedback-drawer" id="feedbackDrawer" aria-label="Governance feedback loop" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Governance Feedback Loop</span>
+          <h2>Learn from enforcement outcomes safely</h2>
+        </div>
+        <button class="icon-button" id="closeFeedbackButton" type="button" aria-label="Close governance feedback loop" title="Close governance feedback loop">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip feedback-metrics" aria-label="Governance feedback health">
+        <article>
+          <span class="label">Feedback Score</span>
+          <strong id="feedbackScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Outcomes</span>
+          <strong id="feedbackOutcomeCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Tunings</span>
+          <strong id="feedbackTuningCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Benefit Lift</span>
+          <strong id="feedbackBenefitLift">+0</strong>
+        </article>
+      </section>
+
+      <section class="feedback-actions" aria-label="Governance feedback controls">
+        <div>
+          <span class="label">Loop Status</span>
+          <strong id="feedbackStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="captureFeedbackButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Capture Outcomes</span>
+        </button>
+        <button class="secondary-button" id="tuneFeedbackButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Tune Policy</span>
+        </button>
+        <button class="secondary-button" id="publishFeedbackButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+          <span>Publish Aggregate</span>
+        </button>
+        <button class="secondary-button" id="copyFeedbackDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="feedback-body">
+        <section class="feedback-section" aria-label="Decision outcomes">
+          <div class="section-heading">
+            <span class="label">Decision Outcomes</span>
+            <span>Allowed, blocked, and escalated actions become measurable learning signals</span>
+          </div>
+          <div class="feedback-outcome-list" id="feedbackOutcomeList"></div>
+        </section>
+
+        <section class="feedback-section" aria-label="Policy tuning suggestions">
+          <div class="section-heading">
+            <span class="label">Policy Tuning Suggestions</span>
+            <span>Thresholds move only after evidence, owner, and calibration context</span>
+          </div>
+          <div class="feedback-tuning-list" id="feedbackTuningList"></div>
+        </section>
+
+        <section class="feedback-section" aria-label="Benefit attribution">
+          <div class="section-heading">
+            <span class="label">Benefit Attribution</span>
+            <span>Separate speed, proof quality, risk avoidance, policy clarity, and network-safe value</span>
+          </div>
+          <div class="feedback-benefit-list" id="feedbackBenefitList"></div>
+        </section>
+
+        <section class="feedback-section" aria-label="Network-safe feedback">
+          <div class="section-heading">
+            <span class="label">Network-Safe Feedback</span>
+            <span>Only aggregate classes can leave the tenant boundary</span>
+          </div>
+          <div class="feedback-network-list" id="feedbackNetworkList"></div>
+        </section>
+
+        <section class="feedback-section" aria-label="Feedback actions">
+          <div class="section-heading">
+            <span class="label">Feedback Actions</span>
+            <span>Capture, tune, measure, publish, and close the governance loop</span>
+          </div>
+          <div class="feedback-action-list" id="feedbackActionList"></div>
+        </section>
+
+        <section class="feedback-section" aria-label="Feedback receipts">
+          <div class="section-heading">
+            <span class="label">Feedback Receipts</span>
+            <span>Proof that learning decisions were measured before reuse</span>
+          </div>
+          <div class="feedback-receipt-list" id="feedbackReceiptList"></div>
+        </section>
+
+        <section class="feedback-section" aria-label="Feedback digest">
+          <div class="section-heading">
+            <span class="label">Feedback Digest</span>
+            <span>Copyable closed-loop governance note for security, legal, and AI teams</span>
+          </div>
+          <pre class="feedback-digest" id="feedbackDigest"></pre>
         </section>
       </section>
     </aside>
