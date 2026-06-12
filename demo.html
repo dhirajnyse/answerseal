@@ -179,6 +179,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Feedback</span>
           </button>
+          <button class="nav-item" id="optimizerNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Optimizer</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -241,8 +245,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.36 Alpha</strong>
-          <span>Governance Feedback Loop</span>
+          <strong>v0.37 Alpha</strong>
+          <span>Continuous Trust Optimizer</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -254,7 +258,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.36 Alpha</span>
+            <span class="label">Security questionnaire | v0.37 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -2913,6 +2917,111 @@
             <span>Copyable closed-loop governance note for security, legal, and AI teams</span>
           </div>
           <pre class="feedback-digest" id="feedbackDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="optimizer-backdrop drawer-backdrop" id="optimizerBackdrop" hidden></div>
+    <aside class="workspace-drawer optimizer-drawer" id="optimizerDrawer" aria-label="Continuous trust optimizer" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Continuous Trust Optimizer</span>
+          <h2>Turn feedback into controlled improvements</h2>
+        </div>
+        <button class="icon-button" id="closeOptimizerButton" type="button" aria-label="Close continuous trust optimizer" title="Close continuous trust optimizer">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip optimizer-metrics" aria-label="Continuous trust optimizer health">
+        <article>
+          <span class="label">Optimizer Score</span>
+          <strong id="optimizerScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Candidates</span>
+          <strong id="optimizerCandidateCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Experiments</span>
+          <strong id="optimizerExperimentCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Open Guardrails</span>
+          <strong id="optimizerGuardrailCount">0</strong>
+        </article>
+      </section>
+
+      <section class="optimizer-actions" aria-label="Continuous trust optimizer controls">
+        <div>
+          <span class="label">Optimizer Status</span>
+          <strong id="optimizerStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="rankOptimizerButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Rank Queue</span>
+        </button>
+        <button class="secondary-button" id="simulateOptimizerButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+          <span>Simulate</span>
+        </button>
+        <button class="secondary-button" id="approveOptimizerButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve Rollout</span>
+        </button>
+        <button class="secondary-button" id="copyOptimizerDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="optimizer-body">
+        <section class="optimizer-section" aria-label="Optimization queue">
+          <div class="section-heading">
+            <span class="label">Optimization Queue</span>
+            <span>Rank improvements by benefit, risk, policy priority, and feedback score</span>
+          </div>
+          <div class="optimizer-queue-list" id="optimizerQueueList"></div>
+        </section>
+
+        <section class="optimizer-section" aria-label="Controlled experiments">
+          <div class="section-heading">
+            <span class="label">Controlled Experiments</span>
+            <span>Draft-only and policy-sandbox tests before production behavior changes</span>
+          </div>
+          <div class="optimizer-experiment-list" id="optimizerExperimentList"></div>
+        </section>
+
+        <section class="optimizer-section" aria-label="Benefit guardrails">
+          <div class="section-heading">
+            <span class="label">Benefit Guardrails</span>
+            <span>Proof quality, privacy boundary, measured benefit, and experiment readiness</span>
+          </div>
+          <div class="optimizer-guardrail-list" id="optimizerGuardrailList"></div>
+        </section>
+
+        <section class="optimizer-section" aria-label="Customer-safe rollout">
+          <div class="section-heading">
+            <span class="label">Customer-Safe Rollout</span>
+            <span>Move from draft to pilot to production with owner receipts and rollback paths</span>
+          </div>
+          <div class="optimizer-rollout-list" id="optimizerRolloutList"></div>
+        </section>
+
+        <section class="optimizer-section" aria-label="Optimizer receipts">
+          <div class="section-heading">
+            <span class="label">Optimizer Receipts</span>
+            <span>Proof that optimization work stayed controlled</span>
+          </div>
+          <div class="optimizer-receipt-list" id="optimizerReceiptList"></div>
+        </section>
+
+        <section class="optimizer-section" aria-label="Optimizer digest">
+          <div class="section-heading">
+            <span class="label">Optimizer Digest</span>
+            <span>Copyable release note for security, legal, AI governance, and customer success</span>
+          </div>
+          <pre class="optimizer-digest" id="optimizerDigest"></pre>
         </section>
       </section>
     </aside>

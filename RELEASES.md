@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.37 Alpha - Continuous Trust Optimizer
+
+Phase: Continuous Trust Optimizer
+
+- Added an Optimizer drawer with optimizer score, candidate count, experiment count, open guardrail count, optimizer status, actions, digest, and receipts.
+- Added a ranked optimization queue that turns governance feedback into safe improvement candidates scored by benefit, risk, policy priority, and proof quality.
+- Added controlled experiments that keep changes in draft, policy, owner-routing, or aggregate sandboxes before production behavior changes.
+- Added benefit guardrails for proof quality, privacy boundary, benefit over risk, and experiment readiness.
+- Added customer-safe rollout steps that require owner receipts, rollback reasoning, and audit-ready detail before production rollout.
+- Added optimizer status, score, candidate count, experiment count, open guardrails, rollout steps, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v33 with optimizer queue, controlled experiments, benefit guardrails, rollout plan, and digest.
+- Updated the build phases page with the v0.38 Autonomous Trust Release Train plan.
+
 ## v0.36 Alpha - Governance Feedback Loop
 
 Phase: Governance Feedback Loop

@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.36 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v36";
+const BUILD_VERSION = "v0.37 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v37";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v36",
   "answerseal.workspace.v35",
   "answerseal.workspace.v34",
   "answerseal.workspace.v33",
@@ -720,6 +721,8 @@ function createInitialState() {
     enforcementActions: createInitialEnforcementActions(),
     feedbackOpen: false,
     feedbackActions: createInitialFeedbackActions(),
+    optimizerOpen: false,
+    optimizerActions: createInitialOptimizerActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -923,6 +926,17 @@ function createInitialFeedbackActions() {
   };
 }
 
+function createInitialOptimizerActions() {
+  return {
+    status: "Draft",
+    rankedAt: null,
+    simulatedAt: null,
+    approvedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1058,6 +1072,7 @@ function loadWorkspaceState() {
       policyActions: normalizePolicyActions(workspace.policyActions ?? fresh.policyActions),
       enforcementActions: normalizeEnforcementActions(workspace.enforcementActions ?? fresh.enforcementActions),
       feedbackActions: normalizeFeedbackActions(workspace.feedbackActions ?? fresh.feedbackActions),
+      optimizerActions: normalizeOptimizerActions(workspace.optimizerActions ?? fresh.optimizerActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1089,6 +1104,7 @@ function loadWorkspaceState() {
       policyOpen: false,
       enforcementOpen: false,
       feedbackOpen: false,
+      optimizerOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1678,6 +1694,27 @@ function normalizeFeedbackReceipt(receipt) {
   };
 }
 
+function normalizeOptimizerActions(actions) {
+  const status = ["Draft", "Queue ranked", "Experiments simulated", "Rollout approved"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    rankedAt: actions?.rankedAt ?? null,
+    simulatedAt: actions?.simulatedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeOptimizerReceipt) : [],
+  };
+}
+
+function normalizeOptimizerReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `optimizer-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Optimizer action"),
+    detail: String(receipt?.detail ?? "Continuous trust optimization action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1727,6 +1764,7 @@ const elements = {
   policyNavButton: document.querySelector("#policyNavButton"),
   enforcementNavButton: document.querySelector("#enforcementNavButton"),
   feedbackNavButton: document.querySelector("#feedbackNavButton"),
+  optimizerNavButton: document.querySelector("#optimizerNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2216,6 +2254,24 @@ const elements = {
   tuneFeedbackButton: document.querySelector("#tuneFeedbackButton"),
   publishFeedbackButton: document.querySelector("#publishFeedbackButton"),
   copyFeedbackDigestButton: document.querySelector("#copyFeedbackDigestButton"),
+  optimizerBackdrop: document.querySelector("#optimizerBackdrop"),
+  optimizerDrawer: document.querySelector("#optimizerDrawer"),
+  closeOptimizerButton: document.querySelector("#closeOptimizerButton"),
+  optimizerScore: document.querySelector("#optimizerScore"),
+  optimizerCandidateCount: document.querySelector("#optimizerCandidateCount"),
+  optimizerExperimentCount: document.querySelector("#optimizerExperimentCount"),
+  optimizerGuardrailCount: document.querySelector("#optimizerGuardrailCount"),
+  optimizerStatus: document.querySelector("#optimizerStatus"),
+  optimizerQueueList: document.querySelector("#optimizerQueueList"),
+  optimizerExperimentList: document.querySelector("#optimizerExperimentList"),
+  optimizerGuardrailList: document.querySelector("#optimizerGuardrailList"),
+  optimizerRolloutList: document.querySelector("#optimizerRolloutList"),
+  optimizerReceiptList: document.querySelector("#optimizerReceiptList"),
+  optimizerDigest: document.querySelector("#optimizerDigest"),
+  rankOptimizerButton: document.querySelector("#rankOptimizerButton"),
+  simulateOptimizerButton: document.querySelector("#simulateOptimizerButton"),
+  approveOptimizerButton: document.querySelector("#approveOptimizerButton"),
+  copyOptimizerDigestButton: document.querySelector("#copyOptimizerDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2337,6 +2393,7 @@ function bindEvents() {
   elements.policyNavButton.addEventListener("click", openLearningPolicyGovernor);
   elements.enforcementNavButton.addEventListener("click", openPolicyEnforcementAgent);
   elements.feedbackNavButton.addEventListener("click", openGovernanceFeedbackLoop);
+  elements.optimizerNavButton.addEventListener("click", openContinuousTrustOptimizer);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2403,6 +2460,7 @@ function bindEvents() {
     renderLearningPolicyGovernor();
     renderPolicyEnforcementAgent();
     renderGovernanceFeedbackLoop();
+    renderContinuousTrustOptimizer();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2543,6 +2601,12 @@ function bindEvents() {
   elements.tuneFeedbackButton.addEventListener("click", proposeGovernanceTuning);
   elements.publishFeedbackButton.addEventListener("click", publishGovernanceFeedback);
   elements.copyFeedbackDigestButton.addEventListener("click", copyGovernanceFeedbackDigest);
+  elements.closeOptimizerButton.addEventListener("click", closeContinuousTrustOptimizer);
+  elements.optimizerBackdrop.addEventListener("click", closeContinuousTrustOptimizer);
+  elements.rankOptimizerButton.addEventListener("click", rankContinuousTrustOptimizations);
+  elements.simulateOptimizerButton.addEventListener("click", simulateContinuousTrustExperiments);
+  elements.approveOptimizerButton.addEventListener("click", approveContinuousTrustRollout);
+  elements.copyOptimizerDigestButton.addEventListener("click", copyContinuousTrustOptimizerDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2609,6 +2673,7 @@ function bindEvents() {
     if (state.policyOpen) closeLearningPolicyGovernor();
     if (state.enforcementOpen) closePolicyEnforcementAgent();
     if (state.feedbackOpen) closeGovernanceFeedbackLoop();
+    if (state.optimizerOpen) closeContinuousTrustOptimizer();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2642,6 +2707,7 @@ function applyInitialHash() {
   if (hash === "policy" || hash === "learning-policy" || hash === "policy-governor" || hash === "governor") openLearningPolicyGovernor();
   if (hash === "enforce" || hash === "enforcement" || hash === "policy-enforcement" || hash === "enforcement-agent") openPolicyEnforcementAgent();
   if (hash === "feedback" || hash === "governance-feedback" || hash === "feedback-loop" || hash === "governance-loop") openGovernanceFeedbackLoop();
+  if (hash === "optimizer" || hash === "optimizations" || hash === "continuous-trust" || hash === "trust-optimizer") openContinuousTrustOptimizer();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2689,6 +2755,7 @@ function render() {
   renderLearningPolicyGovernor();
   renderPolicyEnforcementAgent();
   renderGovernanceFeedbackLoop();
+  renderContinuousTrustOptimizer();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3420,6 +3487,7 @@ function activateWorkspaceNav(target) {
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3468,6 +3536,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.feedbackNavButton && state.feedbackOpen) {
     closeGovernanceFeedbackLoop(false);
   }
+  if (activeButton !== elements.optimizerNavButton && state.optimizerOpen) {
+    closeContinuousTrustOptimizer(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3490,6 +3561,7 @@ function setActiveNav(activeButton) {
     elements.policyNavButton,
     elements.enforcementNavButton,
     elements.feedbackNavButton,
+    elements.optimizerNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4419,6 +4491,7 @@ function openGovernanceFeedbackLoop() {
   closeLearningLedger(false);
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
+  closeContinuousTrustOptimizer(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4447,6 +4520,54 @@ function closeGovernanceFeedbackLoop(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openContinuousTrustOptimizer() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.optimizerOpen = true;
+  setActiveNav(elements.optimizerNavButton);
+  elements.optimizerBackdrop.hidden = false;
+  elements.optimizerDrawer.classList.add("is-open");
+  elements.optimizerDrawer.setAttribute("aria-hidden", "false");
+  renderContinuousTrustOptimizer();
+}
+
+function closeContinuousTrustOptimizer(activateReview = true) {
+  if (!state.optimizerOpen && elements.optimizerDrawer.getAttribute("aria-hidden") === "true") return;
+  state.optimizerOpen = false;
+  elements.optimizerDrawer.classList.remove("is-open");
+  elements.optimizerDrawer.setAttribute("aria-hidden", "true");
+  elements.optimizerBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -4458,6 +4579,7 @@ function openAnalytics() {
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -13749,6 +13871,392 @@ function governanceFeedbackDigestText(feedback = governanceFeedbackSnapshot()) {
   ].join("\n");
 }
 
+function renderContinuousTrustOptimizer() {
+  const optimizer = continuousTrustOptimizerSnapshot();
+
+  elements.optimizerScore.textContent = `${optimizer.score}%`;
+  elements.optimizerCandidateCount.textContent = optimizer.candidates.length;
+  elements.optimizerExperimentCount.textContent = optimizer.experiments.length;
+  elements.optimizerGuardrailCount.textContent = optimizer.guardrails.filter((guardrail) => guardrail.status !== "Pass").length;
+  elements.optimizerStatus.textContent = optimizer.statusLabel;
+  elements.optimizerDigest.textContent = continuousTrustOptimizerDigestText(optimizer);
+
+  elements.optimizerQueueList.innerHTML = "";
+  optimizer.candidates.forEach((candidate) => {
+    const card = document.createElement("article");
+    card.className = `optimizer-candidate-card ${candidate.decision === "Hold" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(candidate.driver)}</span>
+          <strong>${escapeHtml(candidate.title)}</strong>
+        </div>
+        <b>${candidate.score}%</b>
+      </header>
+      <p>${escapeHtml(candidate.detail)}</p>
+      <footer>
+        <span>${escapeHtml(candidate.priority)} priority</span>
+        <span>${escapeHtml(candidate.expectedLift)}</span>
+        <span>${escapeHtml(candidate.decision)}</span>
+      </footer>
+    `;
+    elements.optimizerQueueList.append(card);
+  });
+
+  elements.optimizerExperimentList.innerHTML = "";
+  optimizer.experiments.forEach((experiment) => {
+    const card = document.createElement("article");
+    card.className = `optimizer-experiment-card ${experiment.status !== "Ready" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(experiment.scope)}</span>
+          <strong>${escapeHtml(experiment.title)}</strong>
+        </div>
+        <b>${escapeHtml(experiment.status)}</b>
+      </header>
+      <p>${escapeHtml(experiment.detail)}</p>
+      <footer>
+        <span>${escapeHtml(experiment.metric)}</span>
+        <span>${escapeHtml(experiment.stopRule)}</span>
+      </footer>
+    `;
+    elements.optimizerExperimentList.append(card);
+  });
+
+  elements.optimizerGuardrailList.innerHTML = "";
+  optimizer.guardrails.forEach((guardrail) => {
+    const card = document.createElement("article");
+    card.className = `optimizer-guardrail-card ${guardrail.status !== "Pass" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(guardrail.title)}</strong>
+        <b>${escapeHtml(guardrail.status)}</b>
+      </header>
+      <p>${escapeHtml(guardrail.detail)}</p>
+      <span>${escapeHtml(guardrail.metric)}</span>
+    `;
+    elements.optimizerGuardrailList.append(card);
+  });
+
+  elements.optimizerRolloutList.innerHTML = "";
+  optimizer.rollout.forEach((step) => {
+    const card = document.createElement("article");
+    card.className = "optimizer-rollout-card";
+    card.innerHTML = `
+      <span>${escapeHtml(step.step)}</span>
+      <div>
+        <strong>${escapeHtml(step.title)}</strong>
+        <p>${escapeHtml(step.detail)}</p>
+      </div>
+      <b>${escapeHtml(step.status)}</b>
+    `;
+    elements.optimizerRolloutList.append(card);
+  });
+
+  elements.optimizerReceiptList.innerHTML = "";
+  if (optimizer.receipts.length === 0) {
+    elements.optimizerReceiptList.append(emptyState("No optimizer receipts yet"));
+  }
+  optimizer.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "optimizer-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.optimizerReceiptList.append(card);
+  });
+}
+
+function continuousTrustOptimizerSnapshot() {
+  const feedback = governanceFeedbackSnapshot();
+  const candidates = continuousTrustOptimizationCandidates(feedback);
+  const experiments = continuousTrustExperiments(candidates, feedback);
+  const guardrails = continuousTrustBenefitGuardrails(candidates, experiments, feedback);
+  const rollout = continuousTrustRolloutPlan(candidates, experiments, guardrails);
+  const openGuardrails = guardrails.filter((guardrail) => guardrail.status !== "Pass").length;
+  const readyExperiments = experiments.filter((experiment) => experiment.status === "Ready").length;
+  const readyCandidates = candidates.filter((candidate) => candidate.decision === "Promote").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        feedback.score * 0.22
+          + Math.min(100, readyCandidates * 22) * 0.24
+          + Math.min(100, readyExperiments * 25) * 0.2
+          + Math.max(0, 100 - openGuardrails * 20) * 0.22
+          + Math.min(100, feedback.benefitLift * 7) * 0.12,
+      ),
+    ),
+  );
+  const statusLabel = state.optimizerActions.status === "Draft" ? "Ready to optimize safely" : state.optimizerActions.status;
+
+  return {
+    score,
+    statusLabel,
+    candidates,
+    experiments,
+    guardrails,
+    rollout,
+    feedback,
+    receipts: state.optimizerActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function continuousTrustOptimizationCandidates(feedback) {
+  const highTunings = feedback.tunings.filter((item) => item.priority === "High").length;
+  const shareable = feedback.networkSignals.filter((item) => item.status === "Shareable").length;
+  const stalePenalty = feedback.outcomes.some((item) => item.title.includes("freshness") && item.result === "Needs tuning");
+  const graphRisk = feedback.outcomes.some((item) => item.title.includes("Graph drift") && item.result === "Needs tuning");
+  const localLift = feedback.benefits.find((item) => item.title === "Local speed benefit")?.lift ?? 0;
+  const proofLift = feedback.benefits.find((item) => item.title === "Proof quality")?.lift ?? 0;
+
+  return [
+    {
+      title: "Auto-promote source-backed local memory",
+      priority: localLift >= 4 ? "High" : "Medium",
+      score: Math.min(98, 72 + localLift * 5),
+      driver: "Local exact learning",
+      expectedLift: `+${localLift || 1} speed lift`,
+      risk: "Tenant-only",
+      decision: localLift >= 3 ? "Promote" : "Experiment",
+      detail: "Use approved, cited answers to improve this tenant's next draft without changing network behavior.",
+    },
+    {
+      title: "Tighten stale-source confidence penalty",
+      priority: stalePenalty ? "High" : "Low",
+      score: stalePenalty ? 91 : 64,
+      driver: "Freshness guardrail",
+      expectedLift: stalePenalty ? "+3 proof quality" : "+1 stability",
+      risk: "Low",
+      decision: stalePenalty ? "Promote" : "Experiment",
+      detail: "Lower confidence faster when source freshness is stale, while leaving approved answer text unchanged.",
+    },
+    {
+      title: "Split repeated escalations into narrower owner paths",
+      priority: highTunings > 1 ? "High" : "Medium",
+      score: Math.min(94, 68 + highTunings * 8),
+      driver: "Policy tuning",
+      expectedLift: "+2 cycle time",
+      risk: "Owner routing",
+      decision: highTunings > 0 ? "Experiment" : "Hold",
+      detail: "Route repeated high-priority tunings to narrower owners so security, legal, and AI governance do not block each other.",
+    },
+    {
+      title: "Publish aggregate benefit labels",
+      priority: shareable >= 2 ? "Medium" : "High",
+      score: shareable >= 2 ? 88 : 58,
+      driver: "Network-safe learning",
+      expectedLift: `+${shareable} peer signals`,
+      risk: shareable >= 2 ? "Aggregate only" : "Privacy gate",
+      decision: shareable >= 2 ? "Experiment" : "Hold",
+      detail: "Share only decision class, threshold band, benefit class, and guardrail label across customers.",
+    },
+    {
+      title: "Quarantine graph drift before rollout",
+      priority: graphRisk ? "High" : "Low",
+      score: graphRisk ? 86 : 61,
+      driver: "Drift protection",
+      expectedLift: graphRisk ? "+2 avoided risk" : "+1 stability",
+      risk: graphRisk ? "Drift active" : "Low",
+      decision: graphRisk ? "Experiment" : "Hold",
+      detail: "Keep graph drift as a negative signal until source freshness, eval quality, and policy gates are clear.",
+    },
+    {
+      title: "Raise reviewer-calibrated reward weight",
+      priority: proofLift >= 3 ? "Medium" : "High",
+      score: proofLift >= 3 ? 84 : 63,
+      driver: "Reward tuning",
+      expectedLift: `+${Math.max(1, proofLift)} proof lift`,
+      risk: proofLift >= 3 ? "Controlled" : "Calibration",
+      decision: proofLift >= 3 ? "Experiment" : "Hold",
+      detail: "Let reviewer agreement strengthen future recommendations only when eval quality stays above threshold.",
+    },
+  ].sort((a, b) => b.score - a.score);
+}
+
+function continuousTrustExperiments(candidates, feedback) {
+  return candidates.slice(0, 4).map((candidate, index) => {
+    const ready = candidate.decision !== "Hold" && candidate.score >= 75 && feedback.score >= 70;
+    return {
+      title: candidate.title,
+      scope: index === 0 ? "Draft sandbox" : index === 1 ? "Policy sandbox" : index === 2 ? "Owner routing" : "Aggregate sandbox",
+      status: ready ? "Ready" : "Guarded",
+      metric: candidate.expectedLift,
+      stopRule: candidate.risk === "Privacy gate" ? "Stop if privacy score drops" : "Stop on eval regression",
+      detail: ready
+        ? `Run this optimization against draft-only behavior and compare it to the current ${candidate.driver.toLowerCase()} baseline.`
+        : `Hold production changes until ${candidate.risk.toLowerCase()} risk is cleared by owner receipt.`,
+    };
+  });
+}
+
+function continuousTrustBenefitGuardrails(candidates, experiments, feedback) {
+  const promoted = candidates.filter((candidate) => candidate.decision === "Promote").length;
+  const ready = experiments.filter((experiment) => experiment.status === "Ready").length;
+  const shareable = feedback.networkSignals.filter((item) => item.status === "Shareable").length;
+
+  return [
+    {
+      title: "Proof quality cannot regress",
+      status: feedback.score < 70 ? "Watch" : "Pass",
+      metric: `${feedback.score}% feedback score`,
+      detail: "Optimization stays draft-only if evidence coverage, calibration, or source confidence moves backward.",
+    },
+    {
+      title: "Privacy boundary stays aggregate",
+      status: shareable > 0 ? "Pass" : "Watch",
+      metric: `${shareable}/${feedback.networkSignals.length} shareable signals`,
+      detail: "Cross-customer learning can use only aggregate labels and never raw answers, prompts, files, or buyer text.",
+    },
+    {
+      title: "Benefit must beat risk",
+      status: feedback.benefitLift >= promoted + 4 ? "Pass" : "Watch",
+      metric: `+${feedback.benefitLift} benefit lift`,
+      detail: "Rollout waits unless measured benefit is larger than the number of promoted optimization candidates.",
+    },
+    {
+      title: "Experiment before production",
+      status: ready >= 2 ? "Pass" : "Block",
+      metric: `${ready}/${experiments.length} experiments ready`,
+      detail: "Every optimizer recommendation must run through sandbox comparison before changing live trust behavior.",
+    },
+  ];
+}
+
+function continuousTrustRolloutPlan(candidates, experiments, guardrails) {
+  const top = candidates[0];
+  const blocked = guardrails.some((guardrail) => guardrail.status === "Block");
+  return [
+    {
+      step: "01",
+      title: "Rank safe optimization candidates",
+      status: candidates.length > 0 ? "Ready" : "Waiting",
+      detail: `${candidates.length} candidates are ordered by benefit, risk, policy priority, and feedback score.`,
+    },
+    {
+      step: "02",
+      title: `Run controlled experiment for ${top?.driver ?? "top candidate"}`,
+      status: experiments.some((experiment) => experiment.status === "Ready") ? "Ready" : "Guarded",
+      detail: top ? `${top.title} is tested in draft or policy sandbox before production rollout.` : "No experiment is ready yet.",
+    },
+    {
+      step: "03",
+      title: "Check benefit guardrails",
+      status: blocked ? "Blocked" : "Ready",
+      detail: `${guardrails.filter((guardrail) => guardrail.status === "Pass").length}/${guardrails.length} guardrails pass before rollout.`,
+    },
+    {
+      step: "04",
+      title: "Approve customer-safe rollout",
+      status: blocked ? "Hold" : "Owner receipt",
+      detail: "Approved changes move from draft to pilot to production with rollback reasoning and audit trail.",
+    },
+  ];
+}
+
+function rankContinuousTrustOptimizations() {
+  const optimizer = continuousTrustOptimizerSnapshot();
+  const detail = `Ranked ${optimizer.candidates.length} optimization candidates with ${optimizer.score}% optimizer score and ${optimizer.candidates.filter((candidate) => candidate.decision === "Promote").length} promote-ready candidates.`;
+  state.optimizerActions.status = "Queue ranked";
+  state.optimizerActions.rankedAt = new Date().toISOString();
+  addOptimizerReceipt("Optimization queue ranked", detail);
+  addAudit("Optimizer queue ranked", detail);
+  renderContinuousTrustOptimizer();
+  renderAudit();
+  showToast("Optimization queue ranked.");
+}
+
+function simulateContinuousTrustExperiments() {
+  const optimizer = continuousTrustOptimizerSnapshot();
+  const ready = optimizer.experiments.filter((experiment) => experiment.status === "Ready").length;
+  const detail = `Simulated ${optimizer.experiments.length} controlled experiments with ${ready} ready for draft-only comparison and ${optimizer.guardrails.filter((guardrail) => guardrail.status !== "Pass").length} guardrails to watch.`;
+  state.optimizerActions.status = "Experiments simulated";
+  state.optimizerActions.simulatedAt = new Date().toISOString();
+  addOptimizerReceipt("Controlled experiments simulated", detail);
+  addAudit("Optimizer experiments simulated", detail);
+  render();
+  showToast("Controlled optimizer experiments simulated.");
+}
+
+function approveContinuousTrustRollout() {
+  const optimizer = continuousTrustOptimizerSnapshot();
+  const blocked = optimizer.guardrails.some((guardrail) => guardrail.status === "Block");
+  const detail = blocked
+    ? "Rollout held because at least one optimizer guardrail is blocked."
+    : `Approved customer-safe rollout path for ${optimizer.candidates[0]?.title ?? "top optimization"} with rollback and owner receipt.`;
+  state.optimizerActions.status = blocked ? "Experiments simulated" : "Rollout approved";
+  state.optimizerActions.approvedAt = blocked ? state.optimizerActions.approvedAt : new Date().toISOString();
+  addOptimizerReceipt(blocked ? "Rollout held" : "Rollout approved", detail);
+  addAudit(blocked ? "Optimizer rollout held" : "Optimizer rollout approved", detail);
+  render();
+  showToast(blocked ? "Rollout held by guardrail." : "Optimizer rollout approved.");
+}
+
+function copyContinuousTrustOptimizerDigest() {
+  const optimizer = continuousTrustOptimizerSnapshot();
+  state.optimizerActions.lastCopiedAt = new Date().toISOString();
+  addOptimizerReceipt("Optimizer digest copied", "Continuous trust optimizer digest copied.");
+  addAudit("Optimizer digest copied", "Continuous trust optimizer digest copied.");
+  renderContinuousTrustOptimizer();
+  renderAudit();
+  copyText(continuousTrustOptimizerDigestText(optimizer), "Optimizer digest copied.");
+}
+
+function addOptimizerReceipt(action, detail) {
+  state.optimizerActions.receipts = [
+    ...(state.optimizerActions.receipts ?? []),
+    {
+      id: `optimizer-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function continuousTrustOptimizerDigestText(optimizer = continuousTrustOptimizerSnapshot()) {
+  const candidateLines = optimizer.candidates.map((item, index) => `${index + 1}. ${item.decision}: ${item.title} | ${item.score}% | ${item.expectedLift} | ${item.risk}`).join("\n");
+  const experimentLines = optimizer.experiments.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.scope} | ${item.metric} | ${item.stopRule}`).join("\n");
+  const guardrailLines = optimizer.guardrails.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.metric} | ${item.detail}`).join("\n");
+  const rolloutLines = optimizer.rollout.map((item) => `${item.step}. ${item.title} | ${item.status} | ${item.detail}`).join("\n");
+  const receiptLines = optimizer.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Continuous Trust Optimizer",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${optimizer.statusLabel}`,
+    `Optimizer score: ${optimizer.score}%`,
+    `Candidates: ${optimizer.candidates.length}`,
+    `Controlled experiments: ${optimizer.experiments.length}`,
+    `Open guardrails: ${optimizer.guardrails.filter((guardrail) => guardrail.status !== "Pass").length}`,
+    "",
+    "Optimization queue:",
+    candidateLines,
+    "",
+    "Controlled experiments:",
+    experimentLines,
+    "",
+    "Benefit guardrails:",
+    guardrailLines,
+    "",
+    "Customer-safe rollout:",
+    rolloutLines,
+    "",
+    "Receipts:",
+    receiptLines || "No optimizer receipts yet.",
+    "",
+    "Optimizer rule:",
+    "- Feedback can propose improvements, but experiments decide whether they are safe.",
+    "- Production rollout requires proof quality, privacy, benefit, and rollback guardrails.",
+    "- Network learning remains aggregate-only unless customer policy explicitly permits more.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -15998,6 +16506,13 @@ function exportCsv() {
     "Feedback Benefit Lift",
     "Feedback Network Signals",
     "Feedback Receipts",
+    "Optimizer Status",
+    "Optimizer Score",
+    "Optimizer Candidates",
+    "Optimizer Experiments",
+    "Optimizer Open Guardrails",
+    "Optimizer Rollout Steps",
+    "Optimizer Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -16031,6 +16546,7 @@ function exportCsv() {
     const policy = learningPolicySnapshot();
     const enforcement = policyEnforcementSnapshot();
     const feedback = governanceFeedbackSnapshot();
+    const optimizer = continuousTrustOptimizerSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -16161,6 +16677,13 @@ function exportCsv() {
       `+${feedback.benefitLift}`,
       feedback.networkSignals.filter((item) => item.status === "Shareable").length,
       feedback.receipts.length,
+      optimizer.statusLabel,
+      `${optimizer.score}%`,
+      optimizer.candidates.length,
+      optimizer.experiments.length,
+      optimizer.guardrails.filter((guardrail) => guardrail.status !== "Pass").length,
+      optimizer.rollout.length,
+      optimizer.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -16204,6 +16727,7 @@ function exportReviewPack() {
   const policy = learningPolicySnapshot();
   const enforcement = policyEnforcementSnapshot();
   const feedback = governanceFeedbackSnapshot();
+  const optimizer = continuousTrustOptimizerSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -16221,7 +16745,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v32</h1>
+        <h1>AnswerSeal Review Pack v33</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -17733,6 +18257,113 @@ function exportReviewPack() {
         </table>
         <h2>Feedback Digest</h2>
         <pre>${escapeHtml(governanceFeedbackDigestText(feedback))}</pre>
+        <h2>Continuous Trust Optimizer</h2>
+        <p>Status: ${escapeHtml(optimizer.statusLabel)} | Optimizer score: ${optimizer.score}% | Candidates: ${optimizer.candidates.length} | Experiments: ${optimizer.experiments.length} | Open guardrails: ${optimizer.guardrails.filter((guardrail) => guardrail.status !== "Pass").length} | Rollout steps: ${optimizer.rollout.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Driver</th>
+              <th>Score</th>
+              <th>Decision</th>
+              <th>Expected Lift</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${optimizer.candidates
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.driver)}</td>
+                    <td>${item.score}%</td>
+                    <td class="${item.decision === "Hold" ? "risk" : "ok"}">${escapeHtml(item.decision)}</td>
+                    <td>${escapeHtml(item.expectedLift)}</td>
+                    <td>${escapeHtml(item.risk)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Controlled Experiments</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Experiment</th>
+              <th>Scope</th>
+              <th>Status</th>
+              <th>Metric</th>
+              <th>Stop Rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${optimizer.experiments
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.scope)}</td>
+                    <td class="${item.status === "Ready" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.metric)}</td>
+                    <td>${escapeHtml(item.stopRule)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Benefit Guardrails</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Guardrail</th>
+              <th>Status</th>
+              <th>Metric</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${optimizer.guardrails
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Pass" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.metric)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Customer-Safe Rollout</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${optimizer.rollout
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.step)} ${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Blocked" || item.status === "Hold" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Optimizer Digest</h2>
+        <pre>${escapeHtml(continuousTrustOptimizerDigestText(optimizer))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -18445,7 +19076,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v32 created with governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v33 created with continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -18466,12 +19097,13 @@ function exportReviewPack() {
   renderEvaluationLab();
   renderLearningLedger();
   renderGovernanceFeedbackLoop();
+  renderContinuousTrustOptimizer();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v32 exported.");
+  showToast("Review Pack v33 exported.");
 }
 
 function toCsv(rows) {
@@ -18544,6 +19176,7 @@ function serializeWorkspace() {
     policyActions: state.policyActions,
     enforcementActions: state.enforcementActions,
     feedbackActions: state.feedbackActions,
+    optimizerActions: state.optimizerActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -18587,6 +19220,7 @@ function resetWorkspace() {
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
   closeWorkspace(false);
   closeLibrary();
   render();
