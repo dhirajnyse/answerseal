@@ -167,6 +167,10 @@
             <svg aria-hidden="true"><use href="#icon-file"></use></svg>
             <span>Ledger</span>
           </button>
+          <button class="nav-item" id="policyNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+            <span>Policy</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -229,8 +233,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.33 Alpha</strong>
-          <span>Learning Ledger</span>
+          <strong>v0.34 Alpha</strong>
+          <span>Learning Policy Governor</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -242,7 +246,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.33 Alpha</span>
+            <span class="label">Security questionnaire | v0.34 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -2554,6 +2558,127 @@
             <span>Copyable audit note for security, legal, and AI governance</span>
           </div>
           <pre class="ledger-digest" id="ledgerDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="policy-backdrop drawer-backdrop" id="policyBackdrop" hidden></div>
+    <aside class="workspace-drawer policy-drawer" id="policyDrawer" aria-label="Learning policy governor" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Learning Policy Governor</span>
+          <h2>Control what the AI loop may learn</h2>
+        </div>
+        <button class="icon-button" id="closePolicyButton" type="button" aria-label="Close learning policy governor" title="Close learning policy governor">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip policy-metrics" aria-label="Learning policy health">
+        <article>
+          <span class="label">Governor Score</span>
+          <strong id="policyScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Policies</span>
+          <strong id="policyRuleCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Stop Conditions</span>
+          <strong id="policyStopCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Simulated Lift</span>
+          <strong id="policySimulationLift">+0</strong>
+        </article>
+      </section>
+
+      <section class="policy-actions" aria-label="Learning policy controls">
+        <div>
+          <span class="label">Policy Status</span>
+          <strong id="policyStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="savePolicyButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+          <span>Save</span>
+        </button>
+        <button class="secondary-button" id="simulatePolicyButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Simulate</span>
+        </button>
+        <button class="secondary-button" id="approvePolicyButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve</span>
+        </button>
+        <button class="secondary-button" id="copyPolicyDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="policy-body">
+        <section class="policy-section" aria-label="Learning policies">
+          <div class="section-heading">
+            <span class="label">Learning Policies</span>
+            <span>What may learn locally, what can aggregate, and what stays quarantined</span>
+          </div>
+          <div class="policy-rule-list" id="policyRuleList"></div>
+        </section>
+
+        <section class="policy-section" aria-label="Approval roles">
+          <div class="section-heading">
+            <span class="label">Approval Roles</span>
+            <span>Who can approve memory, network promotion, reward tuning, and handoff language</span>
+          </div>
+          <div class="policy-role-list" id="policyRoleList"></div>
+        </section>
+
+        <section class="policy-section" aria-label="Stop conditions">
+          <div class="section-heading">
+            <span class="label">Stop Conditions</span>
+            <span>When automation pauses before it can teach the loop</span>
+          </div>
+          <div class="policy-stop-list" id="policyStopList"></div>
+        </section>
+
+        <section class="policy-section" aria-label="Policy simulations">
+          <div class="section-heading">
+            <span class="label">Policy Simulations</span>
+            <span>Preview speed, proof quality, network lift, and governance tradeoffs</span>
+          </div>
+          <div class="policy-simulation-list" id="policySimulationList"></div>
+        </section>
+
+        <section class="policy-section" aria-label="Policy exceptions">
+          <div class="section-heading">
+            <span class="label">Exceptions</span>
+            <span>Overrides that need a receipt before the loop can continue</span>
+          </div>
+          <div class="policy-exception-list" id="policyExceptionList"></div>
+        </section>
+
+        <section class="policy-section" aria-label="Policy actions">
+          <div class="section-heading">
+            <span class="label">Governor Actions</span>
+            <span>How customer policy controls the closed loop</span>
+          </div>
+          <div class="policy-action-list" id="policyActionList"></div>
+        </section>
+
+        <section class="policy-section" aria-label="Policy receipts">
+          <div class="section-heading">
+            <span class="label">Policy Receipts</span>
+            <span>Saved policy, simulation, approval, and copied digest decisions</span>
+          </div>
+          <div class="policy-receipt-list" id="policyReceiptList"></div>
+        </section>
+
+        <section class="policy-section" aria-label="Learning policy digest">
+          <div class="section-heading">
+            <span class="label">Policy Digest</span>
+            <span>Copyable governance note for security, legal, and AI governance</span>
+          </div>
+          <pre class="policy-digest" id="policyDigest"></pre>
         </section>
       </section>
     </aside>

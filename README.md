@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.33 Alpha
+**Current version:** v0.34 Alpha
 
-**Current phase:** Learning Ledger
+**Current phase:** Learning Policy Governor
 
 ## Brand
 
@@ -158,6 +158,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Approval gates for eval pass, privacy threshold, human approval, drift quarantine, and reward boundary
 - Network accounting that measures lift without exposing raw answers, evidence, prompts, contracts, or customer names
 - Learning ledger digest for security, legal, AI governance, and enterprise buyer explanations
+- Learning Policy Governor drawer with governor score, customer learning rules, approval roles, stop conditions, simulations, exceptions, actions, and receipts
+- Tenant learning policies for what may learn from approvals, buyer challenges, source refreshes, outcomes, evals, reward tuning, and network patterns
+- Approval roles for local memory, aggregate network promotion, reward-policy tuning, and buyer-facing handoff language
+- Stop conditions for privacy score, eval regression, graph drift, source freshness, reviewer calibration, and open gate backlog
+- Policy simulations that compare strict customer policy, balanced learning policy, growth learning policy, and network publish policy before the loop changes
+- Exception handling for deadline overrides, legacy evidence reuse, network promotion exceptions, and reviewer disagreement
+- Learning policy digest for security, legal, AI governance, and enterprise buyer explanations
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -178,7 +185,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v29 export with learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v30 export with learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -196,13 +203,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.34 Alpha - Learning Policy Governor
+## Next Phase: v0.35 Alpha - Policy Enforcement Agent
 
-- Add tenant learning policies for what the platform may learn from approvals, challenges, refreshes, and outcomes
-- Define promotion roles for local memory, buyer-segment learning, network-safe patterns, and blocked exceptions
-- Add stop conditions for privacy score, eval quality, drift, source freshness, reviewer agreement, and buyer-risk thresholds
-- Simulate how policy changes affect answer speed, proof quality, network lift, and enterprise trust
-- Keep every automated improvement governed by explicit customer policy
+- Add an enforced policy queue for allowed, gated, blocked, and approval-waiting learning actions
+- Add a blocked action monitor with rule, owner, risk reason, and recovery path
+- Route policy exceptions to security, legal, AI governance, or sales engineering with clear receipts
+- Export enforcement receipts that prove the platform followed customer policy before local or network learning changed behavior
+- Keep the closed-loop SaaS promise visible, controlled, and auditable for every customer
 
 ## License
 

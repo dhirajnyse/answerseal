@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.33 Alpha</strong>
+        <strong>v0.34 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -41,15 +41,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.33 Alpha</h1>
+          <h1>AnswerSeal v0.34 Alpha</h1>
           <p>
-            This release makes closed-loop learning auditable: every improvement shows what changed, why it changed, who approved it, which scope it can affect, and what benefit it is allowed to create.
+            This release puts a customer-defined governor above the AI learning loop: rules, approval roles, stop conditions, simulations, exceptions, receipts, and Review Pack evidence.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Learning Ledger</h2>
+          <h2>Learning Policy Governor</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -57,11 +57,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Learning receipts, benefit map, provenance chain, approval gates, network accounting, and Review Pack v29</dd>
+              <dd>Customer learning policies, approval roles, stop conditions, policy simulations, exceptions, and Review Pack v30</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.34 Alpha - Learning Policy Governor</dd>
+              <dd>v0.35 Alpha - Policy Enforcement Agent</dd>
             </div>
           </dl>
         </aside>
@@ -77,6 +77,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.34 Alpha</strong>
+            </header>
+            <h3>Learning Policy Governor</h3>
+            <p>Added Policy drawer, tenant learning rules, approval roles, stop conditions, policy simulations, exceptions, CSV policy context, and Review Pack v30.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.33 Alpha</strong>
             </header>
             <h3>Learning Ledger</h3>
@@ -376,39 +385,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.34 Alpha - Learning Policy Governor</h2>
+          <h2>v0.35 Alpha - Policy Enforcement Agent</h2>
           <p>
-            The next release should let each customer define exactly what the platform may learn, what must stay local, which roles can approve promotion, and when automation must stop.
+            The next release should make policy enforcement visible in daily operations: blocked actions, escalations, owner receipts, and safe execution paths before any AI loop can mutate recommendations.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Learning policies</h3>
-            <p>Set tenant rules for what can learn from approvals, buyer challenges, evidence refreshes, and outcomes.</p>
+            <h3>Enforced policy queue</h3>
+            <p>Show which learning actions are allowed, gated, blocked, or waiting for reviewer approval.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Promotion roles</h3>
-            <p>Define which owners can approve local memory, segment learning, network-safe patterns, and blocked exceptions.</p>
+            <h3>Blocked action monitor</h3>
+            <p>Track every stopped automation with the policy rule, owner, risk reason, and recovery path.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Stop conditions</h3>
-            <p>Pause automation when privacy score, eval quality, drift, source freshness, or reviewer agreement falls below policy.</p>
+            <h3>Owner escalations</h3>
+            <p>Route policy exceptions to security, legal, AI governance, or sales engineering with clear decision receipts.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Policy simulation</h3>
-            <p>Preview how a governance rule changes answer speed, proof quality, network lift, and customer trust.</p>
+            <h3>Enforcement receipts</h3>
+            <p>Export proof that the platform followed customer policy before local or network learning changed behavior.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.33 Alpha</span>
+      <span>AnswerSeal v0.34 Alpha</span>
       <a href="./">Home</a>
       <a href="demo.html">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

@@ -5529,6 +5529,225 @@ svg {
   white-space: pre-wrap;
 }
 
+.policy-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, calc(100vw - 250px));
+}
+
+.policy-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.policy-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #e9fff8, #eef8ff);
+}
+
+.policy-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--mint-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.policy-actions strong {
+  color: var(--green);
+}
+
+.policy-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(233, 255, 248, 0.72), rgba(255, 255, 255, 0.98));
+}
+
+.policy-section,
+.policy-rule-card,
+.policy-role-card,
+.policy-stop-card,
+.policy-simulation-card,
+.policy-exception-card,
+.policy-action-card,
+.policy-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.policy-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.policy-rule-list,
+.policy-role-list,
+.policy-stop-list,
+.policy-simulation-list,
+.policy-exception-list,
+.policy-action-list,
+.policy-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.policy-rule-list,
+.policy-role-list,
+.policy-stop-list,
+.policy-simulation-list,
+.policy-exception-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.policy-rule-card,
+.policy-role-card,
+.policy-stop-card,
+.policy-simulation-card,
+.policy-exception-card,
+.policy-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.policy-rule-card {
+  border-color: rgba(32, 192, 231, 0.34);
+  background: linear-gradient(180deg, rgba(239, 252, 255, 0.94), #fff);
+}
+
+.policy-rule-card.is-risk,
+.policy-role-card.is-risk,
+.policy-stop-card.is-risk,
+.policy-simulation-card.is-risk,
+.policy-exception-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.policy-role-card,
+.policy-stop-card,
+.policy-simulation-card,
+.policy-exception-card {
+  background: #fbfffd;
+}
+
+.policy-action-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+}
+
+.policy-action-card > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--green);
+  background: #dcfff8;
+  font-weight: 900;
+}
+
+.policy-rule-card header,
+.policy-rule-card footer,
+.policy-role-card header,
+.policy-role-card footer,
+.policy-stop-card header,
+.policy-stop-card footer,
+.policy-simulation-card header,
+.policy-simulation-card footer,
+.policy-exception-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.policy-rule-card header div,
+.policy-role-card header div,
+.policy-simulation-card header div,
+.policy-exception-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.policy-rule-card strong,
+.policy-role-card strong,
+.policy-stop-card strong,
+.policy-simulation-card strong,
+.policy-exception-card strong,
+.policy-action-card strong,
+.policy-receipt-card strong {
+  color: var(--ink);
+}
+
+.policy-rule-card b,
+.policy-role-card b,
+.policy-stop-card b,
+.policy-simulation-card b,
+.policy-exception-card b,
+.policy-action-card b {
+  color: var(--green);
+  font-size: 0.88rem;
+}
+
+.policy-rule-card.is-risk b,
+.policy-role-card.is-risk b,
+.policy-stop-card.is-risk b,
+.policy-simulation-card.is-risk b,
+.policy-exception-card.is-risk b {
+  color: var(--amber);
+}
+
+.policy-rule-card p,
+.policy-rule-card footer span,
+.policy-role-card p,
+.policy-role-card footer span,
+.policy-stop-card p,
+.policy-stop-card footer span,
+.policy-simulation-card p,
+.policy-simulation-card footer span,
+.policy-exception-card p,
+.policy-exception-card span,
+.policy-action-card p,
+.policy-receipt-card p,
+.policy-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.policy-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -7754,6 +7973,13 @@ svg {
     .ledger-benefit-list,
     .ledger-gate-list,
     .ledger-accounting-list,
+    .policy-metrics,
+    .policy-actions,
+    .policy-rule-list,
+    .policy-role-list,
+    .policy-stop-list,
+    .policy-simulation-list,
+    .policy-exception-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -7885,6 +8111,16 @@ svg {
     .ledger-gate-card header,
     .ledger-accounting-card header,
     .ledger-action-card,
+    .policy-rule-card header,
+    .policy-rule-card footer,
+    .policy-role-card header,
+    .policy-role-card footer,
+    .policy-stop-card header,
+    .policy-stop-card footer,
+    .policy-simulation-card header,
+    .policy-simulation-card footer,
+    .policy-exception-card header,
+    .policy-action-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -7916,7 +8152,8 @@ svg {
   }
 
   .ledger-provenance-card,
-  .ledger-action-card {
+  .ledger-action-card,
+  .policy-action-card {
     grid-template-columns: 1fr;
   }
 

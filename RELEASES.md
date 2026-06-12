@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.34 Alpha - Learning Policy Governor
+
+Phase: Learning Policy Governor
+
+- Added a Policy drawer with governor score, policy count, stop-condition count, simulated lift, policy status, actions, digest, and receipts.
+- Added tenant learning policies that define local exact memory, aggregate network promotion, buyer-text quarantine, reward tuning, freshness penalties, and graph drift guardrails.
+- Added approval roles for security, legal, AI governance, and sales engineering so customers can decide who approves each learning scope.
+- Added stop conditions for privacy score, eval regression, graph drift, source freshness, reviewer calibration, and open gate backlog.
+- Added policy simulations for strict customer policy, balanced learning policy, growth learning policy, and network publish policy before the loop changes.
+- Added exception handling for deadline overrides, legacy evidence reuse, network promotion exceptions, and reviewer disagreement.
+- Added learning policy status, score, rule count, stop-condition count, simulation count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v30 with learning policy governor rules, roles, stop conditions, simulations, and digest.
+- Updated the build phases page with the v0.35 Policy Enforcement Agent plan.
+
 ## v0.33 Alpha - Learning Ledger
 
 Phase: Learning Ledger
