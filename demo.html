@@ -159,6 +159,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Control</span>
           </button>
+          <button class="nav-item" id="evaluationNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Eval Lab</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -221,8 +225,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.31 Alpha</strong>
-          <span>Reinforcement Control Room</span>
+          <strong>v0.32 Alpha</strong>
+          <span>Evaluation Lab</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -234,7 +238,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.31 Alpha</span>
+            <span class="label">Security questionnaire | v0.32 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -2312,6 +2316,119 @@
             <span>Copyable closed-loop learning note</span>
           </div>
           <pre class="reinforcement-digest" id="reinforcementDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="evaluation-backdrop drawer-backdrop" id="evaluationBackdrop" hidden></div>
+    <aside class="workspace-drawer evaluation-drawer" id="evaluationDrawer" aria-label="Evaluation lab" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Evaluation Lab</span>
+          <h2>Test answer quality and reward changes before production learning</h2>
+        </div>
+        <button class="icon-button" id="closeEvaluationButton" type="button" aria-label="Close evaluation lab" title="Close evaluation lab">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip evaluation-metrics" aria-label="Evaluation lab health">
+        <article>
+          <span class="label">Lab Score</span>
+          <strong id="evaluationScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Eval Sets</span>
+          <strong id="evaluationSetCount">0/0</strong>
+        </article>
+        <article>
+          <span class="label">Regressions</span>
+          <strong id="evaluationRegressionCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Calibration</span>
+          <strong id="evaluationCalibrationScore">0%</strong>
+        </article>
+      </section>
+
+      <section class="evaluation-actions" aria-label="Evaluation lab controls">
+        <div>
+          <span class="label">Lab Status</span>
+          <strong id="evaluationStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="runEvaluationButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Run Evals</span>
+        </button>
+        <button class="secondary-button" id="testRewardPolicyButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Test Rewards</span>
+        </button>
+        <button class="secondary-button" id="calibrateReviewersButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+          <span>Calibrate</span>
+        </button>
+        <button class="secondary-button" id="copyEvaluationDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy Digest</span>
+        </button>
+      </section>
+
+      <section class="evaluation-body">
+        <section class="evaluation-section" aria-label="Answer evaluation sets">
+          <div class="section-heading">
+            <span class="label">Answer Eval Sets</span>
+            <span>Source coverage, citation quality, refusal, freshness, and privacy</span>
+          </div>
+          <div class="evaluation-set-list" id="evaluationSetList"></div>
+        </section>
+
+        <section class="evaluation-section" aria-label="Reward policy tests">
+          <div class="section-heading">
+            <span class="label">Reward Policy Tests</span>
+            <span>Compare reward variants before production queue influence</span>
+          </div>
+          <div class="evaluation-reward-test-list" id="evaluationRewardTestList"></div>
+        </section>
+
+        <section class="evaluation-section" aria-label="Regression watch">
+          <div class="section-heading">
+            <span class="label">Regression Watch</span>
+            <span>Block changes when evidence, drift, or citation quality worsens</span>
+          </div>
+          <div class="evaluation-regression-list" id="evaluationRegressionList"></div>
+        </section>
+
+        <section class="evaluation-section" aria-label="Reviewer calibration">
+          <div class="section-heading">
+            <span class="label">Reviewer Calibration</span>
+            <span>Align security, legal, sales, and AI governance decisions</span>
+          </div>
+          <div class="evaluation-calibration-list" id="evaluationCalibrationList"></div>
+        </section>
+
+        <section class="evaluation-section" aria-label="Evaluation actions">
+          <div class="section-heading">
+            <span class="label">Lab Actions</span>
+            <span>How eval results move into governed reinforcement work</span>
+          </div>
+          <div class="evaluation-action-list" id="evaluationActionList"></div>
+        </section>
+
+        <section class="evaluation-section" aria-label="Evaluation receipts">
+          <div class="section-heading">
+            <span class="label">Evaluation Receipts</span>
+            <span>Recorded eval, policy test, and calibration decisions</span>
+          </div>
+          <div class="evaluation-receipt-list" id="evaluationReceiptList"></div>
+        </section>
+
+        <section class="evaluation-section" aria-label="Evaluation digest">
+          <div class="section-heading">
+            <span class="label">Evaluation Digest</span>
+            <span>Copyable quality, reward, regression, and calibration note</span>
+          </div>
+          <pre class="evaluation-digest" id="evaluationDigest"></pre>
         </section>
       </section>
     </aside>

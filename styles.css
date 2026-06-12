@@ -5118,6 +5118,209 @@ svg {
   white-space: pre-wrap;
 }
 
+.evaluation-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, calc(100vw - 250px));
+}
+
+.evaluation-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.evaluation-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #effaf7, #f7fbff);
+}
+
+.evaluation-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--mint-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.evaluation-actions strong {
+  color: var(--green);
+}
+
+.evaluation-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(242, 255, 252, 0.75), rgba(255, 255, 255, 0.98));
+}
+
+.evaluation-section,
+.evaluation-set-card,
+.evaluation-reward-card,
+.evaluation-regression-card,
+.evaluation-calibration-card,
+.evaluation-action-card,
+.evaluation-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.evaluation-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.evaluation-set-list,
+.evaluation-reward-test-list,
+.evaluation-regression-list,
+.evaluation-calibration-list,
+.evaluation-action-list,
+.evaluation-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.evaluation-set-list,
+.evaluation-reward-test-list,
+.evaluation-regression-list,
+.evaluation-calibration-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.evaluation-set-card,
+.evaluation-reward-card,
+.evaluation-regression-card,
+.evaluation-calibration-card,
+.evaluation-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.evaluation-set-card {
+  border-color: rgba(24, 185, 166, 0.36);
+  background: linear-gradient(180deg, rgba(238, 255, 251, 0.94), #fff);
+}
+
+.evaluation-set-card.is-risk,
+.evaluation-reward-card.is-risk,
+.evaluation-regression-card.is-risk,
+.evaluation-calibration-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.evaluation-reward-card,
+.evaluation-regression-card,
+.evaluation-calibration-card {
+  background: #fbfffd;
+}
+
+.evaluation-action-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+}
+
+.evaluation-action-card > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--green);
+  background: #dcfff8;
+  font-weight: 900;
+}
+
+.evaluation-set-card header,
+.evaluation-set-card footer,
+.evaluation-reward-card header,
+.evaluation-regression-card header,
+.evaluation-calibration-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.evaluation-set-card header div,
+.evaluation-reward-card header div,
+.evaluation-calibration-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.evaluation-set-card strong,
+.evaluation-reward-card strong,
+.evaluation-regression-card strong,
+.evaluation-calibration-card strong,
+.evaluation-action-card strong,
+.evaluation-receipt-card strong {
+  color: var(--ink);
+}
+
+.evaluation-set-card b,
+.evaluation-reward-card b,
+.evaluation-regression-card b,
+.evaluation-calibration-card b,
+.evaluation-action-card b {
+  color: var(--green);
+  font-size: 0.88rem;
+}
+
+.evaluation-set-card.is-risk b,
+.evaluation-reward-card.is-risk b,
+.evaluation-regression-card.is-risk b,
+.evaluation-calibration-card.is-risk b {
+  color: var(--amber);
+}
+
+.evaluation-set-card p,
+.evaluation-set-card footer span,
+.evaluation-reward-card p,
+.evaluation-reward-card span,
+.evaluation-regression-card p,
+.evaluation-regression-card span,
+.evaluation-calibration-card p,
+.evaluation-calibration-card span,
+.evaluation-action-card p,
+.evaluation-receipt-card p,
+.evaluation-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.evaluation-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -7331,6 +7534,12 @@ svg {
     .reinforcement-reward-list,
     .reinforcement-boundary-list,
     .reinforcement-before-after,
+    .evaluation-metrics,
+    .evaluation-actions,
+    .evaluation-set-list,
+    .evaluation-reward-test-list,
+    .evaluation-regression-list,
+    .evaluation-calibration-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -7449,6 +7658,12 @@ svg {
     .reinforcement-reward-card header,
     .reinforcement-boundary-card header,
     .reinforcement-action-card,
+    .evaluation-set-card header,
+    .evaluation-set-card footer,
+    .evaluation-reward-card header,
+    .evaluation-regression-card header,
+    .evaluation-calibration-card header,
+    .evaluation-action-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -7472,6 +7687,10 @@ svg {
   }
 
   .reinforcement-action-card {
+    grid-template-columns: 1fr;
+  }
+
+  .evaluation-action-card {
     grid-template-columns: 1fr;
   }
 

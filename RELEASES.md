@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.32 Alpha - Evaluation Lab
+
+Phase: Evaluation Lab
+
+- Added an Eval Lab drawer with lab score, answer eval sets, reward-policy tests, regression watch, reviewer calibration, action plan, digest, and evaluation receipts.
+- Added answer evaluation sets for source coverage, citation quality, freshness, network boundaries, reviewer routing, and claim trace quality.
+- Added reward-policy tests that compare conservative, network-safe, speed-biased, and reviewer-calibrated learning policies before production tuning.
+- Added regression watch for stale evidence, risky reward behavior, reviewer disagreement, and network drift.
+- Added reviewer calibration across security, legal, sales, and AI governance so disagreement becomes a measurable training signal.
+- Added evaluation status, lab score, pass rate, reward tests, regression count, calibration score, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v28 with evaluation lab summary, eval sets, reward tests, regression watch, calibration, and digest.
+- Updated the build phases page with the v0.33 Learning Ledger plan.
+
 ## v0.31 Alpha - Reinforcement Control Room
 
 Phase: Reinforcement Control Room

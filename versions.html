@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.31 Alpha</strong>
+        <strong>v0.32 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -41,15 +41,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.31 Alpha</h1>
+          <h1>AnswerSeal v0.32 Alpha</h1>
           <p>
-            This release closes the learning loop: teams can replay predictions against real outcomes, tune reward signals, and prove which lessons stay tenant-local versus which aggregate patterns can safely improve the network.
+            This release makes the learning loop measurable: teams can score answer quality, test reward changes, watch regressions, and calibrate reviewers before any improvement affects live buyer workflows.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Reinforcement Control Room</h2>
+          <h2>Evaluation Lab</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -57,11 +57,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Prediction replay, reward tuning, learning boundaries, network-safe lift, and Review Pack v27</dd>
+              <dd>Answer evals, reward-policy tests, regression watch, reviewer calibration, and Review Pack v28</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.32 Alpha - Evaluation Lab</dd>
+              <dd>v0.33 Alpha - Learning Ledger</dd>
             </div>
           </dl>
         </aside>
@@ -77,6 +77,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.32 Alpha</strong>
+            </header>
+            <h3>Evaluation Lab</h3>
+            <p>Added Eval Lab drawer, answer eval sets, reward-policy tests, regression watch, reviewer calibration, evaluation receipts, CSV evaluation context, and Review Pack v28.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.31 Alpha</strong>
             </header>
             <h3>Reinforcement Control Room</h3>
@@ -358,39 +367,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.32 Alpha - Evaluation Lab</h2>
+          <h2>v0.33 Alpha - Learning Ledger</h2>
           <p>
-            The next release should turn the learning loop into a measurable evaluation system: score answer quality, test reward changes, and compare model recommendations before they affect live buyer workflows.
+            The next release should give every learning event a traceable ledger: what changed, why it changed, who approved it, which tenant it benefits, and whether it can safely help the wider network.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Answer eval sets</h3>
-            <p>Benchmark generated answers against expected source coverage, citation quality, freshness, and reviewer decisions.</p>
+            <h3>Learning receipt ledger</h3>
+            <p>Record every approved learning event with source, reviewer, policy, tenant boundary, and downstream impact.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Reward A/B tests</h3>
-            <p>Compare tuned reward policies before applying them to production recommendation queues.</p>
+            <h3>Benefit map</h3>
+            <p>Show whether an improvement helps only the local workspace, a buyer segment, or a privacy-safe network pattern.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Regression watch</h3>
-            <p>Warn when a new answer, source, or model behavior performs worse than a prior approved pattern.</p>
+            <h3>Approval provenance</h3>
+            <p>Explain which human gates, evals, and policy constraints allowed or blocked a learning update.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Reviewer calibration</h3>
-            <p>Show where security, legal, sales, and AI governance reviewers disagree so training improves over time.</p>
+            <h3>Network lift accounting</h3>
+            <p>Track aggregate lift without exposing raw answers, evidence, prompts, contracts, or customer names.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.31 Alpha</span>
+      <span>AnswerSeal v0.32 Alpha</span>
       <a href="./">Home</a>
       <a href="demo.html">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

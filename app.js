@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.31 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v31";
+const BUILD_VERSION = "v0.32 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v32";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v31",
   "answerseal.workspace.v30",
   "answerseal.workspace.v29",
   "answerseal.workspace.v28",
@@ -705,6 +706,8 @@ function createInitialState() {
     simulatorActions: createInitialSimulatorActions(),
     reinforcementOpen: false,
     reinforcementActions: createInitialReinforcementActions(),
+    evaluationOpen: false,
+    evaluationActions: createInitialEvaluationActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -853,6 +856,17 @@ function createInitialReinforcementActions() {
   };
 }
 
+function createInitialEvaluationActions() {
+  return {
+    status: "Draft",
+    evaluatedAt: null,
+    testedAt: null,
+    calibratedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -983,6 +997,7 @@ function loadWorkspaceState() {
       graphActions: normalizeGraphActions(workspace.graphActions ?? fresh.graphActions),
       simulatorActions: normalizeSimulatorActions(workspace.simulatorActions ?? fresh.simulatorActions),
       reinforcementActions: normalizeReinforcementActions(workspace.reinforcementActions ?? fresh.reinforcementActions),
+      evaluationActions: normalizeEvaluationActions(workspace.evaluationActions ?? fresh.evaluationActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1009,6 +1024,7 @@ function loadWorkspaceState() {
       graphOpen: false,
       simulatorOpen: false,
       reinforcementOpen: false,
+      evaluationOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1493,6 +1509,27 @@ function normalizeReinforcementReceipt(receipt) {
   };
 }
 
+function normalizeEvaluationActions(actions) {
+  const status = ["Draft", "Evaluation run", "Reward policy tested", "Reviewers calibrated"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    evaluatedAt: actions?.evaluatedAt ?? null,
+    testedAt: actions?.testedAt ?? null,
+    calibratedAt: actions?.calibratedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeEvaluationReceipt) : [],
+  };
+}
+
+function normalizeEvaluationReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `evaluation-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Evaluation action"),
+    detail: String(receipt?.detail ?? "Evaluation lab action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1537,6 +1574,7 @@ const elements = {
   graphNavButton: document.querySelector("#graphNavButton"),
   simulatorNavButton: document.querySelector("#simulatorNavButton"),
   reinforcementNavButton: document.querySelector("#reinforcementNavButton"),
+  evaluationNavButton: document.querySelector("#evaluationNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1929,6 +1967,25 @@ const elements = {
   tuneRewardButton: document.querySelector("#tuneRewardButton"),
   prepareNetworkLearningButton: document.querySelector("#prepareNetworkLearningButton"),
   copyReinforcementDigestButton: document.querySelector("#copyReinforcementDigestButton"),
+  evaluationBackdrop: document.querySelector("#evaluationBackdrop"),
+  evaluationDrawer: document.querySelector("#evaluationDrawer"),
+  closeEvaluationButton: document.querySelector("#closeEvaluationButton"),
+  evaluationScore: document.querySelector("#evaluationScore"),
+  evaluationSetCount: document.querySelector("#evaluationSetCount"),
+  evaluationRegressionCount: document.querySelector("#evaluationRegressionCount"),
+  evaluationCalibrationScore: document.querySelector("#evaluationCalibrationScore"),
+  evaluationStatus: document.querySelector("#evaluationStatus"),
+  evaluationSetList: document.querySelector("#evaluationSetList"),
+  evaluationRewardTestList: document.querySelector("#evaluationRewardTestList"),
+  evaluationRegressionList: document.querySelector("#evaluationRegressionList"),
+  evaluationCalibrationList: document.querySelector("#evaluationCalibrationList"),
+  evaluationActionList: document.querySelector("#evaluationActionList"),
+  evaluationReceiptList: document.querySelector("#evaluationReceiptList"),
+  evaluationDigest: document.querySelector("#evaluationDigest"),
+  runEvaluationButton: document.querySelector("#runEvaluationButton"),
+  testRewardPolicyButton: document.querySelector("#testRewardPolicyButton"),
+  calibrateReviewersButton: document.querySelector("#calibrateReviewersButton"),
+  copyEvaluationDigestButton: document.querySelector("#copyEvaluationDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2045,6 +2102,7 @@ function bindEvents() {
   elements.graphNavButton.addEventListener("click", openFederatedGraph);
   elements.simulatorNavButton.addEventListener("click", openPolicySimulator);
   elements.reinforcementNavButton.addEventListener("click", openReinforcementControl);
+  elements.evaluationNavButton.addEventListener("click", openEvaluationLab);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2106,6 +2164,7 @@ function bindEvents() {
     renderFederatedGraph();
     renderPolicySimulator();
     renderReinforcementControl();
+    renderEvaluationLab();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2216,6 +2275,12 @@ function bindEvents() {
   elements.tuneRewardButton.addEventListener("click", tuneReinforcementRewards);
   elements.prepareNetworkLearningButton.addEventListener("click", prepareReinforcementNetworkPackage);
   elements.copyReinforcementDigestButton.addEventListener("click", copyReinforcementDigest);
+  elements.closeEvaluationButton.addEventListener("click", closeEvaluationLab);
+  elements.evaluationBackdrop.addEventListener("click", closeEvaluationLab);
+  elements.runEvaluationButton.addEventListener("click", runEvaluationLab);
+  elements.testRewardPolicyButton.addEventListener("click", testEvaluationRewardPolicy);
+  elements.calibrateReviewersButton.addEventListener("click", calibrateEvaluationReviewers);
+  elements.copyEvaluationDigestButton.addEventListener("click", copyEvaluationDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2277,6 +2342,7 @@ function bindEvents() {
     if (state.graphOpen) closeFederatedGraph();
     if (state.simulatorOpen) closePolicySimulator();
     if (state.reinforcementOpen) closeReinforcementControl();
+    if (state.evaluationOpen) closeEvaluationLab();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2305,6 +2371,7 @@ function applyInitialHash() {
   if (hash === "graph" || hash === "trust-graph" || hash === "federated-graph" || hash === "federation") openFederatedGraph();
   if (hash === "simulator" || hash === "policy-simulator" || hash === "simulation" || hash === "rehearsal") openPolicySimulator();
   if (hash === "control" || hash === "reinforcement" || hash === "reinforcement-control" || hash === "control-room") openReinforcementControl();
+  if (hash === "evaluation" || hash === "eval" || hash === "evaluation-lab" || hash === "eval-lab") openEvaluationLab();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2347,6 +2414,7 @@ function render() {
   renderFederatedGraph();
   renderPolicySimulator();
   renderReinforcementControl();
+  renderEvaluationLab();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3073,6 +3141,7 @@ function activateWorkspaceNav(target) {
   closeFederatedGraph(false);
   closePolicySimulator(false);
   closeReinforcementControl(false);
+  closeEvaluationLab(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3106,6 +3175,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.reinforcementNavButton && state.reinforcementOpen) {
     closeReinforcementControl(false);
   }
+  if (activeButton !== elements.evaluationNavButton && state.evaluationOpen) {
+    closeEvaluationLab(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3123,6 +3195,7 @@ function setActiveNav(activeButton) {
     elements.graphNavButton,
     elements.simulatorNavButton,
     elements.reinforcementNavButton,
+    elements.evaluationNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3847,6 +3920,49 @@ function closeReinforcementControl(activateReview = true) {
   elements.reinforcementDrawer.classList.remove("is-open");
   elements.reinforcementDrawer.setAttribute("aria-hidden", "true");
   elements.reinforcementBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openEvaluationLab() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.evaluationOpen = true;
+  setActiveNav(elements.evaluationNavButton);
+  elements.evaluationBackdrop.hidden = false;
+  elements.evaluationDrawer.classList.add("is-open");
+  elements.evaluationDrawer.setAttribute("aria-hidden", "false");
+  renderEvaluationLab();
+}
+
+function closeEvaluationLab(activateReview = true) {
+  if (!state.evaluationOpen && elements.evaluationDrawer.getAttribute("aria-hidden") === "true") return;
+  state.evaluationOpen = false;
+  elements.evaluationDrawer.classList.remove("is-open");
+  elements.evaluationDrawer.setAttribute("aria-hidden", "true");
+  elements.evaluationBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -10690,6 +10806,457 @@ function reinforcementDigestText(control = reinforcementControlSnapshot()) {
   ].join("\n");
 }
 
+function renderEvaluationLab() {
+  const lab = evaluationLabSnapshot();
+
+  elements.evaluationScore.textContent = `${lab.score}%`;
+  elements.evaluationSetCount.textContent = `${lab.passedCount}/${lab.evalSets.length}`;
+  elements.evaluationRegressionCount.textContent = lab.regressionCount;
+  elements.evaluationCalibrationScore.textContent = `${lab.calibrationScore}%`;
+  elements.evaluationStatus.textContent = lab.statusLabel;
+  elements.evaluationDigest.textContent = evaluationDigestText(lab);
+
+  elements.evaluationSetList.innerHTML = "";
+  lab.evalSets.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `evaluation-set-card ${item.status === "Pass" ? "" : "is-risk"}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.area)}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+        </div>
+        <b>${escapeHtml(item.status)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.expected)}</span>
+        <span>${escapeHtml(item.actual)}</span>
+      </footer>
+    `;
+    elements.evaluationSetList.append(card);
+  });
+
+  elements.evaluationRewardTestList.innerHTML = "";
+  lab.rewardTests.forEach((test) => {
+    const card = document.createElement("article");
+    card.className = `evaluation-reward-card ${test.result === "Risk" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(test.variant)}</span>
+          <strong>${escapeHtml(test.title)}</strong>
+        </div>
+        <b>${escapeHtml(test.score)}</b>
+      </header>
+      <p>${escapeHtml(test.detail)}</p>
+      <span>${escapeHtml(test.guardrail)}</span>
+    `;
+    elements.evaluationRewardTestList.append(card);
+  });
+
+  elements.evaluationRegressionList.innerHTML = "";
+  lab.regressions.forEach((regression) => {
+    const card = document.createElement("article");
+    card.className = `evaluation-regression-card ${regression.status === "Pass" ? "" : "is-risk"}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(regression.title)}</strong>
+        <b>${escapeHtml(regression.status)}</b>
+      </header>
+      <p>${escapeHtml(regression.detail)}</p>
+      <span>${escapeHtml(regression.action)}</span>
+    `;
+    elements.evaluationRegressionList.append(card);
+  });
+
+  elements.evaluationCalibrationList.innerHTML = "";
+  lab.calibrations.forEach((calibration) => {
+    const card = document.createElement("article");
+    card.className = `evaluation-calibration-card ${calibration.agreement < 80 ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(calibration.role)}</span>
+          <strong>${escapeHtml(calibration.topic)}</strong>
+        </div>
+        <b>${calibration.agreement}%</b>
+      </header>
+      <p>${escapeHtml(calibration.detail)}</p>
+      <span>${escapeHtml(calibration.action)}</span>
+    `;
+    elements.evaluationCalibrationList.append(card);
+  });
+
+  elements.evaluationActionList.innerHTML = "";
+  lab.actions.forEach((action) => {
+    const card = document.createElement("article");
+    card.className = "evaluation-action-card";
+    card.innerHTML = `
+      <span>${escapeHtml(action.step)}</span>
+      <div>
+        <strong>${escapeHtml(action.title)}</strong>
+        <p>${escapeHtml(action.detail)}</p>
+      </div>
+      <b>${escapeHtml(action.mode)}</b>
+    `;
+    elements.evaluationActionList.append(card);
+  });
+
+  elements.evaluationReceiptList.innerHTML = "";
+  if (lab.receipts.length === 0) {
+    elements.evaluationReceiptList.append(emptyState("No evaluation receipts yet"));
+  }
+  lab.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "evaluation-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.evaluationReceiptList.append(card);
+  });
+}
+
+function evaluationLabSnapshot() {
+  const reinforcement = reinforcementControlSnapshot();
+  const simulator = policySimulatorSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const network = learningNetworkSnapshot();
+  const graph = federatedGraphSnapshot();
+  const coverage = coverageSnapshot();
+  const connectors = connectorSnapshot();
+  const followUps = followUpSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const activeQuestion = getActiveQuestion();
+  const trace = claimTraceSnapshot(activeQuestion);
+  const retrieval = retrievalSnapshot(activeQuestion);
+  const evalSets = evaluationSets({ coverage, connectors, trace, retrieval, network, reinforcement });
+  const rewardTests = evaluationRewardPolicyTests({ reinforcement, simulator, outcomes, network, graph, followUps });
+  const regressions = evaluationRegressions({ connectors, followUps, graph, trace, retrieval, coverage });
+  const calibrations = evaluationReviewerCalibration({ routing, coverage, followUps, outcomes, trace });
+  const actions = evaluationLabActions({ evalSets, rewardTests, regressions, calibrations, reinforcement });
+  const passedCount = evalSets.filter((item) => item.status === "Pass").length;
+  const regressionCount = regressions.filter((item) => item.status !== "Pass").length;
+  const calibrationScore = Math.round(calibrations.reduce((sum, item) => sum + item.agreement, 0) / Math.max(1, calibrations.length));
+  const score = Math.min(
+    100,
+    Math.round(
+      (passedCount / Math.max(1, evalSets.length)) * 32
+        + Math.max(0, 100 - regressionCount * 16) * 0.22
+        + calibrationScore * 0.2
+        + reinforcement.score * 0.16
+        + network.privacyScore * 0.1,
+    ),
+  );
+  const statusLabel = state.evaluationActions.status === "Draft" ? "Ready to evaluate" : state.evaluationActions.status;
+
+  return {
+    score,
+    statusLabel,
+    evalSets,
+    rewardTests,
+    regressions,
+    calibrations,
+    actions,
+    passedCount,
+    regressionCount,
+    calibrationScore,
+    receipts: state.evaluationActions.receipts.slice(-8).reverse(),
+    reinforcement,
+    simulator,
+    outcomes,
+    network,
+    graph,
+  };
+}
+
+function evaluationSets({ coverage, connectors, trace, retrieval, network, reinforcement }) {
+  return [
+    {
+      area: "Source coverage",
+      title: "Every answer has approved proof",
+      status: coverage.score >= 80 ? "Pass" : "Review",
+      expected: "Coverage >= 80%",
+      actual: `${coverage.score}% coverage`,
+      detail: `${coverage.ready}/${coverage.items.length} trust categories are evidence-ready before answer reuse.`,
+    },
+    {
+      area: "Citation quality",
+      title: "Claims trace to ranked sources",
+      status: trace.averageRank >= 72 && trace.conflicts === 0 ? "Pass" : "Review",
+      expected: "Rank >= 72%, no conflicts",
+      actual: `${trace.averageRank}% rank, ${trace.conflicts} conflicts`,
+      detail: `${trace.bound}/${trace.claims.length} claims bind to source excerpts for the active answer.`,
+    },
+    {
+      area: "Retrieval safety",
+      title: "Weak matches are blocked",
+      status: retrieval.verdict === "refuse" ? "Review" : "Pass",
+      expected: "No unsupported approval",
+      actual: `${retrieval.gateLabel}, ${retrieval.topScore}% match`,
+      detail: "The eval checks whether answer drafting refuses weak evidence instead of inventing confidence.",
+    },
+    {
+      area: "Source freshness",
+      title: "Stale evidence does not improve rewards",
+      status: connectors.staleCount === 0 ? "Pass" : "Watch",
+      expected: "0 stale source signals",
+      actual: `${connectors.staleCount} stale`,
+      detail: "Freshness issues reduce reward confidence before patterns can move into reusable memory.",
+    },
+    {
+      area: "Privacy boundary",
+      title: "Network learning stays aggregate",
+      status: network.privacyScore >= 90 && reinforcement.blockedCount <= 1 ? "Pass" : "Review",
+      expected: "Privacy >= 90%, <= 1 block",
+      actual: `${network.privacyScore}% privacy, ${reinforcement.blockedCount} blocks`,
+      detail: "The lab confirms exact tenant memory and aggregate network learning remain separated.",
+    },
+  ];
+}
+
+function evaluationRewardPolicyTests({ reinforcement, simulator, outcomes, network, graph, followUps }) {
+  const positiveSignals = reinforcement.rewards.filter((reward) => !String(reward.weight).startsWith("-")).length;
+  const driftBlocks = graph.drift.filter((item) => item.severity === "High").length;
+  return [
+    {
+      variant: "Baseline",
+      title: "Source-first policy",
+      score: `${Math.min(98, 70 + reinforcement.score / 4)}%`,
+      result: "Pass",
+      detail: "Prioritizes source coverage, claim trace, and human approval over speed.",
+      guardrail: "Cannot reward unsupported answers.",
+    },
+    {
+      variant: "Tuned",
+      title: "Outcome-aware policy",
+      score: `${Math.min(96, 66 + positiveSignals * 7 + outcomes.shareablePatterns * 3)}%`,
+      result: outcomes.shareablePatterns > 0 ? "Pass" : "Watch",
+      detail: "Rewards accepted answers and penalizes buyer challenges after outcomes are captured.",
+      guardrail: "Exact buyer details stay local.",
+    },
+    {
+      variant: "Network",
+      title: "Aggregate learning policy",
+      score: `${Math.min(94, network.privacyScore - driftBlocks * 12)}%`,
+      result: network.privacyScore >= 90 && driftBlocks === 0 ? "Pass" : "Risk",
+      detail: "Tests whether network-safe patterns improve recommendations without leaking source material.",
+      guardrail: "Shares only category, proof type, freshness band, confidence band, and outcome label.",
+    },
+    {
+      variant: "Speed",
+      title: "Deadline-pressure policy",
+      score: `${Math.max(52, 88 - followUps.slaCount * 12 - simulator.blockedCount * 4)}%`,
+      result: followUps.slaCount > 0 || simulator.blockedCount > 2 ? "Risk" : "Pass",
+      detail: "Prevents urgent deals from rewarding shortcuts that bypass evidence gates.",
+      guardrail: "Deadline pressure cannot override proof quality.",
+    },
+  ];
+}
+
+function evaluationRegressions({ connectors, followUps, graph, trace, retrieval, coverage }) {
+  return [
+    {
+      title: "Source freshness regression",
+      status: connectors.staleCount > 0 ? "Watch" : "Pass",
+      detail: `${connectors.staleCount} source freshness signal${connectors.staleCount === 1 ? "" : "s"} can weaken answer reuse.`,
+      action: connectors.staleCount > 0 ? "Route source-owner refresh before reward promotion." : "Keep connector freshness monitoring active.",
+    },
+    {
+      title: "Buyer challenge regression",
+      status: followUps.evidenceCount > 0 ? "Watch" : "Pass",
+      detail: `${followUps.evidenceCount} buyer follow-up${followUps.evidenceCount === 1 ? "" : "s"} need stronger evidence.`,
+      action: followUps.evidenceCount > 0 ? "Reduce confidence for similar categories until evidence improves." : "No buyer challenge regression is active.",
+    },
+    {
+      title: "Graph drift regression",
+      status: graph.drift.some((item) => item.severity === "High") ? "Blocked" : "Pass",
+      detail: `${graph.drift.length} graph drift signal${graph.drift.length === 1 ? "" : "s"} detected.`,
+      action: "Quarantine high-drift patterns from network learning.",
+    },
+    {
+      title: "Citation regression",
+      status: trace.conflicts > 0 || retrieval.verdict === "refuse" || coverage.score < 70 ? "Blocked" : "Pass",
+      detail: `${trace.conflicts} claim conflict${trace.conflicts === 1 ? "" : "s"}, retrieval gate ${retrieval.gateLabel}.`,
+      action: "Block approval when citations, retrieval, or coverage fall below eval thresholds.",
+    },
+  ];
+}
+
+function evaluationReviewerCalibration({ routing, coverage, followUps, outcomes, trace }) {
+  return [
+    {
+      role: "Security",
+      topic: "Source freshness and SOC proof",
+      agreement: Math.max(64, Math.min(96, 92 - followUps.evidenceCount * 4)),
+      detail: "Security reviewers should agree when stale evidence needs owner refresh before reuse.",
+      action: "Use freshness regression results in security review.",
+    },
+    {
+      role: "Legal",
+      topic: "Privacy and network learning",
+      agreement: Math.max(70, Math.min(98, 86 + outcomes.shareablePatterns * 2)),
+      detail: "Legal calibration checks what can aggregate without raw buyer, contract, prompt, or evidence text.",
+      action: "Review network-safe fields before promotion.",
+    },
+    {
+      role: "Sales Engineering",
+      topic: "Deal speed versus proof quality",
+      agreement: Math.max(62, Math.min(94, 90 - routing.openRisks * 3)),
+      detail: "Sales engineering should not approve deadline shortcuts when proof gates fail.",
+      action: "Use eval status in buyer handoff.",
+    },
+    {
+      role: "AI Governance",
+      topic: "Claim trace and model behavior",
+      agreement: Math.max(68, Math.min(97, 72 + trace.averageRank / 4 + coverage.ready)),
+      detail: "AI governance calibration catches unsupported generated claims before reward changes learn from them.",
+      action: "Compare answer evals before policy tuning.",
+    },
+  ];
+}
+
+function evaluationLabActions({ evalSets, rewardTests, regressions, calibrations, reinforcement }) {
+  const failedEval = evalSets.find((item) => item.status !== "Pass");
+  const riskyReward = rewardTests.find((item) => item.result === "Risk");
+  const regression = regressions.find((item) => item.status === "Blocked" || item.status === "Watch");
+  const calibration = [...calibrations].sort((a, b) => a.agreement - b.agreement)[0];
+  return [
+    {
+      step: "01",
+      title: failedEval ? `Fix ${failedEval.area.toLowerCase()} eval` : "Approve answer eval set",
+      mode: failedEval ? "Fix" : "Pass",
+      detail: failedEval ? failedEval.detail : `${evalSets.length} evals are ready for reward testing.`,
+    },
+    {
+      step: "02",
+      title: riskyReward ? `Hold ${riskyReward.variant.toLowerCase()} reward policy` : "Compare reward policies",
+      mode: riskyReward ? "Hold" : "Test",
+      detail: riskyReward ? riskyReward.guardrail : `${rewardTests.length} reward policies can be compared before production use.`,
+    },
+    {
+      step: "03",
+      title: regression ? `Watch ${regression.title.toLowerCase()}` : "Clear regression watch",
+      mode: regression ? "Watch" : "Clear",
+      detail: regression ? regression.action : "No blocking regression is currently active.",
+    },
+    {
+      step: "04",
+      title: `Calibrate ${calibration.role}`,
+      mode: "Calibrate",
+      detail: `${calibration.agreement}% agreement on ${calibration.topic.toLowerCase()}.`,
+    },
+    {
+      step: "05",
+      title: "Feed safe result to reinforcement",
+      mode: "Learn",
+      detail: `Only passing evals can tune the ${reinforcement.statusLabel.toLowerCase()} control loop.`,
+    },
+  ];
+}
+
+function runEvaluationLab() {
+  const lab = evaluationLabSnapshot();
+  const detail = `Evaluation lab ran ${lab.evalSets.length} evals with ${lab.passedCount} passing, ${lab.regressionCount} regression watches, and ${lab.score}% lab score.`;
+  state.evaluationActions.status = "Evaluation run";
+  state.evaluationActions.evaluatedAt = new Date().toISOString();
+  addEvaluationReceipt("Evaluation run", detail);
+  addAudit("Evaluation lab run", detail);
+  renderEvaluationLab();
+  renderAudit();
+  showToast("Evaluation lab run.");
+}
+
+function testEvaluationRewardPolicy() {
+  const lab = evaluationLabSnapshot();
+  const risky = lab.rewardTests.filter((test) => test.result === "Risk").length;
+  const detail = `Reward policies tested: ${lab.rewardTests.length} variants, ${risky} risky, ${lab.reinforcement.networkLift} network-safe lift baseline.`;
+  state.evaluationActions.status = "Reward policy tested";
+  state.evaluationActions.testedAt = new Date().toISOString();
+  addEvaluationReceipt("Reward policy tested", detail);
+  addAudit("Reward policy tested", detail);
+  render();
+  showToast("Reward policy tested.");
+}
+
+function calibrateEvaluationReviewers() {
+  const lab = evaluationLabSnapshot();
+  const detail = `Reviewer calibration recorded at ${lab.calibrationScore}% average agreement across ${lab.calibrations.length} roles.`;
+  state.evaluationActions.status = "Reviewers calibrated";
+  state.evaluationActions.calibratedAt = new Date().toISOString();
+  addEvaluationReceipt("Reviewers calibrated", detail);
+  addAudit("Reviewers calibrated", detail);
+  render();
+  showToast("Reviewers calibrated.");
+}
+
+function copyEvaluationDigest() {
+  const lab = evaluationLabSnapshot();
+  state.evaluationActions.lastCopiedAt = new Date().toISOString();
+  addEvaluationReceipt("Evaluation digest copied", "Evaluation lab digest copied.");
+  addAudit("Evaluation digest copied", "Evaluation lab digest copied.");
+  renderEvaluationLab();
+  renderAudit();
+  copyText(evaluationDigestText(lab), "Evaluation digest copied.");
+}
+
+function addEvaluationReceipt(action, detail) {
+  state.evaluationActions.receipts = [
+    ...(state.evaluationActions.receipts ?? []),
+    {
+      id: `evaluation-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function evaluationDigestText(lab = evaluationLabSnapshot()) {
+  const evalLines = lab.evalSets.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.actual} | ${item.detail}`).join("\n");
+  const rewardLines = lab.rewardTests.map((test, index) => `${index + 1}. ${test.result}: ${test.variant} ${test.score} | ${test.guardrail}`).join("\n");
+  const regressionLines = lab.regressions.map((regression, index) => `${index + 1}. ${regression.status}: ${regression.title} | ${regression.action}`).join("\n");
+  const calibrationLines = lab.calibrations.map((calibration, index) => `${index + 1}. ${calibration.role}: ${calibration.agreement}% | ${calibration.topic} | ${calibration.action}`).join("\n");
+  const actionLines = lab.actions.map((action) => `${action.step}. ${action.title} | ${action.mode} | ${action.detail}`).join("\n");
+  const receiptLines = lab.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Evaluation Lab",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${lab.statusLabel}`,
+    `Lab score: ${lab.score}%`,
+    `Passing evals: ${lab.passedCount}/${lab.evalSets.length}`,
+    `Regression watches: ${lab.regressionCount}`,
+    `Reviewer calibration: ${lab.calibrationScore}%`,
+    "",
+    "Answer evals:",
+    evalLines,
+    "",
+    "Reward policy tests:",
+    rewardLines,
+    "",
+    "Regression watch:",
+    regressionLines,
+    "",
+    "Reviewer calibration:",
+    calibrationLines,
+    "",
+    "Lab actions:",
+    actionLines,
+    "",
+    "Receipts:",
+    receiptLines || "No evaluation receipts yet.",
+    "",
+    "Evaluation rule:",
+    "- Reward-policy changes must pass evals before they influence production recommendation queues.",
+    "- Regression watches block shortcuts when citation quality, source freshness, privacy, or drift gets worse.",
+    "- Reviewer calibration keeps security, legal, sales, and AI governance aligned before the loop learns.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -12906,6 +13473,13 @@ function exportCsv() {
     "Network-Safe Lift",
     "Learning Boundary Blocks",
     "Reinforcement Receipts",
+    "Evaluation Status",
+    "Evaluation Score",
+    "Evaluation Passes",
+    "Reward Tests",
+    "Regression Watch",
+    "Reviewer Calibration",
+    "Evaluation Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -12934,6 +13508,7 @@ function exportCsv() {
     const graph = federatedGraphSnapshot();
     const simulator = policySimulatorSnapshot();
     const reinforcement = reinforcementControlSnapshot();
+    const evaluation = evaluationLabSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -13031,6 +13606,13 @@ function exportCsv() {
       `+${reinforcement.networkLift}`,
       reinforcement.blockedCount,
       reinforcement.receipts.length,
+      evaluation.statusLabel,
+      `${evaluation.score}%`,
+      `${evaluation.passedCount}/${evaluation.evalSets.length}`,
+      evaluation.rewardTests.length,
+      evaluation.regressionCount,
+      `${evaluation.calibrationScore}%`,
+      evaluation.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -13069,6 +13651,7 @@ function exportReviewPack() {
   const graph = federatedGraphSnapshot();
   const simulator = policySimulatorSnapshot();
   const reinforcement = reinforcementControlSnapshot();
+  const evaluation = evaluationLabSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -13086,7 +13669,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v27</h1>
+        <h1>AnswerSeal Review Pack v28</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -14047,6 +14630,113 @@ function exportReviewPack() {
         </table>
         <h2>Reinforcement Digest</h2>
         <pre>${escapeHtml(reinforcementDigestText(reinforcement))}</pre>
+        <h2>Evaluation Lab</h2>
+        <p>Status: ${escapeHtml(evaluation.statusLabel)} | Lab score: ${evaluation.score}% | Passing evals: ${evaluation.passedCount}/${evaluation.evalSets.length} | Regression watches: ${evaluation.regressionCount} | Reviewer calibration: ${evaluation.calibrationScore}%</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Eval</th>
+              <th>Status</th>
+              <th>Expected</th>
+              <th>Actual</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${evaluation.evalSets
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.area)}<br />${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Pass" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.expected)}</td>
+                    <td>${escapeHtml(item.actual)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evaluation Reward Tests</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Variant</th>
+              <th>Score</th>
+              <th>Result</th>
+              <th>Detail</th>
+              <th>Guardrail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${evaluation.rewardTests
+              .map(
+                (test) => `
+                  <tr>
+                    <td>${escapeHtml(test.variant)}<br />${escapeHtml(test.title)}</td>
+                    <td>${escapeHtml(test.score)}</td>
+                    <td class="${test.result === "Risk" ? "risk" : "ok"}">${escapeHtml(test.result)}</td>
+                    <td>${escapeHtml(test.detail)}</td>
+                    <td>${escapeHtml(test.guardrail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evaluation Regression Watch</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Regression</th>
+              <th>Status</th>
+              <th>Detail</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${evaluation.regressions
+              .map(
+                (regression) => `
+                  <tr>
+                    <td>${escapeHtml(regression.title)}</td>
+                    <td class="${regression.status === "Pass" ? "ok" : "risk"}">${escapeHtml(regression.status)}</td>
+                    <td>${escapeHtml(regression.detail)}</td>
+                    <td>${escapeHtml(regression.action)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Reviewer Calibration</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Topic</th>
+              <th>Agreement</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${evaluation.calibrations
+              .map(
+                (calibration) => `
+                  <tr>
+                    <td>${escapeHtml(calibration.role)}</td>
+                    <td>${escapeHtml(calibration.topic)}</td>
+                    <td class="${calibration.agreement < 80 ? "risk" : "ok"}">${calibration.agreement}%</td>
+                    <td>${escapeHtml(calibration.action)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evaluation Digest</h2>
+        <pre>${escapeHtml(evaluationDigestText(evaluation))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -14759,7 +15449,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v27 created with reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v28 created with evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -14777,12 +15467,13 @@ function exportReviewPack() {
   renderFederatedGraph();
   renderPolicySimulator();
   renderReinforcementControl();
+  renderEvaluationLab();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v27 exported.");
+  showToast("Review Pack v28 exported.");
 }
 
 function toCsv(rows) {
@@ -14850,6 +15541,7 @@ function serializeWorkspace() {
     graphActions: state.graphActions,
     simulatorActions: state.simulatorActions,
     reinforcementActions: state.reinforcementActions,
+    evaluationActions: state.evaluationActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -14887,6 +15579,8 @@ function resetWorkspace() {
   closeTrustOrchestrator(false);
   closeFederatedGraph(false);
   closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
   closeWorkspace(false);
   closeLibrary();
   render();
