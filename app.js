@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.32 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v32";
+const BUILD_VERSION = "v0.33 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v33";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v32",
   "answerseal.workspace.v31",
   "answerseal.workspace.v30",
   "answerseal.workspace.v29",
@@ -708,6 +709,8 @@ function createInitialState() {
     reinforcementActions: createInitialReinforcementActions(),
     evaluationOpen: false,
     evaluationActions: createInitialEvaluationActions(),
+    ledgerOpen: false,
+    ledgerActions: createInitialLedgerActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -867,6 +870,17 @@ function createInitialEvaluationActions() {
   };
 }
 
+function createInitialLedgerActions() {
+  return {
+    status: "Draft",
+    recordedAt: null,
+    approvedAt: null,
+    publishedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -998,6 +1012,7 @@ function loadWorkspaceState() {
       simulatorActions: normalizeSimulatorActions(workspace.simulatorActions ?? fresh.simulatorActions),
       reinforcementActions: normalizeReinforcementActions(workspace.reinforcementActions ?? fresh.reinforcementActions),
       evaluationActions: normalizeEvaluationActions(workspace.evaluationActions ?? fresh.evaluationActions),
+      ledgerActions: normalizeLedgerActions(workspace.ledgerActions ?? fresh.ledgerActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1025,6 +1040,7 @@ function loadWorkspaceState() {
       simulatorOpen: false,
       reinforcementOpen: false,
       evaluationOpen: false,
+      ledgerOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1530,6 +1546,27 @@ function normalizeEvaluationReceipt(receipt) {
   };
 }
 
+function normalizeLedgerActions(actions) {
+  const status = ["Draft", "Learning recorded", "Ledger approved", "Network package published"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    recordedAt: actions?.recordedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    publishedAt: actions?.publishedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeLedgerReceipt) : [],
+  };
+}
+
+function normalizeLedgerReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `ledger-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Ledger action"),
+    detail: String(receipt?.detail ?? "Learning ledger action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1575,6 +1612,7 @@ const elements = {
   simulatorNavButton: document.querySelector("#simulatorNavButton"),
   reinforcementNavButton: document.querySelector("#reinforcementNavButton"),
   evaluationNavButton: document.querySelector("#evaluationNavButton"),
+  ledgerNavButton: document.querySelector("#ledgerNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -1986,6 +2024,26 @@ const elements = {
   testRewardPolicyButton: document.querySelector("#testRewardPolicyButton"),
   calibrateReviewersButton: document.querySelector("#calibrateReviewersButton"),
   copyEvaluationDigestButton: document.querySelector("#copyEvaluationDigestButton"),
+  ledgerBackdrop: document.querySelector("#ledgerBackdrop"),
+  ledgerDrawer: document.querySelector("#ledgerDrawer"),
+  closeLedgerButton: document.querySelector("#closeLedgerButton"),
+  ledgerScore: document.querySelector("#ledgerScore"),
+  ledgerEntryCount: document.querySelector("#ledgerEntryCount"),
+  ledgerNetworkLift: document.querySelector("#ledgerNetworkLift"),
+  ledgerGateCount: document.querySelector("#ledgerGateCount"),
+  ledgerStatus: document.querySelector("#ledgerStatus"),
+  ledgerEntryList: document.querySelector("#ledgerEntryList"),
+  ledgerBenefitList: document.querySelector("#ledgerBenefitList"),
+  ledgerProvenanceList: document.querySelector("#ledgerProvenanceList"),
+  ledgerGateList: document.querySelector("#ledgerGateList"),
+  ledgerAccountingList: document.querySelector("#ledgerAccountingList"),
+  ledgerActionList: document.querySelector("#ledgerActionList"),
+  ledgerReceiptList: document.querySelector("#ledgerReceiptList"),
+  ledgerDigest: document.querySelector("#ledgerDigest"),
+  recordLedgerButton: document.querySelector("#recordLedgerButton"),
+  approveLedgerButton: document.querySelector("#approveLedgerButton"),
+  publishLedgerButton: document.querySelector("#publishLedgerButton"),
+  copyLedgerDigestButton: document.querySelector("#copyLedgerDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2103,6 +2161,7 @@ function bindEvents() {
   elements.simulatorNavButton.addEventListener("click", openPolicySimulator);
   elements.reinforcementNavButton.addEventListener("click", openReinforcementControl);
   elements.evaluationNavButton.addEventListener("click", openEvaluationLab);
+  elements.ledgerNavButton.addEventListener("click", openLearningLedger);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2165,6 +2224,7 @@ function bindEvents() {
     renderPolicySimulator();
     renderReinforcementControl();
     renderEvaluationLab();
+    renderLearningLedger();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2281,6 +2341,12 @@ function bindEvents() {
   elements.testRewardPolicyButton.addEventListener("click", testEvaluationRewardPolicy);
   elements.calibrateReviewersButton.addEventListener("click", calibrateEvaluationReviewers);
   elements.copyEvaluationDigestButton.addEventListener("click", copyEvaluationDigest);
+  elements.closeLedgerButton.addEventListener("click", closeLearningLedger);
+  elements.ledgerBackdrop.addEventListener("click", closeLearningLedger);
+  elements.recordLedgerButton.addEventListener("click", recordLearningLedger);
+  elements.approveLedgerButton.addEventListener("click", approveLearningLedger);
+  elements.publishLedgerButton.addEventListener("click", publishLearningLedger);
+  elements.copyLedgerDigestButton.addEventListener("click", copyLearningLedgerDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2343,6 +2409,7 @@ function bindEvents() {
     if (state.simulatorOpen) closePolicySimulator();
     if (state.reinforcementOpen) closeReinforcementControl();
     if (state.evaluationOpen) closeEvaluationLab();
+    if (state.ledgerOpen) closeLearningLedger();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2372,6 +2439,7 @@ function applyInitialHash() {
   if (hash === "simulator" || hash === "policy-simulator" || hash === "simulation" || hash === "rehearsal") openPolicySimulator();
   if (hash === "control" || hash === "reinforcement" || hash === "reinforcement-control" || hash === "control-room") openReinforcementControl();
   if (hash === "evaluation" || hash === "eval" || hash === "evaluation-lab" || hash === "eval-lab") openEvaluationLab();
+  if (hash === "ledger" || hash === "learning-ledger" || hash === "learning-receipts" || hash === "closed-loop-ledger") openLearningLedger();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2415,6 +2483,7 @@ function render() {
   renderPolicySimulator();
   renderReinforcementControl();
   renderEvaluationLab();
+  renderLearningLedger();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3142,6 +3211,7 @@ function activateWorkspaceNav(target) {
   closePolicySimulator(false);
   closeReinforcementControl(false);
   closeEvaluationLab(false);
+  closeLearningLedger(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3178,6 +3248,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.evaluationNavButton && state.evaluationOpen) {
     closeEvaluationLab(false);
   }
+  if (activeButton !== elements.ledgerNavButton && state.ledgerOpen) {
+    closeLearningLedger(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3196,6 +3269,7 @@ function setActiveNav(activeButton) {
     elements.simulatorNavButton,
     elements.reinforcementNavButton,
     elements.evaluationNavButton,
+    elements.ledgerNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -3938,6 +4012,7 @@ function openEvaluationLab() {
   closeFederatedGraph(false);
   closePolicySimulator(false);
   closeReinforcementControl(false);
+  closeLearningLedger(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -3963,6 +4038,50 @@ function closeEvaluationLab(activateReview = true) {
   elements.evaluationDrawer.classList.remove("is-open");
   elements.evaluationDrawer.setAttribute("aria-hidden", "true");
   elements.evaluationBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openLearningLedger() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.ledgerOpen = true;
+  setActiveNav(elements.ledgerNavButton);
+  elements.ledgerBackdrop.hidden = false;
+  elements.ledgerDrawer.classList.add("is-open");
+  elements.ledgerDrawer.setAttribute("aria-hidden", "false");
+  renderLearningLedger();
+}
+
+function closeLearningLedger(activateReview = true) {
+  if (!state.ledgerOpen && elements.ledgerDrawer.getAttribute("aria-hidden") === "true") return;
+  state.ledgerOpen = false;
+  elements.ledgerDrawer.classList.remove("is-open");
+  elements.ledgerDrawer.setAttribute("aria-hidden", "true");
+  elements.ledgerBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -11257,6 +11376,520 @@ function evaluationDigestText(lab = evaluationLabSnapshot()) {
   ].join("\n");
 }
 
+function renderLearningLedger() {
+  const ledger = learningLedgerSnapshot();
+
+  elements.ledgerScore.textContent = `${ledger.score}%`;
+  elements.ledgerEntryCount.textContent = ledger.entries.length;
+  elements.ledgerNetworkLift.textContent = `+${ledger.networkLift}`;
+  elements.ledgerGateCount.textContent = ledger.openGateCount;
+  elements.ledgerStatus.textContent = ledger.statusLabel;
+  elements.ledgerDigest.textContent = learningLedgerDigestText(ledger);
+
+  elements.ledgerEntryList.innerHTML = "";
+  ledger.entries.forEach((entry) => {
+    const card = document.createElement("article");
+    card.className = `ledger-entry-card ${entry.status === "Blocked" || entry.scope === "Local only" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(entry.scope)}</span>
+          <strong>${escapeHtml(entry.title)}</strong>
+        </div>
+        <b>${escapeHtml(entry.status)}</b>
+      </header>
+      <p>${escapeHtml(entry.detail)}</p>
+      <footer>
+        <span>${escapeHtml(entry.source)}</span>
+        <span>${escapeHtml(entry.benefit)}</span>
+      </footer>
+    `;
+    elements.ledgerEntryList.append(card);
+  });
+
+  elements.ledgerBenefitList.innerHTML = "";
+  ledger.benefits.forEach((benefit) => {
+    const card = document.createElement("article");
+    card.className = `ledger-benefit-card ${benefit.mode === "Blocked" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(benefit.scope)}</strong>
+        <b>${escapeHtml(benefit.value)}</b>
+      </header>
+      <p>${escapeHtml(benefit.detail)}</p>
+      <span>${escapeHtml(benefit.mode)}</span>
+    `;
+    elements.ledgerBenefitList.append(card);
+  });
+
+  elements.ledgerProvenanceList.innerHTML = "";
+  ledger.provenance.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "ledger-provenance-card";
+    card.innerHTML = `
+      <span>${escapeHtml(item.step)}</span>
+      <div>
+        <strong>${escapeHtml(item.title)}</strong>
+        <p>${escapeHtml(item.detail)}</p>
+      </div>
+      <b>${escapeHtml(item.owner)}</b>
+    `;
+    elements.ledgerProvenanceList.append(card);
+  });
+
+  elements.ledgerGateList.innerHTML = "";
+  ledger.gates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `ledger-gate-card ${gate.status === "Blocked" || gate.status === "Review" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <b>${escapeHtml(gate.status)}</b>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+      <span>${escapeHtml(gate.action)}</span>
+    `;
+    elements.ledgerGateList.append(card);
+  });
+
+  elements.ledgerAccountingList.innerHTML = "";
+  ledger.accounting.forEach((row) => {
+    const card = document.createElement("article");
+    card.className = `ledger-accounting-card ${row.status === "Held" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(row.metric)}</strong>
+        <b>${escapeHtml(row.value)}</b>
+      </header>
+      <p>${escapeHtml(row.detail)}</p>
+      <span>${escapeHtml(row.status)}</span>
+    `;
+    elements.ledgerAccountingList.append(card);
+  });
+
+  elements.ledgerActionList.innerHTML = "";
+  ledger.actions.forEach((action) => {
+    const card = document.createElement("article");
+    card.className = "ledger-action-card";
+    card.innerHTML = `
+      <span>${escapeHtml(action.step)}</span>
+      <div>
+        <strong>${escapeHtml(action.title)}</strong>
+        <p>${escapeHtml(action.detail)}</p>
+      </div>
+      <b>${escapeHtml(action.mode)}</b>
+    `;
+    elements.ledgerActionList.append(card);
+  });
+
+  elements.ledgerReceiptList.innerHTML = "";
+  if (ledger.receipts.length === 0) {
+    elements.ledgerReceiptList.append(emptyState("No learning ledger receipts yet"));
+  }
+  ledger.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "ledger-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.ledgerReceiptList.append(card);
+  });
+}
+
+function learningLedgerSnapshot() {
+  const evaluation = evaluationLabSnapshot();
+  const reinforcement = reinforcementControlSnapshot();
+  const network = learningNetworkSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const graph = federatedGraphSnapshot();
+  const orchestrator = trustOrchestratorSnapshot();
+  const connectors = connectorSnapshot();
+  const followUps = followUpSnapshot();
+  const entries = learningLedgerEntries({ evaluation, reinforcement, network, outcomes, graph, connectors, followUps });
+  const benefits = learningLedgerBenefits({ entries, evaluation, reinforcement, network, outcomes, graph });
+  const provenance = learningLedgerProvenance({ evaluation, reinforcement, network, outcomes, graph });
+  const gates = learningLedgerGates({ evaluation, reinforcement, network, graph, orchestrator });
+  const accounting = learningLedgerAccounting({ entries, benefits, evaluation, reinforcement, network, outcomes, graph });
+  const actions = learningLedgerActions({ entries, gates, accounting, evaluation });
+  const approvedEntries = entries.filter((entry) => entry.status === "Approved" || entry.status === "Network ready").length;
+  const openGateCount = gates.filter((gate) => gate.status !== "Approved").length;
+  const networkLift = Math.max(0, reinforcement.networkLift + Math.max(0, network.readyPatternCount - graph.drift.length) + approvedEntries - openGateCount);
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        evaluation.score * 0.28
+          + reinforcement.score * 0.2
+          + network.privacyScore * 0.18
+          + Math.max(0, 100 - openGateCount * 14) * 0.16
+          + Math.min(100, approvedEntries * 20) * 0.1
+          + Math.max(0, 100 - graph.drift.length * 12) * 0.08,
+      ),
+    ),
+  );
+  const statusLabel = state.ledgerActions.status === "Draft" ? "Ready to record" : state.ledgerActions.status;
+
+  return {
+    score,
+    statusLabel,
+    entries,
+    benefits,
+    provenance,
+    gates,
+    accounting,
+    actions,
+    approvedEntries,
+    openGateCount,
+    networkLift,
+    receipts: state.ledgerActions.receipts.slice(-8).reverse(),
+    evaluation,
+    reinforcement,
+    network,
+    outcomes,
+    graph,
+  };
+}
+
+function learningLedgerEntries({ evaluation, reinforcement, network, outcomes, graph, connectors, followUps }) {
+  const passing = evaluation.passedCount === evaluation.evalSets.length && evaluation.regressionCount === 0;
+  const driftBlocked = graph.drift.some((item) => item.severity === "High");
+  return [
+    {
+      scope: "Local memory",
+      title: "Approved answer pattern",
+      status: passing ? "Approved" : "Review",
+      source: `${evaluation.passedCount}/${evaluation.evalSets.length} evals passed`,
+      benefit: "Faster future drafts",
+      detail: "Approved answer structure can improve this tenant's response memory after eval and reviewer checks.",
+    },
+    {
+      scope: "Network candidate",
+      title: "Aggregate proof pattern",
+      status: network.privacyScore >= 90 && network.readyPatternCount > 0 && !driftBlocked ? "Network ready" : "Review",
+      source: `${network.readyPatternCount}/${network.patterns.length} patterns`,
+      benefit: "Peer-safe recommendations",
+      detail: "Only category, proof type, freshness band, confidence band, and outcome label can leave the tenant boundary.",
+    },
+    {
+      scope: "Local only",
+      title: "Buyer challenge correction",
+      status: followUps.evidenceCount > 0 ? "Review" : "Approved",
+      source: `${followUps.evidenceCount} evidence follow-ups`,
+      benefit: "Safer weak-proof handling",
+      detail: "Buyer challenges update local routing and confidence without exposing buyer-specific text to the network.",
+    },
+    {
+      scope: "Penalty",
+      title: "Stale source penalty",
+      status: connectors.staleCount > 0 ? "Blocked" : "Approved",
+      source: `${connectors.staleCount} stale sources`,
+      benefit: "Prevents outdated learning",
+      detail: "Stale evidence can lower local confidence but cannot become a positive network reward.",
+    },
+    {
+      scope: "Calibration",
+      title: "Reviewer agreement signal",
+      status: evaluation.calibrationScore >= 82 ? "Approved" : "Review",
+      source: `${evaluation.calibrationScore}% agreement`,
+      benefit: "Consistent human gates",
+      detail: "Security, legal, sales, and AI governance alignment becomes a training signal for future handoffs.",
+    },
+    {
+      scope: "Reinforcement",
+      title: "Reward tuning receipt",
+      status: reinforcement.blockedCount === 0 ? "Approved" : "Review",
+      source: `${reinforcement.rewards.length} reward signals`,
+      benefit: `+${reinforcement.networkLift} safe lift`,
+      detail: "Reward changes are ledgered only after the eval lab confirms they do not weaken source-backed answers.",
+    },
+  ];
+}
+
+function learningLedgerBenefits({ entries, evaluation, reinforcement, network, outcomes, graph }) {
+  const approved = entries.filter((entry) => entry.status === "Approved" || entry.status === "Network ready").length;
+  return [
+    {
+      scope: "Organization",
+      value: `${approved}/${entries.length}`,
+      mode: "Tenant exact",
+      detail: "Exact answers, owners, buyer history, and source excerpts improve only the current workspace.",
+    },
+    {
+      scope: "Buyer segment",
+      value: `${evaluation.calibrationScore}%`,
+      mode: "Calibrated",
+      detail: "Reviewer agreement improves future routing for similar enterprise security reviews.",
+    },
+    {
+      scope: "Network",
+      value: `+${Math.max(0, reinforcement.networkLift + outcomes.shareablePatterns)}`,
+      mode: network.privacyScore >= 90 ? "Aggregate only" : "Held",
+      detail: "Only privacy-safe labels can benefit other organizations through the network learning layer.",
+    },
+    {
+      scope: "Blocked learning",
+      value: `${graph.drift.length + evaluation.regressionCount}`,
+      mode: graph.drift.length + evaluation.regressionCount > 0 ? "Blocked" : "Clear",
+      detail: "Regression, drift, and stale evidence stop unsafe lessons from becoming recommendations.",
+    },
+  ];
+}
+
+function learningLedgerProvenance({ evaluation, reinforcement, network, outcomes, graph }) {
+  return [
+    {
+      step: "01",
+      title: "Question and evidence",
+      owner: workspaceAccount.currentRole,
+      detail: "Buyer question, draft answer, source excerpts, and reviewer notes are captured inside tenant memory.",
+    },
+    {
+      step: "02",
+      title: "Evaluation result",
+      owner: "AI Governance",
+      detail: `${evaluation.passedCount}/${evaluation.evalSets.length} evals passed with ${evaluation.score}% lab score.`,
+    },
+    {
+      step: "03",
+      title: "Reward decision",
+      owner: "Security",
+      detail: `${reinforcement.rewards.length} reward signals and ${reinforcement.blockedCount} learning boundary blocks are reviewed.`,
+    },
+    {
+      step: "04",
+      title: "Privacy scope",
+      owner: "Legal",
+      detail: `${network.privacyScore}% privacy score with ${network.readyPatternCount} aggregate-ready patterns.`,
+    },
+    {
+      step: "05",
+      title: "Outcome evidence",
+      owner: "Sales Engineering",
+      detail: `${outcomes.events.length} outcome events and ${outcomes.shareablePatterns}/${outcomes.patterns.length} shareable patterns are recorded.`,
+    },
+    {
+      step: "06",
+      title: "Graph guardrail",
+      owner: "AI Governance",
+      detail: `${graph.promotions.filter((promotion) => promotion.status === "Eligible").length} eligible graph promotions and ${graph.drift.length} drift signals.`,
+    },
+  ];
+}
+
+function learningLedgerGates({ evaluation, reinforcement, network, graph, orchestrator }) {
+  return [
+    {
+      title: "Evaluation pass",
+      status: evaluation.regressionCount === 0 && evaluation.passedCount === evaluation.evalSets.length ? "Approved" : "Review",
+      detail: `${evaluation.passedCount}/${evaluation.evalSets.length} evals passed; ${evaluation.regressionCount} regression watches remain.`,
+      action: "Run or fix evals before learning can publish.",
+    },
+    {
+      title: "Privacy threshold",
+      status: network.privacyScore >= 90 ? "Approved" : "Review",
+      detail: `${network.privacyScore}% privacy score controls whether aggregate patterns can leave the tenant.`,
+      action: "Hold network promotion until privacy threshold passes.",
+    },
+    {
+      title: "Human approval",
+      status: orchestrator.gates.filter((gate) => gate.status !== "Approved").length <= 2 ? "Approved" : "Review",
+      detail: `${orchestrator.gates.filter((gate) => gate.status !== "Approved").length} orchestrator gates are still open.`,
+      action: "Route remaining gates to owners before production mutation.",
+    },
+    {
+      title: "Drift quarantine",
+      status: graph.drift.some((item) => item.severity === "High") ? "Blocked" : "Approved",
+      detail: `${graph.drift.length} graph drift signals are watched before network promotion.`,
+      action: "Keep high-drift patterns local until repaired.",
+    },
+    {
+      title: "Reward boundary",
+      status: reinforcement.blockedCount === 0 ? "Approved" : "Review",
+      detail: `${reinforcement.blockedCount} reinforcement boundary blocks remain.`,
+      action: "Only evaluated reward changes can influence future recommendations.",
+    },
+  ];
+}
+
+function learningLedgerAccounting({ entries, benefits, evaluation, reinforcement, network, outcomes, graph }) {
+  return [
+    {
+      metric: "Local learning",
+      value: `${entries.filter((entry) => entry.scope !== "Network candidate").length} receipts`,
+      status: "Tenant exact",
+      detail: "Exact answers, evidence, owners, and buyer history stay inside the current organization.",
+    },
+    {
+      metric: "Network learning",
+      value: `${network.readyPatternCount} patterns`,
+      status: network.privacyScore >= 90 ? "Aggregate" : "Held",
+      detail: "Aggregate categories, proof types, freshness bands, confidence bands, and outcome labels may improve peer recommendations.",
+    },
+    {
+      metric: "Quality gate",
+      value: `${evaluation.score}%`,
+      status: evaluation.regressionCount === 0 ? "Clear" : "Held",
+      detail: "The eval score decides whether new learning can influence reward tuning.",
+    },
+    {
+      metric: "Network lift",
+      value: `+${Math.max(0, reinforcement.networkLift + outcomes.shareablePatterns - graph.drift.length)}`,
+      status: "Measured",
+      detail: "Lift is counted only after subtracting drift, blocked learning, and failed evals.",
+    },
+    {
+      metric: "Blocked benefit",
+      value: benefits.find((benefit) => benefit.scope === "Blocked learning")?.value ?? "0",
+      status: "Held",
+      detail: "Unsafe learning remains visible as blocked value instead of disappearing from the audit trail.",
+    },
+  ];
+}
+
+function learningLedgerActions({ entries, gates, accounting, evaluation }) {
+  const reviewEntry = entries.find((entry) => entry.status === "Review" || entry.status === "Blocked");
+  const openGate = gates.find((gate) => gate.status !== "Approved");
+  const heldAccounting = accounting.find((row) => row.status === "Held");
+  return [
+    {
+      step: "01",
+      title: "Record learning receipt",
+      mode: "Record",
+      detail: `${entries.length} learning events are ready for ledger capture from evals, rewards, outcomes, and graph gates.`,
+    },
+    {
+      step: "02",
+      title: reviewEntry ? `Review ${reviewEntry.title.toLowerCase()}` : "Approve safe entries",
+      mode: reviewEntry ? "Review" : "Approve",
+      detail: reviewEntry ? reviewEntry.detail : "All ledger entries are safe enough for approval review.",
+    },
+    {
+      step: "03",
+      title: openGate ? `Resolve ${openGate.title.toLowerCase()}` : "Clear approval gates",
+      mode: openGate ? openGate.status : "Clear",
+      detail: openGate ? openGate.action : "Human, privacy, eval, drift, and reward gates are aligned.",
+    },
+    {
+      step: "04",
+      title: heldAccounting ? `Hold ${heldAccounting.metric.toLowerCase()}` : "Publish benefit map",
+      mode: heldAccounting ? "Hold" : "Publish",
+      detail: heldAccounting ? heldAccounting.detail : "Approved local and aggregate benefits can be explained to customers.",
+    },
+    {
+      step: "05",
+      title: "Feed evaluated learning",
+      mode: "Learn",
+      detail: `${evaluation.score}% lab score controls whether the closed loop can improve recommendations.`,
+    },
+  ];
+}
+
+function recordLearningLedger() {
+  const ledger = learningLedgerSnapshot();
+  const detail = `Recorded ${ledger.entries.length} learning entries with ${ledger.score}% ledger score and ${ledger.openGateCount} open gates.`;
+  state.ledgerActions.status = "Learning recorded";
+  state.ledgerActions.recordedAt = new Date().toISOString();
+  addLedgerReceipt("Learning recorded", detail);
+  addAudit("Learning ledger recorded", detail);
+  renderLearningLedger();
+  renderAudit();
+  showToast("Learning ledger recorded.");
+}
+
+function approveLearningLedger() {
+  const ledger = learningLedgerSnapshot();
+  const detail = `Approved ledger review for ${ledger.approvedEntries}/${ledger.entries.length} safe entries with ${ledger.openGateCount} gates still visible.`;
+  state.ledgerActions.status = "Ledger approved";
+  state.ledgerActions.approvedAt = new Date().toISOString();
+  addLedgerReceipt("Ledger approved", detail);
+  addAudit("Learning ledger approved", detail);
+  render();
+  showToast("Learning ledger approved.");
+}
+
+function publishLearningLedger() {
+  const ledger = learningLedgerSnapshot();
+  const detail = `Published network-safe learning package with +${ledger.networkLift} measured lift, ${ledger.network.readyPatternCount} aggregate patterns, and ${ledger.network.privacyScore}% privacy score.`;
+  state.ledgerActions.status = "Network package published";
+  state.ledgerActions.publishedAt = new Date().toISOString();
+  addLedgerReceipt("Network package published", detail);
+  addAudit("Network learning package published", detail);
+  render();
+  showToast("Network package published.");
+}
+
+function copyLearningLedgerDigest() {
+  const ledger = learningLedgerSnapshot();
+  state.ledgerActions.lastCopiedAt = new Date().toISOString();
+  addLedgerReceipt("Ledger digest copied", "Learning ledger digest copied.");
+  addAudit("Learning ledger copied", "Learning ledger digest copied.");
+  renderLearningLedger();
+  renderAudit();
+  copyText(learningLedgerDigestText(ledger), "Learning ledger digest copied.");
+}
+
+function addLedgerReceipt(action, detail) {
+  state.ledgerActions.receipts = [
+    ...(state.ledgerActions.receipts ?? []),
+    {
+      id: `ledger-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function learningLedgerDigestText(ledger = learningLedgerSnapshot()) {
+  const entryLines = ledger.entries.map((entry, index) => `${index + 1}. ${entry.status}: ${entry.title} | ${entry.scope} | ${entry.benefit} | ${entry.detail}`).join("\n");
+  const benefitLines = ledger.benefits.map((benefit, index) => `${index + 1}. ${benefit.scope}: ${benefit.value} | ${benefit.mode} | ${benefit.detail}`).join("\n");
+  const provenanceLines = ledger.provenance.map((item) => `${item.step}. ${item.title} | ${item.owner} | ${item.detail}`).join("\n");
+  const gateLines = ledger.gates.map((gate, index) => `${index + 1}. ${gate.status}: ${gate.title} | ${gate.action}`).join("\n");
+  const accountingLines = ledger.accounting.map((row, index) => `${index + 1}. ${row.metric}: ${row.value} | ${row.status} | ${row.detail}`).join("\n");
+  const actionLines = ledger.actions.map((action) => `${action.step}. ${action.title} | ${action.mode} | ${action.detail}`).join("\n");
+  const receiptLines = ledger.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Learning Ledger",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${ledger.statusLabel}`,
+    `Ledger score: ${ledger.score}%`,
+    `Learning entries: ${ledger.entries.length}`,
+    `Network-safe lift: +${ledger.networkLift}`,
+    `Open gates: ${ledger.openGateCount}`,
+    "",
+    "Learning entries:",
+    entryLines,
+    "",
+    "Benefit map:",
+    benefitLines,
+    "",
+    "Provenance chain:",
+    provenanceLines,
+    "",
+    "Approval gates:",
+    gateLines,
+    "",
+    "Network accounting:",
+    accountingLines,
+    "",
+    "Ledger actions:",
+    actionLines,
+    "",
+    "Receipts:",
+    receiptLines || "No learning ledger receipts yet.",
+    "",
+    "Ledger rule:",
+    "- Exact organization memory stays tenant-local.",
+    "- Network learning can use only approved aggregate labels, proof types, freshness bands, confidence bands, and outcome classes.",
+    "- Every improvement must show source, eval result, human gate, privacy scope, and measured benefit before it can influence another customer.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -13480,6 +14113,12 @@ function exportCsv() {
     "Regression Watch",
     "Reviewer Calibration",
     "Evaluation Receipts",
+    "Learning Ledger Status",
+    "Ledger Score",
+    "Ledger Entries",
+    "Ledger Network Lift",
+    "Ledger Open Gates",
+    "Ledger Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -13509,6 +14148,7 @@ function exportCsv() {
     const simulator = policySimulatorSnapshot();
     const reinforcement = reinforcementControlSnapshot();
     const evaluation = evaluationLabSnapshot();
+    const ledger = learningLedgerSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -13613,6 +14253,12 @@ function exportCsv() {
       evaluation.regressionCount,
       `${evaluation.calibrationScore}%`,
       evaluation.receipts.length,
+      ledger.statusLabel,
+      `${ledger.score}%`,
+      ledger.entries.length,
+      `+${ledger.networkLift}`,
+      ledger.openGateCount,
+      ledger.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -13652,6 +14298,7 @@ function exportReviewPack() {
   const simulator = policySimulatorSnapshot();
   const reinforcement = reinforcementControlSnapshot();
   const evaluation = evaluationLabSnapshot();
+  const ledger = learningLedgerSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -13669,7 +14316,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v28</h1>
+        <h1>AnswerSeal Review Pack v29</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -14737,6 +15384,111 @@ function exportReviewPack() {
         </table>
         <h2>Evaluation Digest</h2>
         <pre>${escapeHtml(evaluationDigestText(evaluation))}</pre>
+        <h2>Learning Ledger</h2>
+        <p>Status: ${escapeHtml(ledger.statusLabel)} | Ledger score: ${ledger.score}% | Entries: ${ledger.entries.length} | Network-safe lift: +${ledger.networkLift} | Open gates: ${ledger.openGateCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Entry</th>
+              <th>Scope</th>
+              <th>Status</th>
+              <th>Source</th>
+              <th>Benefit</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ledger.entries
+              .map(
+                (entry) => `
+                  <tr>
+                    <td>${escapeHtml(entry.title)}</td>
+                    <td>${escapeHtml(entry.scope)}</td>
+                    <td class="${entry.status === "Blocked" || entry.status === "Review" ? "risk" : "ok"}">${escapeHtml(entry.status)}</td>
+                    <td>${escapeHtml(entry.source)}</td>
+                    <td>${escapeHtml(entry.benefit)}</td>
+                    <td>${escapeHtml(entry.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Learning Benefit Map</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Scope</th>
+              <th>Value</th>
+              <th>Mode</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ledger.benefits
+              .map(
+                (benefit) => `
+                  <tr>
+                    <td>${escapeHtml(benefit.scope)}</td>
+                    <td>${escapeHtml(benefit.value)}</td>
+                    <td class="${benefit.mode === "Blocked" || benefit.mode === "Held" ? "risk" : "ok"}">${escapeHtml(benefit.mode)}</td>
+                    <td>${escapeHtml(benefit.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Learning Provenance Chain</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ledger.provenance
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.step)} ${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Learning Approval Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Detail</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ledger.gates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Approved" ? "ok" : "risk"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                    <td>${escapeHtml(gate.action)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Learning Ledger Digest</h2>
+        <pre>${escapeHtml(learningLedgerDigestText(ledger))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -15449,7 +16201,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v28 created with evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v29 created with learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -15468,12 +16220,13 @@ function exportReviewPack() {
   renderPolicySimulator();
   renderReinforcementControl();
   renderEvaluationLab();
+  renderLearningLedger();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v28 exported.");
+  showToast("Review Pack v29 exported.");
 }
 
 function toCsv(rows) {
@@ -15542,6 +16295,7 @@ function serializeWorkspace() {
     simulatorActions: state.simulatorActions,
     reinforcementActions: state.reinforcementActions,
     evaluationActions: state.evaluationActions,
+    ledgerActions: state.ledgerActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -15581,6 +16335,7 @@ function resetWorkspace() {
   closePolicySimulator(false);
   closeReinforcementControl(false);
   closeEvaluationLab(false);
+  closeLearningLedger(false);
   closeWorkspace(false);
   closeLibrary();
   render();

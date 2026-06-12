@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.33 Alpha - Learning Ledger
+
+Phase: Learning Ledger
+
+- Added a Ledger drawer with ledger score, learning entry count, network-safe lift, open gates, ledger status, actions, digest, and receipts.
+- Added learning entries that show what changed, what scope it has, what source produced it, and what benefit it can create.
+- Added benefit map for organization memory, buyer segment learning, aggregate network benefit, and blocked unsafe learning.
+- Added provenance chain from question and evidence through evals, rewards, privacy scope, outcomes, and graph guardrails.
+- Added approval gates for eval pass, privacy threshold, human approval, drift quarantine, and reward boundary.
+- Added network accounting that measures local learning, aggregate learning, quality gates, network lift, and blocked benefit without exposing raw customer material.
+- Added learning ledger status, score, entries, network lift, open gates, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v29 with learning ledger entries, benefit map, provenance chain, approval gates, and digest.
+- Updated the build phases page with the v0.34 Learning Policy Governor plan.
+
 ## v0.32 Alpha - Evaluation Lab
 
 Phase: Evaluation Lab

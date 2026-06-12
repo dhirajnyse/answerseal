@@ -5321,6 +5321,214 @@ svg {
   white-space: pre-wrap;
 }
 
+.ledger-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, calc(100vw - 250px));
+}
+
+.ledger-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ledger-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #eefcff, #f6fff9);
+}
+
+.ledger-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--mint-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.ledger-actions strong {
+  color: var(--green);
+}
+
+.ledger-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(239, 252, 255, 0.72), rgba(255, 255, 255, 0.98));
+}
+
+.ledger-section,
+.ledger-entry-card,
+.ledger-benefit-card,
+.ledger-provenance-card,
+.ledger-gate-card,
+.ledger-accounting-card,
+.ledger-action-card,
+.ledger-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.ledger-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.ledger-entry-list,
+.ledger-benefit-list,
+.ledger-provenance-list,
+.ledger-gate-list,
+.ledger-accounting-list,
+.ledger-action-list,
+.ledger-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.ledger-entry-list,
+.ledger-benefit-list,
+.ledger-gate-list,
+.ledger-accounting-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ledger-entry-card,
+.ledger-benefit-card,
+.ledger-gate-card,
+.ledger-accounting-card,
+.ledger-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.ledger-entry-card {
+  border-color: rgba(32, 192, 231, 0.34);
+  background: linear-gradient(180deg, rgba(239, 252, 255, 0.94), #fff);
+}
+
+.ledger-entry-card.is-risk,
+.ledger-benefit-card.is-risk,
+.ledger-gate-card.is-risk,
+.ledger-accounting-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.ledger-benefit-card,
+.ledger-gate-card,
+.ledger-accounting-card {
+  background: #fbfffd;
+}
+
+.ledger-provenance-card,
+.ledger-action-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+}
+
+.ledger-provenance-card > span,
+.ledger-action-card > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--green);
+  background: #dcfff8;
+  font-weight: 900;
+}
+
+.ledger-entry-card header,
+.ledger-entry-card footer,
+.ledger-benefit-card header,
+.ledger-gate-card header,
+.ledger-accounting-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.ledger-entry-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.ledger-entry-card strong,
+.ledger-benefit-card strong,
+.ledger-provenance-card strong,
+.ledger-gate-card strong,
+.ledger-accounting-card strong,
+.ledger-action-card strong,
+.ledger-receipt-card strong {
+  color: var(--ink);
+}
+
+.ledger-entry-card b,
+.ledger-benefit-card b,
+.ledger-provenance-card b,
+.ledger-gate-card b,
+.ledger-accounting-card b,
+.ledger-action-card b {
+  color: var(--green);
+  font-size: 0.88rem;
+}
+
+.ledger-entry-card.is-risk b,
+.ledger-benefit-card.is-risk b,
+.ledger-gate-card.is-risk b,
+.ledger-accounting-card.is-risk b {
+  color: var(--amber);
+}
+
+.ledger-entry-card p,
+.ledger-entry-card footer span,
+.ledger-benefit-card p,
+.ledger-benefit-card span,
+.ledger-provenance-card p,
+.ledger-gate-card p,
+.ledger-gate-card span,
+.ledger-accounting-card p,
+.ledger-accounting-card span,
+.ledger-action-card p,
+.ledger-receipt-card p,
+.ledger-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.ledger-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -7540,6 +7748,12 @@ svg {
     .evaluation-reward-test-list,
     .evaluation-regression-list,
     .evaluation-calibration-list,
+    .ledger-metrics,
+    .ledger-actions,
+    .ledger-entry-list,
+    .ledger-benefit-list,
+    .ledger-gate-list,
+    .ledger-accounting-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -7664,6 +7878,13 @@ svg {
     .evaluation-regression-card header,
     .evaluation-calibration-card header,
     .evaluation-action-card,
+    .ledger-entry-card header,
+    .ledger-entry-card footer,
+    .ledger-benefit-card header,
+    .ledger-provenance-card,
+    .ledger-gate-card header,
+    .ledger-accounting-card header,
+    .ledger-action-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,
@@ -7691,6 +7912,11 @@ svg {
   }
 
   .evaluation-action-card {
+    grid-template-columns: 1fr;
+  }
+
+  .ledger-provenance-card,
+  .ledger-action-card {
     grid-template-columns: 1fr;
   }
 

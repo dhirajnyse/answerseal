@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.32 Alpha
+**Current version:** v0.33 Alpha
 
-**Current phase:** Evaluation Lab
+**Current phase:** Learning Ledger
 
 ## Brand
 
@@ -151,6 +151,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Regression watch for stale evidence, risky reward behavior, reviewer disagreement, and network drift
 - Reviewer calibration that turns security, legal, sales, and AI governance disagreement into measurable training signals
 - Evaluation digest for explaining which learning events passed, which risks remain, and what can safely feed reinforcement
+- Learning Ledger drawer with ledger score, learning entries, benefit map, provenance chain, approval gates, network accounting, actions, and receipts
+- Learning entries that explain what changed, what scope it has, what source produced it, and what benefit it can create
+- Benefit map that separates organization memory, buyer segment learning, aggregate network benefit, and blocked unsafe learning
+- Provenance chain from question and evidence through evals, reward decisions, privacy scope, outcomes, and graph guardrails
+- Approval gates for eval pass, privacy threshold, human approval, drift quarantine, and reward boundary
+- Network accounting that measures lift without exposing raw answers, evidence, prompts, contracts, or customer names
+- Learning ledger digest for security, legal, AI governance, and enterprise buyer explanations
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -171,7 +178,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v28 export with evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v29 export with learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -189,13 +196,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.33 Alpha - Learning Ledger
+## Next Phase: v0.34 Alpha - Learning Policy Governor
 
-- Add a learning receipt ledger for every approved or blocked improvement
-- Show whether learning benefits the local workspace, a buyer segment, or a privacy-safe network pattern
-- Tie each learning event to eval results, reviewer approval, policy gates, and tenant boundary
-- Track network lift without exposing raw answers, evidence, prompts, contracts, or customer names
-- Make closed-loop improvement auditable enough for security, legal, and enterprise buyers
+- Add tenant learning policies for what the platform may learn from approvals, challenges, refreshes, and outcomes
+- Define promotion roles for local memory, buyer-segment learning, network-safe patterns, and blocked exceptions
+- Add stop conditions for privacy score, eval quality, drift, source freshness, reviewer agreement, and buyer-risk thresholds
+- Simulate how policy changes affect answer speed, proof quality, network lift, and enterprise trust
+- Keep every automated improvement governed by explicit customer policy
 
 ## License
 
