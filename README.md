@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.34 Alpha
+**Current version:** v0.35 Alpha
 
-**Current phase:** Learning Policy Governor
+**Current phase:** Policy Enforcement Agent
 
 ## Brand
 
@@ -165,6 +165,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Policy simulations that compare strict customer policy, balanced learning policy, growth learning policy, and network publish policy before the loop changes
 - Exception handling for deadline overrides, legacy evidence reuse, network promotion exceptions, and reviewer disagreement
 - Learning policy digest for security, legal, AI governance, and enterprise buyer explanations
+- Policy Enforcement Agent drawer with enforcement score, queue count, blocked action count, escalation count, actions, digest, and receipts
+- Enforcement queue that classifies proposed learning actions as allowed, gated, blocked, or escalated before the loop changes behavior
+- Blocked action monitor with policy rule, owner, risk reason, and recovery path for every stopped automation
+- Owner escalations for security, legal, AI governance, operations, and sales engineering decisions
+- Recovery paths that turn blocked learning into accountable work across eval repair, privacy clearance, drift quarantine, source refresh, and owner receipts
+- Enforcement digest for proving customer policy was applied before local memory, reward weights, buyer-facing language, or network learning changed
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -185,7 +191,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v30 export with learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v31 export with policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -203,13 +209,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.35 Alpha - Policy Enforcement Agent
+## Next Phase: v0.36 Alpha - Governance Feedback Loop
 
-- Add an enforced policy queue for allowed, gated, blocked, and approval-waiting learning actions
-- Add a blocked action monitor with rule, owner, risk reason, and recovery path
-- Route policy exceptions to security, legal, AI governance, or sales engineering with clear receipts
-- Export enforcement receipts that prove the platform followed customer policy before local or network learning changed behavior
-- Keep the closed-loop SaaS promise visible, controlled, and auditable for every customer
+- Track whether blocked, allowed, and escalated actions improved proof quality, answer speed, and buyer trust
+- Recommend safer policy thresholds when enforcement repeatedly blocks or escalates the same learning pattern
+- Attribute benefit to governance decisions that created faster answers, better evidence coverage, or safer network learning
+- Share only aggregate enforcement outcomes so every customer benefits without exposing raw evidence or buyer text
+- Keep the closed-loop SaaS promise measurable, controlled, and privacy-safe across organizations
 
 ## License
 

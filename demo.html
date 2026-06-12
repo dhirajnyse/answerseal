@@ -171,6 +171,10 @@
             <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
             <span>Policy</span>
           </button>
+          <button class="nav-item" id="enforcementNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+            <span>Enforce</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -233,8 +237,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.34 Alpha</strong>
-          <span>Learning Policy Governor</span>
+          <strong>v0.35 Alpha</strong>
+          <span>Policy Enforcement Agent</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -246,7 +250,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.34 Alpha</span>
+            <span class="label">Security questionnaire | v0.35 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -2679,6 +2683,119 @@
             <span>Copyable governance note for security, legal, and AI governance</span>
           </div>
           <pre class="policy-digest" id="policyDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="enforcement-backdrop drawer-backdrop" id="enforcementBackdrop" hidden></div>
+    <aside class="workspace-drawer enforcement-drawer" id="enforcementDrawer" aria-label="Policy enforcement agent" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Policy Enforcement Agent</span>
+          <h2>Stop unsafe learning before it runs</h2>
+        </div>
+        <button class="icon-button" id="closeEnforcementButton" type="button" aria-label="Close policy enforcement agent" title="Close policy enforcement agent">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip enforcement-metrics" aria-label="Policy enforcement health">
+        <article>
+          <span class="label">Enforcement Score</span>
+          <strong id="enforcementScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Queue</span>
+          <strong id="enforcementQueueCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Blocked</span>
+          <strong id="enforcementBlockedCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Escalations</span>
+          <strong id="enforcementEscalationCount">0</strong>
+        </article>
+      </section>
+
+      <section class="enforcement-actions" aria-label="Policy enforcement controls">
+        <div>
+          <span class="label">Agent Status</span>
+          <strong id="enforcementStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="scanEnforcementButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Scan Queue</span>
+        </button>
+        <button class="secondary-button" id="escalateEnforcementButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+          <span>Escalate</span>
+        </button>
+        <button class="secondary-button" id="approveEnforcementButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve Safe</span>
+        </button>
+        <button class="secondary-button" id="copyEnforcementDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="enforcement-body">
+        <section class="enforcement-section" aria-label="Enforcement queue">
+          <div class="section-heading">
+            <span class="label">Enforcement Queue</span>
+            <span>Every proposed learning action is allowed, gated, blocked, or escalated</span>
+          </div>
+          <div class="enforcement-queue-list" id="enforcementQueueList"></div>
+        </section>
+
+        <section class="enforcement-section" aria-label="Blocked action monitor">
+          <div class="section-heading">
+            <span class="label">Blocked Action Monitor</span>
+            <span>Unsafe automation stays visible with rule, owner, and recovery path</span>
+          </div>
+          <div class="enforcement-blocked-list" id="enforcementBlockedList"></div>
+        </section>
+
+        <section class="enforcement-section" aria-label="Owner escalations">
+          <div class="section-heading">
+            <span class="label">Owner Escalations</span>
+            <span>Security, legal, AI governance, and sales engineering decisions</span>
+          </div>
+          <div class="enforcement-escalation-list" id="enforcementEscalationList"></div>
+        </section>
+
+        <section class="enforcement-section" aria-label="Recovery paths">
+          <div class="section-heading">
+            <span class="label">Recovery Paths</span>
+            <span>How blocked learning becomes accountable work</span>
+          </div>
+          <div class="enforcement-recovery-list" id="enforcementRecoveryList"></div>
+        </section>
+
+        <section class="enforcement-section" aria-label="Enforcement actions">
+          <div class="section-heading">
+            <span class="label">Agent Actions</span>
+            <span>Scan, hold, escalate, recover, and export receipts</span>
+          </div>
+          <div class="enforcement-action-list" id="enforcementActionList"></div>
+        </section>
+
+        <section class="enforcement-section" aria-label="Enforcement receipts">
+          <div class="section-heading">
+            <span class="label">Enforcement Receipts</span>
+            <span>Proof that customer policy was applied before the loop changed</span>
+          </div>
+          <div class="enforcement-receipt-list" id="enforcementReceiptList"></div>
+        </section>
+
+        <section class="enforcement-section" aria-label="Enforcement digest">
+          <div class="section-heading">
+            <span class="label">Enforcement Digest</span>
+            <span>Copyable proof for security, legal, AI governance, and buyers</span>
+          </div>
+          <pre class="enforcement-digest" id="enforcementDigest"></pre>
         </section>
       </section>
     </aside>

@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.35 Alpha - Policy Enforcement Agent
+
+Phase: Policy Enforcement Agent
+
+- Added an Enforce drawer with enforcement score, queue count, blocked action count, escalation count, agent status, actions, digest, and receipts.
+- Added an enforcement queue that classifies proposed learning actions as allowed, gated, blocked, or escalated before local memory, rewards, buyer handoff, or network learning can change.
+- Added a blocked action monitor with policy rule, decision, owner, reason, and recovery path for unsafe automation.
+- Added owner escalations for security, legal, AI governance, operations, and sales engineering decisions.
+- Added recovery paths for eval repair, privacy clearance, graph drift quarantine, source refresh, and owner receipts.
+- Added policy enforcement status, score, queue size, allowed count, blocked count, escalation count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v31 with policy enforcement queue, blocked actions, owner escalations, recovery paths, and digest.
+- Updated the build phases page with the v0.36 Governance Feedback Loop plan.
+
 ## v0.34 Alpha - Learning Policy Governor
 
 Phase: Learning Policy Governor

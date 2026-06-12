@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.34 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v34";
+const BUILD_VERSION = "v0.35 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v35";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v34",
   "answerseal.workspace.v33",
   "answerseal.workspace.v32",
   "answerseal.workspace.v31",
@@ -714,6 +715,8 @@ function createInitialState() {
     ledgerActions: createInitialLedgerActions(),
     policyOpen: false,
     policyActions: createInitialPolicyActions(),
+    enforcementOpen: false,
+    enforcementActions: createInitialEnforcementActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -895,6 +898,17 @@ function createInitialPolicyActions() {
   };
 }
 
+function createInitialEnforcementActions() {
+  return {
+    status: "Draft",
+    scannedAt: null,
+    escalatedAt: null,
+    approvedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1028,6 +1042,7 @@ function loadWorkspaceState() {
       evaluationActions: normalizeEvaluationActions(workspace.evaluationActions ?? fresh.evaluationActions),
       ledgerActions: normalizeLedgerActions(workspace.ledgerActions ?? fresh.ledgerActions),
       policyActions: normalizePolicyActions(workspace.policyActions ?? fresh.policyActions),
+      enforcementActions: normalizeEnforcementActions(workspace.enforcementActions ?? fresh.enforcementActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1057,6 +1072,7 @@ function loadWorkspaceState() {
       evaluationOpen: false,
       ledgerOpen: false,
       policyOpen: false,
+      enforcementOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1604,6 +1620,27 @@ function normalizePolicyReceipt(receipt) {
   };
 }
 
+function normalizeEnforcementActions(actions) {
+  const status = ["Draft", "Queue scanned", "Owners escalated", "Safe actions approved"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    scannedAt: actions?.scannedAt ?? null,
+    escalatedAt: actions?.escalatedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeEnforcementReceipt) : [],
+  };
+}
+
+function normalizeEnforcementReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `enforcement-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Enforcement action"),
+    detail: String(receipt?.detail ?? "Policy enforcement action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1651,6 +1688,7 @@ const elements = {
   evaluationNavButton: document.querySelector("#evaluationNavButton"),
   ledgerNavButton: document.querySelector("#ledgerNavButton"),
   policyNavButton: document.querySelector("#policyNavButton"),
+  enforcementNavButton: document.querySelector("#enforcementNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2102,6 +2140,25 @@ const elements = {
   simulatePolicyButton: document.querySelector("#simulatePolicyButton"),
   approvePolicyButton: document.querySelector("#approvePolicyButton"),
   copyPolicyDigestButton: document.querySelector("#copyPolicyDigestButton"),
+  enforcementBackdrop: document.querySelector("#enforcementBackdrop"),
+  enforcementDrawer: document.querySelector("#enforcementDrawer"),
+  closeEnforcementButton: document.querySelector("#closeEnforcementButton"),
+  enforcementScore: document.querySelector("#enforcementScore"),
+  enforcementQueueCount: document.querySelector("#enforcementQueueCount"),
+  enforcementBlockedCount: document.querySelector("#enforcementBlockedCount"),
+  enforcementEscalationCount: document.querySelector("#enforcementEscalationCount"),
+  enforcementStatus: document.querySelector("#enforcementStatus"),
+  enforcementQueueList: document.querySelector("#enforcementQueueList"),
+  enforcementBlockedList: document.querySelector("#enforcementBlockedList"),
+  enforcementEscalationList: document.querySelector("#enforcementEscalationList"),
+  enforcementRecoveryList: document.querySelector("#enforcementRecoveryList"),
+  enforcementActionList: document.querySelector("#enforcementActionList"),
+  enforcementReceiptList: document.querySelector("#enforcementReceiptList"),
+  enforcementDigest: document.querySelector("#enforcementDigest"),
+  scanEnforcementButton: document.querySelector("#scanEnforcementButton"),
+  escalateEnforcementButton: document.querySelector("#escalateEnforcementButton"),
+  approveEnforcementButton: document.querySelector("#approveEnforcementButton"),
+  copyEnforcementDigestButton: document.querySelector("#copyEnforcementDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2221,6 +2278,7 @@ function bindEvents() {
   elements.evaluationNavButton.addEventListener("click", openEvaluationLab);
   elements.ledgerNavButton.addEventListener("click", openLearningLedger);
   elements.policyNavButton.addEventListener("click", openLearningPolicyGovernor);
+  elements.enforcementNavButton.addEventListener("click", openPolicyEnforcementAgent);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2285,6 +2343,7 @@ function bindEvents() {
     renderEvaluationLab();
     renderLearningLedger();
     renderLearningPolicyGovernor();
+    renderPolicyEnforcementAgent();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2413,6 +2472,12 @@ function bindEvents() {
   elements.simulatePolicyButton.addEventListener("click", simulateLearningPolicy);
   elements.approvePolicyButton.addEventListener("click", approveLearningPolicy);
   elements.copyPolicyDigestButton.addEventListener("click", copyLearningPolicyDigest);
+  elements.closeEnforcementButton.addEventListener("click", closePolicyEnforcementAgent);
+  elements.enforcementBackdrop.addEventListener("click", closePolicyEnforcementAgent);
+  elements.scanEnforcementButton.addEventListener("click", scanPolicyEnforcement);
+  elements.escalateEnforcementButton.addEventListener("click", escalatePolicyEnforcement);
+  elements.approveEnforcementButton.addEventListener("click", approvePolicyEnforcement);
+  elements.copyEnforcementDigestButton.addEventListener("click", copyPolicyEnforcementDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2477,6 +2542,7 @@ function bindEvents() {
     if (state.evaluationOpen) closeEvaluationLab();
     if (state.ledgerOpen) closeLearningLedger();
     if (state.policyOpen) closeLearningPolicyGovernor();
+    if (state.enforcementOpen) closePolicyEnforcementAgent();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2508,6 +2574,7 @@ function applyInitialHash() {
   if (hash === "evaluation" || hash === "eval" || hash === "evaluation-lab" || hash === "eval-lab") openEvaluationLab();
   if (hash === "ledger" || hash === "learning-ledger" || hash === "learning-receipts" || hash === "closed-loop-ledger") openLearningLedger();
   if (hash === "policy" || hash === "learning-policy" || hash === "policy-governor" || hash === "governor") openLearningPolicyGovernor();
+  if (hash === "enforce" || hash === "enforcement" || hash === "policy-enforcement" || hash === "enforcement-agent") openPolicyEnforcementAgent();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2553,6 +2620,7 @@ function render() {
   renderEvaluationLab();
   renderLearningLedger();
   renderLearningPolicyGovernor();
+  renderPolicyEnforcementAgent();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3282,6 +3350,7 @@ function activateWorkspaceNav(target) {
   closeEvaluationLab(false);
   closeLearningLedger(false);
   closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3324,6 +3393,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.policyNavButton && state.policyOpen) {
     closeLearningPolicyGovernor(false);
   }
+  if (activeButton !== elements.enforcementNavButton && state.enforcementOpen) {
+    closePolicyEnforcementAgent(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3344,6 +3416,7 @@ function setActiveNav(activeButton) {
     elements.evaluationNavButton,
     elements.ledgerNavButton,
     elements.policyNavButton,
+    elements.enforcementNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4178,6 +4251,7 @@ function openLearningPolicyGovernor() {
   closeReinforcementControl(false);
   closeEvaluationLab(false);
   closeLearningLedger(false);
+  closePolicyEnforcementAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4206,6 +4280,52 @@ function closeLearningPolicyGovernor(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openPolicyEnforcementAgent() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.enforcementOpen = true;
+  setActiveNav(elements.enforcementNavButton);
+  elements.enforcementBackdrop.hidden = false;
+  elements.enforcementDrawer.classList.add("is-open");
+  elements.enforcementDrawer.setAttribute("aria-hidden", "false");
+  renderPolicyEnforcementAgent();
+}
+
+function closePolicyEnforcementAgent(activateReview = true) {
+  if (!state.enforcementOpen && elements.enforcementDrawer.getAttribute("aria-hidden") === "true") return;
+  state.enforcementOpen = false;
+  elements.enforcementDrawer.classList.remove("is-open");
+  elements.enforcementDrawer.setAttribute("aria-hidden", "true");
+  elements.enforcementBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -4215,6 +4335,7 @@ function openAnalytics() {
   closeAdaptiveCoach(false);
   closeEvidenceAgent(false);
   closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -12557,6 +12678,461 @@ function learningPolicyDigestText(policy = learningPolicySnapshot()) {
   ].join("\n");
 }
 
+function renderPolicyEnforcementAgent() {
+  const enforcement = policyEnforcementSnapshot();
+
+  elements.enforcementScore.textContent = `${enforcement.score}%`;
+  elements.enforcementQueueCount.textContent = enforcement.queue.length;
+  elements.enforcementBlockedCount.textContent = enforcement.blockedCount;
+  elements.enforcementEscalationCount.textContent = enforcement.escalations.length;
+  elements.enforcementStatus.textContent = enforcement.statusLabel;
+  elements.enforcementDigest.textContent = policyEnforcementDigestText(enforcement);
+
+  elements.enforcementQueueList.innerHTML = "";
+  enforcement.queue.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `enforcement-queue-card ${item.decision !== "Allowed" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.policy)}</span>
+          <strong>${escapeHtml(item.action)}</strong>
+        </div>
+        <b>${escapeHtml(item.decision)}</b>
+      </header>
+      <p>${escapeHtml(item.reason)}</p>
+      <footer>
+        <span>${escapeHtml(item.owner)}</span>
+        <span>${escapeHtml(item.recovery)}</span>
+      </footer>
+    `;
+    elements.enforcementQueueList.append(card);
+  });
+
+  elements.enforcementBlockedList.innerHTML = "";
+  if (enforcement.blocked.length === 0) {
+    elements.enforcementBlockedList.append(emptyState("No blocked learning actions"));
+  }
+  enforcement.blocked.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "enforcement-blocked-card is-risk";
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.action)}</strong>
+        <b>${escapeHtml(item.decision)}</b>
+      </header>
+      <p>${escapeHtml(item.reason)}</p>
+      <footer>
+        <span>${escapeHtml(item.policy)}</span>
+        <span>${escapeHtml(item.recovery)}</span>
+      </footer>
+    `;
+    elements.enforcementBlockedList.append(card);
+  });
+
+  elements.enforcementEscalationList.innerHTML = "";
+  if (enforcement.escalations.length === 0) {
+    elements.enforcementEscalationList.append(emptyState("No owner escalations"));
+  }
+  enforcement.escalations.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `enforcement-escalation-card ${item.severity === "High" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.owner)}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+        </div>
+        <b>${escapeHtml(item.severity)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.due)}</span>
+        <span>${escapeHtml(item.receipt)}</span>
+      </footer>
+    `;
+    elements.enforcementEscalationList.append(card);
+  });
+
+  elements.enforcementRecoveryList.innerHTML = "";
+  enforcement.recoveries.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "enforcement-recovery-card";
+    card.innerHTML = `
+      <span>${escapeHtml(item.step)}</span>
+      <div>
+        <strong>${escapeHtml(item.title)}</strong>
+        <p>${escapeHtml(item.detail)}</p>
+      </div>
+      <b>${escapeHtml(item.owner)}</b>
+    `;
+    elements.enforcementRecoveryList.append(card);
+  });
+
+  elements.enforcementActionList.innerHTML = "";
+  enforcement.actions.forEach((action) => {
+    const card = document.createElement("article");
+    card.className = "enforcement-action-card";
+    card.innerHTML = `
+      <span>${escapeHtml(action.step)}</span>
+      <div>
+        <strong>${escapeHtml(action.title)}</strong>
+        <p>${escapeHtml(action.detail)}</p>
+      </div>
+      <b>${escapeHtml(action.mode)}</b>
+    `;
+    elements.enforcementActionList.append(card);
+  });
+
+  elements.enforcementReceiptList.innerHTML = "";
+  if (enforcement.receipts.length === 0) {
+    elements.enforcementReceiptList.append(emptyState("No enforcement receipts yet"));
+  }
+  enforcement.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "enforcement-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.enforcementReceiptList.append(card);
+  });
+}
+
+function policyEnforcementSnapshot() {
+  const policy = learningPolicySnapshot();
+  const ledger = policy.ledger;
+  const evaluation = policy.evaluation;
+  const network = policy.network;
+  const graph = policy.graph;
+  const connectors = connectorSnapshot();
+  const simulator = policySimulatorSnapshot();
+  const reinforcement = reinforcementControlSnapshot();
+  const orchestrator = trustOrchestratorSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const queue = policyEnforcementQueue({ policy, ledger, evaluation, network, graph, connectors, simulator, reinforcement, routing });
+  const blocked = queue.filter((item) => item.decision === "Blocked" || item.decision === "Gated");
+  const allowedCount = queue.filter((item) => item.decision === "Allowed").length;
+  const blockedCount = blocked.length;
+  const escalations = policyEnforcementEscalations({ queue, policy, ledger, evaluation, network, graph, connectors, routing });
+  const recoveries = policyEnforcementRecoveries({ blocked, escalations, policy, evaluation, network, graph, connectors });
+  const actions = policyEnforcementActions({ queue, blocked, escalations, recoveries, orchestrator });
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        policy.score * 0.34
+          + Math.min(100, allowedCount * 15) * 0.2
+          + Math.max(0, 100 - blockedCount * 18) * 0.22
+          + Math.max(0, 100 - escalations.length * 12) * 0.14
+          + Math.max(0, 100 - policy.openStopCount * 10) * 0.1,
+      ),
+    ),
+  );
+  const statusLabel = state.enforcementActions.status === "Draft" ? "Ready to enforce" : state.enforcementActions.status;
+
+  return {
+    score,
+    statusLabel,
+    queue,
+    blocked,
+    allowedCount,
+    blockedCount,
+    escalations,
+    recoveries,
+    actions,
+    receipts: state.enforcementActions.receipts.slice(-8).reverse(),
+    policy,
+    ledger,
+    evaluation,
+    network,
+    graph,
+  };
+}
+
+function policyEnforcementQueue({ policy, ledger, evaluation, network, graph, connectors, simulator, reinforcement, routing }) {
+  const highDrift = graph.drift.some((item) => item.severity === "High");
+  const evalClear = evaluation.regressionCount === 0 && evaluation.passedCount === evaluation.evalSets.length;
+  const privacyClear = network.privacyScore >= 90;
+  const gateBacklog = ledger.openGateCount > 2 || routing.openRisks > 3;
+  return [
+    {
+      action: "Apply approved answer memory",
+      policy: "Tenant exact",
+      decision: evalClear && ledger.approvedEntries > 0 ? "Allowed" : "Gated",
+      owner: "Security",
+      reason: `${ledger.approvedEntries}/${ledger.entries.length} ledger entries are safe and ${evaluation.passedCount}/${evaluation.evalSets.length} evals passed.`,
+      recovery: evalClear ? "Record local memory receipt" : "Run eval repair first",
+    },
+    {
+      action: "Promote aggregate proof pattern",
+      policy: "Network aggregate",
+      decision: privacyClear && !highDrift && network.readyPatternCount > 0 ? "Allowed" : "Blocked",
+      owner: "Legal",
+      reason: `${network.privacyScore}% privacy score, ${network.readyPatternCount} ready patterns, ${graph.drift.length} drift signals.`,
+      recovery: privacyClear ? "Resolve drift quarantine" : "Raise privacy score before promotion",
+    },
+    {
+      action: "Tune reinforcement reward weights",
+      policy: "Reward tuning",
+      decision: evalClear && reinforcement.blockedCount === 0 ? "Allowed" : "Gated",
+      owner: "AI Governance",
+      reason: `${reinforcement.rewards.length} reward signals, ${reinforcement.blockedCount} boundary blocks, ${evaluation.regressionCount} regression watches.`,
+      recovery: "Clear eval and reward boundary before tuning",
+    },
+    {
+      action: "Publish network learning package",
+      policy: "Network publish policy",
+      decision: privacyClear && !highDrift && policy.openStopCount === 0 ? "Allowed" : "Blocked",
+      owner: "Legal",
+      reason: `${policy.openStopCount} stop conditions and +${policy.simulationLift} simulated lift are visible before publish.`,
+      recovery: "Resolve stop conditions and collect legal receipt",
+    },
+    {
+      action: "Use stale source as confidence penalty",
+      policy: "Freshness penalty",
+      decision: connectors.staleCount > 0 ? "Allowed" : "Allowed",
+      owner: "Operations",
+      reason: `${connectors.staleCount} stale sources can lower confidence but cannot teach positive patterns.`,
+      recovery: connectors.staleCount > 0 ? "Refresh source for positive learning" : "No stale-source recovery needed",
+    },
+    {
+      action: "Allow buyer deadline override",
+      policy: "Deadline exception",
+      decision: gateBacklog ? "Escalate" : "Allowed",
+      owner: "Sales Engineering",
+      reason: `${ledger.openGateCount} ledger gates and ${routing.openRisks} open risks decide whether deadline pressure can continue locally.`,
+      recovery: gateBacklog ? "Escalate fallback text and owner receipt" : "Continue with buyer-safe receipt",
+    },
+    {
+      action: "Execute safest simulated move",
+      policy: "Policy simulation",
+      decision: simulator.blockedCount > 0 || policy.openStopCount > 2 ? "Gated" : "Allowed",
+      owner: "AI Governance",
+      reason: `${simulator.scenarios.length} simulations, ${simulator.blockedCount} blocked counterfactuals, ${policy.openStopCount} stop conditions.`,
+      recovery: "Approve the simulation gate before queue execution",
+    },
+  ];
+}
+
+function policyEnforcementEscalations({ queue, policy, ledger, evaluation, network, graph, connectors, routing }) {
+  const escalations = [];
+  queue
+    .filter((item) => item.decision !== "Allowed")
+    .forEach((item) => {
+      escalations.push({
+        title: item.action,
+        owner: item.owner,
+        severity: item.decision === "Blocked" ? "High" : "Medium",
+        due: item.decision === "Blocked" ? "Today" : "Next review",
+        detail: `${item.decision}: ${item.reason}`,
+        receipt: item.recovery,
+      });
+    });
+
+  if (connectors.staleCount > 0) {
+    escalations.push({
+      title: "Refresh stale evidence sources",
+      owner: "Operations",
+      severity: "Medium",
+      due: "48 hours",
+      detail: `${connectors.staleCount} stale sources can only create penalties until refreshed.`,
+      receipt: "Refresh receipt required before positive learning",
+    });
+  }
+
+  if (evaluation.calibrationScore < 90 || routing.openRisks > 2) {
+    escalations.push({
+      title: "Calibrate reviewer decision boundary",
+      owner: "AI Governance",
+      severity: "Medium",
+      due: "Next review",
+      detail: `${evaluation.calibrationScore}% reviewer calibration and ${routing.openRisks} open risks shape the policy boundary.`,
+      receipt: "Calibration receipt required before reward influence",
+    });
+  }
+
+  return escalations.slice(0, 6);
+}
+
+function policyEnforcementRecoveries({ blocked, escalations, policy, evaluation, network, graph, connectors }) {
+  return [
+    {
+      step: "01",
+      title: blocked.length > 0 ? "Freeze blocked learning actions" : "Confirm allowed actions",
+      owner: "Policy",
+      detail: blocked.length > 0 ? `${blocked.length} gated or blocked actions remain visible until their policy recovery passes.` : "Allowed actions can proceed with receipts.",
+    },
+    {
+      step: "02",
+      title: evaluation.regressionCount > 0 ? "Repair evaluation regression" : "Keep eval gate current",
+      owner: "AI Governance",
+      detail: `${evaluation.passedCount}/${evaluation.evalSets.length} evals passed and ${evaluation.regressionCount} regression watches are active.`,
+    },
+    {
+      step: "03",
+      title: network.privacyScore >= 90 ? "Prepare legal promotion receipt" : "Raise privacy score",
+      owner: "Legal",
+      detail: `${network.privacyScore}% privacy score controls aggregate network learning.`,
+    },
+    {
+      step: "04",
+      title: graph.drift.length > 0 ? "Quarantine drifted patterns" : "Confirm graph clearance",
+      owner: "AI Governance",
+      detail: `${graph.drift.length} drift signals decide whether network patterns stay local.`,
+    },
+    {
+      step: "05",
+      title: connectors.staleCount > 0 ? "Refresh stale source evidence" : "Maintain source freshness",
+      owner: "Operations",
+      detail: `${connectors.staleCount} stale sources can penalize confidence until refreshed.`,
+    },
+    {
+      step: "06",
+      title: escalations.length > 0 ? "Collect owner receipts" : "Publish enforcement receipt",
+      owner: workspaceAccount.currentRole,
+      detail: `${escalations.length} owner escalations and ${policy.openStopCount} policy stop conditions are tracked before learning changes behavior.`,
+    },
+  ];
+}
+
+function policyEnforcementActions({ queue, blocked, escalations, recoveries, orchestrator }) {
+  return [
+    {
+      step: "01",
+      title: "Scan policy queue",
+      mode: "Scan",
+      detail: `${queue.length} proposed learning actions are classified as allowed, gated, blocked, or escalated.`,
+    },
+    {
+      step: "02",
+      title: blocked.length > 0 ? "Hold blocked actions" : "Approve allowed actions",
+      mode: blocked.length > 0 ? "Hold" : "Approve",
+      detail: blocked.length > 0 ? `${blocked.length} actions need recovery before execution.` : "Every proposed action can execute with a receipt.",
+    },
+    {
+      step: "03",
+      title: escalations.length > 0 ? "Route owner escalations" : "No escalation needed",
+      mode: escalations.length > 0 ? "Escalate" : "Clear",
+      detail: `${escalations.length} owner decisions are required before the policy agent can release the queue.`,
+    },
+    {
+      step: "04",
+      title: "Apply recovery path",
+      mode: "Recover",
+      detail: `${recoveries.length} recovery steps translate blocked automation into accountable work.`,
+    },
+    {
+      step: "05",
+      title: "Export enforcement receipt",
+      mode: "Receipt",
+      detail: `${orchestrator.score}% orchestration score supports a buyer-safe proof that policy was enforced before learning changed behavior.`,
+    },
+  ];
+}
+
+function scanPolicyEnforcement() {
+  const enforcement = policyEnforcementSnapshot();
+  const detail = `Scanned ${enforcement.queue.length} learning actions: ${enforcement.allowedCount} allowed, ${enforcement.blockedCount} gated or blocked, ${enforcement.escalations.length} escalations.`;
+  state.enforcementActions.status = "Queue scanned";
+  state.enforcementActions.scannedAt = new Date().toISOString();
+  addEnforcementReceipt("Queue scanned", detail);
+  addAudit("Policy enforcement scanned", detail);
+  renderPolicyEnforcementAgent();
+  renderAudit();
+  showToast("Policy enforcement queue scanned.");
+}
+
+function escalatePolicyEnforcement() {
+  const enforcement = policyEnforcementSnapshot();
+  const detail = `Escalated ${enforcement.escalations.length} owner decisions for ${enforcement.blockedCount} gated or blocked learning actions.`;
+  state.enforcementActions.status = "Owners escalated";
+  state.enforcementActions.escalatedAt = new Date().toISOString();
+  addEnforcementReceipt("Owners escalated", detail);
+  addAudit("Policy enforcement escalated", detail);
+  render();
+  showToast("Policy enforcement escalated.");
+}
+
+function approvePolicyEnforcement() {
+  const enforcement = policyEnforcementSnapshot();
+  const detail = `Approved ${enforcement.allowedCount} safe learning actions with ${enforcement.blockedCount} blocked actions still held by policy.`;
+  state.enforcementActions.status = "Safe actions approved";
+  state.enforcementActions.approvedAt = new Date().toISOString();
+  addEnforcementReceipt("Safe actions approved", detail);
+  addAudit("Policy enforcement approved", detail);
+  render();
+  showToast("Safe policy actions approved.");
+}
+
+function copyPolicyEnforcementDigest() {
+  const enforcement = policyEnforcementSnapshot();
+  state.enforcementActions.lastCopiedAt = new Date().toISOString();
+  addEnforcementReceipt("Enforcement digest copied", "Policy enforcement digest copied.");
+  addAudit("Policy enforcement copied", "Policy enforcement digest copied.");
+  renderPolicyEnforcementAgent();
+  renderAudit();
+  copyText(policyEnforcementDigestText(enforcement), "Policy enforcement digest copied.");
+}
+
+function addEnforcementReceipt(action, detail) {
+  state.enforcementActions.receipts = [
+    ...(state.enforcementActions.receipts ?? []),
+    {
+      id: `enforcement-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function policyEnforcementDigestText(enforcement = policyEnforcementSnapshot()) {
+  const queueLines = enforcement.queue.map((item, index) => `${index + 1}. ${item.decision}: ${item.action} | ${item.policy} | ${item.owner} | ${item.reason}`).join("\n");
+  const blockedLines = enforcement.blocked.map((item, index) => `${index + 1}. ${item.decision}: ${item.action} | ${item.recovery}`).join("\n");
+  const escalationLines = enforcement.escalations.map((item, index) => `${index + 1}. ${item.severity}: ${item.title} | ${item.owner} | ${item.due} | ${item.receipt}`).join("\n");
+  const recoveryLines = enforcement.recoveries.map((item) => `${item.step}. ${item.title} | ${item.owner} | ${item.detail}`).join("\n");
+  const actionLines = enforcement.actions.map((action) => `${action.step}. ${action.title} | ${action.mode} | ${action.detail}`).join("\n");
+  const receiptLines = enforcement.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Policy Enforcement Agent",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${enforcement.statusLabel}`,
+    `Enforcement score: ${enforcement.score}%`,
+    `Queue actions: ${enforcement.queue.length}`,
+    `Allowed actions: ${enforcement.allowedCount}`,
+    `Blocked or gated actions: ${enforcement.blockedCount}`,
+    `Owner escalations: ${enforcement.escalations.length}`,
+    "",
+    "Enforcement queue:",
+    queueLines,
+    "",
+    "Blocked action monitor:",
+    blockedLines || "No blocked learning actions.",
+    "",
+    "Owner escalations:",
+    escalationLines || "No owner escalations.",
+    "",
+    "Recovery paths:",
+    recoveryLines,
+    "",
+    "Agent actions:",
+    actionLines,
+    "",
+    "Receipts:",
+    receiptLines || "No enforcement receipts yet.",
+    "",
+    "Enforcement rule:",
+    "- Policy is not advice; it is a gate.",
+    "- Allowed actions require a receipt before execution.",
+    "- Gated, blocked, or escalated actions cannot change local memory, reward weights, buyer-facing language, or network learning until the named owner clears the recovery path.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -14792,6 +15368,13 @@ function exportCsv() {
     "Policy Stop Conditions",
     "Policy Simulations",
     "Policy Receipts",
+    "Enforcement Status",
+    "Enforcement Score",
+    "Enforcement Queue",
+    "Enforcement Allowed",
+    "Enforcement Blocked",
+    "Enforcement Escalations",
+    "Enforcement Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -14823,6 +15406,7 @@ function exportCsv() {
     const evaluation = evaluationLabSnapshot();
     const ledger = learningLedgerSnapshot();
     const policy = learningPolicySnapshot();
+    const enforcement = policyEnforcementSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -14939,6 +15523,13 @@ function exportCsv() {
       policy.openStopCount,
       policy.simulations.length,
       policy.receipts.length,
+      enforcement.statusLabel,
+      `${enforcement.score}%`,
+      enforcement.queue.length,
+      enforcement.allowedCount,
+      enforcement.blockedCount,
+      enforcement.escalations.length,
+      enforcement.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -14980,6 +15571,7 @@ function exportReviewPack() {
   const evaluation = evaluationLabSnapshot();
   const ledger = learningLedgerSnapshot();
   const policy = learningPolicySnapshot();
+  const enforcement = policyEnforcementSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -14997,7 +15589,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v30</h1>
+        <h1>AnswerSeal Review Pack v31</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -16283,6 +16875,121 @@ function exportReviewPack() {
         </table>
         <h2>Policy Digest</h2>
         <pre>${escapeHtml(learningPolicyDigestText(policy))}</pre>
+        <h2>Policy Enforcement Agent</h2>
+        <p>Status: ${escapeHtml(enforcement.statusLabel)} | Enforcement score: ${enforcement.score}% | Queue: ${enforcement.queue.length} | Allowed: ${enforcement.allowedCount} | Blocked or gated: ${enforcement.blockedCount} | Escalations: ${enforcement.escalations.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Policy</th>
+              <th>Decision</th>
+              <th>Owner</th>
+              <th>Recovery</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${enforcement.queue
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.action)}</td>
+                    <td>${escapeHtml(item.policy)}</td>
+                    <td class="${item.decision === "Allowed" ? "ok" : "risk"}">${escapeHtml(item.decision)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.recovery)}</td>
+                    <td>${escapeHtml(item.reason)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Blocked Action Monitor</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Decision</th>
+              <th>Policy</th>
+              <th>Recovery</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${
+              enforcement.blocked.length > 0
+                ? enforcement.blocked
+                    .map(
+                      (item) => `
+                        <tr>
+                          <td>${escapeHtml(item.action)}</td>
+                          <td class="risk">${escapeHtml(item.decision)}</td>
+                          <td>${escapeHtml(item.policy)}</td>
+                          <td>${escapeHtml(item.recovery)}</td>
+                        </tr>
+                      `,
+                    )
+                    .join("")
+                : "<tr><td colspan=\"4\">No blocked learning actions.</td></tr>"
+            }
+          </tbody>
+        </table>
+        <h2>Owner Escalations</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Escalation</th>
+              <th>Owner</th>
+              <th>Severity</th>
+              <th>Due</th>
+              <th>Receipt</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${
+              enforcement.escalations.length > 0
+                ? enforcement.escalations
+                    .map(
+                      (item) => `
+                        <tr>
+                          <td>${escapeHtml(item.title)}<br />${escapeHtml(item.detail)}</td>
+                          <td>${escapeHtml(item.owner)}</td>
+                          <td class="${item.severity === "High" ? "risk" : "ok"}">${escapeHtml(item.severity)}</td>
+                          <td>${escapeHtml(item.due)}</td>
+                          <td>${escapeHtml(item.receipt)}</td>
+                        </tr>
+                      `,
+                    )
+                    .join("")
+                : "<tr><td colspan=\"5\">No owner escalations.</td></tr>"
+            }
+          </tbody>
+        </table>
+        <h2>Enforcement Recovery Paths</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${enforcement.recoveries
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.step)} ${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Enforcement Digest</h2>
+        <pre>${escapeHtml(policyEnforcementDigestText(enforcement))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -16995,7 +17702,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v30 created with learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v31 created with policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -17020,7 +17727,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v30 exported.");
+  showToast("Review Pack v31 exported.");
 }
 
 function toCsv(rows) {
@@ -17091,6 +17798,7 @@ function serializeWorkspace() {
     evaluationActions: state.evaluationActions,
     ledgerActions: state.ledgerActions,
     policyActions: state.policyActions,
+    enforcementActions: state.enforcementActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -17132,6 +17840,7 @@ function resetWorkspace() {
   closeEvaluationLab(false);
   closeLearningLedger(false);
   closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
   closeWorkspace(false);
   closeLibrary();
   render();
