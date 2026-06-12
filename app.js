@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.37 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v37";
+const BUILD_VERSION = "v0.38 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v38";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v37",
   "answerseal.workspace.v36",
   "answerseal.workspace.v35",
   "answerseal.workspace.v34",
@@ -723,6 +724,8 @@ function createInitialState() {
     feedbackActions: createInitialFeedbackActions(),
     optimizerOpen: false,
     optimizerActions: createInitialOptimizerActions(),
+    releaseTrainOpen: false,
+    releaseTrainActions: createInitialReleaseTrainActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -937,6 +940,17 @@ function createInitialOptimizerActions() {
   };
 }
 
+function createInitialReleaseTrainActions() {
+  return {
+    status: "Draft",
+    packagedAt: null,
+    scheduledAt: null,
+    monitoredAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1073,6 +1087,7 @@ function loadWorkspaceState() {
       enforcementActions: normalizeEnforcementActions(workspace.enforcementActions ?? fresh.enforcementActions),
       feedbackActions: normalizeFeedbackActions(workspace.feedbackActions ?? fresh.feedbackActions),
       optimizerActions: normalizeOptimizerActions(workspace.optimizerActions ?? fresh.optimizerActions),
+      releaseTrainActions: normalizeReleaseTrainActions(workspace.releaseTrainActions ?? fresh.releaseTrainActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1105,6 +1120,7 @@ function loadWorkspaceState() {
       enforcementOpen: false,
       feedbackOpen: false,
       optimizerOpen: false,
+      releaseTrainOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1715,6 +1731,27 @@ function normalizeOptimizerReceipt(receipt) {
   };
 }
 
+function normalizeReleaseTrainActions(actions) {
+  const status = ["Draft", "Candidates packaged", "Rollout scheduled", "Adoption monitored"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    packagedAt: actions?.packagedAt ?? null,
+    scheduledAt: actions?.scheduledAt ?? null,
+    monitoredAt: actions?.monitoredAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeReleaseTrainReceipt) : [],
+  };
+}
+
+function normalizeReleaseTrainReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `release-train-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Release train action"),
+    detail: String(receipt?.detail ?? "Autonomous trust release train action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1765,6 +1802,7 @@ const elements = {
   enforcementNavButton: document.querySelector("#enforcementNavButton"),
   feedbackNavButton: document.querySelector("#feedbackNavButton"),
   optimizerNavButton: document.querySelector("#optimizerNavButton"),
+  releaseTrainNavButton: document.querySelector("#releaseTrainNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2272,6 +2310,24 @@ const elements = {
   simulateOptimizerButton: document.querySelector("#simulateOptimizerButton"),
   approveOptimizerButton: document.querySelector("#approveOptimizerButton"),
   copyOptimizerDigestButton: document.querySelector("#copyOptimizerDigestButton"),
+  releaseTrainBackdrop: document.querySelector("#releaseTrainBackdrop"),
+  releaseTrainDrawer: document.querySelector("#releaseTrainDrawer"),
+  closeReleaseTrainButton: document.querySelector("#closeReleaseTrainButton"),
+  releaseTrainScore: document.querySelector("#releaseTrainScore"),
+  releaseCandidateCount: document.querySelector("#releaseCandidateCount"),
+  rolloutStageCount: document.querySelector("#rolloutStageCount"),
+  rollbackEvidenceCount: document.querySelector("#rollbackEvidenceCount"),
+  releaseTrainStatus: document.querySelector("#releaseTrainStatus"),
+  releaseCandidateList: document.querySelector("#releaseCandidateList"),
+  releaseCalendarList: document.querySelector("#releaseCalendarList"),
+  releaseAdoptionList: document.querySelector("#releaseAdoptionList"),
+  releaseRollbackList: document.querySelector("#releaseRollbackList"),
+  releaseTrainReceiptList: document.querySelector("#releaseTrainReceiptList"),
+  releaseTrainDigest: document.querySelector("#releaseTrainDigest"),
+  packageReleaseButton: document.querySelector("#packageReleaseButton"),
+  scheduleReleaseButton: document.querySelector("#scheduleReleaseButton"),
+  monitorReleaseButton: document.querySelector("#monitorReleaseButton"),
+  copyReleaseTrainDigestButton: document.querySelector("#copyReleaseTrainDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2394,6 +2450,7 @@ function bindEvents() {
   elements.enforcementNavButton.addEventListener("click", openPolicyEnforcementAgent);
   elements.feedbackNavButton.addEventListener("click", openGovernanceFeedbackLoop);
   elements.optimizerNavButton.addEventListener("click", openContinuousTrustOptimizer);
+  elements.releaseTrainNavButton.addEventListener("click", openAutonomousTrustReleaseTrain);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2461,6 +2518,7 @@ function bindEvents() {
     renderPolicyEnforcementAgent();
     renderGovernanceFeedbackLoop();
     renderContinuousTrustOptimizer();
+    renderAutonomousTrustReleaseTrain();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2607,6 +2665,12 @@ function bindEvents() {
   elements.simulateOptimizerButton.addEventListener("click", simulateContinuousTrustExperiments);
   elements.approveOptimizerButton.addEventListener("click", approveContinuousTrustRollout);
   elements.copyOptimizerDigestButton.addEventListener("click", copyContinuousTrustOptimizerDigest);
+  elements.closeReleaseTrainButton.addEventListener("click", closeAutonomousTrustReleaseTrain);
+  elements.releaseTrainBackdrop.addEventListener("click", closeAutonomousTrustReleaseTrain);
+  elements.packageReleaseButton.addEventListener("click", packageAutonomousTrustRelease);
+  elements.scheduleReleaseButton.addEventListener("click", scheduleAutonomousTrustRelease);
+  elements.monitorReleaseButton.addEventListener("click", monitorAutonomousTrustRelease);
+  elements.copyReleaseTrainDigestButton.addEventListener("click", copyAutonomousTrustReleaseTrainDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2674,6 +2738,7 @@ function bindEvents() {
     if (state.enforcementOpen) closePolicyEnforcementAgent();
     if (state.feedbackOpen) closeGovernanceFeedbackLoop();
     if (state.optimizerOpen) closeContinuousTrustOptimizer();
+    if (state.releaseTrainOpen) closeAutonomousTrustReleaseTrain();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2708,6 +2773,7 @@ function applyInitialHash() {
   if (hash === "enforce" || hash === "enforcement" || hash === "policy-enforcement" || hash === "enforcement-agent") openPolicyEnforcementAgent();
   if (hash === "feedback" || hash === "governance-feedback" || hash === "feedback-loop" || hash === "governance-loop") openGovernanceFeedbackLoop();
   if (hash === "optimizer" || hash === "optimizations" || hash === "continuous-trust" || hash === "trust-optimizer") openContinuousTrustOptimizer();
+  if (hash === "release" || hash === "release-train" || hash === "trust-release" || hash === "release-candidates") openAutonomousTrustReleaseTrain();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2756,6 +2822,7 @@ function render() {
   renderPolicyEnforcementAgent();
   renderGovernanceFeedbackLoop();
   renderContinuousTrustOptimizer();
+  renderAutonomousTrustReleaseTrain();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3488,6 +3555,7 @@ function activateWorkspaceNav(target) {
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3539,6 +3607,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.optimizerNavButton && state.optimizerOpen) {
     closeContinuousTrustOptimizer(false);
   }
+  if (activeButton !== elements.releaseTrainNavButton && state.releaseTrainOpen) {
+    closeAutonomousTrustReleaseTrain(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3562,6 +3633,7 @@ function setActiveNav(activeButton) {
     elements.enforcementNavButton,
     elements.feedbackNavButton,
     elements.optimizerNavButton,
+    elements.releaseTrainNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4492,6 +4564,7 @@ function openGovernanceFeedbackLoop() {
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
   closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4540,6 +4613,7 @@ function openContinuousTrustOptimizer() {
   closeLearningPolicyGovernor(false);
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
+  closeAutonomousTrustReleaseTrain(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4568,6 +4642,55 @@ function closeContinuousTrustOptimizer(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openAutonomousTrustReleaseTrain() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.releaseTrainOpen = true;
+  setActiveNav(elements.releaseTrainNavButton);
+  elements.releaseTrainBackdrop.hidden = false;
+  elements.releaseTrainDrawer.classList.add("is-open");
+  elements.releaseTrainDrawer.setAttribute("aria-hidden", "false");
+  renderAutonomousTrustReleaseTrain();
+}
+
+function closeAutonomousTrustReleaseTrain(activateReview = true) {
+  if (!state.releaseTrainOpen && elements.releaseTrainDrawer.getAttribute("aria-hidden") === "true") return;
+  state.releaseTrainOpen = false;
+  elements.releaseTrainDrawer.classList.remove("is-open");
+  elements.releaseTrainDrawer.setAttribute("aria-hidden", "true");
+  elements.releaseTrainBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -4580,6 +4703,7 @@ function openAnalytics() {
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -14257,6 +14381,366 @@ function continuousTrustOptimizerDigestText(optimizer = continuousTrustOptimizer
   ].join("\n");
 }
 
+function renderAutonomousTrustReleaseTrain() {
+  const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+
+  elements.releaseTrainScore.textContent = `${releaseTrain.score}%`;
+  elements.releaseCandidateCount.textContent = releaseTrain.candidates.length;
+  elements.rolloutStageCount.textContent = releaseTrain.calendar.length;
+  elements.rollbackEvidenceCount.textContent = releaseTrain.rollback.length;
+  elements.releaseTrainStatus.textContent = releaseTrain.statusLabel;
+  elements.releaseTrainDigest.textContent = autonomousTrustReleaseTrainDigestText(releaseTrain);
+
+  elements.releaseCandidateList.innerHTML = "";
+  releaseTrain.candidates.forEach((candidate) => {
+    const card = document.createElement("article");
+    card.className = `release-candidate-card ${candidate.status === "Held" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(candidate.version)}</span>
+          <strong>${escapeHtml(candidate.title)}</strong>
+        </div>
+        <b>${escapeHtml(candidate.status)}</b>
+      </header>
+      <p>${escapeHtml(candidate.detail)}</p>
+      <footer>
+        <span>${escapeHtml(candidate.scope)}</span>
+        <span>${escapeHtml(candidate.owner)}</span>
+        <span>${escapeHtml(candidate.impact)}</span>
+      </footer>
+    `;
+    elements.releaseCandidateList.append(card);
+  });
+
+  elements.releaseCalendarList.innerHTML = "";
+  releaseTrain.calendar.forEach((stage) => {
+    const card = document.createElement("article");
+    card.className = `release-calendar-card ${stage.status === "Blocked" || stage.status === "Hold" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(stage.window)}</span>
+          <strong>${escapeHtml(stage.stage)}</strong>
+        </div>
+        <b>${escapeHtml(stage.status)}</b>
+      </header>
+      <p>${escapeHtml(stage.detail)}</p>
+      <footer>
+        <span>${escapeHtml(stage.gate)}</span>
+        <span>${escapeHtml(stage.owner)}</span>
+      </footer>
+    `;
+    elements.releaseCalendarList.append(card);
+  });
+
+  elements.releaseAdoptionList.innerHTML = "";
+  releaseTrain.adoption.forEach((signal) => {
+    const card = document.createElement("article");
+    card.className = `release-adoption-card ${signal.status !== "Healthy" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(signal.title)}</strong>
+        <b>${escapeHtml(signal.value)}</b>
+      </header>
+      <p>${escapeHtml(signal.detail)}</p>
+      <span>${escapeHtml(signal.status)}</span>
+    `;
+    elements.releaseAdoptionList.append(card);
+  });
+
+  elements.releaseRollbackList.innerHTML = "";
+  releaseTrain.rollback.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `release-rollback-card ${item.status !== "Ready" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.title)}</strong>
+        <b>${escapeHtml(item.status)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.trigger)}</span>
+        <span>${escapeHtml(item.owner)}</span>
+      </footer>
+    `;
+    elements.releaseRollbackList.append(card);
+  });
+
+  elements.releaseTrainReceiptList.innerHTML = "";
+  if (releaseTrain.receipts.length === 0) {
+    elements.releaseTrainReceiptList.append(emptyState("No release train receipts yet"));
+  }
+  releaseTrain.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "release-train-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.releaseTrainReceiptList.append(card);
+  });
+}
+
+function autonomousTrustReleaseTrainSnapshot() {
+  const optimizer = continuousTrustOptimizerSnapshot();
+  const candidates = releaseTrainCandidates(optimizer);
+  const calendar = releaseTrainCalendar(candidates, optimizer);
+  const adoption = releaseTrainAdoptionSignals(candidates, optimizer);
+  const rollback = releaseTrainRollbackEvidence(candidates, calendar, optimizer);
+  const openRollback = rollback.filter((item) => item.status !== "Ready").length;
+  const readyStages = calendar.filter((stage) => stage.status === "Ready" || stage.status === "Scheduled").length;
+  const healthyAdoption = adoption.filter((signal) => signal.status === "Healthy").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        optimizer.score * 0.28
+          + Math.min(100, candidates.filter((candidate) => candidate.status === "Ready").length * 25) * 0.22
+          + Math.min(100, readyStages * 20) * 0.2
+          + Math.min(100, healthyAdoption * 25) * 0.18
+          + Math.max(0, 100 - openRollback * 22) * 0.12,
+      ),
+    ),
+  );
+  const statusLabel = state.releaseTrainActions.status === "Draft" ? "Ready to package release candidates" : state.releaseTrainActions.status;
+
+  return {
+    score,
+    statusLabel,
+    candidates,
+    calendar,
+    adoption,
+    rollback,
+    optimizer,
+    receipts: state.releaseTrainActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function releaseTrainCandidates(optimizer) {
+  const readyExperiments = optimizer.experiments.filter((experiment) => experiment.status === "Ready").length;
+  const openGuardrails = optimizer.guardrails.filter((guardrail) => guardrail.status !== "Pass").length;
+  return optimizer.candidates.slice(0, 4).map((candidate, index) => {
+    const canRelease = candidate.decision !== "Hold" && readyExperiments > 0 && openGuardrails === 0;
+    const status = canRelease ? "Ready" : candidate.decision === "Hold" ? "Held" : "Pilot";
+    return {
+      version: `RC-${String(index + 1).padStart(3, "0")}`,
+      title: candidate.title,
+      scope: candidate.risk === "Tenant-only" ? "Tenant local" : candidate.risk === "Aggregate only" ? "Aggregate network" : "Governed workspace",
+      owner: candidate.risk === "Privacy gate" || candidate.risk === "Aggregate only" ? "Legal" : candidate.risk === "Owner routing" ? "Sales Engineering" : "AI Governance",
+      impact: candidate.expectedLift,
+      status,
+      detail: `${candidate.driver} release candidate uses ${candidate.decision.toLowerCase()} decision and ${candidate.score}% optimizer score.`,
+    };
+  });
+}
+
+function releaseTrainCalendar(candidates, optimizer) {
+  const readyCount = candidates.filter((candidate) => candidate.status === "Ready").length;
+  const pilotCount = candidates.filter((candidate) => candidate.status === "Pilot").length;
+  const heldCount = candidates.filter((candidate) => candidate.status === "Held").length;
+  const blocked = optimizer.guardrails.some((guardrail) => guardrail.status === "Block");
+  return [
+    {
+      stage: "Package release candidate",
+      window: "Day 0",
+      status: candidates.length > 0 ? "Ready" : "Hold",
+      owner: "AI Governance",
+      gate: "Candidate summary",
+      detail: `${candidates.length} optimizer candidates are bundled with scope, owner, impact, and rollback notes.`,
+    },
+    {
+      stage: "Pilot release",
+      window: "Day 1-2",
+      status: readyCount + pilotCount > 0 ? "Scheduled" : "Hold",
+      owner: "Trust Lead",
+      gate: "Draft-only baseline",
+      detail: `${readyCount + pilotCount} candidates can run in pilot while buyer-facing production behavior stays controlled.`,
+    },
+    {
+      stage: "Production release",
+      window: "Day 3-5",
+      status: blocked || heldCount > 1 ? "Blocked" : "Ready",
+      owner: "Security",
+      gate: "Guardrail pass",
+      detail: blocked ? "Production waits because an optimizer guardrail is blocked." : "Production release can proceed after owner receipt and rollback evidence review.",
+    },
+    {
+      stage: "Network-safe release",
+      window: "Day 6",
+      status: optimizer.candidates.some((candidate) => candidate.risk === "Aggregate only" && candidate.decision !== "Hold") ? "Ready" : "Hold",
+      owner: "Legal",
+      gate: "Aggregate-only proof",
+      detail: "Network-safe release includes only aggregate labels and excludes raw evidence, buyer text, prompts, or customer names.",
+    },
+  ];
+}
+
+function releaseTrainAdoptionSignals(candidates, optimizer) {
+  const ready = candidates.filter((candidate) => candidate.status === "Ready").length;
+  const held = candidates.filter((candidate) => candidate.status === "Held").length;
+  const scheduled = optimizer.rollout.filter((step) => step.status !== "Blocked" && step.status !== "Hold").length;
+  return [
+    {
+      title: "Reviewer adoption",
+      value: `${Math.min(100, 54 + ready * 14)}%`,
+      status: ready > 0 ? "Healthy" : "Watch",
+      detail: "Reviewers can see which trust behavior changed, why it changed, and where to reverse it.",
+    },
+    {
+      title: "Answer quality lift",
+      value: `+${Math.max(1, Math.round(optimizer.score / 18))}`,
+      status: optimizer.score >= 75 ? "Healthy" : "Watch",
+      detail: "Adoption is healthy only when optimization raises quality without lowering evidence coverage.",
+    },
+    {
+      title: "Owner intervention",
+      value: `${held} held`,
+      status: held <= 1 ? "Healthy" : "Watch",
+      detail: "Held candidates remain visible so owners can clear policy, privacy, drift, or calibration blockers.",
+    },
+    {
+      title: "Rollout readiness",
+      value: `${scheduled}/${optimizer.rollout.length}`,
+      status: scheduled >= 3 ? "Healthy" : "Watch",
+      detail: "The release train promotes only stages that have receipts, gates, and rollback paths.",
+    },
+  ];
+}
+
+function releaseTrainRollbackEvidence(candidates, calendar, optimizer) {
+  const productionBlocked = calendar.some((stage) => stage.stage === "Production release" && stage.status === "Blocked");
+  return [
+    {
+      title: "Candidate scope snapshot",
+      status: candidates.length > 0 ? "Ready" : "Missing",
+      owner: "AI Governance",
+      trigger: "Scope mismatch",
+      detail: "Each release candidate stores scope, owner, impact, and decision so the team knows what to reverse.",
+    },
+    {
+      title: "Baseline comparison",
+      status: optimizer.experiments.some((experiment) => experiment.status === "Ready") ? "Ready" : "Missing",
+      owner: "Security",
+      trigger: "Quality regression",
+      detail: "Draft and policy sandbox results are retained as the rollback baseline for production behavior.",
+    },
+    {
+      title: "Buyer-safe explanation",
+      status: "Ready",
+      owner: "Sales Engineering",
+      trigger: "Buyer concern",
+      detail: "External explanation describes the governance process without exposing internal prompts, files, or customer-specific evidence.",
+    },
+    {
+      title: "Rollback decision path",
+      status: productionBlocked ? "Ready" : "Ready",
+      owner: "Trust Lead",
+      trigger: productionBlocked ? "Blocked guardrail" : "Owner request",
+      detail: productionBlocked ? "Production stays held until guardrails pass." : "Owner can pause, revert, or keep the release with recorded reason.",
+    },
+  ];
+}
+
+function packageAutonomousTrustRelease() {
+  const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+  const detail = `Packaged ${releaseTrain.candidates.length} trust release candidates with ${releaseTrain.score}% release train score and ${releaseTrain.rollback.filter((item) => item.status === "Ready").length} rollback evidence items ready.`;
+  state.releaseTrainActions.status = "Candidates packaged";
+  state.releaseTrainActions.packagedAt = new Date().toISOString();
+  addReleaseTrainReceipt("Release candidates packaged", detail);
+  addAudit("Release candidates packaged", detail);
+  renderAutonomousTrustReleaseTrain();
+  renderAudit();
+  showToast("Release candidates packaged.");
+}
+
+function scheduleAutonomousTrustRelease() {
+  const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+  const readyStages = releaseTrain.calendar.filter((stage) => stage.status === "Ready" || stage.status === "Scheduled").length;
+  const detail = `Scheduled ${readyStages}/${releaseTrain.calendar.length} rollout stages with ${releaseTrain.candidates.filter((candidate) => candidate.status !== "Held").length} candidates eligible for pilot or production.`;
+  state.releaseTrainActions.status = "Rollout scheduled";
+  state.releaseTrainActions.scheduledAt = new Date().toISOString();
+  addReleaseTrainReceipt("Rollout scheduled", detail);
+  addAudit("Release train scheduled", detail);
+  render();
+  showToast("Release train scheduled.");
+}
+
+function monitorAutonomousTrustRelease() {
+  const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+  const healthy = releaseTrain.adoption.filter((signal) => signal.status === "Healthy").length;
+  const detail = `Monitored ${releaseTrain.adoption.length} adoption signals with ${healthy} healthy and ${releaseTrain.rollback.length} rollback evidence records available.`;
+  state.releaseTrainActions.status = "Adoption monitored";
+  state.releaseTrainActions.monitoredAt = new Date().toISOString();
+  addReleaseTrainReceipt("Adoption monitored", detail);
+  addAudit("Release adoption monitored", detail);
+  render();
+  showToast("Release adoption monitored.");
+}
+
+function copyAutonomousTrustReleaseTrainDigest() {
+  const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+  state.releaseTrainActions.lastCopiedAt = new Date().toISOString();
+  addReleaseTrainReceipt("Release train digest copied", "Autonomous trust release train digest copied.");
+  addAudit("Release train digest copied", "Autonomous trust release train digest copied.");
+  renderAutonomousTrustReleaseTrain();
+  renderAudit();
+  copyText(autonomousTrustReleaseTrainDigestText(releaseTrain), "Release train digest copied.");
+}
+
+function addReleaseTrainReceipt(action, detail) {
+  state.releaseTrainActions.receipts = [
+    ...(state.releaseTrainActions.receipts ?? []),
+    {
+      id: `release-train-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function autonomousTrustReleaseTrainDigestText(releaseTrain = autonomousTrustReleaseTrainSnapshot()) {
+  const candidateLines = releaseTrain.candidates.map((item, index) => `${index + 1}. ${item.version}: ${item.status} | ${item.title} | ${item.scope} | ${item.impact}`).join("\n");
+  const calendarLines = releaseTrain.calendar.map((item, index) => `${index + 1}. ${item.status}: ${item.stage} | ${item.window} | ${item.gate} | ${item.owner}`).join("\n");
+  const adoptionLines = releaseTrain.adoption.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.value} | ${item.detail}`).join("\n");
+  const rollbackLines = releaseTrain.rollback.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.trigger} | ${item.owner} | ${item.detail}`).join("\n");
+  const receiptLines = releaseTrain.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Autonomous Trust Release Train",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${releaseTrain.statusLabel}`,
+    `Release train score: ${releaseTrain.score}%`,
+    `Release candidates: ${releaseTrain.candidates.length}`,
+    `Rollout stages: ${releaseTrain.calendar.length}`,
+    `Rollback evidence: ${releaseTrain.rollback.length}`,
+    "",
+    "Release candidates:",
+    candidateLines,
+    "",
+    "Rollout calendar:",
+    calendarLines,
+    "",
+    "Adoption monitor:",
+    adoptionLines,
+    "",
+    "Rollback evidence:",
+    rollbackLines,
+    "",
+    "Receipts:",
+    receiptLines || "No release train receipts yet.",
+    "",
+    "Release train rule:",
+    "- Optimizations become release candidates only with scope, owner, impact, and rollback notes.",
+    "- Pilot and production rollout require gates, adoption monitoring, and buyer-safe rollback evidence.",
+    "- Network-safe rollout remains aggregate-only unless customer policy permits more.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -16513,6 +16997,13 @@ function exportCsv() {
     "Optimizer Open Guardrails",
     "Optimizer Rollout Steps",
     "Optimizer Receipts",
+    "Release Train Status",
+    "Release Train Score",
+    "Release Candidates",
+    "Rollout Stages",
+    "Adoption Healthy",
+    "Rollback Evidence",
+    "Release Train Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -16547,6 +17038,7 @@ function exportCsv() {
     const enforcement = policyEnforcementSnapshot();
     const feedback = governanceFeedbackSnapshot();
     const optimizer = continuousTrustOptimizerSnapshot();
+    const releaseTrain = autonomousTrustReleaseTrainSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -16684,6 +17176,13 @@ function exportCsv() {
       optimizer.guardrails.filter((guardrail) => guardrail.status !== "Pass").length,
       optimizer.rollout.length,
       optimizer.receipts.length,
+      releaseTrain.statusLabel,
+      `${releaseTrain.score}%`,
+      releaseTrain.candidates.length,
+      releaseTrain.calendar.length,
+      releaseTrain.adoption.filter((signal) => signal.status === "Healthy").length,
+      releaseTrain.rollback.length,
+      releaseTrain.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -16728,6 +17227,7 @@ function exportReviewPack() {
   const enforcement = policyEnforcementSnapshot();
   const feedback = governanceFeedbackSnapshot();
   const optimizer = continuousTrustOptimizerSnapshot();
+  const releaseTrain = autonomousTrustReleaseTrainSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -16745,7 +17245,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v33</h1>
+        <h1>AnswerSeal Review Pack v34</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -18364,6 +18864,115 @@ function exportReviewPack() {
         </table>
         <h2>Optimizer Digest</h2>
         <pre>${escapeHtml(continuousTrustOptimizerDigestText(optimizer))}</pre>
+        <h2>Autonomous Trust Release Train</h2>
+        <p>Status: ${escapeHtml(releaseTrain.statusLabel)} | Release train score: ${releaseTrain.score}% | Candidates: ${releaseTrain.candidates.length} | Rollout stages: ${releaseTrain.calendar.length} | Healthy adoption signals: ${releaseTrain.adoption.filter((signal) => signal.status === "Healthy").length}/${releaseTrain.adoption.length} | Rollback evidence: ${releaseTrain.rollback.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Scope</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Impact</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${releaseTrain.candidates
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.version)} ${escapeHtml(item.title)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.scope)}</td>
+                    <td class="${item.status === "Held" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.impact)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Rollout Calendar</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Window</th>
+              <th>Status</th>
+              <th>Gate</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${releaseTrain.calendar
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.stage)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.window)}</td>
+                    <td class="${item.status === "Blocked" || item.status === "Hold" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.gate)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Adoption Monitor</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Value</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${releaseTrain.adoption
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.value)}</td>
+                    <td class="${item.status === "Healthy" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Rollback Evidence</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Evidence</th>
+              <th>Status</th>
+              <th>Trigger</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${releaseTrain.rollback
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Ready" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.trigger)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Release Train Digest</h2>
+        <pre>${escapeHtml(autonomousTrustReleaseTrainDigestText(releaseTrain))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -19076,7 +19685,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v33 created with continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v34 created with autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -19098,12 +19707,13 @@ function exportReviewPack() {
   renderLearningLedger();
   renderGovernanceFeedbackLoop();
   renderContinuousTrustOptimizer();
+  renderAutonomousTrustReleaseTrain();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v33 exported.");
+  showToast("Review Pack v34 exported.");
 }
 
 function toCsv(rows) {
@@ -19177,6 +19787,7 @@ function serializeWorkspace() {
     enforcementActions: state.enforcementActions,
     feedbackActions: state.feedbackActions,
     optimizerActions: state.optimizerActions,
+    releaseTrainActions: state.releaseTrainActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -19221,6 +19832,7 @@ function resetWorkspace() {
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
   closeWorkspace(false);
   closeLibrary();
   render();

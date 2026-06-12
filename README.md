@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.37 Alpha
+**Current version:** v0.38 Alpha
 
-**Current phase:** Continuous Trust Optimizer
+**Current phase:** Autonomous Trust Release Train
 
 ## Brand
 
@@ -183,6 +183,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Benefit guardrails for proof quality, privacy boundary, measured benefit, and experiment readiness
 - Customer-safe rollout plan that moves improvements from draft to pilot to production with owner receipts and rollback reasoning
 - Optimizer digest for explaining which feedback became a tested improvement and why production rollout is allowed or held
+- Autonomous Trust Release Train drawer with release score, candidates, rollout stages, rollback evidence, release status, digest, and receipts
+- Release candidates that package approved optimizations with scope, owner, impact, status, and rollback notes
+- Rollout calendar for pilot, production, and network-safe stages with gates and owners
+- Adoption monitor for reviewer adoption, answer quality lift, owner intervention, and rollout readiness
+- Rollback evidence for candidate scope, baseline comparison, buyer-safe explanation, and rollback decision path
+- Release train digest for explaining which optimization shipped, which gate passed, and how the team can reverse it
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -203,7 +209,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v33 export with continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v34 export with autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -221,13 +227,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.38 Alpha - Autonomous Trust Release Train
+## Next Phase: v0.39 Alpha - Trust Operations Command Center
 
-- Bundle approved optimizations into release candidates with owners, scope, impact, and rollback notes
-- Schedule pilot, production, and network-safe rollout stages with security, legal, and AI governance gates
-- Monitor adoption, answer quality, owner intervention, and benefit after rollout
-- Prepare rollback evidence and buyer-safe explanations before production release
-- Turn safe closed-loop improvements into a repeatable release train for enterprise trust operations
+- Show every active buyer review, release train, evidence gap, and trust room in one operating view
+- Expose where security, legal, AI governance, sales engineering, or operations are blocking deal velocity
+- Connect unanswered trust work to deal value, deadlines, buyer friction, and next best action
+- Record operator changes, approvals, release impact, and buyer outcomes as command receipts
+- Turn AnswerSeal into the daily control room for enterprise trust operations
 
 ## License
 

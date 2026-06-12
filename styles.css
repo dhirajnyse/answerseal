@@ -6342,6 +6342,186 @@ svg {
   white-space: pre-wrap;
 }
 
+.release-train-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, calc(100vw - 250px));
+}
+
+.release-train-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.release-train-actions {
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #f7fff0, #eef8ff);
+}
+
+.release-train-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.release-train-actions strong {
+  color: var(--accent-dark);
+}
+
+.release-train-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(247, 255, 240, 0.78), rgba(255, 255, 255, 0.98));
+}
+
+.release-train-section,
+.release-candidate-card,
+.release-calendar-card,
+.release-adoption-card,
+.release-rollback-card,
+.release-train-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.release-train-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.release-candidate-list,
+.release-calendar-list,
+.release-adoption-list,
+.release-rollback-list,
+.release-train-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.release-candidate-list,
+.release-calendar-list,
+.release-adoption-list,
+.release-rollback-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.release-candidate-card,
+.release-calendar-card,
+.release-adoption-card,
+.release-rollback-card,
+.release-train-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.release-candidate-card {
+  border-color: rgba(0, 168, 137, 0.3);
+  background: linear-gradient(180deg, rgba(246, 255, 240, 0.95), #fff);
+}
+
+.release-candidate-card.is-risk,
+.release-calendar-card.is-risk,
+.release-adoption-card.is-risk,
+.release-rollback-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.release-calendar-card,
+.release-adoption-card,
+.release-rollback-card {
+  background: #fbfffd;
+}
+
+.release-candidate-card header,
+.release-candidate-card footer,
+.release-calendar-card header,
+.release-calendar-card footer,
+.release-adoption-card header,
+.release-rollback-card header,
+.release-rollback-card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.release-candidate-card header div,
+.release-calendar-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.release-candidate-card strong,
+.release-calendar-card strong,
+.release-adoption-card strong,
+.release-rollback-card strong,
+.release-train-receipt-card strong {
+  color: var(--ink);
+}
+
+.release-candidate-card b,
+.release-calendar-card b,
+.release-adoption-card b,
+.release-rollback-card b {
+  color: var(--accent-dark);
+  font-size: 0.88rem;
+  text-align: right;
+}
+
+.release-candidate-card.is-risk b,
+.release-calendar-card.is-risk b,
+.release-adoption-card.is-risk b,
+.release-rollback-card.is-risk b {
+  color: var(--amber);
+}
+
+.release-candidate-card p,
+.release-candidate-card footer span,
+.release-calendar-card p,
+.release-calendar-card footer span,
+.release-adoption-card p,
+.release-adoption-card span,
+.release-rollback-card p,
+.release-rollback-card footer span,
+.release-train-receipt-card p,
+.release-train-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.release-train-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -8590,6 +8770,12 @@ svg {
     .optimizer-queue-list,
     .optimizer-experiment-list,
     .optimizer-guardrail-list,
+    .release-train-metrics,
+    .release-train-actions,
+    .release-candidate-list,
+    .release-calendar-list,
+    .release-adoption-list,
+    .release-rollback-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -8753,6 +8939,13 @@ svg {
     .optimizer-experiment-card footer,
     .optimizer-guardrail-card header,
     .optimizer-rollout-card,
+    .release-candidate-card header,
+    .release-candidate-card footer,
+    .release-calendar-card header,
+    .release-calendar-card footer,
+    .release-adoption-card header,
+    .release-rollback-card header,
+    .release-rollback-card footer,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

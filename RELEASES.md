@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.38 Alpha - Autonomous Trust Release Train
+
+Phase: Autonomous Trust Release Train
+
+- Added a Release drawer with release score, candidate count, rollout stage count, rollback evidence count, release status, actions, digest, and receipts.
+- Added release candidates that package approved optimizations with scope, owner, impact, status, and rollback notes.
+- Added a rollout calendar for pilot, production, and network-safe stages with gates, owners, windows, and status.
+- Added adoption monitor signals for reviewer adoption, answer quality lift, owner intervention, and rollout readiness.
+- Added rollback evidence for candidate scope snapshot, baseline comparison, buyer-safe explanation, and rollback decision path.
+- Added release train status, score, candidate count, rollout stages, healthy adoption count, rollback evidence count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v34 with release candidates, rollout calendar, adoption monitor, rollback evidence, and digest.
+- Updated the build phases page with the v0.39 Trust Operations Command Center plan.
+
 ## v0.37 Alpha - Continuous Trust Optimizer
 
 Phase: Continuous Trust Optimizer

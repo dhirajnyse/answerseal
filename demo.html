@@ -183,6 +183,10 @@
             <svg aria-hidden="true"><use href="#icon-check"></use></svg>
             <span>Optimizer</span>
           </button>
+          <button class="nav-item" id="releaseTrainNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span>Release</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -245,8 +249,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.37 Alpha</strong>
-          <span>Continuous Trust Optimizer</span>
+          <strong>v0.38 Alpha</strong>
+          <span>Autonomous Trust Release Train</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -258,7 +262,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.37 Alpha</span>
+            <span class="label">Security questionnaire | v0.38 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3022,6 +3026,111 @@
             <span>Copyable release note for security, legal, AI governance, and customer success</span>
           </div>
           <pre class="optimizer-digest" id="optimizerDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="release-train-backdrop drawer-backdrop" id="releaseTrainBackdrop" hidden></div>
+    <aside class="workspace-drawer release-train-drawer" id="releaseTrainDrawer" aria-label="Autonomous trust release train" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Autonomous Trust Release Train</span>
+          <h2>Ship approved improvements with rollback evidence</h2>
+        </div>
+        <button class="icon-button" id="closeReleaseTrainButton" type="button" aria-label="Close autonomous trust release train" title="Close autonomous trust release train">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip release-train-metrics" aria-label="Autonomous trust release health">
+        <article>
+          <span class="label">Release Score</span>
+          <strong id="releaseTrainScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Candidates</span>
+          <strong id="releaseCandidateCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Rollout Stages</span>
+          <strong id="rolloutStageCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Rollback Evidence</span>
+          <strong id="rollbackEvidenceCount">0</strong>
+        </article>
+      </section>
+
+      <section class="release-train-actions" aria-label="Autonomous trust release controls">
+        <div>
+          <span class="label">Release Status</span>
+          <strong id="releaseTrainStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="packageReleaseButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+          <span>Package</span>
+        </button>
+        <button class="secondary-button" id="scheduleReleaseButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Schedule</span>
+        </button>
+        <button class="secondary-button" id="monitorReleaseButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Monitor</span>
+        </button>
+        <button class="secondary-button" id="copyReleaseTrainDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="release-train-body">
+        <section class="release-train-section" aria-label="Release candidates">
+          <div class="section-heading">
+            <span class="label">Release Candidates</span>
+            <span>Approved optimizations become scoped candidates with owner, impact, and status</span>
+          </div>
+          <div class="release-candidate-list" id="releaseCandidateList"></div>
+        </section>
+
+        <section class="release-train-section" aria-label="Rollout calendar">
+          <div class="section-heading">
+            <span class="label">Rollout Calendar</span>
+            <span>Pilot, production, and network-safe release stages with gates</span>
+          </div>
+          <div class="release-calendar-list" id="releaseCalendarList"></div>
+        </section>
+
+        <section class="release-train-section" aria-label="Adoption monitor">
+          <div class="section-heading">
+            <span class="label">Adoption Monitor</span>
+            <span>Track reviewer adoption, answer quality, owner intervention, and rollout readiness</span>
+          </div>
+          <div class="release-adoption-list" id="releaseAdoptionList"></div>
+        </section>
+
+        <section class="release-train-section" aria-label="Rollback evidence">
+          <div class="section-heading">
+            <span class="label">Rollback Evidence</span>
+            <span>Reversal triggers and buyer-safe explanations are prepared before production</span>
+          </div>
+          <div class="release-rollback-list" id="releaseRollbackList"></div>
+        </section>
+
+        <section class="release-train-section" aria-label="Release train receipts">
+          <div class="section-heading">
+            <span class="label">Release Receipts</span>
+            <span>Proof that packaging, scheduling, and monitoring were controlled</span>
+          </div>
+          <div class="release-train-receipt-list" id="releaseTrainReceiptList"></div>
+        </section>
+
+        <section class="release-train-section" aria-label="Release train digest">
+          <div class="section-heading">
+            <span class="label">Release Train Digest</span>
+            <span>Copyable rollout note for security, legal, AI governance, and customer success</span>
+          </div>
+          <pre class="release-train-digest" id="releaseTrainDigest"></pre>
         </section>
       </section>
     </aside>
