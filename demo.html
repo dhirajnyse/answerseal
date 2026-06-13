@@ -195,6 +195,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Revenue</span>
           </button>
+          <button class="nav-item" id="buyerGraphNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Buyer Graph</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -257,8 +261,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.40 Alpha</strong>
-          <span>Revenue Outcome Loop</span>
+          <strong>v0.41 Alpha</strong>
+          <span>Buyer Trust Graph</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -270,7 +274,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.40 Alpha</span>
+            <span class="label">Security questionnaire | v0.41 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3349,6 +3353,111 @@
             <span>Copyable learning brief for founders, trust leads, AI governance, and revenue teams</span>
           </div>
           <pre class="revenue-loop-digest" id="revenueLoopDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="buyer-graph-backdrop drawer-backdrop" id="buyerGraphBackdrop" hidden></div>
+    <aside class="workspace-drawer buyer-graph-drawer" id="buyerGraphDrawer" aria-label="Buyer trust graph" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Buyer Trust Graph</span>
+          <h2>Map buyer personas, objections, proof paths, and guardrails</h2>
+        </div>
+        <button class="icon-button" id="closeBuyerGraphButton" type="button" aria-label="Close buyer trust graph" title="Close buyer trust graph">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip buyer-graph-metrics" aria-label="Buyer trust graph health">
+        <article>
+          <span class="label">Graph Score</span>
+          <strong id="buyerGraphScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Personas</span>
+          <strong id="buyerPersonaCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Objections</span>
+          <strong id="objectionEdgeCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Guidance</span>
+          <strong id="guidancePathCount">0</strong>
+        </article>
+      </section>
+
+      <section class="buyer-graph-actions" aria-label="Buyer trust graph controls">
+        <div>
+          <span class="label">Graph Status</span>
+          <strong id="buyerGraphStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="mapBuyerGraphButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+          <span>Map</span>
+        </button>
+        <button class="secondary-button" id="guideBuyerGraphButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Guide</span>
+        </button>
+        <button class="secondary-button" id="guardBuyerGraphButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+          <span>Guard</span>
+        </button>
+        <button class="secondary-button" id="copyBuyerGraphDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="buyer-graph-body">
+        <section class="buyer-graph-section" aria-label="Buyer personas">
+          <div class="section-heading">
+            <span class="label">Persona Nodes</span>
+            <span>Security, AI governance, legal, and procurement mapped to questions, friction, and outcomes</span>
+          </div>
+          <div class="buyer-persona-list" id="buyerPersonaList"></div>
+        </section>
+
+        <section class="buyer-graph-section" aria-label="Objection edges">
+          <div class="section-heading">
+            <span class="label">Objection Edges</span>
+            <span>Buyer objections connected to proof, owners, and resolution state</span>
+          </div>
+          <div class="buyer-objection-list" id="buyerObjectionList"></div>
+        </section>
+
+        <section class="buyer-graph-section" aria-label="Guidance paths">
+          <div class="section-heading">
+            <span class="label">Guidance Paths</span>
+            <span>Shortest governed proof paths by buyer type and objection class</span>
+          </div>
+          <div class="buyer-guidance-list" id="buyerGuidanceList"></div>
+        </section>
+
+        <section class="buyer-graph-section" aria-label="Graph guardrails">
+          <div class="section-heading">
+            <span class="label">Graph Guardrails</span>
+            <span>Separate tenant-local exact memory from aggregate buyer trust patterns</span>
+          </div>
+          <div class="buyer-graph-guardrail-list" id="buyerGraphGuardrailList"></div>
+        </section>
+
+        <section class="buyer-graph-section" aria-label="Buyer graph receipts">
+          <div class="section-heading">
+            <span class="label">Graph Receipts</span>
+            <span>Proof that mapping, guidance, and guardrail checks stayed controlled</span>
+          </div>
+          <div class="buyer-graph-receipt-list" id="buyerGraphReceiptList"></div>
+        </section>
+
+        <section class="buyer-graph-section" aria-label="Buyer graph digest">
+          <div class="section-heading">
+            <span class="label">Buyer Graph Digest</span>
+            <span>Copyable graph brief for sales, security, legal, AI governance, and founders</span>
+          </div>
+          <pre class="buyer-graph-digest" id="buyerGraphDigest"></pre>
         </section>
       </section>
     </aside>

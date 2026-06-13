@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.41 Alpha - Buyer Trust Graph
+
+Phase: Buyer Trust Graph
+
+- Added a Buyer Graph drawer with graph score, persona count, objection edge count, guidance path count, graph status, actions, digest, and receipts.
+- Added buyer persona nodes for security, AI governance, legal, and procurement mapped to questions, friction, and outcomes.
+- Added objection edges that connect buyer concerns to proof, owners, resolution state, and revenue outcome context.
+- Added guidance paths that recommend governed proof sequences by buyer type and objection class.
+- Added graph guardrails that separate tenant-local exact buyer context from aggregate persona, proof, objection, and outcome patterns.
+- Added buyer graph receipts for mapped personas, prepared guidance, guardrail checks, and copied graph digests.
+- Added buyer graph status, score, persona count, objection edge count, guidance path count, guardrail pass count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v37 with persona nodes, objection edges, guidance paths, graph guardrails, and digest.
+- Updated the build phases page with the v0.42 Evidence Pack Marketplace Readiness plan.
+
 ## v0.40 Alpha - Revenue Outcome Loop
 
 Phase: Revenue Outcome Loop

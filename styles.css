@@ -6895,6 +6895,199 @@ svg {
   white-space: pre-wrap;
 }
 
+.buyer-graph-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1160px, calc(100vw - 250px));
+}
+
+.buyer-graph-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.buyer-graph-actions {
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #eefbff, #f4fff1);
+}
+
+.buyer-graph-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.buyer-graph-actions strong {
+  color: var(--blue);
+}
+
+.buyer-graph-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(238, 251, 255, 0.82), rgba(255, 255, 255, 0.98));
+}
+
+.buyer-graph-section,
+.buyer-persona-card,
+.buyer-objection-card,
+.buyer-guidance-card,
+.buyer-graph-guardrail-card,
+.buyer-graph-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.buyer-graph-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.buyer-persona-list,
+.buyer-objection-list,
+.buyer-guidance-list,
+.buyer-graph-guardrail-list,
+.buyer-graph-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.buyer-persona-list,
+.buyer-objection-list,
+.buyer-graph-guardrail-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.buyer-persona-card,
+.buyer-objection-card,
+.buyer-graph-guardrail-card,
+.buyer-graph-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.buyer-persona-card {
+  border-color: rgba(32, 192, 231, 0.34);
+  background: linear-gradient(180deg, rgba(238, 251, 255, 0.95), #fff);
+}
+
+.buyer-persona-card.is-risk,
+.buyer-objection-card.is-risk,
+.buyer-guidance-card.is-risk,
+.buyer-graph-guardrail-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.buyer-objection-card,
+.buyer-graph-guardrail-card {
+  background: #fbfffd;
+}
+
+.buyer-guidance-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+}
+
+.buyer-guidance-card > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--blue);
+  background: #e5f7ff;
+  font-weight: 900;
+}
+
+.buyer-persona-card header,
+.buyer-persona-card footer,
+.buyer-objection-card header,
+.buyer-objection-card footer,
+.buyer-graph-guardrail-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.buyer-persona-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.buyer-persona-card strong,
+.buyer-objection-card strong,
+.buyer-guidance-card strong,
+.buyer-graph-guardrail-card strong,
+.buyer-graph-receipt-card strong {
+  color: var(--ink);
+}
+
+.buyer-persona-card b,
+.buyer-objection-card b,
+.buyer-guidance-card b,
+.buyer-graph-guardrail-card b {
+  color: var(--blue);
+  font-size: 0.88rem;
+  text-align: right;
+}
+
+.buyer-persona-card.is-risk b,
+.buyer-objection-card.is-risk b,
+.buyer-guidance-card.is-risk b,
+.buyer-graph-guardrail-card.is-risk b {
+  color: var(--amber);
+}
+
+.buyer-persona-card p,
+.buyer-persona-card footer span,
+.buyer-objection-card p,
+.buyer-objection-card footer span,
+.buyer-guidance-card p,
+.buyer-graph-guardrail-card p,
+.buyer-graph-guardrail-card span,
+.buyer-graph-receipt-card p,
+.buyer-graph-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.buyer-graph-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -9160,6 +9353,11 @@ svg {
     .revenue-reward-list,
     .revenue-forecast-list,
     .revenue-pattern-list,
+    .buyer-graph-metrics,
+    .buyer-graph-actions,
+    .buyer-persona-list,
+    .buyer-objection-list,
+    .buyer-graph-guardrail-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -9343,6 +9541,12 @@ svg {
     .revenue-forecast-card footer,
     .revenue-pattern-card header,
     .revenue-pattern-card footer,
+    .buyer-persona-card header,
+    .buyer-persona-card footer,
+    .buyer-objection-card header,
+    .buyer-objection-card footer,
+    .buyer-guidance-card,
+    .buyer-graph-guardrail-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

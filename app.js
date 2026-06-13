@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.40 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v40";
+const BUILD_VERSION = "v0.41 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v41";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v40",
   "answerseal.workspace.v39",
   "answerseal.workspace.v38",
   "answerseal.workspace.v37",
@@ -732,6 +733,8 @@ function createInitialState() {
     commandCenterActions: createInitialCommandCenterActions(),
     revenueLoopOpen: false,
     revenueLoopActions: createInitialRevenueLoopActions(),
+    buyerGraphOpen: false,
+    buyerGraphActions: createInitialBuyerGraphActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -979,6 +982,17 @@ function createInitialRevenueLoopActions() {
   };
 }
 
+function createInitialBuyerGraphActions() {
+  return {
+    status: "Draft",
+    mappedAt: null,
+    guidedAt: null,
+    guardedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1118,6 +1132,7 @@ function loadWorkspaceState() {
       releaseTrainActions: normalizeReleaseTrainActions(workspace.releaseTrainActions ?? fresh.releaseTrainActions),
       commandCenterActions: normalizeCommandCenterActions(workspace.commandCenterActions ?? fresh.commandCenterActions),
       revenueLoopActions: normalizeRevenueLoopActions(workspace.revenueLoopActions ?? fresh.revenueLoopActions),
+      buyerGraphActions: normalizeBuyerGraphActions(workspace.buyerGraphActions ?? fresh.buyerGraphActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1153,6 +1168,7 @@ function loadWorkspaceState() {
       releaseTrainOpen: false,
       commandCenterOpen: false,
       revenueLoopOpen: false,
+      buyerGraphOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1826,6 +1842,27 @@ function normalizeRevenueLoopReceipt(receipt) {
   };
 }
 
+function normalizeBuyerGraphActions(actions) {
+  const status = ["Draft", "Personas mapped", "Guidance prepared", "Guardrails checked"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    mappedAt: actions?.mappedAt ?? null,
+    guidedAt: actions?.guidedAt ?? null,
+    guardedAt: actions?.guardedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeBuyerGraphReceipt) : [],
+  };
+}
+
+function normalizeBuyerGraphReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `buyer-graph-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Buyer graph action"),
+    detail: String(receipt?.detail ?? "Buyer trust graph action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1879,6 +1916,7 @@ const elements = {
   releaseTrainNavButton: document.querySelector("#releaseTrainNavButton"),
   commandCenterNavButton: document.querySelector("#commandCenterNavButton"),
   revenueLoopNavButton: document.querySelector("#revenueLoopNavButton"),
+  buyerGraphNavButton: document.querySelector("#buyerGraphNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2440,6 +2478,24 @@ const elements = {
   tuneRevenueRewardsButton: document.querySelector("#tuneRevenueRewardsButton"),
   checkRevenueForecastButton: document.querySelector("#checkRevenueForecastButton"),
   copyRevenueLoopDigestButton: document.querySelector("#copyRevenueLoopDigestButton"),
+  buyerGraphBackdrop: document.querySelector("#buyerGraphBackdrop"),
+  buyerGraphDrawer: document.querySelector("#buyerGraphDrawer"),
+  closeBuyerGraphButton: document.querySelector("#closeBuyerGraphButton"),
+  buyerGraphScore: document.querySelector("#buyerGraphScore"),
+  buyerPersonaCount: document.querySelector("#buyerPersonaCount"),
+  objectionEdgeCount: document.querySelector("#objectionEdgeCount"),
+  guidancePathCount: document.querySelector("#guidancePathCount"),
+  buyerGraphStatus: document.querySelector("#buyerGraphStatus"),
+  buyerPersonaList: document.querySelector("#buyerPersonaList"),
+  buyerObjectionList: document.querySelector("#buyerObjectionList"),
+  buyerGuidanceList: document.querySelector("#buyerGuidanceList"),
+  buyerGraphGuardrailList: document.querySelector("#buyerGraphGuardrailList"),
+  buyerGraphReceiptList: document.querySelector("#buyerGraphReceiptList"),
+  buyerGraphDigest: document.querySelector("#buyerGraphDigest"),
+  mapBuyerGraphButton: document.querySelector("#mapBuyerGraphButton"),
+  guideBuyerGraphButton: document.querySelector("#guideBuyerGraphButton"),
+  guardBuyerGraphButton: document.querySelector("#guardBuyerGraphButton"),
+  copyBuyerGraphDigestButton: document.querySelector("#copyBuyerGraphDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2565,6 +2621,7 @@ function bindEvents() {
   elements.releaseTrainNavButton.addEventListener("click", openAutonomousTrustReleaseTrain);
   elements.commandCenterNavButton.addEventListener("click", openTrustOperationsCommandCenter);
   elements.revenueLoopNavButton.addEventListener("click", openRevenueOutcomeLoop);
+  elements.buyerGraphNavButton.addEventListener("click", openBuyerTrustGraph);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2799,6 +2856,12 @@ function bindEvents() {
   elements.tuneRevenueRewardsButton.addEventListener("click", tuneRevenueOutcomeRewards);
   elements.checkRevenueForecastButton.addEventListener("click", checkRevenueForecastQuality);
   elements.copyRevenueLoopDigestButton.addEventListener("click", copyRevenueOutcomeLoopDigest);
+  elements.closeBuyerGraphButton.addEventListener("click", closeBuyerTrustGraph);
+  elements.buyerGraphBackdrop.addEventListener("click", closeBuyerTrustGraph);
+  elements.mapBuyerGraphButton.addEventListener("click", mapBuyerTrustGraph);
+  elements.guideBuyerGraphButton.addEventListener("click", prepareBuyerGraphGuidance);
+  elements.guardBuyerGraphButton.addEventListener("click", checkBuyerGraphGuardrails);
+  elements.copyBuyerGraphDigestButton.addEventListener("click", copyBuyerTrustGraphDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2869,6 +2932,7 @@ function bindEvents() {
     if (state.releaseTrainOpen) closeAutonomousTrustReleaseTrain();
     if (state.commandCenterOpen) closeTrustOperationsCommandCenter();
     if (state.revenueLoopOpen) closeRevenueOutcomeLoop();
+    if (state.buyerGraphOpen) closeBuyerTrustGraph();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2906,6 +2970,7 @@ function applyInitialHash() {
   if (hash === "release" || hash === "release-train" || hash === "trust-release" || hash === "release-candidates") openAutonomousTrustReleaseTrain();
   if (hash === "command" || hash === "command-center" || hash === "trust-ops" || hash === "operations") openTrustOperationsCommandCenter();
   if (hash === "revenue" || hash === "revenue-loop" || hash === "outcome-loop" || hash === "revenue-outcomes") openRevenueOutcomeLoop();
+  if (hash === "buyer-graph" || hash === "buyers-graph" || hash === "trust-graph" || hash === "buyer-trust") openBuyerTrustGraph();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2957,6 +3022,7 @@ function render() {
   renderAutonomousTrustReleaseTrain();
   renderTrustOperationsCommandCenter();
   renderRevenueOutcomeLoop();
+  renderBuyerTrustGraph();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3692,6 +3758,7 @@ function activateWorkspaceNav(target) {
   closeAutonomousTrustReleaseTrain(false);
   closeTrustOperationsCommandCenter(false);
   closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3752,6 +3819,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.revenueLoopNavButton && state.revenueLoopOpen) {
     closeRevenueOutcomeLoop(false);
   }
+  if (activeButton !== elements.buyerGraphNavButton && state.buyerGraphOpen) {
+    closeBuyerTrustGraph(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3778,6 +3848,7 @@ function setActiveNav(activeButton) {
     elements.releaseTrainNavButton,
     elements.commandCenterNavButton,
     elements.revenueLoopNavButton,
+    elements.buyerGraphNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4859,6 +4930,7 @@ function openTrustOperationsCommandCenter() {
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
   closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4911,6 +4983,7 @@ function openRevenueOutcomeLoop() {
   closeAutonomousTrustReleaseTrain(false);
   closeTrustOperationsCommandCenter(false);
   closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4939,6 +5012,58 @@ function closeRevenueOutcomeLoop(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openBuyerTrustGraph() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.buyerGraphOpen = true;
+  setActiveNav(elements.buyerGraphNavButton);
+  elements.buyerGraphBackdrop.hidden = false;
+  elements.buyerGraphDrawer.classList.add("is-open");
+  elements.buyerGraphDrawer.setAttribute("aria-hidden", "false");
+  renderBuyerTrustGraph();
+}
+
+function closeBuyerTrustGraph(activateReview = true) {
+  if (!state.buyerGraphOpen && elements.buyerGraphDrawer.getAttribute("aria-hidden") === "true") return;
+  state.buyerGraphOpen = false;
+  elements.buyerGraphDrawer.classList.remove("is-open");
+  elements.buyerGraphDrawer.setAttribute("aria-hidden", "true");
+  elements.buyerGraphBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -4954,6 +5079,7 @@ function openAnalytics() {
   closeAutonomousTrustReleaseTrain(false);
   closeTrustOperationsCommandCenter(false);
   closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -15701,6 +15827,377 @@ function revenueOutcomeLoopDigestText(loop = revenueOutcomeLoopSnapshot()) {
   ].join("\n");
 }
 
+function renderBuyerTrustGraph() {
+  const graph = buyerTrustGraphSnapshot();
+
+  elements.buyerGraphScore.textContent = `${graph.score}%`;
+  elements.buyerPersonaCount.textContent = graph.personas.length;
+  elements.objectionEdgeCount.textContent = graph.objections.length;
+  elements.guidancePathCount.textContent = graph.guidance.length;
+  elements.buyerGraphStatus.textContent = graph.statusLabel;
+  elements.buyerGraphDigest.textContent = buyerTrustGraphDigestText(graph);
+
+  elements.buyerPersonaList.innerHTML = "";
+  graph.personas.forEach((persona) => {
+    const card = document.createElement("article");
+    card.className = `buyer-persona-card ${persona.status !== "Mapped" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(persona.role)}</span>
+          <strong>${escapeHtml(persona.name)}</strong>
+        </div>
+        <b>${escapeHtml(persona.status)}</b>
+      </header>
+      <p>${escapeHtml(persona.detail)}</p>
+      <footer>
+        <span>${persona.questions} questions</span>
+        <span>${persona.friction}</span>
+        <span>${persona.outcome}</span>
+      </footer>
+    `;
+    elements.buyerPersonaList.append(card);
+  });
+
+  elements.buyerObjectionList.innerHTML = "";
+  graph.objections.forEach((edge) => {
+    const card = document.createElement("article");
+    card.className = `buyer-objection-card ${edge.status !== "Resolved" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(edge.objection)}</strong>
+        <b>${escapeHtml(edge.status)}</b>
+      </header>
+      <p>${escapeHtml(edge.detail)}</p>
+      <footer>
+        <span>${escapeHtml(edge.persona)}</span>
+        <span>${escapeHtml(edge.proof)}</span>
+        <span>${escapeHtml(edge.owner)}</span>
+      </footer>
+    `;
+    elements.buyerObjectionList.append(card);
+  });
+
+  elements.buyerGuidanceList.innerHTML = "";
+  graph.guidance.forEach((path, index) => {
+    const card = document.createElement("article");
+    card.className = `buyer-guidance-card ${path.status === "Blocked" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <span>${String(index + 1).padStart(2, "0")}</span>
+      <div>
+        <strong>${escapeHtml(path.title)}</strong>
+        <p>${escapeHtml(path.detail)}</p>
+      </div>
+      <b>${escapeHtml(path.status)}</b>
+    `;
+    elements.buyerGuidanceList.append(card);
+  });
+
+  elements.buyerGraphGuardrailList.innerHTML = "";
+  graph.guardrails.forEach((guardrail) => {
+    const card = document.createElement("article");
+    card.className = `buyer-graph-guardrail-card ${guardrail.status !== "Pass" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(guardrail.title)}</strong>
+        <b>${escapeHtml(guardrail.status)}</b>
+      </header>
+      <p>${escapeHtml(guardrail.detail)}</p>
+      <span>${escapeHtml(guardrail.scope)}</span>
+    `;
+    elements.buyerGraphGuardrailList.append(card);
+  });
+
+  elements.buyerGraphReceiptList.innerHTML = "";
+  if (graph.receipts.length === 0) {
+    elements.buyerGraphReceiptList.append(emptyState("No buyer graph receipts yet"));
+  }
+  graph.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "buyer-graph-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.buyerGraphReceiptList.append(card);
+  });
+}
+
+function buyerTrustGraphSnapshot() {
+  const revenueLoop = revenueOutcomeLoopSnapshot();
+  const personas = buyerPersonaNodes(revenueLoop);
+  const objections = buyerObjectionEdges(revenueLoop, personas);
+  const guidance = buyerGuidancePaths(personas, objections, revenueLoop);
+  const guardrails = buyerGraphGuardrails(revenueLoop, objections);
+  const mapped = personas.filter((item) => item.status === "Mapped").length;
+  const resolved = objections.filter((item) => item.status === "Resolved").length;
+  const readyPaths = guidance.filter((item) => item.status !== "Blocked").length;
+  const passed = guardrails.filter((item) => item.status === "Pass").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        revenueLoop.score * 0.24
+          + Math.min(100, mapped * 20) * 0.2
+          + Math.min(100, resolved * 18) * 0.2
+          + Math.min(100, readyPaths * 22) * 0.18
+          + Math.min(100, passed * 25) * 0.18,
+      ),
+    ),
+  );
+  const statusLabel = state.buyerGraphActions.status === "Draft" ? "Ready to map buyer trust graph" : state.buyerGraphActions.status;
+
+  return {
+    score,
+    statusLabel,
+    revenueLoop,
+    personas,
+    objections,
+    guidance,
+    guardrails,
+    receipts: state.buyerGraphActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function buyerPersonaNodes(revenueLoop) {
+  const outcomeByIndex = revenueLoop.outcomes;
+  const categoryCounts = state.questions.reduce((map, question) => {
+    map.set(question.category, (map.get(question.category) ?? 0) + 1);
+    return map;
+  }, new Map());
+  return [
+    {
+      name: "Security reviewer",
+      role: "Security",
+      questions: (categoryCounts.get("Encryption") ?? 0) + (categoryCounts.get("Access") ?? 0) + (categoryCounts.get("Incident") ?? 0),
+      friction: "Proof depth",
+      outcome: outcomeByIndex[0]?.result ?? "Advanced",
+      status: "Mapped",
+      detail: "Needs SOC 2, access controls, incident timelines, and source freshness before approval.",
+    },
+    {
+      name: "AI governance reviewer",
+      role: "AI Governance",
+      questions: categoryCounts.get("AI Governance") ?? 1,
+      friction: "Model use clarity",
+      outcome: outcomeByIndex[1]?.result ?? "Advanced",
+      status: "Mapped",
+      detail: "Wants customer-data training boundaries, human review, prompt redaction, and policy evidence.",
+    },
+    {
+      name: "Legal reviewer",
+      role: "Legal",
+      questions: categoryCounts.get("Privacy") ?? 1,
+      friction: "DPA confidence",
+      outcome: outcomeByIndex[2]?.result ?? "More proof",
+      status: revenueLoop.safePatterns.some((item) => item.status === "Quarantine") ? "Watch" : "Mapped",
+      detail: "Checks privacy language, subprocessors, customer commitments, and shareability boundaries.",
+    },
+    {
+      name: "Procurement operator",
+      role: "Procurement",
+      questions: revenueLoop.command.pipeline.accounts.length,
+      friction: "Deadline pressure",
+      outcome: outcomeByIndex[3]?.result ?? "Stalled",
+      status: revenueLoop.command.pipeline.slaRiskCount > 1 ? "Watch" : "Mapped",
+      detail: "Cares about review completion, owner responsiveness, trust room clarity, and deal handoff speed.",
+    },
+  ];
+}
+
+function buyerObjectionEdges(revenueLoop, personas) {
+  const challenge = revenueLoop.outcomes.some((item) => item.result === "More proof");
+  const staleRisk = revenueLoop.rewards.some((item) => item.direction === "Penalize");
+  return [
+    {
+      persona: personas[0].name,
+      objection: "Encryption answer needs stronger proof",
+      proof: "SOC 2 + Security Policy",
+      owner: "Security",
+      status: "Resolved",
+      detail: "Security objection connects to approved SOC 2 evidence and access-control policy language.",
+    },
+    {
+      persona: personas[1].name,
+      objection: "Customer data training boundary",
+      proof: "AI Usage Standard",
+      owner: "AI Governance",
+      status: challenge ? "Review" : "Resolved",
+      detail: "AI governance objection maps to customer-data training, redaction, and human approval claims.",
+    },
+    {
+      persona: personas[2].name,
+      objection: "DPA and subprocessor language",
+      proof: "DPA + Privacy Policy",
+      owner: "Legal",
+      status: staleRisk ? "Review" : "Resolved",
+      detail: "Legal objection is linked to privacy evidence and stays local unless aggregate labels pass guardrails.",
+    },
+    {
+      persona: personas[3].name,
+      objection: "Review may miss buyer deadline",
+      proof: "Command receipts",
+      owner: "Trust Lead",
+      status: revenueLoop.command.pipeline.slaRiskCount > 0 ? "Review" : "Resolved",
+      detail: "Procurement friction links to owner routing, command receipts, and trust room handoff status.",
+    },
+  ];
+}
+
+function buyerGuidancePaths(personas, objections, revenueLoop) {
+  const unresolved = objections.filter((item) => item.status !== "Resolved").length;
+  return [
+    {
+      title: "Security proof path",
+      status: "Ready",
+      detail: "Start with SOC 2, bind encryption and access claims, then copy buyer-safe evidence excerpts.",
+    },
+    {
+      title: "AI governance proof path",
+      status: objections.some((item) => item.owner === "AI Governance" && item.status !== "Resolved") ? "Review" : "Ready",
+      detail: "Use AI Usage Standard, customer-data training boundary, redaction rule, and human approval receipt.",
+    },
+    {
+      title: "Legal confidence path",
+      status: objections.some((item) => item.owner === "Legal" && item.status !== "Resolved") ? "Review" : "Ready",
+      detail: "Route DPA/subprocessor proof to legal and keep buyer-specific text tenant-local.",
+    },
+    {
+      title: "Procurement acceleration path",
+      status: unresolved > 2 ? "Blocked" : "Ready",
+      detail: `Use command digest and revenue outcome loop to focus owners on ${revenueLoop.command.pipeline.slaRiskCount} SLA-risk review(s).`,
+    },
+  ];
+}
+
+function buyerGraphGuardrails(revenueLoop, objections) {
+  return [
+    {
+      title: "Tenant-local exact graph",
+      status: "Pass",
+      scope: "Local memory",
+      detail: "Exact buyer questions, evidence, deal values, owner names, and objection text remain inside this workspace.",
+    },
+    {
+      title: "Aggregate persona promotion",
+      status: revenueLoop.safePatterns.filter((item) => item.status === "Shareable").length >= 2 ? "Pass" : "Watch",
+      scope: "Aggregate pattern",
+      detail: "Only persona role, proof type, outcome class, and guardrail label can improve other workspaces.",
+    },
+    {
+      title: "Objection quarantine",
+      status: objections.some((item) => item.status === "Review") ? "Watch" : "Pass",
+      scope: "Graph drift",
+      detail: "Unresolved objections stay quarantined until evidence freshness, owner approval, or forecast quality improves.",
+    },
+    {
+      title: "Revenue learning boundary",
+      status: "Pass",
+      scope: "No raw deal data",
+      detail: "Cross-customer graph learning excludes account names, buyer text, answers, prompts, files, and deal values.",
+    },
+  ];
+}
+
+function mapBuyerTrustGraph() {
+  const graph = buyerTrustGraphSnapshot();
+  const detail = `Mapped ${graph.personas.length} buyer personas with ${graph.objections.length} objection edges and ${graph.score}% graph score.`;
+  state.buyerGraphActions.status = "Personas mapped";
+  state.buyerGraphActions.mappedAt = new Date().toISOString();
+  addBuyerGraphReceipt("Buyer personas mapped", detail);
+  addAudit("Buyer graph mapped", detail);
+  renderBuyerTrustGraph();
+  renderAudit();
+  showToast("Buyer trust graph mapped.");
+}
+
+function prepareBuyerGraphGuidance() {
+  const graph = buyerTrustGraphSnapshot();
+  const ready = graph.guidance.filter((item) => item.status === "Ready").length;
+  const detail = `Prepared ${graph.guidance.length} buyer guidance paths with ${ready} ready and ${graph.objections.filter((item) => item.status !== "Resolved").length} objections still under review.`;
+  state.buyerGraphActions.status = "Guidance prepared";
+  state.buyerGraphActions.guidedAt = new Date().toISOString();
+  addBuyerGraphReceipt("Buyer guidance prepared", detail);
+  addAudit("Buyer guidance prepared", detail);
+  render();
+  showToast("Buyer guidance prepared.");
+}
+
+function checkBuyerGraphGuardrails() {
+  const graph = buyerTrustGraphSnapshot();
+  const passed = graph.guardrails.filter((item) => item.status === "Pass").length;
+  const detail = `Checked ${graph.guardrails.length} buyer graph guardrails with ${passed} passing and ${graph.guardrails.length - passed} watch items.`;
+  state.buyerGraphActions.status = "Guardrails checked";
+  state.buyerGraphActions.guardedAt = new Date().toISOString();
+  addBuyerGraphReceipt("Graph guardrails checked", detail);
+  addAudit("Buyer graph guardrails checked", detail);
+  render();
+  showToast("Buyer graph guardrails checked.");
+}
+
+function copyBuyerTrustGraphDigest() {
+  const graph = buyerTrustGraphSnapshot();
+  state.buyerGraphActions.lastCopiedAt = new Date().toISOString();
+  addBuyerGraphReceipt("Buyer graph digest copied", "Buyer trust graph digest copied.");
+  addAudit("Buyer graph digest copied", "Buyer trust graph digest copied.");
+  renderBuyerTrustGraph();
+  renderAudit();
+  copyText(buyerTrustGraphDigestText(graph), "Buyer graph digest copied.");
+}
+
+function addBuyerGraphReceipt(action, detail) {
+  state.buyerGraphActions.receipts = [
+    ...(state.buyerGraphActions.receipts ?? []),
+    {
+      id: `buyer-graph-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function buyerTrustGraphDigestText(graph = buyerTrustGraphSnapshot()) {
+  const personaLines = graph.personas.map((item, index) => `${index + 1}. ${item.status}: ${item.name} | ${item.role} | ${item.questions} questions | ${item.friction} | ${item.outcome}`).join("\n");
+  const objectionLines = graph.objections.map((item, index) => `${index + 1}. ${item.status}: ${item.persona} -> ${item.objection} | ${item.proof} | ${item.owner}`).join("\n");
+  const guidanceLines = graph.guidance.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.detail}`).join("\n");
+  const guardrailLines = graph.guardrails.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.scope} | ${item.detail}`).join("\n");
+  const receiptLines = graph.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Buyer Trust Graph",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${graph.statusLabel}`,
+    `Graph score: ${graph.score}%`,
+    `Buyer personas: ${graph.personas.length}`,
+    `Objection edges: ${graph.objections.length}`,
+    `Guidance paths: ${graph.guidance.length}`,
+    "",
+    "Persona nodes:",
+    personaLines,
+    "",
+    "Objection edges:",
+    objectionLines,
+    "",
+    "Guidance paths:",
+    guidanceLines,
+    "",
+    "Graph guardrails:",
+    guardrailLines,
+    "",
+    "Receipts:",
+    receiptLines || "No buyer graph receipts yet.",
+    "",
+    "Buyer graph rule:",
+    "- Exact buyer questions, answers, evidence, owner names, and deal values stay tenant-local.",
+    "- Aggregate graph learning can use persona role, proof type, objection class, outcome class, and guardrail label.",
+    "- Unresolved objections are quarantined until evidence freshness, owner approval, or forecast quality improves.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -17978,6 +18475,13 @@ function exportCsv() {
     "Forecast Calibrated",
     "Safe Revenue Patterns",
     "Revenue Loop Receipts",
+    "Buyer Graph Status",
+    "Buyer Graph Score",
+    "Buyer Personas",
+    "Objection Edges",
+    "Guidance Paths",
+    "Graph Guardrails Pass",
+    "Buyer Graph Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -18015,6 +18519,7 @@ function exportCsv() {
     const releaseTrain = autonomousTrustReleaseTrainSnapshot();
     const command = trustOperationsCommandSnapshot();
     const revenueLoop = revenueOutcomeLoopSnapshot();
+    const buyerGraph = buyerTrustGraphSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -18173,6 +18678,13 @@ function exportCsv() {
       revenueLoop.forecasts.filter((item) => item.status === "Calibrated").length,
       revenueLoop.safePatterns.filter((item) => item.status === "Shareable").length,
       revenueLoop.receipts.length,
+      buyerGraph.statusLabel,
+      `${buyerGraph.score}%`,
+      buyerGraph.personas.length,
+      buyerGraph.objections.length,
+      buyerGraph.guidance.length,
+      buyerGraph.guardrails.filter((item) => item.status === "Pass").length,
+      buyerGraph.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -18220,6 +18732,7 @@ function exportReviewPack() {
   const releaseTrain = autonomousTrustReleaseTrainSnapshot();
   const command = trustOperationsCommandSnapshot();
   const revenueLoop = revenueOutcomeLoopSnapshot();
+  const buyerGraph = buyerTrustGraphSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -18237,7 +18750,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v36</h1>
+        <h1>AnswerSeal Review Pack v37</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -20181,6 +20694,111 @@ function exportReviewPack() {
         </table>
         <h2>Revenue Loop Digest</h2>
         <pre>${escapeHtml(revenueOutcomeLoopDigestText(revenueLoop))}</pre>
+        <h2>Buyer Trust Graph</h2>
+        <p>Status: ${escapeHtml(buyerGraph.statusLabel)} | Graph score: ${buyerGraph.score}% | Personas: ${buyerGraph.personas.length} | Objection edges: ${buyerGraph.objections.length} | Guidance paths: ${buyerGraph.guidance.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Status</th>
+              <th>Questions</th>
+              <th>Friction</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerGraph.personas
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.name)}<br />${escapeHtml(item.role)}</td>
+                    <td class="${item.status === "Mapped" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${item.questions}</td>
+                    <td>${escapeHtml(item.friction)}</td>
+                    <td>${escapeHtml(item.outcome)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Objection Edges</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Objection</th>
+              <th>Proof</th>
+              <th>Owner</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerGraph.objections
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.persona)}</td>
+                    <td>${escapeHtml(item.objection)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.proof)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td class="${item.status === "Resolved" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Guidance Paths</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Path</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerGraph.guidance
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Blocked" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Graph Guardrails</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Guardrail</th>
+              <th>Status</th>
+              <th>Scope</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerGraph.guardrails
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Pass" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.scope)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Graph Digest</h2>
+        <pre>${escapeHtml(buyerTrustGraphDigestText(buyerGraph))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -20893,7 +21511,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v36 created with revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v37 created with buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -20918,12 +21536,13 @@ function exportReviewPack() {
   renderAutonomousTrustReleaseTrain();
   renderTrustOperationsCommandCenter();
   renderRevenueOutcomeLoop();
+  renderBuyerTrustGraph();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v36 exported.");
+  showToast("Review Pack v37 exported.");
 }
 
 function toCsv(rows) {
@@ -21000,6 +21619,7 @@ function serializeWorkspace() {
     releaseTrainActions: state.releaseTrainActions,
     commandCenterActions: state.commandCenterActions,
     revenueLoopActions: state.revenueLoopActions,
+    buyerGraphActions: state.buyerGraphActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -21046,6 +21666,8 @@ function resetWorkspace() {
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
   closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
   closeWorkspace(false);
   closeLibrary();
   render();
