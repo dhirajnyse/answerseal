@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.39 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v39";
+const BUILD_VERSION = "v0.40 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v40";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v39",
   "answerseal.workspace.v38",
   "answerseal.workspace.v37",
   "answerseal.workspace.v36",
@@ -729,6 +730,8 @@ function createInitialState() {
     releaseTrainActions: createInitialReleaseTrainActions(),
     commandCenterOpen: false,
     commandCenterActions: createInitialCommandCenterActions(),
+    revenueLoopOpen: false,
+    revenueLoopActions: createInitialRevenueLoopActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -965,6 +968,17 @@ function createInitialCommandCenterActions() {
   };
 }
 
+function createInitialRevenueLoopActions() {
+  return {
+    status: "Draft",
+    capturedAt: null,
+    tunedAt: null,
+    forecastedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1103,6 +1117,7 @@ function loadWorkspaceState() {
       optimizerActions: normalizeOptimizerActions(workspace.optimizerActions ?? fresh.optimizerActions),
       releaseTrainActions: normalizeReleaseTrainActions(workspace.releaseTrainActions ?? fresh.releaseTrainActions),
       commandCenterActions: normalizeCommandCenterActions(workspace.commandCenterActions ?? fresh.commandCenterActions),
+      revenueLoopActions: normalizeRevenueLoopActions(workspace.revenueLoopActions ?? fresh.revenueLoopActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1137,6 +1152,7 @@ function loadWorkspaceState() {
       optimizerOpen: false,
       releaseTrainOpen: false,
       commandCenterOpen: false,
+      revenueLoopOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1789,6 +1805,27 @@ function normalizeCommandCenterReceipt(receipt) {
   };
 }
 
+function normalizeRevenueLoopActions(actions) {
+  const status = ["Draft", "Outcomes captured", "Rewards tuned", "Forecast checked"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    capturedAt: actions?.capturedAt ?? null,
+    tunedAt: actions?.tunedAt ?? null,
+    forecastedAt: actions?.forecastedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeRevenueLoopReceipt) : [],
+  };
+}
+
+function normalizeRevenueLoopReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `revenue-loop-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Revenue loop action"),
+    detail: String(receipt?.detail ?? "Revenue outcome loop action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1841,6 +1878,7 @@ const elements = {
   optimizerNavButton: document.querySelector("#optimizerNavButton"),
   releaseTrainNavButton: document.querySelector("#releaseTrainNavButton"),
   commandCenterNavButton: document.querySelector("#commandCenterNavButton"),
+  revenueLoopNavButton: document.querySelector("#revenueLoopNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2384,6 +2422,24 @@ const elements = {
   routeCommandOwnersButton: document.querySelector("#routeCommandOwnersButton"),
   briefCommandCenterButton: document.querySelector("#briefCommandCenterButton"),
   copyCommandCenterDigestButton: document.querySelector("#copyCommandCenterDigestButton"),
+  revenueLoopBackdrop: document.querySelector("#revenueLoopBackdrop"),
+  revenueLoopDrawer: document.querySelector("#revenueLoopDrawer"),
+  closeRevenueLoopButton: document.querySelector("#closeRevenueLoopButton"),
+  revenueLoopScore: document.querySelector("#revenueLoopScore"),
+  revenueOutcomeEventCount: document.querySelector("#revenueOutcomeEventCount"),
+  rewardLiftCount: document.querySelector("#rewardLiftCount"),
+  safePatternCount: document.querySelector("#safePatternCount"),
+  revenueLoopStatus: document.querySelector("#revenueLoopStatus"),
+  revenueOutcomeList: document.querySelector("#revenueOutcomeList"),
+  revenueRewardList: document.querySelector("#revenueRewardList"),
+  revenueForecastList: document.querySelector("#revenueForecastList"),
+  revenueSafePatternList: document.querySelector("#revenueSafePatternList"),
+  revenueLoopReceiptList: document.querySelector("#revenueLoopReceiptList"),
+  revenueLoopDigest: document.querySelector("#revenueLoopDigest"),
+  captureRevenueOutcomesButton: document.querySelector("#captureRevenueOutcomesButton"),
+  tuneRevenueRewardsButton: document.querySelector("#tuneRevenueRewardsButton"),
+  checkRevenueForecastButton: document.querySelector("#checkRevenueForecastButton"),
+  copyRevenueLoopDigestButton: document.querySelector("#copyRevenueLoopDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2508,6 +2564,7 @@ function bindEvents() {
   elements.optimizerNavButton.addEventListener("click", openContinuousTrustOptimizer);
   elements.releaseTrainNavButton.addEventListener("click", openAutonomousTrustReleaseTrain);
   elements.commandCenterNavButton.addEventListener("click", openTrustOperationsCommandCenter);
+  elements.revenueLoopNavButton.addEventListener("click", openRevenueOutcomeLoop);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2577,6 +2634,7 @@ function bindEvents() {
     renderContinuousTrustOptimizer();
     renderAutonomousTrustReleaseTrain();
     renderTrustOperationsCommandCenter();
+    renderRevenueOutcomeLoop();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2735,6 +2793,12 @@ function bindEvents() {
   elements.routeCommandOwnersButton.addEventListener("click", routeTrustOperationsOwners);
   elements.briefCommandCenterButton.addEventListener("click", prepareTrustOperationsBrief);
   elements.copyCommandCenterDigestButton.addEventListener("click", copyTrustOperationsCommandDigest);
+  elements.closeRevenueLoopButton.addEventListener("click", closeRevenueOutcomeLoop);
+  elements.revenueLoopBackdrop.addEventListener("click", closeRevenueOutcomeLoop);
+  elements.captureRevenueOutcomesButton.addEventListener("click", captureRevenueOutcomes);
+  elements.tuneRevenueRewardsButton.addEventListener("click", tuneRevenueOutcomeRewards);
+  elements.checkRevenueForecastButton.addEventListener("click", checkRevenueForecastQuality);
+  elements.copyRevenueLoopDigestButton.addEventListener("click", copyRevenueOutcomeLoopDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2804,6 +2868,7 @@ function bindEvents() {
     if (state.optimizerOpen) closeContinuousTrustOptimizer();
     if (state.releaseTrainOpen) closeAutonomousTrustReleaseTrain();
     if (state.commandCenterOpen) closeTrustOperationsCommandCenter();
+    if (state.revenueLoopOpen) closeRevenueOutcomeLoop();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2840,6 +2905,7 @@ function applyInitialHash() {
   if (hash === "optimizer" || hash === "optimizations" || hash === "continuous-trust" || hash === "trust-optimizer") openContinuousTrustOptimizer();
   if (hash === "release" || hash === "release-train" || hash === "trust-release" || hash === "release-candidates") openAutonomousTrustReleaseTrain();
   if (hash === "command" || hash === "command-center" || hash === "trust-ops" || hash === "operations") openTrustOperationsCommandCenter();
+  if (hash === "revenue" || hash === "revenue-loop" || hash === "outcome-loop" || hash === "revenue-outcomes") openRevenueOutcomeLoop();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2890,6 +2956,7 @@ function render() {
   renderContinuousTrustOptimizer();
   renderAutonomousTrustReleaseTrain();
   renderTrustOperationsCommandCenter();
+  renderRevenueOutcomeLoop();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3624,6 +3691,7 @@ function activateWorkspaceNav(target) {
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
   closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3681,6 +3749,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.commandCenterNavButton && state.commandCenterOpen) {
     closeTrustOperationsCommandCenter(false);
   }
+  if (activeButton !== elements.revenueLoopNavButton && state.revenueLoopOpen) {
+    closeRevenueOutcomeLoop(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3706,6 +3777,7 @@ function setActiveNav(activeButton) {
     elements.optimizerNavButton,
     elements.releaseTrainNavButton,
     elements.commandCenterNavButton,
+    elements.revenueLoopNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4786,6 +4858,7 @@ function openTrustOperationsCommandCenter() {
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
+  closeRevenueOutcomeLoop(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4814,6 +4887,58 @@ function closeTrustOperationsCommandCenter(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openRevenueOutcomeLoop() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.revenueLoopOpen = true;
+  setActiveNav(elements.revenueLoopNavButton);
+  elements.revenueLoopBackdrop.hidden = false;
+  elements.revenueLoopDrawer.classList.add("is-open");
+  elements.revenueLoopDrawer.setAttribute("aria-hidden", "false");
+  renderRevenueOutcomeLoop();
+}
+
+function closeRevenueOutcomeLoop(activateReview = true) {
+  if (!state.revenueLoopOpen && elements.revenueLoopDrawer.getAttribute("aria-hidden") === "true") return;
+  state.revenueLoopOpen = false;
+  elements.revenueLoopDrawer.classList.remove("is-open");
+  elements.revenueLoopDrawer.setAttribute("aria-hidden", "true");
+  elements.revenueLoopBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -4828,6 +4953,7 @@ function openAnalytics() {
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
   closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -15222,6 +15348,359 @@ function trustOperationsCommandDigestText(command = trustOperationsCommandSnapsh
   ].join("\n");
 }
 
+function renderRevenueOutcomeLoop() {
+  const loop = revenueOutcomeLoopSnapshot();
+
+  elements.revenueLoopScore.textContent = `${loop.score}%`;
+  elements.revenueOutcomeEventCount.textContent = loop.outcomes.length;
+  elements.rewardLiftCount.textContent = `+${loop.rewardLift}`;
+  elements.safePatternCount.textContent = loop.safePatterns.filter((item) => item.status === "Shareable").length;
+  elements.revenueLoopStatus.textContent = loop.statusLabel;
+  elements.revenueLoopDigest.textContent = revenueOutcomeLoopDigestText(loop);
+
+  elements.revenueOutcomeList.innerHTML = "";
+  loop.outcomes.forEach((outcome) => {
+    const card = document.createElement("article");
+    card.className = `revenue-outcome-card ${outcome.result === "Stalled" || outcome.result === "More proof" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(outcome.stage)}</span>
+          <strong>${escapeHtml(outcome.company)}</strong>
+        </div>
+        <b>${escapeHtml(outcome.result)}</b>
+      </header>
+      <p>${escapeHtml(outcome.detail)}</p>
+      <footer>
+        <span>${escapeHtml(outcome.trigger)}</span>
+        <span>${escapeHtml(outcome.owner)}</span>
+        <span>${escapeHtml(outcome.value)}</span>
+      </footer>
+    `;
+    elements.revenueOutcomeList.append(card);
+  });
+
+  elements.revenueRewardList.innerHTML = "";
+  loop.rewards.forEach((reward) => {
+    const card = document.createElement("article");
+    card.className = `revenue-reward-card ${reward.direction === "Penalize" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(reward.title)}</strong>
+        <b>${escapeHtml(reward.weight)}</b>
+      </header>
+      <p>${escapeHtml(reward.detail)}</p>
+      <span>${escapeHtml(reward.direction)}</span>
+    `;
+    elements.revenueRewardList.append(card);
+  });
+
+  elements.revenueForecastList.innerHTML = "";
+  loop.forecasts.forEach((forecast) => {
+    const card = document.createElement("article");
+    card.className = `revenue-forecast-card ${forecast.status !== "Calibrated" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(forecast.title)}</strong>
+        <b>${escapeHtml(forecast.accuracy)}</b>
+      </header>
+      <p>${escapeHtml(forecast.detail)}</p>
+      <footer>
+        <span>${escapeHtml(forecast.predicted)}</span>
+        <span>${escapeHtml(forecast.actual)}</span>
+        <span>${escapeHtml(forecast.status)}</span>
+      </footer>
+    `;
+    elements.revenueForecastList.append(card);
+  });
+
+  elements.revenueSafePatternList.innerHTML = "";
+  loop.safePatterns.forEach((pattern) => {
+    const card = document.createElement("article");
+    card.className = `revenue-pattern-card ${pattern.status !== "Shareable" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(pattern.title)}</strong>
+        <b>${escapeHtml(pattern.status)}</b>
+      </header>
+      <p>${escapeHtml(pattern.detail)}</p>
+      <footer>
+        <span>${escapeHtml(pattern.scope)}</span>
+        <span>${escapeHtml(pattern.guardrail)}</span>
+      </footer>
+    `;
+    elements.revenueSafePatternList.append(card);
+  });
+
+  elements.revenueLoopReceiptList.innerHTML = "";
+  if (loop.receipts.length === 0) {
+    elements.revenueLoopReceiptList.append(emptyState("No revenue loop receipts yet"));
+  }
+  loop.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "revenue-loop-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.revenueLoopReceiptList.append(card);
+  });
+}
+
+function revenueOutcomeLoopSnapshot() {
+  const command = trustOperationsCommandSnapshot();
+  const pipeline = command.pipeline;
+  const outcomes = revenueOutcomeEvents(command);
+  const rewards = revenueOutcomeRewards(outcomes, command);
+  const forecasts = revenueForecastQuality(outcomes, command);
+  const safePatterns = revenueSafePatterns(outcomes, rewards, command);
+  const positive = outcomes.filter((item) => item.result === "Advanced" || item.result === "Converted").length;
+  const calibrated = forecasts.filter((item) => item.status === "Calibrated").length;
+  const shareable = safePatterns.filter((item) => item.status === "Shareable").length;
+  const rewardLift = Math.max(1, rewards.filter((item) => item.direction === "Reward").length * 3 - rewards.filter((item) => item.direction === "Penalize").length);
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        command.score * 0.22
+          + Math.min(100, positive * 25) * 0.22
+          + Math.min(100, rewardLift * 12) * 0.18
+          + Math.min(100, calibrated * 25) * 0.18
+          + Math.min(100, shareable * 25) * 0.12
+          + Math.max(0, 100 - pipeline.slaRiskCount * 18) * 0.08,
+      ),
+    ),
+  );
+  const statusLabel = state.revenueLoopActions.status === "Draft" ? "Ready to capture buyer outcomes" : state.revenueLoopActions.status;
+
+  return {
+    score,
+    statusLabel,
+    command,
+    outcomes,
+    rewards,
+    forecasts,
+    safePatterns,
+    rewardLift,
+    receipts: state.revenueLoopActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function revenueOutcomeEvents(command) {
+  const accounts = command.portfolio.slice(0, 4);
+  const topAction = command.actions[0];
+  return accounts.map((account, index) => {
+    const readiness = Number(account.readiness) || 0;
+    const result = readiness >= 82 ? "Converted" : readiness >= 70 ? "Advanced" : account.blockers > 3 ? "More proof" : "Stalled";
+    const trigger = result === "Converted" ? "Review pack accepted" : result === "Advanced" ? "Trust room viewed" : result === "More proof" ? "Buyer challenged proof" : "Owner queue delayed";
+    return {
+      company: account.company,
+      stage: account.stage,
+      result,
+      trigger,
+      owner: account.owner,
+      value: formatMoney(account.value),
+      detail: `${topAction?.title ?? "Command action"} influenced ${account.company}: ${account.readiness}% ready, ${account.blockers} blockers, ${account.daysLeft} days left.`,
+      index,
+    };
+  });
+}
+
+function revenueOutcomeRewards(outcomes, command) {
+  const advanced = outcomes.filter((item) => item.result === "Advanced" || item.result === "Converted").length;
+  const challenged = outcomes.filter((item) => item.result === "More proof").length;
+  const stalled = outcomes.filter((item) => item.result === "Stalled").length;
+  return [
+    {
+      title: "Sealed evidence reuse",
+      direction: advanced > 0 ? "Reward" : "Watch",
+      weight: `+${Math.max(1, advanced * 4)}`,
+      detail: `${advanced} buyer reviews advanced or converted after source-backed answers and command routing.`,
+    },
+    {
+      title: "Proof challenge penalty",
+      direction: challenged > 0 ? "Penalize" : "Reward",
+      weight: challenged > 0 ? `-${challenged * 3}` : "+2",
+      detail: challenged > 0 ? `${challenged} reviews requested more proof; increase freshness and source coverage thresholds.` : "No buyer proof challenge is visible in the current outcome sample.",
+    },
+    {
+      title: "Owner delay penalty",
+      direction: stalled > 0 ? "Penalize" : "Reward",
+      weight: stalled > 0 ? `-${stalled * 2}` : "+2",
+      detail: stalled > 0 ? `${stalled} reviews stalled around owner workload; route overloaded queues earlier.` : "Owner routing is not currently blocking buyer progress.",
+    },
+    {
+      title: "Command receipt lift",
+      direction: command.receipts.length > 0 ? "Reward" : "Watch",
+      weight: `+${Math.max(1, command.receipts.length)}`,
+      detail: `${command.receipts.length} command receipts are available to explain which operating moves changed the review.`,
+    },
+  ];
+}
+
+function revenueForecastQuality(outcomes, command) {
+  const riskMap = new Map(command.revenueRisks.map((risk) => [risk.title, risk]));
+  return [
+    {
+      title: "Pipeline exposure forecast",
+      predicted: riskMap.get("Pipeline exposure")?.level ?? "Medium",
+      actual: command.pipeline.slaRiskCount > 1 ? "High" : command.pipeline.slaRiskCount > 0 ? "Medium" : "Low",
+      accuracy: command.pipeline.slaRiskCount <= 1 ? "82%" : "69%",
+      status: command.pipeline.slaRiskCount <= 1 ? "Calibrated" : "Watch",
+      detail: "Predicted pipeline exposure is compared with actual SLA-risk reviews after command actions.",
+    },
+    {
+      title: "Buyer progression forecast",
+      predicted: command.analytics.riskLabel,
+      actual: outcomes.some((item) => item.result === "Converted") ? "Low" : outcomes.some((item) => item.result === "More proof") ? "High" : "Medium",
+      accuracy: outcomes.some((item) => item.result === "More proof") ? "71%" : "86%",
+      status: outcomes.some((item) => item.result === "More proof") ? "Watch" : "Calibrated",
+      detail: "Buyer outcome is checked against deal desk risk so future recommendations improve.",
+    },
+    {
+      title: "Release readiness forecast",
+      predicted: `${command.releaseTrain.score}%`,
+      actual: command.releaseTrain.adoption.filter((item) => item.status === "Healthy").length >= 3 ? "Healthy" : "Watch",
+      accuracy: command.releaseTrain.score >= 75 ? "88%" : "73%",
+      status: command.releaseTrain.score >= 75 ? "Calibrated" : "Watch",
+      detail: "Release readiness is compared with adoption signals and rollback evidence before reward promotion.",
+    },
+  ];
+}
+
+function revenueSafePatterns(outcomes, rewards, command) {
+  const advanced = outcomes.filter((item) => item.result === "Advanced" || item.result === "Converted").length;
+  const challenged = outcomes.filter((item) => item.result === "More proof").length;
+  return [
+    {
+      title: "Healthcare security review advanced after sealed SOC 2 reuse",
+      status: advanced > 0 ? "Shareable" : "Local only",
+      scope: "Aggregate outcome",
+      guardrail: "No buyer text",
+      detail: "Share only category, proof type, and outcome class; keep account names, answers, evidence, and deal value tenant-local.",
+    },
+    {
+      title: "Fresh AI governance language reduced proof challenge",
+      status: challenged === 0 ? "Shareable" : "Quarantine",
+      scope: "Aggregate reward",
+      guardrail: "No prompts or files",
+      detail: challenged === 0 ? "Fresh approved AI policy language can inform aggregate reward weights." : "Proof challenge remains quarantined until source freshness improves.",
+    },
+    {
+      title: "Owner-load early routing protected deadline",
+      status: command.ownerLoad.some((row) => row.status !== "Balanced") ? "Local only" : "Shareable",
+      scope: "Operational pattern",
+      guardrail: "No owner names",
+      detail: "Pattern can generalize as team-role routing only; exact people, queues, and buyer deadlines stay local.",
+    },
+    {
+      title: "Command receipts explain review movement",
+      status: command.receipts.length > 0 ? "Shareable" : "Local only",
+      scope: "Receipt class",
+      guardrail: "Metadata only",
+      detail: "Receipt type and timing can improve aggregate benchmarks without exposing customer-specific content.",
+    },
+  ];
+}
+
+function captureRevenueOutcomes() {
+  const loop = revenueOutcomeLoopSnapshot();
+  const detail = `Captured ${loop.outcomes.length} buyer outcome events with ${loop.outcomes.filter((item) => item.result === "Advanced" || item.result === "Converted").length} positive outcomes and ${loop.score}% revenue loop score.`;
+  state.revenueLoopActions.status = "Outcomes captured";
+  state.revenueLoopActions.capturedAt = new Date().toISOString();
+  addRevenueLoopReceipt("Outcomes captured", detail);
+  addAudit("Revenue outcomes captured", detail);
+  renderRevenueOutcomeLoop();
+  renderAudit();
+  showToast("Revenue outcomes captured.");
+}
+
+function tuneRevenueOutcomeRewards() {
+  const loop = revenueOutcomeLoopSnapshot();
+  const detail = `Tuned ${loop.rewards.length} revenue reward signals with +${loop.rewardLift} reward lift and ${loop.safePatterns.filter((item) => item.status === "Shareable").length} safe patterns.`;
+  state.revenueLoopActions.status = "Rewards tuned";
+  state.revenueLoopActions.tunedAt = new Date().toISOString();
+  addRevenueLoopReceipt("Revenue rewards tuned", detail);
+  addAudit("Revenue rewards tuned", detail);
+  render();
+  showToast("Revenue rewards tuned.");
+}
+
+function checkRevenueForecastQuality() {
+  const loop = revenueOutcomeLoopSnapshot();
+  const calibrated = loop.forecasts.filter((item) => item.status === "Calibrated").length;
+  const detail = `Checked ${loop.forecasts.length} revenue forecasts with ${calibrated} calibrated and ${loop.forecasts.length - calibrated} watch items.`;
+  state.revenueLoopActions.status = "Forecast checked";
+  state.revenueLoopActions.forecastedAt = new Date().toISOString();
+  addRevenueLoopReceipt("Forecast quality checked", detail);
+  addAudit("Revenue forecast checked", detail);
+  render();
+  showToast("Revenue forecast quality checked.");
+}
+
+function copyRevenueOutcomeLoopDigest() {
+  const loop = revenueOutcomeLoopSnapshot();
+  state.revenueLoopActions.lastCopiedAt = new Date().toISOString();
+  addRevenueLoopReceipt("Revenue loop digest copied", "Revenue outcome loop digest copied.");
+  addAudit("Revenue loop digest copied", "Revenue outcome loop digest copied.");
+  renderRevenueOutcomeLoop();
+  renderAudit();
+  copyText(revenueOutcomeLoopDigestText(loop), "Revenue loop digest copied.");
+}
+
+function addRevenueLoopReceipt(action, detail) {
+  state.revenueLoopActions.receipts = [
+    ...(state.revenueLoopActions.receipts ?? []),
+    {
+      id: `revenue-loop-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function revenueOutcomeLoopDigestText(loop = revenueOutcomeLoopSnapshot()) {
+  const outcomeLines = loop.outcomes.map((item, index) => `${index + 1}. ${item.result}: ${item.company} | ${item.trigger} | ${item.owner} | ${item.value}`).join("\n");
+  const rewardLines = loop.rewards.map((item, index) => `${index + 1}. ${item.direction}: ${item.title} | ${item.weight} | ${item.detail}`).join("\n");
+  const forecastLines = loop.forecasts.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | predicted ${item.predicted} | actual ${item.actual} | ${item.accuracy}`).join("\n");
+  const patternLines = loop.safePatterns.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.scope} | ${item.guardrail}`).join("\n");
+  const receiptLines = loop.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Revenue Outcome Loop",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${loop.statusLabel}`,
+    `Revenue loop score: ${loop.score}%`,
+    `Outcome events: ${loop.outcomes.length}`,
+    `Reward lift: +${loop.rewardLift}`,
+    `Safe aggregate patterns: ${loop.safePatterns.filter((item) => item.status === "Shareable").length}`,
+    "",
+    "Buyer outcomes:",
+    outcomeLines,
+    "",
+    "Reward tuning:",
+    rewardLines,
+    "",
+    "Forecast quality:",
+    forecastLines,
+    "",
+    "Safe revenue learning:",
+    patternLines,
+    "",
+    "Receipts:",
+    receiptLines || "No revenue loop receipts yet.",
+    "",
+    "Revenue loop rule:",
+    "- Trust actions learn from buyer outcomes only when the outcome is recorded with a receipt.",
+    "- Exact buyer text, evidence, prompts, account names, and deal values stay tenant-local.",
+    "- Cross-customer learning uses aggregate outcome class, proof type, threshold band, and guardrail label only.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -17492,6 +17971,13 @@ function exportCsv() {
     "Command Owner Load",
     "Command Actions",
     "Command Receipts",
+    "Revenue Loop Status",
+    "Revenue Loop Score",
+    "Outcome Events",
+    "Reward Lift",
+    "Forecast Calibrated",
+    "Safe Revenue Patterns",
+    "Revenue Loop Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -17528,6 +18014,7 @@ function exportCsv() {
     const optimizer = continuousTrustOptimizerSnapshot();
     const releaseTrain = autonomousTrustReleaseTrainSnapshot();
     const command = trustOperationsCommandSnapshot();
+    const revenueLoop = revenueOutcomeLoopSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -17679,6 +18166,13 @@ function exportCsv() {
       command.ownerLoad.filter((row) => row.status !== "Balanced").length,
       command.actions.length,
       command.receipts.length,
+      revenueLoop.statusLabel,
+      `${revenueLoop.score}%`,
+      revenueLoop.outcomes.length,
+      `+${revenueLoop.rewardLift}`,
+      revenueLoop.forecasts.filter((item) => item.status === "Calibrated").length,
+      revenueLoop.safePatterns.filter((item) => item.status === "Shareable").length,
+      revenueLoop.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -17725,6 +18219,7 @@ function exportReviewPack() {
   const optimizer = continuousTrustOptimizerSnapshot();
   const releaseTrain = autonomousTrustReleaseTrainSnapshot();
   const command = trustOperationsCommandSnapshot();
+  const revenueLoop = revenueOutcomeLoopSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -17742,7 +18237,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v35</h1>
+        <h1>AnswerSeal Review Pack v36</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -19577,6 +20072,115 @@ function exportReviewPack() {
         </table>
         <h2>Command Digest</h2>
         <pre>${escapeHtml(trustOperationsCommandDigestText(command))}</pre>
+        <h2>Revenue Outcome Loop</h2>
+        <p>Status: ${escapeHtml(revenueLoop.statusLabel)} | Loop score: ${revenueLoop.score}% | Outcomes: ${revenueLoop.outcomes.length} | Reward lift: +${revenueLoop.rewardLift} | Safe aggregate patterns: ${revenueLoop.safePatterns.filter((item) => item.status === "Shareable").length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Buyer Outcome</th>
+              <th>Result</th>
+              <th>Trigger</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${revenueLoop.outcomes
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.company)}<br />${escapeHtml(item.stage)}</td>
+                    <td class="${item.result === "Stalled" || item.result === "More proof" ? "risk" : "ok"}">${escapeHtml(item.result)}</td>
+                    <td>${escapeHtml(item.trigger)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Revenue Reward Tuning</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Direction</th>
+              <th>Weight</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${revenueLoop.rewards
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td class="${item.direction === "Penalize" ? "risk" : "ok"}">${escapeHtml(item.direction)}</td>
+                    <td>${escapeHtml(item.weight)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Revenue Forecast Quality</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Forecast</th>
+              <th>Predicted</th>
+              <th>Actual</th>
+              <th>Accuracy</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${revenueLoop.forecasts
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}<br />${escapeHtml(item.detail)}</td>
+                    <td>${escapeHtml(item.predicted)}</td>
+                    <td>${escapeHtml(item.actual)}</td>
+                    <td>${escapeHtml(item.accuracy)}</td>
+                    <td class="${item.status === "Calibrated" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Safe Revenue Learning</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Status</th>
+              <th>Scope</th>
+              <th>Guardrail</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${revenueLoop.safePatterns
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Shareable" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.scope)}</td>
+                    <td>${escapeHtml(item.guardrail)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Revenue Loop Digest</h2>
+        <pre>${escapeHtml(revenueOutcomeLoopDigestText(revenueLoop))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -20289,7 +20893,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v35 created with trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v36 created with revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -20313,12 +20917,13 @@ function exportReviewPack() {
   renderContinuousTrustOptimizer();
   renderAutonomousTrustReleaseTrain();
   renderTrustOperationsCommandCenter();
+  renderRevenueOutcomeLoop();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v35 exported.");
+  showToast("Review Pack v36 exported.");
 }
 
 function toCsv(rows) {
@@ -20394,6 +20999,7 @@ function serializeWorkspace() {
     optimizerActions: state.optimizerActions,
     releaseTrainActions: state.releaseTrainActions,
     commandCenterActions: state.commandCenterActions,
+    revenueLoopActions: state.revenueLoopActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,

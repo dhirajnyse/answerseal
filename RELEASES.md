@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.40 Alpha - Revenue Outcome Loop
+
+Phase: Revenue Outcome Loop
+
+- Added a Revenue drawer with loop score, outcome count, reward lift, safe pattern count, loop status, actions, digest, and receipts.
+- Added buyer outcome events that classify reviews as advanced, converted, stalled, or needing more proof after command actions.
+- Added revenue reward tuning that reinforces proof moves that reduce buyer friction and penalizes weak, stale, or delayed proof paths.
+- Added forecast quality checks that compare predicted trust risk with actual buyer progression after review activity.
+- Added safe revenue learning patterns that promote only aggregate outcome classes, proof types, threshold bands, and guardrail labels.
+- Added revenue loop receipts for captured outcomes, reward tuning, forecast checks, and copied learning digests.
+- Added revenue loop status, score, outcome count, reward lift, calibrated forecast count, safe pattern count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v36 with buyer outcomes, revenue reward tuning, forecast quality, safe revenue learning, and digest.
+- Updated the build phases page with the v0.41 Buyer Trust Graph plan.
+
 ## v0.39 Alpha - Trust Operations Command Center
 
 Phase: Trust Operations Command Center

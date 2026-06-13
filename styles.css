@@ -6716,6 +6716,185 @@ svg {
   white-space: pre-wrap;
 }
 
+.revenue-loop-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1160px, calc(100vw - 250px));
+}
+
+.revenue-loop-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.revenue-loop-actions {
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #f4fff1, #edf8ff);
+}
+
+.revenue-loop-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.revenue-loop-actions strong {
+  color: var(--accent-dark);
+}
+
+.revenue-loop-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(244, 255, 241, 0.82), rgba(255, 255, 255, 0.98));
+}
+
+.revenue-loop-section,
+.revenue-outcome-card,
+.revenue-reward-card,
+.revenue-forecast-card,
+.revenue-pattern-card,
+.revenue-loop-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.revenue-loop-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.revenue-outcome-list,
+.revenue-reward-list,
+.revenue-forecast-list,
+.revenue-pattern-list,
+.revenue-loop-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.revenue-outcome-list,
+.revenue-reward-list,
+.revenue-forecast-list,
+.revenue-pattern-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.revenue-outcome-card,
+.revenue-reward-card,
+.revenue-forecast-card,
+.revenue-pattern-card,
+.revenue-loop-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.revenue-outcome-card {
+  border-color: rgba(0, 168, 137, 0.3);
+  background: linear-gradient(180deg, rgba(244, 255, 241, 0.95), #fff);
+}
+
+.revenue-outcome-card.is-risk,
+.revenue-reward-card.is-risk,
+.revenue-forecast-card.is-risk,
+.revenue-pattern-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.revenue-reward-card,
+.revenue-forecast-card,
+.revenue-pattern-card {
+  background: #fbfffd;
+}
+
+.revenue-outcome-card header,
+.revenue-outcome-card footer,
+.revenue-reward-card header,
+.revenue-forecast-card header,
+.revenue-forecast-card footer,
+.revenue-pattern-card header,
+.revenue-pattern-card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.revenue-outcome-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.revenue-outcome-card strong,
+.revenue-reward-card strong,
+.revenue-forecast-card strong,
+.revenue-pattern-card strong,
+.revenue-loop-receipt-card strong {
+  color: var(--ink);
+}
+
+.revenue-outcome-card b,
+.revenue-reward-card b,
+.revenue-forecast-card b,
+.revenue-pattern-card b {
+  color: var(--accent-dark);
+  font-size: 0.88rem;
+  text-align: right;
+}
+
+.revenue-outcome-card.is-risk b,
+.revenue-reward-card.is-risk b,
+.revenue-forecast-card.is-risk b,
+.revenue-pattern-card.is-risk b {
+  color: var(--amber);
+}
+
+.revenue-outcome-card p,
+.revenue-outcome-card footer span,
+.revenue-reward-card p,
+.revenue-reward-card span,
+.revenue-forecast-card p,
+.revenue-forecast-card footer span,
+.revenue-pattern-card p,
+.revenue-pattern-card footer span,
+.revenue-loop-receipt-card p,
+.revenue-loop-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.revenue-loop-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -8975,6 +9154,12 @@ svg {
     .command-portfolio-list,
     .command-owner-list,
     .command-revenue-list,
+    .revenue-loop-metrics,
+    .revenue-loop-actions,
+    .revenue-outcome-list,
+    .revenue-reward-list,
+    .revenue-forecast-list,
+    .revenue-pattern-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -9151,6 +9336,13 @@ svg {
     .command-owner-card footer,
     .command-revenue-card header,
     .command-action-card,
+    .revenue-outcome-card header,
+    .revenue-outcome-card footer,
+    .revenue-reward-card header,
+    .revenue-forecast-card header,
+    .revenue-forecast-card footer,
+    .revenue-pattern-card header,
+    .revenue-pattern-card footer,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

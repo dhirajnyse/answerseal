@@ -191,6 +191,10 @@
             <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
             <span>Command</span>
           </button>
+          <button class="nav-item" id="revenueLoopNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Revenue</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -253,8 +257,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.39 Alpha</strong>
-          <span>Trust Operations Command Center</span>
+          <strong>v0.40 Alpha</strong>
+          <span>Revenue Outcome Loop</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -266,7 +270,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.39 Alpha</span>
+            <span class="label">Security questionnaire | v0.40 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3240,6 +3244,111 @@
             <span>Copyable operating brief for founders, CTOs, sales engineering, and trust leads</span>
           </div>
           <pre class="command-center-digest" id="commandCenterDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="revenue-loop-backdrop drawer-backdrop" id="revenueLoopBackdrop" hidden></div>
+    <aside class="workspace-drawer revenue-loop-drawer" id="revenueLoopDrawer" aria-label="Revenue outcome loop" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Revenue Outcome Loop</span>
+          <h2>Learn from buyer outcomes without leaking customer data</h2>
+        </div>
+        <button class="icon-button" id="closeRevenueLoopButton" type="button" aria-label="Close revenue outcome loop" title="Close revenue outcome loop">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip revenue-loop-metrics" aria-label="Revenue outcome loop health">
+        <article>
+          <span class="label">Loop Score</span>
+          <strong id="revenueLoopScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Outcomes</span>
+          <strong id="revenueOutcomeEventCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Reward Lift</span>
+          <strong id="rewardLiftCount">+0</strong>
+        </article>
+        <article>
+          <span class="label">Safe Patterns</span>
+          <strong id="safePatternCount">0</strong>
+        </article>
+      </section>
+
+      <section class="revenue-loop-actions" aria-label="Revenue outcome loop controls">
+        <div>
+          <span class="label">Loop Status</span>
+          <strong id="revenueLoopStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="captureRevenueOutcomesButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Capture</span>
+        </button>
+        <button class="secondary-button" id="tuneRevenueRewardsButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Tune</span>
+        </button>
+        <button class="secondary-button" id="checkRevenueForecastButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+          <span>Forecast</span>
+        </button>
+        <button class="secondary-button" id="copyRevenueLoopDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="revenue-loop-body">
+        <section class="revenue-loop-section" aria-label="Buyer outcomes">
+          <div class="section-heading">
+            <span class="label">Buyer Outcomes</span>
+            <span>What happened after command actions: advanced, converted, stalled, or requested more proof</span>
+          </div>
+          <div class="revenue-outcome-list" id="revenueOutcomeList"></div>
+        </section>
+
+        <section class="revenue-loop-section" aria-label="Reward tuning">
+          <div class="section-heading">
+            <span class="label">Reward Tuning</span>
+            <span>Proof moves that helped buyers progress are rewarded; weak moves are penalized</span>
+          </div>
+          <div class="revenue-reward-list" id="revenueRewardList"></div>
+        </section>
+
+        <section class="revenue-loop-section" aria-label="Forecast quality">
+          <div class="section-heading">
+            <span class="label">Forecast Quality</span>
+            <span>Predicted trust risk is compared with actual buyer movement after the review</span>
+          </div>
+          <div class="revenue-forecast-list" id="revenueForecastList"></div>
+        </section>
+
+        <section class="revenue-loop-section" aria-label="Safe revenue learning">
+          <div class="section-heading">
+            <span class="label">Safe Revenue Learning</span>
+            <span>Only aggregate outcome patterns can help other customers; exact buyer context stays local</span>
+          </div>
+          <div class="revenue-pattern-list" id="revenueSafePatternList"></div>
+        </section>
+
+        <section class="revenue-loop-section" aria-label="Revenue loop receipts">
+          <div class="section-heading">
+            <span class="label">Loop Receipts</span>
+            <span>Proof that outcomes, reward tuning, and forecast checks stayed governed</span>
+          </div>
+          <div class="revenue-loop-receipt-list" id="revenueLoopReceiptList"></div>
+        </section>
+
+        <section class="revenue-loop-section" aria-label="Revenue loop digest">
+          <div class="section-heading">
+            <span class="label">Revenue Loop Digest</span>
+            <span>Copyable learning brief for founders, trust leads, AI governance, and revenue teams</span>
+          </div>
+          <pre class="revenue-loop-digest" id="revenueLoopDigest"></pre>
         </section>
       </section>
     </aside>
