@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.42 Alpha
+**Current version:** v0.43 Alpha
 
-**Current phase:** Evidence Pack Marketplace
+**Current phase:** Buyer Trust Packet Studio
 
 ## Brand
 
@@ -213,6 +213,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Publish checks for pack coverage, fresh source posture, questionnaire demand, and buyer graph alignment
 - Marketplace boundaries that separate private source files from reusable aggregate proof-pack patterns
 - Evidence pack receipts for prepared packs, publish checks, boundary approval, and copied readiness digests
+- Buyer Trust Packet Studio drawer with studio score, ready packet count, audience count, receipt count, digest, and receipts
+- Buyer-safe packet builder that turns approved proof packs into scoped summaries with claims, excerpts, status, and expiry
+- Audience controls for security, legal, and procurement reviewers with visibility levels and handoff windows
+- Packet safety gates for approved claims, source excerpt depth, audience expiry, and marketplace boundary checks
+- Packet receipts for build, buyer-safe review, controlled handoff, and copied packet digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -233,7 +238,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v38 export with evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v39 export with buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -251,13 +256,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.43 Alpha - Buyer Trust Packet Studio
+## Next Phase: v0.44 Alpha - Buyer Access Room
 
-- Build buyer-safe packet summaries from approved evidence packs
-- Add audience controls for buyer role, expiry, excerpt depth, and evidence visibility
-- Record packet receipts for build, review, copy, share, expiry, and blocked release events
-- Export packet digests that sales, security, legal, and external buyers can trust
-- Move from reusable internal proof packs to controlled buyer-facing trust packets
+- Open a scoped buyer room for each trust packet with status, expiry, and packet visibility
+- Track packet views, copied excerpts, buyer questions, and follow-up risk
+- Route buyer follow-ups to security, legal, AI governance, or operations owners
+- Record room open, packet share, buyer activity, owner routing, and expiry events
+- Move from controlled packet generation to controlled buyer access and response loops
 
 ## License
 

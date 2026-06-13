@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.42 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v42";
+const BUILD_VERSION = "v0.43 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v43";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v42",
   "answerseal.workspace.v41",
   "answerseal.workspace.v40",
   "answerseal.workspace.v39",
@@ -738,6 +739,8 @@ function createInitialState() {
     buyerGraphActions: createInitialBuyerGraphActions(),
     evidencePackOpen: false,
     evidencePackActions: createInitialEvidencePackActions(),
+    packetStudioOpen: false,
+    packetStudioActions: createInitialPacketStudioActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1007,6 +1010,17 @@ function createInitialEvidencePackActions() {
   };
 }
 
+function createInitialPacketStudioActions() {
+  return {
+    status: "Draft",
+    builtAt: null,
+    reviewedAt: null,
+    sharedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1148,6 +1162,7 @@ function loadWorkspaceState() {
       revenueLoopActions: normalizeRevenueLoopActions(workspace.revenueLoopActions ?? fresh.revenueLoopActions),
       buyerGraphActions: normalizeBuyerGraphActions(workspace.buyerGraphActions ?? fresh.buyerGraphActions),
       evidencePackActions: normalizeEvidencePackActions(workspace.evidencePackActions ?? fresh.evidencePackActions),
+      packetStudioActions: normalizePacketStudioActions(workspace.packetStudioActions ?? fresh.packetStudioActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1185,6 +1200,7 @@ function loadWorkspaceState() {
       revenueLoopOpen: false,
       buyerGraphOpen: false,
       evidencePackOpen: false,
+      packetStudioOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1902,6 +1918,29 @@ function normalizeEvidencePackReceipt(receipt) {
   };
 }
 
+function normalizePacketStudioActions(actions) {
+  const status = ["Draft", "Packets built", "Buyer-safe review complete", "Packet shared"].includes(actions?.status)
+    ? actions.status
+    : "Draft";
+  return {
+    status,
+    builtAt: actions?.builtAt ?? null,
+    reviewedAt: actions?.reviewedAt ?? null,
+    sharedAt: actions?.sharedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizePacketStudioReceipt) : [],
+  };
+}
+
+function normalizePacketStudioReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `packet-studio-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Packet studio action"),
+    detail: String(receipt?.detail ?? "Buyer trust packet studio action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1957,6 +1996,7 @@ const elements = {
   revenueLoopNavButton: document.querySelector("#revenueLoopNavButton"),
   buyerGraphNavButton: document.querySelector("#buyerGraphNavButton"),
   evidencePackNavButton: document.querySelector("#evidencePackNavButton"),
+  packetStudioNavButton: document.querySelector("#packetStudioNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2553,6 +2593,23 @@ const elements = {
   checkEvidencePackButton: document.querySelector("#checkEvidencePackButton"),
   approveMarketplaceBoundaryButton: document.querySelector("#approveMarketplaceBoundaryButton"),
   copyEvidencePackDigestButton: document.querySelector("#copyEvidencePackDigestButton"),
+  packetStudioBackdrop: document.querySelector("#packetStudioBackdrop"),
+  packetStudioDrawer: document.querySelector("#packetStudioDrawer"),
+  closePacketStudioButton: document.querySelector("#closePacketStudioButton"),
+  packetStudioScore: document.querySelector("#packetStudioScore"),
+  packetReadyCount: document.querySelector("#packetReadyCount"),
+  packetAudienceCount: document.querySelector("#packetAudienceCount"),
+  packetReceiptCount: document.querySelector("#packetReceiptCount"),
+  packetStudioStatus: document.querySelector("#packetStudioStatus"),
+  packetBuilderList: document.querySelector("#packetBuilderList"),
+  packetAudienceList: document.querySelector("#packetAudienceList"),
+  packetSafetyList: document.querySelector("#packetSafetyList"),
+  packetReceiptList: document.querySelector("#packetReceiptList"),
+  packetStudioDigest: document.querySelector("#packetStudioDigest"),
+  buildPacketsButton: document.querySelector("#buildPacketsButton"),
+  reviewPacketsButton: document.querySelector("#reviewPacketsButton"),
+  sharePacketButton: document.querySelector("#sharePacketButton"),
+  copyPacketDigestButton: document.querySelector("#copyPacketDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2680,6 +2737,7 @@ function bindEvents() {
   elements.revenueLoopNavButton.addEventListener("click", openRevenueOutcomeLoop);
   elements.buyerGraphNavButton.addEventListener("click", openBuyerTrustGraph);
   elements.evidencePackNavButton.addEventListener("click", openEvidencePackMarketplace);
+  elements.packetStudioNavButton.addEventListener("click", openPacketStudio);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2752,6 +2810,7 @@ function bindEvents() {
     renderRevenueOutcomeLoop();
     renderBuyerTrustGraph();
     renderEvidencePackMarketplace();
+    renderPacketStudio();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2928,6 +2987,12 @@ function bindEvents() {
   elements.checkEvidencePackButton.addEventListener("click", checkEvidencePackPublish);
   elements.approveMarketplaceBoundaryButton.addEventListener("click", approveEvidencePackBoundary);
   elements.copyEvidencePackDigestButton.addEventListener("click", copyEvidencePackDigest);
+  elements.closePacketStudioButton.addEventListener("click", closePacketStudio);
+  elements.packetStudioBackdrop.addEventListener("click", closePacketStudio);
+  elements.buildPacketsButton.addEventListener("click", buildBuyerTrustPackets);
+  elements.reviewPacketsButton.addEventListener("click", reviewBuyerTrustPackets);
+  elements.sharePacketButton.addEventListener("click", shareBuyerTrustPacket);
+  elements.copyPacketDigestButton.addEventListener("click", copyPacketStudioDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -3000,6 +3065,7 @@ function bindEvents() {
     if (state.revenueLoopOpen) closeRevenueOutcomeLoop();
     if (state.buyerGraphOpen) closeBuyerTrustGraph();
     if (state.evidencePackOpen) closeEvidencePackMarketplace();
+    if (state.packetStudioOpen) closePacketStudio();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3039,6 +3105,7 @@ function applyInitialHash() {
   if (hash === "revenue" || hash === "revenue-loop" || hash === "outcome-loop" || hash === "revenue-outcomes") openRevenueOutcomeLoop();
   if (hash === "buyer-graph" || hash === "buyers-graph" || hash === "trust-graph" || hash === "buyer-trust") openBuyerTrustGraph();
   if (hash === "evidence-packs" || hash === "packs" || hash === "marketplace" || hash === "proof-packs") openEvidencePackMarketplace();
+  if (hash === "packet-studio" || hash === "packets" || hash === "trust-packets" || hash === "buyer-packets") openPacketStudio();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3092,6 +3159,7 @@ function render() {
   renderRevenueOutcomeLoop();
   renderBuyerTrustGraph();
   renderEvidencePackMarketplace();
+  renderPacketStudio();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3894,6 +3962,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.evidencePackNavButton && state.evidencePackOpen) {
     closeEvidencePackMarketplace(false);
   }
+  if (activeButton !== elements.packetStudioNavButton && state.packetStudioOpen) {
+    closePacketStudio(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3922,6 +3993,7 @@ function setActiveNav(activeButton) {
     elements.revenueLoopNavButton,
     elements.buyerGraphNavButton,
     elements.evidencePackNavButton,
+    elements.packetStudioNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -5175,6 +5247,7 @@ function openEvidencePackMarketplace() {
   closeIntake(false);
   closeLibrary(false);
   closePortal(false);
+  closePacketStudio(false);
   state.evidencePackOpen = true;
   setActiveNav(elements.evidencePackNavButton);
   elements.evidencePackBackdrop.hidden = false;
@@ -5189,6 +5262,60 @@ function closeEvidencePackMarketplace(activateReview = true) {
   elements.evidencePackDrawer.classList.remove("is-open");
   elements.evidencePackDrawer.setAttribute("aria-hidden", "true");
   elements.evidencePackBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openPacketStudio() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.packetStudioOpen = true;
+  setActiveNav(elements.packetStudioNavButton);
+  elements.packetStudioBackdrop.hidden = false;
+  elements.packetStudioDrawer.classList.add("is-open");
+  elements.packetStudioDrawer.setAttribute("aria-hidden", "false");
+  renderPacketStudio();
+}
+
+function closePacketStudio(activateReview = true) {
+  if (!state.packetStudioOpen && elements.packetStudioDrawer.getAttribute("aria-hidden") === "true") return;
+  state.packetStudioOpen = false;
+  elements.packetStudioDrawer.classList.remove("is-open");
+  elements.packetStudioDrawer.setAttribute("aria-hidden", "true");
+  elements.packetStudioBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -5209,6 +5336,7 @@ function openAnalytics() {
   closeRevenueOutcomeLoop(false);
   closeBuyerTrustGraph(false);
   closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -16665,6 +16793,284 @@ function evidencePackDigestText(marketplace = evidencePackMarketplaceSnapshot())
   ].join("\n");
 }
 
+function renderPacketStudio() {
+  const studio = packetStudioSnapshot();
+
+  elements.packetStudioScore.textContent = `${studio.score}%`;
+  elements.packetReadyCount.textContent = `${studio.readyCount}/${studio.packets.length}`;
+  elements.packetAudienceCount.textContent = studio.audiences.length;
+  elements.packetReceiptCount.textContent = studio.receipts.length;
+  elements.packetStudioStatus.textContent = studio.statusLabel;
+  elements.packetStudioDigest.textContent = packetStudioDigestText(studio);
+
+  elements.packetBuilderList.innerHTML = "";
+  studio.packets.forEach((packet) => {
+    const card = document.createElement("article");
+    card.className = `packet-card ${packet.status !== "Ready" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(packet.audience)}</span>
+          <strong>${escapeHtml(packet.title)}</strong>
+        </div>
+        <b>${packet.score}%</b>
+      </header>
+      <p>${escapeHtml(packet.summary)}</p>
+      <footer>
+        <span>${escapeHtml(packet.status)}</span>
+        <span>${packet.claims} claims</span>
+        <span>${packet.excerpts} excerpts</span>
+        <span>${escapeHtml(packet.expiry)}</span>
+      </footer>
+    `;
+    elements.packetBuilderList.append(card);
+  });
+
+  elements.packetAudienceList.innerHTML = "";
+  studio.audiences.forEach((audience) => {
+    const card = document.createElement("article");
+    card.className = "packet-audience-card";
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(audience.role)}</strong>
+        <b>${escapeHtml(audience.visibility)}</b>
+      </header>
+      <p>${escapeHtml(audience.detail)}</p>
+      <span>${escapeHtml(audience.expiry)}</span>
+    `;
+    elements.packetAudienceList.append(card);
+  });
+
+  elements.packetSafetyList.innerHTML = "";
+  studio.safety.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `packet-safety-card ${gate.status !== "Pass" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <b>${escapeHtml(gate.status)}</b>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+      <span>${escapeHtml(gate.owner)}</span>
+    `;
+    elements.packetSafetyList.append(card);
+  });
+
+  elements.packetReceiptList.innerHTML = "";
+  if (studio.receipts.length === 0) {
+    elements.packetReceiptList.append(emptyState("No packet receipts yet"));
+  }
+  studio.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "packet-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.packetReceiptList.append(card);
+  });
+}
+
+function packetStudioSnapshot() {
+  const marketplace = evidencePackMarketplaceSnapshot();
+  const packets = buyerTrustPackets(marketplace);
+  const audiences = packetAudiences(marketplace);
+  const safety = packetSafetyGates(marketplace, packets);
+  const readyCount = packets.filter((packet) => packet.status === "Ready").length;
+  const passedSafety = safety.filter((gate) => gate.status === "Pass").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        marketplace.score * 0.28
+          + Math.min(100, readyCount * 25) * 0.32
+          + Math.min(100, passedSafety * 25) * 0.28
+          + Math.min(100, audiences.length * 18) * 0.12,
+      ),
+    ),
+  );
+  const statusLabel = state.packetStudioActions.status === "Draft" ? "Ready to build buyer trust packets" : state.packetStudioActions.status;
+
+  return {
+    score,
+    statusLabel,
+    marketplace,
+    packets,
+    audiences,
+    safety,
+    readyCount,
+    passedSafety,
+    receipts: state.packetStudioActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function buyerTrustPackets(marketplace) {
+  return marketplace.packs.slice(0, 4).map((pack) => {
+    const approvedClaims = state.questions.filter((question) => question.status === "approved" || question.confidence >= 85);
+    const excerpts = pack.sources.reduce((sum, source) => sum + Math.min(2, source.excerpts.length), 0);
+    const boundaryReady = pack.status === "Marketplace ready" && marketplace.passedBoundary >= 3;
+    const score = Math.min(100, Math.round(pack.score * 0.52 + Math.min(100, approvedClaims.length * 12) * 0.24 + Math.min(100, excerpts * 10) * 0.14 + (boundaryReady ? 10 : 0)));
+    return {
+      id: `packet-${pack.category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      title: `${pack.title.replace(" Pack", "")} Buyer Packet`,
+      audience: pack.buyerFit,
+      summary: `${pack.detail} Includes buyer-safe citations, approved claims, source freshness, and private evidence boundaries.`,
+      claims: Math.min(approvedClaims.length, 6),
+      excerpts,
+      expiry: daysUntil(workspaceAccount.expires) <= 3 ? "Expires soon" : workspaceAccount.expires,
+      score,
+      status: score >= 82 && boundaryReady ? "Ready" : "Review",
+    };
+  });
+}
+
+function packetAudiences(marketplace) {
+  const readyPacks = marketplace.packs.filter((pack) => pack.status === "Marketplace ready").length;
+  return [
+    {
+      role: "Security reviewer",
+      visibility: "Citations + excerpts",
+      expiry: workspaceAccount.expires,
+      detail: `${readyPacks} reusable pack(s) can show source excerpts, confidence, and freshness without raw files.`,
+    },
+    {
+      role: "Legal reviewer",
+      visibility: "Claims + DPA summary",
+      expiry: workspaceAccount.expires,
+      detail: "Privacy and contractual claims require approved language and boundary checks before sharing.",
+    },
+    {
+      role: "Procurement",
+      visibility: "Status + packet digest",
+      expiry: workspaceAccount.expires,
+      detail: "Packet digest focuses on completion, owner approval, missing proof, and safe handoff status.",
+    },
+  ];
+}
+
+function packetSafetyGates(marketplace, packets) {
+  const readyPackets = packets.filter((packet) => packet.status === "Ready").length;
+  return [
+    {
+      title: "Approved claim gate",
+      status: state.questions.some((question) => question.status === "approved") ? "Pass" : "Watch",
+      owner: "Trust Lead",
+      detail: "Buyer packets prefer approved claims and flag drafted answers before external sharing.",
+    },
+    {
+      title: "Source excerpt depth",
+      status: packets.every((packet) => packet.excerpts >= 2) ? "Pass" : "Watch",
+      owner: "Security",
+      detail: "Each packet must include enough buyer-safe excerpts to support its claims without raw files.",
+    },
+    {
+      title: "Audience expiry",
+      status: daysUntil(workspaceAccount.expires) > 0 ? "Pass" : "Watch",
+      owner: "Sales Engineering",
+      detail: `Packet access expires on ${workspaceAccount.expires} and should be renewed per buyer review.`,
+    },
+    {
+      title: "Marketplace boundary",
+      status: marketplace.passedBoundary >= 3 && readyPackets >= 3 ? "Pass" : "Watch",
+      owner: "AI Governance",
+      detail: "Only buyer-safe summaries, citations, excerpts, readiness bands, and guardrail labels leave the workspace.",
+    },
+  ];
+}
+
+function buildBuyerTrustPackets() {
+  const studio = packetStudioSnapshot();
+  const detail = `Built ${studio.packets.length} buyer trust packets with ${studio.readyCount} ready for controlled review.`;
+  state.packetStudioActions.status = "Packets built";
+  state.packetStudioActions.builtAt = new Date().toISOString();
+  addPacketStudioReceipt("Buyer trust packets built", detail);
+  addAudit("Buyer trust packets built", detail);
+  renderPacketStudio();
+  renderAudit();
+  showToast("Buyer trust packets built.");
+}
+
+function reviewBuyerTrustPackets() {
+  const studio = packetStudioSnapshot();
+  const passed = studio.safety.filter((gate) => gate.status === "Pass").length;
+  const detail = `Reviewed ${studio.safety.length} packet safety gates with ${passed} passing and ${studio.safety.length - passed} watch items.`;
+  state.packetStudioActions.status = "Buyer-safe review complete";
+  state.packetStudioActions.reviewedAt = new Date().toISOString();
+  addPacketStudioReceipt("Buyer-safe packet review complete", detail);
+  addAudit("Buyer-safe packet review complete", detail);
+  render();
+  showToast("Buyer-safe packet review complete.");
+}
+
+function shareBuyerTrustPacket() {
+  const studio = packetStudioSnapshot();
+  const detail = `Prepared controlled handoff for ${studio.readyCount}/${studio.packets.length} buyer trust packets with ${studio.audiences.length} audience profiles.`;
+  state.packetStudioActions.status = "Packet shared";
+  state.packetStudioActions.sharedAt = new Date().toISOString();
+  addPacketStudioReceipt("Controlled packet handoff prepared", detail);
+  addAudit("Controlled packet handoff prepared", detail);
+  render();
+  showToast("Controlled packet handoff prepared.");
+}
+
+function copyPacketStudioDigest() {
+  const studio = packetStudioSnapshot();
+  state.packetStudioActions.lastCopiedAt = new Date().toISOString();
+  addPacketStudioReceipt("Packet studio digest copied", "Buyer trust packet studio digest copied.");
+  addAudit("Packet studio digest copied", "Buyer trust packet studio digest copied.");
+  renderPacketStudio();
+  renderAudit();
+  copyText(packetStudioDigestText(studio), "Packet studio digest copied.");
+}
+
+function addPacketStudioReceipt(action, detail) {
+  state.packetStudioActions.receipts = [
+    ...(state.packetStudioActions.receipts ?? []),
+    {
+      id: `packet-studio-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function packetStudioDigestText(studio = packetStudioSnapshot()) {
+  const packetLines = studio.packets.map((packet, index) => `${index + 1}. ${packet.status}: ${packet.title} | ${packet.audience} | ${packet.score}% | ${packet.claims} claims | ${packet.excerpts} excerpts`).join("\n");
+  const audienceLines = studio.audiences.map((audience, index) => `${index + 1}. ${audience.role}: ${audience.visibility} | ${audience.expiry} | ${audience.detail}`).join("\n");
+  const safetyLines = studio.safety.map((gate, index) => `${index + 1}. ${gate.status}: ${gate.title} | ${gate.owner} | ${gate.detail}`).join("\n");
+  const receiptLines = studio.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Buyer Trust Packet Studio",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${studio.statusLabel}`,
+    `Packet studio score: ${studio.score}%`,
+    `Ready packets: ${studio.readyCount}/${studio.packets.length}`,
+    `Safety gates passing: ${studio.passedSafety}/${studio.safety.length}`,
+    "",
+    "Buyer packets:",
+    packetLines,
+    "",
+    "Audience controls:",
+    audienceLines,
+    "",
+    "Packet safety gates:",
+    safetyLines,
+    "",
+    "Receipts:",
+    receiptLines || "No packet studio receipts yet.",
+    "",
+    "Packet rule:",
+    "- Buyer packets expose approved summaries, citations, excerpts, status, and expiry, not raw files or private notes.",
+    "- Each packet is audience-scoped and expires with the workspace handoff window.",
+    "- Unsafe or under-sourced packets remain in review until safety gates pass.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -18955,6 +19361,12 @@ function exportCsv() {
     "Pack Publish Checks Pass",
     "Marketplace Boundary Pass",
     "Evidence Pack Receipts",
+    "Packet Studio Status",
+    "Packet Studio Score",
+    "Ready Packets",
+    "Packet Safety Pass",
+    "Packet Audiences",
+    "Packet Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -18994,6 +19406,7 @@ function exportCsv() {
     const revenueLoop = revenueOutcomeLoopSnapshot();
     const buyerGraph = buyerTrustGraphSnapshot();
     const evidencePack = evidencePackMarketplaceSnapshot();
+    const packetStudio = packetStudioSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -19165,6 +19578,12 @@ function exportCsv() {
       `${evidencePack.publishChecks.filter((check) => check.status === "Pass").length}/${evidencePack.publishChecks.length}`,
       `${evidencePack.passedBoundary}/${evidencePack.boundaries.length}`,
       evidencePack.receipts.length,
+      packetStudio.statusLabel,
+      `${packetStudio.score}%`,
+      `${packetStudio.readyCount}/${packetStudio.packets.length}`,
+      `${packetStudio.passedSafety}/${packetStudio.safety.length}`,
+      packetStudio.audiences.length,
+      packetStudio.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -19214,6 +19633,7 @@ function exportReviewPack() {
   const revenueLoop = revenueOutcomeLoopSnapshot();
   const buyerGraph = buyerTrustGraphSnapshot();
   const evidencePack = evidencePackMarketplaceSnapshot();
+  const packetStudio = packetStudioSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -19231,7 +19651,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v38</h1>
+        <h1>AnswerSeal Review Pack v39</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -21362,6 +21782,90 @@ function exportReviewPack() {
         </table>
         <h2>Evidence Pack Digest</h2>
         <pre>${escapeHtml(evidencePackDigestText(evidencePack))}</pre>
+        <h2>Buyer Trust Packet Studio</h2>
+        <p>Status: ${escapeHtml(packetStudio.statusLabel)} | Studio score: ${packetStudio.score}% | Ready packets: ${packetStudio.readyCount}/${packetStudio.packets.length} | Safety gates: ${packetStudio.passedSafety}/${packetStudio.safety.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Packet</th>
+              <th>Audience</th>
+              <th>Status</th>
+              <th>Score</th>
+              <th>Claims</th>
+              <th>Excerpts</th>
+              <th>Expiry</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${packetStudio.packets
+              .map(
+                (packet) => `
+                  <tr>
+                    <td>${escapeHtml(packet.title)}<br />${escapeHtml(packet.summary)}</td>
+                    <td>${escapeHtml(packet.audience)}</td>
+                    <td class="${packet.status === "Ready" ? "ok" : "risk"}">${escapeHtml(packet.status)}</td>
+                    <td>${packet.score}%</td>
+                    <td>${packet.claims}</td>
+                    <td>${packet.excerpts}</td>
+                    <td>${escapeHtml(packet.expiry)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Packet Audience Controls</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Audience</th>
+              <th>Visibility</th>
+              <th>Expiry</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${packetStudio.audiences
+              .map(
+                (audience) => `
+                  <tr>
+                    <td>${escapeHtml(audience.role)}</td>
+                    <td>${escapeHtml(audience.visibility)}</td>
+                    <td>${escapeHtml(audience.expiry)}</td>
+                    <td>${escapeHtml(audience.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Packet Safety Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${packetStudio.safety
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Pass" ? "ok" : "risk"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.owner)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Packet Studio Digest</h2>
+        <pre>${escapeHtml(packetStudioDigestText(packetStudio))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -22074,7 +22578,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v38 created with evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v39 created with buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -22101,12 +22605,13 @@ function exportReviewPack() {
   renderRevenueOutcomeLoop();
   renderBuyerTrustGraph();
   renderEvidencePackMarketplace();
+  renderPacketStudio();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v38 exported.");
+  showToast("Review Pack v39 exported.");
 }
 
 function toCsv(rows) {
@@ -22185,6 +22690,7 @@ function serializeWorkspace() {
     revenueLoopActions: state.revenueLoopActions,
     buyerGraphActions: state.buyerGraphActions,
     evidencePackActions: state.evidencePackActions,
+    packetStudioActions: state.packetStudioActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -22233,6 +22739,8 @@ function resetWorkspace() {
   closeTrustOperationsCommandCenter(false);
   closeRevenueOutcomeLoop(false);
   closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
   closeWorkspace(false);
   closeLibrary();
   render();

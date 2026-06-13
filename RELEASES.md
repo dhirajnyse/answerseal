@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.43 Alpha - Buyer Trust Packet Studio
+
+Phase: Buyer Trust Packet Studio
+
+- Added a Packet Studio drawer with studio score, ready packet count, audience count, receipt count, actions, digest, and receipts.
+- Added buyer-safe packet builder that turns approved proof packs into scoped summaries with claims, citations, excerpts, status, and expiry.
+- Added audience controls for security, legal, and procurement reviewers with visibility levels and handoff windows.
+- Added packet safety gates for approved claims, source excerpt depth, audience expiry, and marketplace boundary checks.
+- Added packet receipts for build, buyer-safe review, controlled handoff, and copied packet digests.
+- Added packet studio status, score, ready packet count, safety pass count, audience count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v39 with packet builder, audience controls, safety gates, and digest.
+- Updated the build phases page with the v0.44 Buyer Access Room plan.
+
 ## v0.42 Alpha - Evidence Pack Marketplace
 
 Phase: Evidence Pack Marketplace

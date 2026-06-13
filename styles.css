@@ -7249,6 +7249,162 @@ svg {
   white-space: pre-wrap;
 }
 
+.packet-studio-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1040px, calc(100vw - 248px));
+}
+
+.packet-studio-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.packet-studio-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(90deg, #f1fffd, #fff);
+}
+
+.packet-studio-actions > div {
+  display: grid;
+  gap: 4px;
+}
+
+.packet-studio-actions strong {
+  color: var(--accent-dark);
+}
+
+.packet-studio-body {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+}
+
+.packet-studio-section,
+.packet-card,
+.packet-audience-card,
+.packet-safety-card,
+.packet-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.packet-studio-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.packet-builder-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.packet-audience-list,
+.packet-safety-list,
+.packet-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.packet-card,
+.packet-audience-card,
+.packet-safety-card,
+.packet-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.packet-card {
+  background: linear-gradient(180deg, #f0fffb, #fff);
+}
+
+.packet-card.is-risk,
+.packet-safety-card.is-risk {
+  border-color: #f4d39a;
+  background: #fffaf0;
+}
+
+.packet-card header,
+.packet-audience-card header,
+.packet-safety-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.packet-card strong,
+.packet-audience-card strong,
+.packet-safety-card strong,
+.packet-receipt-card strong {
+  color: var(--ink);
+}
+
+.packet-card b,
+.packet-audience-card b,
+.packet-safety-card b {
+  flex: 0 0 auto;
+  color: var(--accent-dark);
+}
+
+.packet-card.is-risk b,
+.packet-safety-card.is-risk b {
+  color: var(--amber);
+}
+
+.packet-card footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.packet-card footer span,
+.packet-audience-card span,
+.packet-safety-card span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #ddfbf5;
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.packet-card p,
+.packet-audience-card p,
+.packet-safety-card p,
+.packet-receipt-card p,
+.packet-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.packet-studio-digest {
+  min-height: 260px;
+  max-height: 420px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -9524,6 +9680,11 @@ svg {
     .evidence-pack-catalog-list,
     .evidence-pack-publish-list,
     .evidence-pack-boundary-list,
+    .packet-studio-metrics,
+    .packet-studio-actions,
+    .packet-builder-list,
+    .packet-audience-list,
+    .packet-safety-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -9717,6 +9878,10 @@ svg {
     .evidence-pack-card footer,
     .evidence-pack-check-card header,
     .evidence-pack-boundary-card header,
+    .packet-card header,
+    .packet-card footer,
+    .packet-audience-card header,
+    .packet-safety-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

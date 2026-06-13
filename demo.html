@@ -203,6 +203,10 @@
             <svg aria-hidden="true"><use href="#icon-file"></use></svg>
             <span>Packs</span>
           </button>
+          <button class="nav-item" id="packetStudioNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+            <span>Packets</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -265,8 +269,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.42 Alpha</strong>
-          <span>Evidence Pack Marketplace</span>
+          <strong>v0.43 Alpha</strong>
+          <span>Buyer Trust Packet Studio</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -278,7 +282,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.42 Alpha</span>
+            <span class="label">Security questionnaire | v0.43 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3559,6 +3563,103 @@
             <span>Copyable readiness brief for founders, sales engineering, security, and legal</span>
           </div>
           <pre class="evidence-pack-digest" id="evidencePackDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="packet-studio-backdrop drawer-backdrop" id="packetStudioBackdrop" hidden></div>
+    <aside class="workspace-drawer packet-studio-drawer" id="packetStudioDrawer" aria-label="Buyer trust packet studio" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Buyer Trust Packet Studio</span>
+          <h2>Build buyer-safe packets from approved proof packs</h2>
+        </div>
+        <button class="icon-button" id="closePacketStudioButton" type="button" aria-label="Close packet studio" title="Close packet studio">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip packet-studio-metrics" aria-label="Buyer trust packet readiness">
+        <article>
+          <span class="label">Studio Score</span>
+          <strong id="packetStudioScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Ready Packets</span>
+          <strong id="packetReadyCount">0/0</strong>
+        </article>
+        <article>
+          <span class="label">Audiences</span>
+          <strong id="packetAudienceCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="packetReceiptCount">0</strong>
+        </article>
+      </section>
+
+      <section class="packet-studio-actions" aria-label="Packet studio controls">
+        <div>
+          <span class="label">Packet Status</span>
+          <strong id="packetStudioStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="buildPacketsButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+          <span>Build</span>
+        </button>
+        <button class="secondary-button" id="reviewPacketsButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Review</span>
+        </button>
+        <button class="secondary-button" id="sharePacketButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+          <span>Handoff</span>
+        </button>
+        <button class="secondary-button" id="copyPacketDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="packet-studio-body">
+        <section class="packet-studio-section" aria-label="Buyer packet builder">
+          <div class="section-heading">
+            <span class="label">Packet Builder</span>
+            <span>Buyer-safe summaries, approved claims, citations, proof excerpts, and expiry</span>
+          </div>
+          <div class="packet-builder-list" id="packetBuilderList"></div>
+        </section>
+
+        <section class="packet-studio-section" aria-label="Packet audience controls">
+          <div class="section-heading">
+            <span class="label">Audience Controls</span>
+            <span>Scope each packet by buyer role, visibility, and handoff window</span>
+          </div>
+          <div class="packet-audience-list" id="packetAudienceList"></div>
+        </section>
+
+        <section class="packet-studio-section" aria-label="Packet safety gates">
+          <div class="section-heading">
+            <span class="label">Safety Gates</span>
+            <span>Keep weak claims, raw files, private notes, and expired packets out of buyer handoff</span>
+          </div>
+          <div class="packet-safety-list" id="packetSafetyList"></div>
+        </section>
+
+        <section class="packet-studio-section" aria-label="Packet receipts">
+          <div class="section-heading">
+            <span class="label">Packet Receipts</span>
+            <span>Build, review, handoff, and copy actions recorded for audit-ready trust delivery</span>
+          </div>
+          <div class="packet-receipt-list" id="packetReceiptList"></div>
+        </section>
+
+        <section class="packet-studio-section" aria-label="Packet studio digest">
+          <div class="section-heading">
+            <span class="label">Packet Digest</span>
+            <span>Copyable buyer handoff brief for sales, security, legal, and procurement</span>
+          </div>
+          <pre class="packet-studio-digest" id="packetStudioDigest"></pre>
         </section>
       </section>
     </aside>
