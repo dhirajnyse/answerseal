@@ -187,6 +187,10 @@
             <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
             <span>Release</span>
           </button>
+          <button class="nav-item" id="commandCenterNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-warning"></use></svg>
+            <span>Command</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -249,8 +253,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.38 Alpha</strong>
-          <span>Autonomous Trust Release Train</span>
+          <strong>v0.39 Alpha</strong>
+          <span>Trust Operations Command Center</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -262,7 +266,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.38 Alpha</span>
+            <span class="label">Security questionnaire | v0.39 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3131,6 +3135,111 @@
             <span>Copyable rollout note for security, legal, AI governance, and customer success</span>
           </div>
           <pre class="release-train-digest" id="releaseTrainDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="command-center-backdrop drawer-backdrop" id="commandCenterBackdrop" hidden></div>
+    <aside class="workspace-drawer command-center-drawer" id="commandCenterDrawer" aria-label="Trust operations command center" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Trust Operations Command Center</span>
+          <h2>Protect revenue, owners, and release readiness</h2>
+        </div>
+        <button class="icon-button" id="closeCommandCenterButton" type="button" aria-label="Close trust operations command center" title="Close trust operations command center">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip command-center-metrics" aria-label="Trust operations command health">
+        <article>
+          <span class="label">Command Score</span>
+          <strong id="commandCenterScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Portfolio</span>
+          <strong id="commandPortfolioCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Revenue Risk</span>
+          <strong id="commandRevenueRisk">$0</strong>
+        </article>
+        <article>
+          <span class="label">Owner Load</span>
+          <strong id="commandOwnerLoadCount">0</strong>
+        </article>
+      </section>
+
+      <section class="command-center-actions" aria-label="Trust operations command controls">
+        <div>
+          <span class="label">Command Status</span>
+          <strong id="commandCenterStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="syncCommandCenterButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Sync</span>
+        </button>
+        <button class="secondary-button" id="routeCommandOwnersButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+          <span>Route</span>
+        </button>
+        <button class="secondary-button" id="briefCommandCenterButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+          <span>Brief</span>
+        </button>
+        <button class="secondary-button" id="copyCommandCenterDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="command-center-body">
+        <section class="command-center-section" aria-label="Portfolio health">
+          <div class="section-heading">
+            <span class="label">Portfolio Health</span>
+            <span>Active buyer reviews ranked by readiness, deadline, blockers, and release gate</span>
+          </div>
+          <div class="command-portfolio-list" id="commandPortfolioList"></div>
+        </section>
+
+        <section class="command-center-section" aria-label="Owner load">
+          <div class="section-heading">
+            <span class="label">Owner Load</span>
+            <span>Security, legal, AI governance, and operations workload before the buyer deadline slips</span>
+          </div>
+          <div class="command-owner-list" id="commandOwnerLoadList"></div>
+        </section>
+
+        <section class="command-center-section" aria-label="Revenue risk">
+          <div class="section-heading">
+            <span class="label">Revenue Risk</span>
+            <span>Pipeline exposure, evidence pressure, follow-up drag, and release confidence in one view</span>
+          </div>
+          <div class="command-revenue-list" id="commandRevenueRiskList"></div>
+        </section>
+
+        <section class="command-center-section" aria-label="Command actions">
+          <div class="section-heading">
+            <span class="label">Command Actions</span>
+            <span>Closed-loop recommendations converted into accountable operating moves</span>
+          </div>
+          <div class="command-action-list" id="commandActionList"></div>
+        </section>
+
+        <section class="command-center-section" aria-label="Command receipts">
+          <div class="section-heading">
+            <span class="label">Command Receipts</span>
+            <span>Proof that trust operations were synced, routed, briefed, or copied with human control</span>
+          </div>
+          <div class="command-receipt-list" id="commandReceiptList"></div>
+        </section>
+
+        <section class="command-center-section" aria-label="Command digest">
+          <div class="section-heading">
+            <span class="label">Command Digest</span>
+            <span>Copyable operating brief for founders, CTOs, sales engineering, and trust leads</span>
+          </div>
+          <pre class="command-center-digest" id="commandCenterDigest"></pre>
         </section>
       </section>
     </aside>

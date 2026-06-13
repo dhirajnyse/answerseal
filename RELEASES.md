@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.39 Alpha - Trust Operations Command Center
+
+Phase: Trust Operations Command Center
+
+- Added a Command drawer with command score, portfolio count, revenue risk, owner load, command status, actions, digest, and receipts.
+- Added portfolio health cards that rank buyer reviews by readiness, deadline, blockers, deal value, owner, and release gate.
+- Added owner load monitoring across security, legal, AI governance, and operations queues before buyer deadlines slip.
+- Added revenue risk command signals for pipeline exposure, highest-risk buyer, evidence gap pressure, buyer follow-up drag, release confidence, and deal desk risk.
+- Added command actions that convert closed-loop recommendations into accountable moves for buyer protection, owner balancing, release readiness, and executive briefing.
+- Added command receipts for portfolio sync, owner routing, executive brief preparation, and copied operating digests.
+- Added command status, command score, portfolio count, revenue risk, owner load, action count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v35 with command center portfolio health, owner load, revenue risk, actions, and digest.
+- Updated the build phases page with the v0.40 Revenue Outcome Loop plan.
+
 ## v0.38 Alpha - Autonomous Trust Release Train
 
 Phase: Autonomous Trust Release Train

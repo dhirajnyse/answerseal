@@ -6522,6 +6522,200 @@ svg {
   white-space: pre-wrap;
 }
 
+.command-center-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1160px, calc(100vw - 250px));
+}
+
+.command-center-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.command-center-actions {
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #edfbff, #f6fff2);
+}
+
+.command-center-actions > div {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.command-center-actions strong {
+  color: var(--blue);
+}
+
+.command-center-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background: linear-gradient(180deg, rgba(237, 251, 255, 0.82), rgba(255, 255, 255, 0.98));
+}
+
+.command-center-section,
+.command-portfolio-card,
+.command-owner-card,
+.command-revenue-card,
+.command-action-card,
+.command-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.command-center-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.command-portfolio-list,
+.command-owner-list,
+.command-revenue-list,
+.command-action-list,
+.command-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.command-portfolio-list,
+.command-owner-list,
+.command-revenue-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.command-portfolio-card,
+.command-owner-card,
+.command-revenue-card,
+.command-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  box-shadow: 0 12px 24px rgba(20, 75, 69, 0.08);
+}
+
+.command-portfolio-card {
+  border-color: rgba(32, 192, 231, 0.34);
+  background: linear-gradient(180deg, rgba(237, 251, 255, 0.95), #fff);
+}
+
+.command-portfolio-card.is-risk,
+.command-owner-card.is-risk,
+.command-revenue-card.is-risk,
+.command-action-card.is-risk {
+  border-color: rgba(177, 108, 10, 0.42);
+  background: #fffaf0;
+}
+
+.command-owner-card,
+.command-revenue-card {
+  background: #fbfffd;
+}
+
+.command-action-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+}
+
+.command-action-card > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--blue);
+  background: #e5f7ff;
+  font-weight: 900;
+}
+
+.command-portfolio-card header,
+.command-portfolio-card footer,
+.command-owner-card header,
+.command-owner-card footer,
+.command-revenue-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.command-portfolio-card header div,
+.command-owner-card header div {
+  display: grid;
+  gap: 4px;
+}
+
+.command-portfolio-card strong,
+.command-owner-card strong,
+.command-revenue-card strong,
+.command-action-card strong,
+.command-receipt-card strong {
+  color: var(--ink);
+}
+
+.command-portfolio-card b,
+.command-owner-card b,
+.command-revenue-card b,
+.command-action-card b {
+  color: var(--blue);
+  font-size: 0.88rem;
+  text-align: right;
+}
+
+.command-portfolio-card.is-risk b,
+.command-owner-card.is-risk b,
+.command-revenue-card.is-risk b,
+.command-action-card.is-risk b {
+  color: var(--amber);
+}
+
+.command-portfolio-card p,
+.command-portfolio-card footer span,
+.command-owner-card p,
+.command-owner-card footer span,
+.command-revenue-card p,
+.command-revenue-card span,
+.command-action-card p,
+.command-receipt-card p,
+.command-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.command-center-digest {
+  min-height: 300px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -8776,6 +8970,11 @@ svg {
     .release-calendar-list,
     .release-adoption-list,
     .release-rollback-list,
+    .command-center-metrics,
+    .command-center-actions,
+    .command-portfolio-list,
+    .command-owner-list,
+    .command-revenue-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -8946,6 +9145,12 @@ svg {
     .release-adoption-card header,
     .release-rollback-card header,
     .release-rollback-card footer,
+    .command-portfolio-card header,
+    .command-portfolio-card footer,
+    .command-owner-card header,
+    .command-owner-card footer,
+    .command-revenue-card header,
+    .command-action-card,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

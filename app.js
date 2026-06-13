@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.38 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v38";
+const BUILD_VERSION = "v0.39 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v39";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v38",
   "answerseal.workspace.v37",
   "answerseal.workspace.v36",
   "answerseal.workspace.v35",
@@ -726,6 +727,8 @@ function createInitialState() {
     optimizerActions: createInitialOptimizerActions(),
     releaseTrainOpen: false,
     releaseTrainActions: createInitialReleaseTrainActions(),
+    commandCenterOpen: false,
+    commandCenterActions: createInitialCommandCenterActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -951,6 +954,17 @@ function createInitialReleaseTrainActions() {
   };
 }
 
+function createInitialCommandCenterActions() {
+  return {
+    status: "Draft",
+    syncedAt: null,
+    routedAt: null,
+    briefedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1088,6 +1102,7 @@ function loadWorkspaceState() {
       feedbackActions: normalizeFeedbackActions(workspace.feedbackActions ?? fresh.feedbackActions),
       optimizerActions: normalizeOptimizerActions(workspace.optimizerActions ?? fresh.optimizerActions),
       releaseTrainActions: normalizeReleaseTrainActions(workspace.releaseTrainActions ?? fresh.releaseTrainActions),
+      commandCenterActions: normalizeCommandCenterActions(workspace.commandCenterActions ?? fresh.commandCenterActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1121,6 +1136,7 @@ function loadWorkspaceState() {
       feedbackOpen: false,
       optimizerOpen: false,
       releaseTrainOpen: false,
+      commandCenterOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1752,6 +1768,27 @@ function normalizeReleaseTrainReceipt(receipt) {
   };
 }
 
+function normalizeCommandCenterActions(actions) {
+  const status = ["Draft", "Portfolio synced", "Owners routed", "Executive brief ready"].includes(actions?.status) ? actions.status : "Draft";
+  return {
+    status,
+    syncedAt: actions?.syncedAt ?? null,
+    routedAt: actions?.routedAt ?? null,
+    briefedAt: actions?.briefedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeCommandCenterReceipt) : [],
+  };
+}
+
+function normalizeCommandCenterReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `command-center-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Command center action"),
+    detail: String(receipt?.detail ?? "Trust operations command center action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1803,6 +1840,7 @@ const elements = {
   feedbackNavButton: document.querySelector("#feedbackNavButton"),
   optimizerNavButton: document.querySelector("#optimizerNavButton"),
   releaseTrainNavButton: document.querySelector("#releaseTrainNavButton"),
+  commandCenterNavButton: document.querySelector("#commandCenterNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2328,6 +2366,24 @@ const elements = {
   scheduleReleaseButton: document.querySelector("#scheduleReleaseButton"),
   monitorReleaseButton: document.querySelector("#monitorReleaseButton"),
   copyReleaseTrainDigestButton: document.querySelector("#copyReleaseTrainDigestButton"),
+  commandCenterBackdrop: document.querySelector("#commandCenterBackdrop"),
+  commandCenterDrawer: document.querySelector("#commandCenterDrawer"),
+  closeCommandCenterButton: document.querySelector("#closeCommandCenterButton"),
+  commandCenterScore: document.querySelector("#commandCenterScore"),
+  commandPortfolioCount: document.querySelector("#commandPortfolioCount"),
+  commandRevenueRisk: document.querySelector("#commandRevenueRisk"),
+  commandOwnerLoadCount: document.querySelector("#commandOwnerLoadCount"),
+  commandCenterStatus: document.querySelector("#commandCenterStatus"),
+  commandPortfolioList: document.querySelector("#commandPortfolioList"),
+  commandOwnerLoadList: document.querySelector("#commandOwnerLoadList"),
+  commandRevenueRiskList: document.querySelector("#commandRevenueRiskList"),
+  commandActionList: document.querySelector("#commandActionList"),
+  commandReceiptList: document.querySelector("#commandReceiptList"),
+  commandCenterDigest: document.querySelector("#commandCenterDigest"),
+  syncCommandCenterButton: document.querySelector("#syncCommandCenterButton"),
+  routeCommandOwnersButton: document.querySelector("#routeCommandOwnersButton"),
+  briefCommandCenterButton: document.querySelector("#briefCommandCenterButton"),
+  copyCommandCenterDigestButton: document.querySelector("#copyCommandCenterDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2451,6 +2507,7 @@ function bindEvents() {
   elements.feedbackNavButton.addEventListener("click", openGovernanceFeedbackLoop);
   elements.optimizerNavButton.addEventListener("click", openContinuousTrustOptimizer);
   elements.releaseTrainNavButton.addEventListener("click", openAutonomousTrustReleaseTrain);
+  elements.commandCenterNavButton.addEventListener("click", openTrustOperationsCommandCenter);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2519,6 +2576,7 @@ function bindEvents() {
     renderGovernanceFeedbackLoop();
     renderContinuousTrustOptimizer();
     renderAutonomousTrustReleaseTrain();
+    renderTrustOperationsCommandCenter();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2671,6 +2729,12 @@ function bindEvents() {
   elements.scheduleReleaseButton.addEventListener("click", scheduleAutonomousTrustRelease);
   elements.monitorReleaseButton.addEventListener("click", monitorAutonomousTrustRelease);
   elements.copyReleaseTrainDigestButton.addEventListener("click", copyAutonomousTrustReleaseTrainDigest);
+  elements.closeCommandCenterButton.addEventListener("click", closeTrustOperationsCommandCenter);
+  elements.commandCenterBackdrop.addEventListener("click", closeTrustOperationsCommandCenter);
+  elements.syncCommandCenterButton.addEventListener("click", syncTrustOperationsPortfolio);
+  elements.routeCommandOwnersButton.addEventListener("click", routeTrustOperationsOwners);
+  elements.briefCommandCenterButton.addEventListener("click", prepareTrustOperationsBrief);
+  elements.copyCommandCenterDigestButton.addEventListener("click", copyTrustOperationsCommandDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2739,6 +2803,7 @@ function bindEvents() {
     if (state.feedbackOpen) closeGovernanceFeedbackLoop();
     if (state.optimizerOpen) closeContinuousTrustOptimizer();
     if (state.releaseTrainOpen) closeAutonomousTrustReleaseTrain();
+    if (state.commandCenterOpen) closeTrustOperationsCommandCenter();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2774,6 +2839,7 @@ function applyInitialHash() {
   if (hash === "feedback" || hash === "governance-feedback" || hash === "feedback-loop" || hash === "governance-loop") openGovernanceFeedbackLoop();
   if (hash === "optimizer" || hash === "optimizations" || hash === "continuous-trust" || hash === "trust-optimizer") openContinuousTrustOptimizer();
   if (hash === "release" || hash === "release-train" || hash === "trust-release" || hash === "release-candidates") openAutonomousTrustReleaseTrain();
+  if (hash === "command" || hash === "command-center" || hash === "trust-ops" || hash === "operations") openTrustOperationsCommandCenter();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -2823,6 +2889,7 @@ function render() {
   renderGovernanceFeedbackLoop();
   renderContinuousTrustOptimizer();
   renderAutonomousTrustReleaseTrain();
+  renderTrustOperationsCommandCenter();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3556,6 +3623,7 @@ function activateWorkspaceNav(target) {
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -3610,6 +3678,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.releaseTrainNavButton && state.releaseTrainOpen) {
     closeAutonomousTrustReleaseTrain(false);
   }
+  if (activeButton !== elements.commandCenterNavButton && state.commandCenterOpen) {
+    closeTrustOperationsCommandCenter(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3634,6 +3705,7 @@ function setActiveNav(activeButton) {
     elements.feedbackNavButton,
     elements.optimizerNavButton,
     elements.releaseTrainNavButton,
+    elements.commandCenterNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4663,6 +4735,7 @@ function openAutonomousTrustReleaseTrain() {
   closePolicyEnforcementAgent(false);
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
+  closeTrustOperationsCommandCenter(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -4691,6 +4764,56 @@ function closeAutonomousTrustReleaseTrain(activateReview = true) {
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
+function openTrustOperationsCommandCenter() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.commandCenterOpen = true;
+  setActiveNav(elements.commandCenterNavButton);
+  elements.commandCenterBackdrop.hidden = false;
+  elements.commandCenterDrawer.classList.add("is-open");
+  elements.commandCenterDrawer.setAttribute("aria-hidden", "false");
+  renderTrustOperationsCommandCenter();
+}
+
+function closeTrustOperationsCommandCenter(activateReview = true) {
+  if (!state.commandCenterOpen && elements.commandCenterDrawer.getAttribute("aria-hidden") === "true") return;
+  state.commandCenterOpen = false;
+  elements.commandCenterDrawer.classList.remove("is-open");
+  elements.commandCenterDrawer.setAttribute("aria-hidden", "true");
+  elements.commandCenterBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
 function openAnalytics() {
   closeImportStudio(false);
   closeGapAutopilot(false);
@@ -4704,6 +4827,7 @@ function openAnalytics() {
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -14741,6 +14865,363 @@ function autonomousTrustReleaseTrainDigestText(releaseTrain = autonomousTrustRel
   ].join("\n");
 }
 
+function renderTrustOperationsCommandCenter() {
+  const command = trustOperationsCommandSnapshot();
+
+  elements.commandCenterScore.textContent = `${command.score}%`;
+  elements.commandPortfolioCount.textContent = command.portfolio.length;
+  elements.commandRevenueRisk.textContent = formatMoney(command.revenueAtRisk);
+  elements.commandOwnerLoadCount.textContent = command.ownerLoad.filter((row) => row.status !== "Balanced").length;
+  elements.commandCenterStatus.textContent = command.statusLabel;
+  elements.commandCenterDigest.textContent = trustOperationsCommandDigestText(command);
+
+  elements.commandPortfolioList.innerHTML = "";
+  command.portfolio.forEach((account) => {
+    const card = document.createElement("article");
+    card.className = `command-portfolio-card ${account.status === "At risk" || account.status === "Active risk" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(account.stage)}</span>
+          <strong>${escapeHtml(account.company)}</strong>
+        </div>
+        <b>${escapeHtml(account.status)}</b>
+      </header>
+      <p>${escapeHtml(account.detail)}</p>
+      <footer>
+        <span>${escapeHtml(formatMoney(account.value))}</span>
+        <span>${escapeHtml(account.owner)}</span>
+        <span>${account.readiness}% ready</span>
+      </footer>
+    `;
+    elements.commandPortfolioList.append(card);
+  });
+
+  elements.commandOwnerLoadList.innerHTML = "";
+  command.ownerLoad.forEach((row) => {
+    const card = document.createElement("article");
+    card.className = `command-owner-card ${row.status !== "Balanced" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(row.member.team)}</span>
+          <strong>${escapeHtml(row.member.name)}</strong>
+        </div>
+        <b>${escapeHtml(row.status)}</b>
+      </header>
+      <p>${escapeHtml(row.detail)}</p>
+      <footer>
+        <span>${row.openWork} open</span>
+        <span>${row.slaRisk} SLA risk</span>
+        <span>${row.releaseOwned} release</span>
+      </footer>
+    `;
+    elements.commandOwnerLoadList.append(card);
+  });
+
+  elements.commandRevenueRiskList.innerHTML = "";
+  command.revenueRisks.forEach((risk) => {
+    const card = document.createElement("article");
+    card.className = `command-revenue-card ${risk.level === "High" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(risk.title)}</strong>
+        <b>${escapeHtml(risk.value)}</b>
+      </header>
+      <p>${escapeHtml(risk.detail)}</p>
+      <span>${escapeHtml(risk.level)}</span>
+    `;
+    elements.commandRevenueRiskList.append(card);
+  });
+
+  elements.commandActionList.innerHTML = "";
+  command.actions.forEach((action, index) => {
+    const card = document.createElement("article");
+    card.className = `command-action-card ${action.status === "Critical" || action.status === "Now" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <span>${String(index + 1).padStart(2, "0")}</span>
+      <div>
+        <strong>${escapeHtml(action.title)}</strong>
+        <p>${escapeHtml(action.detail)}</p>
+      </div>
+      <b>${escapeHtml(action.owner)}</b>
+    `;
+    elements.commandActionList.append(card);
+  });
+
+  elements.commandReceiptList.innerHTML = "";
+  if (command.receipts.length === 0) {
+    elements.commandReceiptList.append(emptyState("No command receipts yet"));
+  }
+  command.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "command-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.commandReceiptList.append(card);
+  });
+}
+
+function trustOperationsCommandSnapshot() {
+  const pipeline = pipelineSnapshot();
+  const analytics = dealAnalyticsSnapshot();
+  const followUps = followUpSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+  const portfolio = commandPortfolioHealth(pipeline, releaseTrain);
+  const ownerLoad = commandOwnerLoad(followUps, gaps, releaseTrain);
+  const revenueRisks = commandRevenueRisks(pipeline, analytics, followUps, gaps, releaseTrain);
+  const actions = commandCenterActions(portfolio, ownerLoad, revenueRisks, analytics, releaseTrain);
+  const overloaded = ownerLoad.filter((row) => row.status !== "Balanced").length;
+  const criticalRisk = revenueRisks.filter((risk) => risk.level === "High").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        releaseTrain.score * 0.24
+          + Math.max(0, 100 - pipeline.slaRiskCount * 17) * 0.22
+          + Math.max(0, 100 - gaps.highRiskCount * 12) * 0.18
+          + Math.max(0, 100 - followUps.slaCount * 15) * 0.14
+          + Math.max(0, 100 - overloaded * 16) * 0.12
+          + Math.max(0, 100 - criticalRisk * 18) * 0.1,
+      ),
+    ),
+  );
+  const statusLabel = state.commandCenterActions.status === "Draft" ? "Ready to sync trust operations" : state.commandCenterActions.status;
+
+  return {
+    score,
+    statusLabel,
+    portfolio,
+    ownerLoad,
+    revenueRisks,
+    actions,
+    releaseTrain,
+    pipeline,
+    analytics,
+    followUps,
+    gaps,
+    revenueAtRisk: pipeline.blockedValue,
+    receipts: state.commandCenterActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function commandPortfolioHealth(pipeline, releaseTrain) {
+  return pipeline.slaRows.slice(0, 5).map((account, index) => {
+    const releaseStage = releaseTrain.calendar[index % releaseTrain.calendar.length]?.status ?? "Ready";
+    return {
+      company: account.company,
+      stage: account.stage,
+      value: account.value,
+      owner: account.owner,
+      status: account.slaRisk ? account.status : "On track",
+      readiness: account.readiness,
+      daysLeft: account.daysLeft,
+      blockers: account.blockers,
+      detail: `${account.questions} questions, ${account.blockers} blockers, ${account.daysLeft} days left, release gate ${releaseStage.toLowerCase()}.`,
+    };
+  });
+}
+
+function commandOwnerLoad(followUps, gaps, releaseTrain) {
+  return workspaceAccount.members
+    .map((member) => {
+      const ownedQuestions = state.questions.filter((question) => memberForQuestion(question).id === member.id);
+      const openQuestions = ownedQuestions.filter((question) => question.status !== "approved").length;
+      const gapRows = gaps.tasks.filter((task) => task.owner.id === member.id);
+      const followRows = followUps.items.filter((item) => item.owner.id === member.id && item.status !== "Answered");
+      const releaseOwned = releaseTrain.candidates.filter((candidate) => candidate.owner === member.team).length;
+      const slaRisk = gapRows.filter((task) => task.severity === "High").length + followRows.filter((item) => item.slaRisk).length;
+      const openWork = openQuestions + gapRows.length + followRows.length + releaseOwned;
+      const status = slaRisk > 1 || openWork >= 6 ? "Overloaded" : slaRisk > 0 || openWork >= 4 ? "Watch" : "Balanced";
+      return {
+        member,
+        openWork,
+        slaRisk,
+        releaseOwned,
+        status,
+        detail: `${openQuestions} open questions, ${gapRows.length} evidence gaps, ${followRows.length} buyer follow-ups, ${releaseOwned} release candidates.`,
+      };
+    })
+    .sort((a, b) => b.openWork - a.openWork || b.slaRisk - a.slaRisk || a.member.name.localeCompare(b.member.name));
+}
+
+function commandRevenueRisks(pipeline, analytics, followUps, gaps, releaseTrain) {
+  const topRisk = pipeline.slaRows[0];
+  return [
+    {
+      title: "Pipeline exposure",
+      value: formatMoney(pipeline.blockedValue),
+      level: pipeline.blockedValue > 50000 || pipeline.slaRiskCount > 1 ? "High" : pipeline.slaRiskCount > 0 ? "Medium" : "Low",
+      detail: `${pipeline.slaRiskCount}/${pipeline.accounts.length} buyer reviews carry SLA risk across ${formatMoney(pipeline.totalValue)} protected pipeline.`,
+    },
+    {
+      title: "Highest-risk buyer",
+      value: topRisk ? `${topRisk.readiness}%` : "Clear",
+      level: topRisk?.slaRisk ? "High" : "Low",
+      detail: topRisk ? `${topRisk.company} has ${topRisk.blockers} blockers, ${topRisk.daysLeft} days left, and ${topRisk.owner} as next owner.` : "No buyer is currently at SLA risk.",
+    },
+    {
+      title: "Evidence gap pressure",
+      value: `${gaps.highRiskCount} high`,
+      level: gaps.highRiskCount > 1 ? "High" : gaps.highRiskCount === 1 ? "Medium" : "Low",
+      detail: `${gaps.taskCount} evidence tasks are open and ${gaps.fallbackCount} need fallback language before approval.`,
+    },
+    {
+      title: "Buyer follow-up drag",
+      value: `${followUps.slaCount} SLA`,
+      level: followUps.slaCount > 1 ? "High" : followUps.slaCount === 1 ? "Medium" : "Low",
+      detail: `${followUps.openCount} open follow-ups, ${followUps.evidenceCount} evidence gaps, ${followUps.routedCount} routed to owners.`,
+    },
+    {
+      title: "Release confidence",
+      value: `${releaseTrain.score}%`,
+      level: releaseTrain.score < 70 ? "High" : releaseTrain.score < 82 ? "Medium" : "Low",
+      detail: `${releaseTrain.candidates.length} release candidates and ${releaseTrain.rollback.length} rollback records protect production behavior.`,
+    },
+    {
+      title: "Deal desk risk",
+      value: `${analytics.riskLabel} ${analytics.riskScore}`,
+      level: analytics.riskScore >= 60 ? "High" : analytics.riskScore >= 35 ? "Medium" : "Low",
+      detail: `${analytics.nextOwner.name} owns the next action: ${analytics.nextAction}.`,
+    },
+  ];
+}
+
+function commandCenterActions(portfolio, ownerLoad, revenueRisks, analytics, releaseTrain) {
+  const topPortfolio = portfolio[0];
+  const overloaded = ownerLoad.find((row) => row.status !== "Balanced") ?? ownerLoad[0];
+  const topRisk = revenueRisks.find((risk) => risk.level === "High") ?? revenueRisks[0];
+  const heldRelease = releaseTrain.candidates.find((candidate) => candidate.status === "Held");
+  return [
+    {
+      title: topPortfolio ? `Protect ${topPortfolio.company}` : "Protect active buyer review",
+      status: topRisk?.level === "High" ? "Critical" : "Now",
+      owner: topPortfolio?.owner ?? analytics.nextOwner.name,
+      detail: topPortfolio ? `${topPortfolio.company} is ${topPortfolio.readiness}% ready with ${topPortfolio.blockers} blockers and ${topPortfolio.daysLeft} days left.` : analytics.nextAction,
+    },
+    {
+      title: overloaded ? `Balance ${overloaded.member.name}'s queue` : "Balance owner workload",
+      status: overloaded?.status === "Overloaded" ? "Critical" : "Watch",
+      owner: overloaded?.member.team ?? "Trust Lead",
+      detail: overloaded ? overloaded.detail : "Owner load is balanced across security, legal, AI governance, and operations.",
+    },
+    {
+      title: heldRelease ? `Clear ${heldRelease.version}` : "Keep release train moving",
+      status: heldRelease ? "Watch" : "Ready",
+      owner: heldRelease?.owner ?? "AI Governance",
+      detail: heldRelease ? heldRelease.detail : `${releaseTrain.candidates.length} candidates are packaged with ${releaseTrain.rollback.length} rollback records.`,
+    },
+    {
+      title: "Prepare executive trust brief",
+      status: "Ready",
+      owner: "Trust Lead",
+      detail: `Summarize ${portfolio.length} buyer reviews, ${revenueRisks.filter((risk) => risk.level === "High").length} high risks, and ${releaseTrain.score}% release readiness.`,
+    },
+  ];
+}
+
+function syncTrustOperationsPortfolio() {
+  const command = trustOperationsCommandSnapshot();
+  const detail = `Synced ${command.portfolio.length} buyer reviews with ${formatMoney(command.revenueAtRisk)} at risk and ${command.score}% command score.`;
+  state.commandCenterActions.status = "Portfolio synced";
+  state.commandCenterActions.syncedAt = new Date().toISOString();
+  addCommandCenterReceipt("Portfolio synced", detail);
+  addAudit("Command portfolio synced", detail);
+  renderTrustOperationsCommandCenter();
+  renderAudit();
+  showToast("Trust operations portfolio synced.");
+}
+
+function routeTrustOperationsOwners() {
+  const command = trustOperationsCommandSnapshot();
+  const overloaded = command.ownerLoad.filter((row) => row.status !== "Balanced").length;
+  const detail = `Routed owner load for ${command.ownerLoad.length} owners with ${overloaded} queues needing attention and ${command.actions.length} command actions ready.`;
+  state.commandCenterActions.status = "Owners routed";
+  state.commandCenterActions.routedAt = new Date().toISOString();
+  addCommandCenterReceipt("Owners routed", detail);
+  addAudit("Command owners routed", detail);
+  render();
+  showToast("Trust operations owners routed.");
+}
+
+function prepareTrustOperationsBrief() {
+  const command = trustOperationsCommandSnapshot();
+  const highRisk = command.revenueRisks.filter((risk) => risk.level === "High").length;
+  const detail = `Prepared executive trust brief with ${command.portfolio.length} accounts, ${highRisk} high revenue risks, and ${command.releaseTrain.score}% release readiness.`;
+  state.commandCenterActions.status = "Executive brief ready";
+  state.commandCenterActions.briefedAt = new Date().toISOString();
+  addCommandCenterReceipt("Executive brief ready", detail);
+  addAudit("Command brief prepared", detail);
+  render();
+  showToast("Executive trust brief prepared.");
+}
+
+function copyTrustOperationsCommandDigest() {
+  const command = trustOperationsCommandSnapshot();
+  state.commandCenterActions.lastCopiedAt = new Date().toISOString();
+  addCommandCenterReceipt("Command digest copied", "Trust operations command digest copied.");
+  addAudit("Command digest copied", "Trust operations command digest copied.");
+  renderTrustOperationsCommandCenter();
+  renderAudit();
+  copyText(trustOperationsCommandDigestText(command), "Command digest copied.");
+}
+
+function addCommandCenterReceipt(action, detail) {
+  state.commandCenterActions.receipts = [
+    ...(state.commandCenterActions.receipts ?? []),
+    {
+      id: `command-center-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function trustOperationsCommandDigestText(command = trustOperationsCommandSnapshot()) {
+  const portfolioLines = command.portfolio.map((item, index) => `${index + 1}. ${item.company}: ${item.status} | ${item.readiness}% ready | ${formatMoney(item.value)} | ${item.owner}`).join("\n");
+  const ownerLines = command.ownerLoad.map((item, index) => `${index + 1}. ${item.status}: ${item.member.name} | ${item.openWork} open | ${item.slaRisk} SLA risk | ${item.detail}`).join("\n");
+  const revenueLines = command.revenueRisks.map((item, index) => `${index + 1}. ${item.level}: ${item.title} | ${item.value} | ${item.detail}`).join("\n");
+  const actionLines = command.actions.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.owner} | ${item.detail}`).join("\n");
+  const receiptLines = command.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Trust Operations Command Center",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${command.statusLabel}`,
+    `Command score: ${command.score}%`,
+    `Portfolio reviews: ${command.portfolio.length}`,
+    `Revenue at risk: ${formatMoney(command.revenueAtRisk)}`,
+    `Owner queues to watch: ${command.ownerLoad.filter((row) => row.status !== "Balanced").length}`,
+    "",
+    "Portfolio health:",
+    portfolioLines,
+    "",
+    "Owner load:",
+    ownerLines,
+    "",
+    "Revenue risk:",
+    revenueLines,
+    "",
+    "Command actions:",
+    actionLines,
+    "",
+    "Receipts:",
+    receiptLines || "No command receipts yet.",
+    "",
+    "Command rule:",
+    "- Every operational recommendation must connect to buyer risk, owner capacity, release readiness, or evidence pressure.",
+    "- Closed-loop learning can propose actions, but command receipts show when humans synced, routed, or briefed the decision.",
+    "- Cross-customer value stays aggregate-only; exact buyer text and evidence remain tenant-local.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -17004,6 +17485,13 @@ function exportCsv() {
     "Adoption Healthy",
     "Rollback Evidence",
     "Release Train Receipts",
+    "Command Status",
+    "Command Score",
+    "Command Portfolio",
+    "Command Revenue Risk",
+    "Command Owner Load",
+    "Command Actions",
+    "Command Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -17039,6 +17527,7 @@ function exportCsv() {
     const feedback = governanceFeedbackSnapshot();
     const optimizer = continuousTrustOptimizerSnapshot();
     const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+    const command = trustOperationsCommandSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -17183,6 +17672,13 @@ function exportCsv() {
       releaseTrain.adoption.filter((signal) => signal.status === "Healthy").length,
       releaseTrain.rollback.length,
       releaseTrain.receipts.length,
+      command.statusLabel,
+      `${command.score}%`,
+      command.portfolio.length,
+      formatMoney(command.revenueAtRisk),
+      command.ownerLoad.filter((row) => row.status !== "Balanced").length,
+      command.actions.length,
+      command.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -17228,6 +17724,7 @@ function exportReviewPack() {
   const feedback = governanceFeedbackSnapshot();
   const optimizer = continuousTrustOptimizerSnapshot();
   const releaseTrain = autonomousTrustReleaseTrainSnapshot();
+  const command = trustOperationsCommandSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -17245,7 +17742,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v34</h1>
+        <h1>AnswerSeal Review Pack v35</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -18973,6 +19470,113 @@ function exportReviewPack() {
         </table>
         <h2>Release Train Digest</h2>
         <pre>${escapeHtml(autonomousTrustReleaseTrainDigestText(releaseTrain))}</pre>
+        <h2>Trust Operations Command Center</h2>
+        <p>Status: ${escapeHtml(command.statusLabel)} | Command score: ${command.score}% | Portfolio: ${command.portfolio.length} reviews | Revenue at risk: ${escapeHtml(formatMoney(command.revenueAtRisk))} | Owner queues to watch: ${command.ownerLoad.filter((row) => row.status !== "Balanced").length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Portfolio</th>
+              <th>Status</th>
+              <th>Value</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${command.portfolio
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.company)}<br />${escapeHtml(item.stage)}</td>
+                    <td class="${item.status === "At risk" || item.status === "Active risk" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(formatMoney(item.value))}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Owner Load</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Owner</th>
+              <th>Status</th>
+              <th>Open Work</th>
+              <th>SLA Risk</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${command.ownerLoad
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.member.name)}<br />${escapeHtml(item.member.team)}</td>
+                    <td class="${item.status === "Balanced" ? "ok" : "risk"}">${escapeHtml(item.status)}</td>
+                    <td>${item.openWork}</td>
+                    <td>${item.slaRisk}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Revenue Risk Command</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Risk</th>
+              <th>Value</th>
+              <th>Level</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${command.revenueRisks
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.value)}</td>
+                    <td class="${item.level === "High" ? "risk" : "ok"}">${escapeHtml(item.level)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Command Actions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${command.actions
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td class="${item.status === "Critical" || item.status === "Now" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Command Digest</h2>
+        <pre>${escapeHtml(trustOperationsCommandDigestText(command))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -19685,7 +20289,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v34 created with autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v35 created with trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -19708,12 +20312,13 @@ function exportReviewPack() {
   renderGovernanceFeedbackLoop();
   renderContinuousTrustOptimizer();
   renderAutonomousTrustReleaseTrain();
+  renderTrustOperationsCommandCenter();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v34 exported.");
+  showToast("Review Pack v35 exported.");
 }
 
 function toCsv(rows) {
@@ -19788,6 +20393,7 @@ function serializeWorkspace() {
     feedbackActions: state.feedbackActions,
     optimizerActions: state.optimizerActions,
     releaseTrainActions: state.releaseTrainActions,
+    commandCenterActions: state.commandCenterActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -19833,6 +20439,7 @@ function resetWorkspace() {
   closeGovernanceFeedbackLoop(false);
   closeContinuousTrustOptimizer(false);
   closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
   closeWorkspace(false);
   closeLibrary();
   render();

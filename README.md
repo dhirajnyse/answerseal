@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.38 Alpha
+**Current version:** v0.39 Alpha
 
-**Current phase:** Autonomous Trust Release Train
+**Current phase:** Trust Operations Command Center
 
 ## Brand
 
@@ -189,6 +189,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Adoption monitor for reviewer adoption, answer quality lift, owner intervention, and rollout readiness
 - Rollback evidence for candidate scope, baseline comparison, buyer-safe explanation, and rollback decision path
 - Release train digest for explaining which optimization shipped, which gate passed, and how the team can reverse it
+- Trust Operations Command Center drawer with command score, portfolio count, revenue risk, owner load, command status, digest, and receipts
+- Portfolio health view for active buyer reviews ranked by readiness, deadline, blockers, value, owner, and release gate
+- Owner load monitor across security, legal, AI governance, and operations queues before buyer deadlines slip
+- Revenue risk command view connecting pipeline exposure, evidence pressure, follow-up drag, release confidence, and deal desk risk
+- Command actions that turn closed-loop recommendations into accountable owner moves for buyers, releases, and executive briefing
+- Command receipts for synced portfolios, routed owners, executive briefs, and copied operating digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -209,7 +215,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v34 export with autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v35 export with trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -227,13 +233,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.39 Alpha - Trust Operations Command Center
+## Next Phase: v0.40 Alpha - Revenue Outcome Loop
 
-- Show every active buyer review, release train, evidence gap, and trust room in one operating view
-- Expose where security, legal, AI governance, sales engineering, or operations are blocking deal velocity
-- Connect unanswered trust work to deal value, deadlines, buyer friction, and next best action
-- Record operator changes, approvals, release impact, and buyer outcomes as command receipts
-- Turn AnswerSeal into the daily control room for enterprise trust operations
+- Capture whether buyer reviews advanced, stalled, requested more proof, or converted after each command action
+- Reward proof moves that reduce friction and penalize actions that create buyer pushback or stale evidence risk
+- Compare predicted review health with actual buyer outcomes so the command center becomes more reliable over time
+- Promote only aggregate outcome patterns across customers while exact buyer text, evidence, and deal details stay tenant-local
+- Turn AnswerSeal into a closed-loop revenue trust platform that learns from real buyer outcomes
 
 ## License
 
