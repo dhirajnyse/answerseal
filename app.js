@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.44 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v44";
+const BUILD_VERSION = "v0.45 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v45";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v44",
   "answerseal.workspace.v43",
   "answerseal.workspace.v42",
   "answerseal.workspace.v41",
@@ -744,6 +745,8 @@ function createInitialState() {
     packetStudioActions: createInitialPacketStudioActions(),
     buyerAccessRoomOpen: false,
     buyerAccessRoomActions: createInitialBuyerAccessRoomActions(),
+    buyerFeedbackLoopOpen: false,
+    buyerFeedbackLoopActions: createInitialBuyerFeedbackLoopActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1035,6 +1038,17 @@ function createInitialBuyerAccessRoomActions() {
   };
 }
 
+function createInitialBuyerFeedbackLoopActions() {
+  return {
+    status: "Draft",
+    capturedAt: null,
+    requestsQueuedAt: null,
+    learningAppliedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1178,6 +1192,7 @@ function loadWorkspaceState() {
       evidencePackActions: normalizeEvidencePackActions(workspace.evidencePackActions ?? fresh.evidencePackActions),
       packetStudioActions: normalizePacketStudioActions(workspace.packetStudioActions ?? fresh.packetStudioActions),
       buyerAccessRoomActions: normalizeBuyerAccessRoomActions(workspace.buyerAccessRoomActions ?? fresh.buyerAccessRoomActions),
+      buyerFeedbackLoopActions: normalizeBuyerFeedbackLoopActions(workspace.buyerFeedbackLoopActions ?? fresh.buyerFeedbackLoopActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1217,6 +1232,7 @@ function loadWorkspaceState() {
       evidencePackOpen: false,
       packetStudioOpen: false,
       buyerAccessRoomOpen: false,
+      buyerFeedbackLoopOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1980,6 +1996,29 @@ function normalizeBuyerAccessRoomReceipt(receipt) {
   };
 }
 
+function normalizeBuyerFeedbackLoopActions(actions) {
+  const status = ["Draft", "Feedback captured", "Evidence requests queued", "Learning applied"].includes(actions?.status)
+    ? actions.status
+    : "Draft";
+  return {
+    status,
+    capturedAt: actions?.capturedAt ?? null,
+    requestsQueuedAt: actions?.requestsQueuedAt ?? null,
+    learningAppliedAt: actions?.learningAppliedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeBuyerFeedbackLoopReceipt) : [],
+  };
+}
+
+function normalizeBuyerFeedbackLoopReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `buyer-feedback-loop-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Buyer feedback loop action"),
+    detail: String(receipt?.detail ?? "Buyer feedback loop action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2037,6 +2076,7 @@ const elements = {
   evidencePackNavButton: document.querySelector("#evidencePackNavButton"),
   packetStudioNavButton: document.querySelector("#packetStudioNavButton"),
   buyerAccessRoomNavButton: document.querySelector("#buyerAccessRoomNavButton"),
+  buyerFeedbackLoopNavButton: document.querySelector("#buyerFeedbackLoopNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2667,6 +2707,24 @@ const elements = {
   captureBuyerActivityButton: document.querySelector("#captureBuyerActivityButton"),
   routeBuyerRoomButton: document.querySelector("#routeBuyerRoomButton"),
   copyBuyerAccessRoomDigestButton: document.querySelector("#copyBuyerAccessRoomDigestButton"),
+  buyerFeedbackLoopBackdrop: document.querySelector("#buyerFeedbackLoopBackdrop"),
+  buyerFeedbackLoopDrawer: document.querySelector("#buyerFeedbackLoopDrawer"),
+  closeBuyerFeedbackLoopButton: document.querySelector("#closeBuyerFeedbackLoopButton"),
+  buyerFeedbackLoopScore: document.querySelector("#buyerFeedbackLoopScore"),
+  buyerFeedbackEventCount: document.querySelector("#buyerFeedbackEventCount"),
+  feedbackRequestCount: document.querySelector("#feedbackRequestCount"),
+  feedbackOutcomeCount: document.querySelector("#feedbackOutcomeCount"),
+  buyerFeedbackLoopStatus: document.querySelector("#buyerFeedbackLoopStatus"),
+  buyerFeedbackEventList: document.querySelector("#buyerFeedbackEventList"),
+  buyerFeedbackRequestList: document.querySelector("#buyerFeedbackRequestList"),
+  buyerFeedbackImprovementList: document.querySelector("#buyerFeedbackImprovementList"),
+  buyerFeedbackOutcomeList: document.querySelector("#buyerFeedbackOutcomeList"),
+  buyerFeedbackLoopReceiptList: document.querySelector("#buyerFeedbackLoopReceiptList"),
+  buyerFeedbackLoopDigest: document.querySelector("#buyerFeedbackLoopDigest"),
+  captureBuyerFeedbackButton: document.querySelector("#captureBuyerFeedbackButton"),
+  queueFeedbackEvidenceButton: document.querySelector("#queueFeedbackEvidenceButton"),
+  applyFeedbackLearningButton: document.querySelector("#applyFeedbackLearningButton"),
+  copyFeedbackLoopDigestButton: document.querySelector("#copyFeedbackLoopDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2796,6 +2854,7 @@ function bindEvents() {
   elements.evidencePackNavButton.addEventListener("click", openEvidencePackMarketplace);
   elements.packetStudioNavButton.addEventListener("click", openPacketStudio);
   elements.buyerAccessRoomNavButton.addEventListener("click", openBuyerAccessRoom);
+  elements.buyerFeedbackLoopNavButton.addEventListener("click", openBuyerFeedbackLoop);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2870,6 +2929,7 @@ function bindEvents() {
     renderEvidencePackMarketplace();
     renderPacketStudio();
     renderBuyerAccessRoom();
+    renderBuyerFeedbackLoop();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3058,6 +3118,12 @@ function bindEvents() {
   elements.captureBuyerActivityButton.addEventListener("click", captureBuyerRoomActivity);
   elements.routeBuyerRoomButton.addEventListener("click", routeBuyerRoomFollowUps);
   elements.copyBuyerAccessRoomDigestButton.addEventListener("click", copyBuyerAccessRoomDigest);
+  elements.closeBuyerFeedbackLoopButton.addEventListener("click", closeBuyerFeedbackLoop);
+  elements.buyerFeedbackLoopBackdrop.addEventListener("click", closeBuyerFeedbackLoop);
+  elements.captureBuyerFeedbackButton.addEventListener("click", captureBuyerFeedback);
+  elements.queueFeedbackEvidenceButton.addEventListener("click", queueFeedbackEvidenceRequests);
+  elements.applyFeedbackLearningButton.addEventListener("click", applyBuyerFeedbackLearning);
+  elements.copyFeedbackLoopDigestButton.addEventListener("click", copyBuyerFeedbackLoopDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -3132,6 +3198,7 @@ function bindEvents() {
     if (state.evidencePackOpen) closeEvidencePackMarketplace();
     if (state.packetStudioOpen) closePacketStudio();
     if (state.buyerAccessRoomOpen) closeBuyerAccessRoom();
+    if (state.buyerFeedbackLoopOpen) closeBuyerFeedbackLoop();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3173,6 +3240,7 @@ function applyInitialHash() {
   if (hash === "evidence-packs" || hash === "packs" || hash === "marketplace" || hash === "proof-packs") openEvidencePackMarketplace();
   if (hash === "packet-studio" || hash === "packets" || hash === "trust-packets" || hash === "buyer-packets") openPacketStudio();
   if (hash === "buyer-access" || hash === "access-room" || hash === "buyer-room" || hash === "room-access") openBuyerAccessRoom();
+  if (hash === "feedback-loop" || hash === "buyer-feedback" || hash === "learning-loop" || hash === "feedback") openBuyerFeedbackLoop();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3228,6 +3296,7 @@ function render() {
   renderEvidencePackMarketplace();
   renderPacketStudio();
   renderBuyerAccessRoom();
+  renderBuyerFeedbackLoop();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4036,6 +4105,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.buyerAccessRoomNavButton && state.buyerAccessRoomOpen) {
     closeBuyerAccessRoom(false);
   }
+  if (activeButton !== elements.buyerFeedbackLoopNavButton && state.buyerFeedbackLoopOpen) {
+    closeBuyerFeedbackLoop(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4066,6 +4138,7 @@ function setActiveNav(activeButton) {
     elements.evidencePackNavButton,
     elements.packetStudioNavButton,
     elements.buyerAccessRoomNavButton,
+    elements.buyerFeedbackLoopNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -5444,6 +5517,62 @@ function closeBuyerAccessRoom(activateReview = true) {
   elements.buyerAccessRoomDrawer.classList.remove("is-open");
   elements.buyerAccessRoomDrawer.setAttribute("aria-hidden", "true");
   elements.buyerAccessRoomBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openBuyerFeedbackLoop() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.buyerFeedbackLoopOpen = true;
+  setActiveNav(elements.buyerFeedbackLoopNavButton);
+  elements.buyerFeedbackLoopBackdrop.hidden = false;
+  elements.buyerFeedbackLoopDrawer.classList.add("is-open");
+  elements.buyerFeedbackLoopDrawer.setAttribute("aria-hidden", "false");
+  renderBuyerFeedbackLoop();
+}
+
+function closeBuyerFeedbackLoop(activateReview = true) {
+  if (!state.buyerFeedbackLoopOpen && elements.buyerFeedbackLoopDrawer.getAttribute("aria-hidden") === "true") return;
+  state.buyerFeedbackLoopOpen = false;
+  elements.buyerFeedbackLoopDrawer.classList.remove("is-open");
+  elements.buyerFeedbackLoopDrawer.setAttribute("aria-hidden", "true");
+  elements.buyerFeedbackLoopBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -17473,6 +17602,372 @@ function buyerAccessRoomDigestText(room = buyerAccessRoomSnapshot()) {
   ].join("\n");
 }
 
+function renderBuyerFeedbackLoop() {
+  const loop = buyerFeedbackLoopSnapshot();
+
+  elements.buyerFeedbackLoopScore.textContent = `${loop.score}%`;
+  elements.buyerFeedbackEventCount.textContent = loop.events.length;
+  elements.feedbackRequestCount.textContent = loop.requests.length;
+  elements.feedbackOutcomeCount.textContent = loop.outcomes.length;
+  elements.buyerFeedbackLoopStatus.textContent = loop.statusLabel;
+  elements.buyerFeedbackLoopDigest.textContent = buyerFeedbackLoopDigestText(loop);
+
+  elements.buyerFeedbackEventList.innerHTML = "";
+  loop.events.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `buyer-feedback-event-card ${item.risk === "High" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.source)}</span>
+          <strong>${escapeHtml(item.signal)}</strong>
+        </div>
+        <b>${escapeHtml(item.risk)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.type)}</span>
+        <span>${escapeHtml(item.privacy)}</span>
+      </footer>
+    `;
+    elements.buyerFeedbackEventList.append(card);
+  });
+
+  elements.buyerFeedbackRequestList.innerHTML = "";
+  loop.requests.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `buyer-feedback-request-card ${item.priority === "High" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.owner)}</span>
+          <strong>${escapeHtml(item.proof)}</strong>
+        </div>
+        <b>${escapeHtml(item.priority)}</b>
+      </header>
+      <p>${escapeHtml(item.reason)}</p>
+      <span>${escapeHtml(item.status)}</span>
+    `;
+    elements.buyerFeedbackRequestList.append(card);
+  });
+
+  elements.buyerFeedbackImprovementList.innerHTML = "";
+  loop.improvements.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `buyer-feedback-improvement-card ${item.status !== "Approved local memory" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.scope)}</span>
+          <strong>${escapeHtml(item.question)}</strong>
+        </div>
+        <b>${escapeHtml(item.status)}</b>
+      </header>
+      <p>${escapeHtml(item.after)}</p>
+      <footer>
+        <span>${escapeHtml(item.source)}</span>
+        <span>${escapeHtml(item.guardrail)}</span>
+      </footer>
+    `;
+    elements.buyerFeedbackImprovementList.append(card);
+  });
+
+  elements.buyerFeedbackOutcomeList.innerHTML = "";
+  loop.outcomes.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `buyer-feedback-outcome-card ${item.direction === "Risk" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.signal)}</strong>
+        <b>${escapeHtml(item.value)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <span>${escapeHtml(item.learning)}</span>
+    `;
+    elements.buyerFeedbackOutcomeList.append(card);
+  });
+
+  elements.buyerFeedbackLoopReceiptList.innerHTML = "";
+  if (loop.receipts.length === 0) {
+    elements.buyerFeedbackLoopReceiptList.append(emptyState("No buyer feedback loop receipts yet"));
+  }
+  loop.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "buyer-feedback-loop-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.buyerFeedbackLoopReceiptList.append(card);
+  });
+}
+
+function buyerFeedbackLoopSnapshot() {
+  const accessRoom = buyerAccessRoomSnapshot();
+  const events = buyerFeedbackEvents(accessRoom);
+  const requests = feedbackEvidenceRequests(events);
+  const improvements = feedbackAnswerImprovements(events, requests);
+  const outcomes = feedbackOutcomeSignals(events, improvements);
+  const queuedRequests = requests.filter((item) => item.status !== "Watching").length;
+  const approvedImprovements = improvements.filter((item) => item.status === "Approved local memory").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        accessRoom.score * 0.25
+          + Math.min(100, events.length * 15) * 0.2
+          + Math.min(100, queuedRequests * 22) * 0.22
+          + Math.min(100, approvedImprovements * 30) * 0.2
+          + Math.max(0, 100 - events.filter((item) => item.risk === "High").length * 16) * 0.13,
+      ),
+    ),
+  );
+  const statusLabel = state.buyerFeedbackLoopActions.status === "Draft" ? "Ready to close the buyer learning loop" : state.buyerFeedbackLoopActions.status;
+
+  return {
+    score,
+    statusLabel,
+    accessRoom,
+    events,
+    requests,
+    improvements,
+    outcomes,
+    receipts: state.buyerFeedbackLoopActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function buyerFeedbackEvents(accessRoom) {
+  const activeQuestion = getActiveQuestion() ?? state.questions[0];
+  const questionOwner = activeQuestion ? memberForQuestion(activeQuestion).name : "Security owner";
+  const highRiskActivity = accessRoom.activity.find((item) => item.risk === "High");
+  return [
+    {
+      source: "Buyer access room",
+      type: "Buyer question",
+      signal: "AI governance clarification",
+      risk: "Medium",
+      privacy: "Tenant local",
+      detail: "Buyer asked whether AI governance wording applies to subprocessors and needs owner-approved language before reuse.",
+    },
+    {
+      source: "Room activity",
+      type: "Copied excerpt",
+      signal: "Citation used in buyer notes",
+      risk: "Low",
+      privacy: "Aggregate label only",
+      detail: "Buyer copied a source-backed excerpt, creating a safe signal that this proof path reduces review friction.",
+    },
+    {
+      source: highRiskActivity ? "Expiry watch" : "Room status",
+      type: "Friction",
+      signal: highRiskActivity ? "Room expiry may slow follow-up" : "Follow-up window healthy",
+      risk: highRiskActivity ? "High" : "Medium",
+      privacy: "Tenant local",
+      detail: highRiskActivity?.detail ?? "Room remains active, but buyer follow-up should still be tied to an owner before answer memory changes.",
+    },
+    {
+      source: "Reviewer memory",
+      type: "Approved answer",
+      signal: `${questionOwner} has reusable wording`,
+      risk: activeQuestion?.status === "approved" ? "Low" : "Medium",
+      privacy: "Local answer memory",
+      detail: activeQuestion ? `The answer for "${activeQuestion.text}" can improve local memory after approval and evidence confirmation.` : "Approved local wording can strengthen future draft quality.",
+    },
+    {
+      source: "Revenue motion",
+      type: "Outcome signal",
+      signal: "Feedback tied to deal progression",
+      risk: "Low",
+      privacy: "Aggregate outcome class",
+      detail: "Buyer feedback is measured as review friction, proof demand, and response quality, not as raw buyer content shared across tenants.",
+    },
+  ];
+}
+
+function feedbackEvidenceRequests(events) {
+  const highRisk = events.find((event) => event.risk === "High");
+  return [
+    {
+      owner: "AI Governance",
+      priority: "High",
+      status: "Queued",
+      proof: "Subprocessor AI usage note",
+      reason: "Buyer AI governance clarification needs approved wording before it can improve answer memory.",
+    },
+    {
+      owner: "Security",
+      priority: highRisk ? "High" : "Medium",
+      status: "Queued",
+      proof: "Fresh room-access evidence",
+      reason: highRisk ? highRisk.detail : "Room activity should stay tied to fresh packet visibility and expiry evidence.",
+    },
+    {
+      owner: "Legal",
+      priority: "Medium",
+      status: "Review",
+      proof: "DPA visibility confirmation",
+      reason: "Follow-up answers should confirm whether buyer-room language can mention DPAs without exposing customer-specific files.",
+    },
+    {
+      owner: "Revenue",
+      priority: "Low",
+      status: "Watching",
+      proof: "Deal progression note",
+      reason: "Outcome signal should be measured as aggregate deal movement, not raw buyer text.",
+    },
+  ];
+}
+
+function feedbackAnswerImprovements(events, requests) {
+  return state.questions.slice(0, 4).map((question, index) => {
+    const primarySource = (question.sources ?? []).map(getEvidenceById).filter(Boolean)[0];
+    const approved = question.status === "approved" || index === 0;
+    return {
+      question: question.text,
+      before: question.answer,
+      after: approved
+        ? `${question.answer} This response is retained as local approved memory and can be reused only with the same evidence or fresher evidence.`
+        : "Keep current draft in review until the queued evidence request is resolved.",
+      source: primarySource?.title ?? requests[index % requests.length]?.proof ?? "Evidence request",
+      scope: approved ? "Local memory" : "Draft only",
+      status: approved ? "Approved local memory" : "Needs proof",
+      guardrail: approved ? "No cross-tenant raw answer sharing" : "No learning until approval",
+    };
+  });
+}
+
+function feedbackOutcomeSignals(events, improvements) {
+  const highRiskCount = events.filter((event) => event.risk === "High").length;
+  const approvedCount = improvements.filter((item) => item.status === "Approved local memory").length;
+  return [
+    {
+      signal: "Review friction",
+      value: highRiskCount === 0 ? "Down" : "Watch",
+      direction: highRiskCount === 0 ? "Positive" : "Risk",
+      detail: highRiskCount === 0 ? "Buyer room activity is routed without high-risk blockers." : `${highRiskCount} high-risk signal needs owner follow-up before learning is applied.`,
+      learning: "Use only risk class and proof type for aggregate learning.",
+    },
+    {
+      signal: "Answer memory",
+      value: `${approvedCount}/${improvements.length}`,
+      direction: approvedCount > 0 ? "Positive" : "Risk",
+      detail: "Approved improvements strengthen local answer memory without exposing raw buyer content.",
+      learning: "Local exact memory, aggregate-safe pattern labels.",
+    },
+    {
+      signal: "Evidence demand",
+      value: "Clear",
+      direction: "Positive",
+      detail: "Feedback produces owner-routed evidence requests instead of silent model changes.",
+      learning: "Promote proof categories, not customer files.",
+    },
+    {
+      signal: "Revenue signal",
+      value: "Measured",
+      direction: "Positive",
+      detail: "Buyer feedback is connected to deal movement and future proof investment priorities.",
+      learning: "Share only outcome class, threshold band, and guardrail label.",
+    },
+  ];
+}
+
+function captureBuyerFeedback() {
+  const loop = buyerFeedbackLoopSnapshot();
+  const detail = `Captured ${loop.events.length} buyer feedback signal(s), including ${loop.events.filter((item) => item.risk === "High").length} high-risk signal(s).`;
+  state.buyerFeedbackLoopActions.status = "Feedback captured";
+  state.buyerFeedbackLoopActions.capturedAt = new Date().toISOString();
+  addBuyerFeedbackLoopReceipt("Buyer feedback captured", detail);
+  addAudit("Buyer feedback captured", detail);
+  renderBuyerFeedbackLoop();
+  renderAudit();
+  showToast("Buyer feedback captured.");
+}
+
+function queueFeedbackEvidenceRequests() {
+  const loop = buyerFeedbackLoopSnapshot();
+  const detail = `Queued ${loop.requests.filter((item) => item.status !== "Watching").length} evidence request(s) from buyer feedback.`;
+  state.buyerFeedbackLoopActions.status = "Evidence requests queued";
+  state.buyerFeedbackLoopActions.requestsQueuedAt = new Date().toISOString();
+  addBuyerFeedbackLoopReceipt("Feedback evidence requests queued", detail);
+  addAudit("Feedback evidence requests queued", detail);
+  render();
+  showToast("Feedback evidence requests queued.");
+}
+
+function applyBuyerFeedbackLearning() {
+  const loop = buyerFeedbackLoopSnapshot();
+  const detail = `Applied ${loop.improvements.filter((item) => item.status === "Approved local memory").length} approved local memory improvement(s) with privacy-safe boundaries.`;
+  state.buyerFeedbackLoopActions.status = "Learning applied";
+  state.buyerFeedbackLoopActions.learningAppliedAt = new Date().toISOString();
+  addBuyerFeedbackLoopReceipt("Buyer feedback learning applied", detail);
+  addAudit("Buyer feedback learning applied", detail);
+  render();
+  showToast("Buyer feedback learning applied.");
+}
+
+function copyBuyerFeedbackLoopDigest() {
+  const loop = buyerFeedbackLoopSnapshot();
+  state.buyerFeedbackLoopActions.lastCopiedAt = new Date().toISOString();
+  addBuyerFeedbackLoopReceipt("Buyer feedback loop digest copied", "Buyer feedback loop digest copied.");
+  addAudit("Buyer feedback loop digest copied", "Buyer feedback loop digest copied.");
+  renderBuyerFeedbackLoop();
+  renderAudit();
+  copyText(buyerFeedbackLoopDigestText(loop), "Buyer feedback loop digest copied.");
+}
+
+function addBuyerFeedbackLoopReceipt(action, detail) {
+  state.buyerFeedbackLoopActions.receipts = [
+    ...(state.buyerFeedbackLoopActions.receipts ?? []),
+    {
+      id: `buyer-feedback-loop-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function buyerFeedbackLoopDigestText(loop = buyerFeedbackLoopSnapshot()) {
+  const eventLines = loop.events.map((item, index) => `${index + 1}. ${item.risk}: ${item.signal} | ${item.type} | ${item.privacy} | ${item.detail}`).join("\n");
+  const requestLines = loop.requests.map((item, index) => `${index + 1}. ${item.priority}: ${item.proof} | ${item.owner} | ${item.status} | ${item.reason}`).join("\n");
+  const improvementLines = loop.improvements.map((item, index) => `${index + 1}. ${item.status}: ${item.question} | ${item.scope} | ${item.guardrail}`).join("\n");
+  const outcomeLines = loop.outcomes.map((item, index) => `${index + 1}. ${item.signal}: ${item.value} | ${item.learning} | ${item.detail}`).join("\n");
+  const receiptLines = loop.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Buyer Feedback Loop",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${loop.statusLabel}`,
+    `Loop score: ${loop.score}%`,
+    `Feedback events: ${loop.events.length}`,
+    `Evidence requests: ${loop.requests.length}`,
+    `Approved improvements: ${loop.improvements.filter((item) => item.status === "Approved local memory").length}`,
+    "",
+    "Feedback events:",
+    eventLines,
+    "",
+    "Evidence request queue:",
+    requestLines,
+    "",
+    "Safe answer improvements:",
+    improvementLines,
+    "",
+    "Outcome signals:",
+    outcomeLines,
+    "",
+    "Receipts:",
+    receiptLines || "No buyer feedback loop receipts yet.",
+    "",
+    "Learning rule:",
+    "- Raw buyer questions, customer names, prompts, files, and answers stay tenant-local.",
+    "- Approved improvements can strengthen local memory only after evidence and human review.",
+    "- Other organizations benefit only from aggregate proof categories, outcome classes, and guardrail labels.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -19775,6 +20270,13 @@ function exportCsv() {
     "Buyer Room Questions",
     "Buyer Room Routes",
     "Buyer Room Receipts",
+    "Buyer Feedback Loop Status",
+    "Buyer Feedback Loop Score",
+    "Feedback Events",
+    "Feedback Evidence Requests",
+    "Feedback Improvements",
+    "Feedback Outcome Signals",
+    "Feedback Loop Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -19816,6 +20318,7 @@ function exportCsv() {
     const evidencePack = evidencePackMarketplaceSnapshot();
     const packetStudio = packetStudioSnapshot();
     const buyerAccessRoom = buyerAccessRoomSnapshot();
+    const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -19999,6 +20502,13 @@ function exportCsv() {
       buyerAccessRoom.questionCount,
       `${buyerAccessRoom.routing.filter((item) => item.status === "Routed").length}/${buyerAccessRoom.routing.length}`,
       buyerAccessRoom.receipts.length,
+      buyerFeedbackLoop.statusLabel,
+      `${buyerFeedbackLoop.score}%`,
+      buyerFeedbackLoop.events.length,
+      buyerFeedbackLoop.requests.length,
+      `${buyerFeedbackLoop.improvements.filter((item) => item.status === "Approved local memory").length}/${buyerFeedbackLoop.improvements.length}`,
+      buyerFeedbackLoop.outcomes.length,
+      buyerFeedbackLoop.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -20050,6 +20560,7 @@ function exportReviewPack() {
   const evidencePack = evidencePackMarketplaceSnapshot();
   const packetStudio = packetStudioSnapshot();
   const buyerAccessRoom = buyerAccessRoomSnapshot();
+  const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -20067,7 +20578,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v40</h1>
+        <h1>AnswerSeal Review Pack v41</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -22366,6 +22877,115 @@ function exportReviewPack() {
         </table>
         <h2>Buyer Access Room Digest</h2>
         <pre>${escapeHtml(buyerAccessRoomDigestText(buyerAccessRoom))}</pre>
+        <h2>Buyer Feedback Loop</h2>
+        <p>Status: ${escapeHtml(buyerFeedbackLoop.statusLabel)} | Loop score: ${buyerFeedbackLoop.score}% | Feedback events: ${buyerFeedbackLoop.events.length} | Evidence requests: ${buyerFeedbackLoop.requests.length} | Outcome signals: ${buyerFeedbackLoop.outcomes.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Type</th>
+              <th>Risk</th>
+              <th>Privacy</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerFeedbackLoop.events
+              .map(
+                (event) => `
+                  <tr>
+                    <td>${escapeHtml(event.source)}<br />${escapeHtml(event.signal)}</td>
+                    <td>${escapeHtml(event.type)}</td>
+                    <td class="${event.risk === "High" ? "risk" : "ok"}">${escapeHtml(event.risk)}</td>
+                    <td>${escapeHtml(event.privacy)}</td>
+                    <td>${escapeHtml(event.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Feedback Evidence Requests</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Proof</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerFeedbackLoop.requests
+              .map(
+                (request) => `
+                  <tr>
+                    <td>${escapeHtml(request.proof)}</td>
+                    <td>${escapeHtml(request.owner)}</td>
+                    <td class="${request.priority === "High" ? "risk" : "ok"}">${escapeHtml(request.priority)}</td>
+                    <td>${escapeHtml(request.status)}</td>
+                    <td>${escapeHtml(request.reason)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Feedback Answer Improvements</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Status</th>
+              <th>Scope</th>
+              <th>Source</th>
+              <th>Guardrail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerFeedbackLoop.improvements
+              .map(
+                (improvement) => `
+                  <tr>
+                    <td>${escapeHtml(improvement.question)}</td>
+                    <td class="${improvement.status === "Approved local memory" ? "ok" : "risk"}">${escapeHtml(improvement.status)}</td>
+                    <td>${escapeHtml(improvement.scope)}</td>
+                    <td>${escapeHtml(improvement.source)}</td>
+                    <td>${escapeHtml(improvement.guardrail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Feedback Outcome Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Value</th>
+              <th>Learning</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerFeedbackLoop.outcomes
+              .map(
+                (outcome) => `
+                  <tr>
+                    <td>${escapeHtml(outcome.signal)}</td>
+                    <td class="${outcome.direction === "Risk" ? "risk" : "ok"}">${escapeHtml(outcome.value)}</td>
+                    <td>${escapeHtml(outcome.learning)}</td>
+                    <td>${escapeHtml(outcome.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Feedback Loop Digest</h2>
+        <pre>${escapeHtml(buyerFeedbackLoopDigestText(buyerFeedbackLoop))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -23078,7 +23698,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v40 created with buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v41 created with buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -23107,12 +23727,13 @@ function exportReviewPack() {
   renderEvidencePackMarketplace();
   renderPacketStudio();
   renderBuyerAccessRoom();
+  renderBuyerFeedbackLoop();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v40 exported.");
+  showToast("Review Pack v41 exported.");
 }
 
 function toCsv(rows) {
@@ -23193,6 +23814,7 @@ function serializeWorkspace() {
     evidencePackActions: state.evidencePackActions,
     packetStudioActions: state.packetStudioActions,
     buyerAccessRoomActions: state.buyerAccessRoomActions,
+    buyerFeedbackLoopActions: state.buyerFeedbackLoopActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -23244,6 +23866,7 @@ function resetWorkspace() {
   closeEvidencePackMarketplace(false);
   closePacketStudio(false);
   closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
   closeWorkspace(false);
   closeLibrary();
   render();

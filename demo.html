@@ -211,6 +211,10 @@
             <svg aria-hidden="true"><use href="#icon-link"></use></svg>
             <span>Access Room</span>
           </button>
+          <button class="nav-item" id="buyerFeedbackLoopNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Feedback Loop</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -273,8 +277,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.44 Alpha</strong>
-          <span>Buyer Access Room</span>
+          <strong>v0.45 Alpha</strong>
+          <span>Buyer Feedback Loop</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -286,7 +290,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.44 Alpha</span>
+            <span class="label">Security questionnaire | v0.45 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3761,6 +3765,111 @@
             <span>Copyable buyer-room brief for sales, security, legal, and customer success</span>
           </div>
           <pre class="buyer-access-room-digest" id="buyerAccessRoomDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="buyer-feedback-loop-backdrop drawer-backdrop" id="buyerFeedbackLoopBackdrop" hidden></div>
+    <aside class="workspace-drawer buyer-feedback-loop-drawer" id="buyerFeedbackLoopDrawer" aria-label="Buyer feedback loop" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Buyer Feedback Loop</span>
+          <h2>Turn buyer signals into governed learning, evidence requests, and outcomes</h2>
+        </div>
+        <button class="icon-button" id="closeBuyerFeedbackLoopButton" type="button" aria-label="Close buyer feedback loop" title="Close buyer feedback loop">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip buyer-feedback-loop-metrics" aria-label="Buyer feedback loop status">
+        <article>
+          <span class="label">Loop Score</span>
+          <strong id="buyerFeedbackLoopScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Events</span>
+          <strong id="buyerFeedbackEventCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Requests</span>
+          <strong id="feedbackRequestCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Outcomes</span>
+          <strong id="feedbackOutcomeCount">0</strong>
+        </article>
+      </section>
+
+      <section class="buyer-feedback-loop-actions" aria-label="Buyer feedback loop controls">
+        <div>
+          <span class="label">Loop Status</span>
+          <strong id="buyerFeedbackLoopStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="captureBuyerFeedbackButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-message"></use></svg>
+          <span>Capture</span>
+        </button>
+        <button class="secondary-button" id="queueFeedbackEvidenceButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+          <span>Request</span>
+        </button>
+        <button class="secondary-button" id="applyFeedbackLearningButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Learn</span>
+        </button>
+        <button class="secondary-button" id="copyFeedbackLoopDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="buyer-feedback-loop-body">
+        <section class="buyer-feedback-loop-section" aria-label="Buyer feedback events">
+          <div class="section-heading">
+            <span class="label">Feedback Events</span>
+            <span>Buyer questions, copied excerpts, room friction, approved memory, and revenue signals</span>
+          </div>
+          <div class="buyer-feedback-event-list" id="buyerFeedbackEventList"></div>
+        </section>
+
+        <section class="buyer-feedback-loop-section" aria-label="Feedback evidence requests">
+          <div class="section-heading">
+            <span class="label">Evidence Requests</span>
+            <span>Owner-routed proof requests created from buyer feedback before learning changes</span>
+          </div>
+          <div class="buyer-feedback-request-list" id="buyerFeedbackRequestList"></div>
+        </section>
+
+        <section class="buyer-feedback-loop-section" aria-label="Safe answer improvements">
+          <div class="section-heading">
+            <span class="label">Answer Improvements</span>
+            <span>Local memory updates only after source coverage and human approval</span>
+          </div>
+          <div class="buyer-feedback-improvement-list" id="buyerFeedbackImprovementList"></div>
+        </section>
+
+        <section class="buyer-feedback-loop-section" aria-label="Feedback outcome signals">
+          <div class="section-heading">
+            <span class="label">Outcome Signals</span>
+            <span>Measure friction, memory lift, evidence demand, and revenue impact safely</span>
+          </div>
+          <div class="buyer-feedback-outcome-list" id="buyerFeedbackOutcomeList"></div>
+        </section>
+
+        <section class="buyer-feedback-loop-section" aria-label="Buyer feedback loop receipts">
+          <div class="section-heading">
+            <span class="label">Loop Receipts</span>
+            <span>Capture, request, learning, and digest actions recorded with governance boundaries</span>
+          </div>
+          <div class="buyer-feedback-loop-receipt-list" id="buyerFeedbackLoopReceiptList"></div>
+        </section>
+
+        <section class="buyer-feedback-loop-section" aria-label="Buyer feedback loop digest">
+          <div class="section-heading">
+            <span class="label">Feedback Loop Digest</span>
+            <span>Copyable closed-loop brief for founders, security, legal, sales, and AI governance</span>
+          </div>
+          <pre class="buyer-feedback-loop-digest" id="buyerFeedbackLoopDigest"></pre>
         </section>
       </section>
     </aside>

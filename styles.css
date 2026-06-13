@@ -7592,6 +7592,214 @@ svg {
   white-space: pre-wrap;
 }
 
+.buyer-feedback-loop-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, calc(100vw - 248px));
+}
+
+.buyer-feedback-loop-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.buyer-feedback-loop-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(90deg, #effcff, #edfff9);
+}
+
+.buyer-feedback-loop-actions > div {
+  display: grid;
+  gap: 4px;
+}
+
+.buyer-feedback-loop-actions strong {
+  color: var(--accent-dark);
+}
+
+.buyer-feedback-loop-body {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(239, 252, 255, 0.78) 0%, rgba(246, 255, 251, 0.94) 48%),
+    #ffffff;
+}
+
+.buyer-feedback-loop-section,
+.buyer-feedback-event-card,
+.buyer-feedback-request-card,
+.buyer-feedback-improvement-card,
+.buyer-feedback-outcome-card,
+.buyer-feedback-loop-receipt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.buyer-feedback-loop-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.buyer-feedback-event-list,
+.buyer-feedback-request-list,
+.buyer-feedback-improvement-list,
+.buyer-feedback-outcome-list,
+.buyer-feedback-loop-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.buyer-feedback-event-list,
+.buyer-feedback-request-list,
+.buyer-feedback-improvement-list,
+.buyer-feedback-outcome-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.buyer-feedback-event-card,
+.buyer-feedback-request-card,
+.buyer-feedback-improvement-card,
+.buyer-feedback-outcome-card,
+.buyer-feedback-loop-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.buyer-feedback-event-card {
+  border-left: 4px solid #1e88e5;
+  background: #f8fdff;
+}
+
+.buyer-feedback-request-card {
+  border-left: 4px solid var(--accent);
+  background: #fbfffd;
+}
+
+.buyer-feedback-improvement-card {
+  border-left: 4px solid var(--success);
+  background: #f7fffb;
+}
+
+.buyer-feedback-outcome-card {
+  border-left: 4px solid #26c6da;
+  background: #f8fdff;
+}
+
+.buyer-feedback-event-card.is-risk,
+.buyer-feedback-request-card.is-risk,
+.buyer-feedback-improvement-card.is-risk,
+.buyer-feedback-outcome-card.is-risk {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.buyer-feedback-event-card header,
+.buyer-feedback-event-card footer,
+.buyer-feedback-request-card header,
+.buyer-feedback-improvement-card header,
+.buyer-feedback-improvement-card footer,
+.buyer-feedback-outcome-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.buyer-feedback-event-card header div,
+.buyer-feedback-request-card header div,
+.buyer-feedback-improvement-card header div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.buyer-feedback-event-card strong,
+.buyer-feedback-request-card strong,
+.buyer-feedback-improvement-card strong,
+.buyer-feedback-outcome-card strong,
+.buyer-feedback-loop-receipt-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.buyer-feedback-event-card b,
+.buyer-feedback-request-card b,
+.buyer-feedback-improvement-card b,
+.buyer-feedback-outcome-card b {
+  color: var(--accent-dark);
+  font-size: 0.86rem;
+  font-weight: 950;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.buyer-feedback-event-card.is-risk b,
+.buyer-feedback-request-card.is-risk b,
+.buyer-feedback-improvement-card.is-risk b,
+.buyer-feedback-outcome-card.is-risk b {
+  color: var(--amber);
+}
+
+.buyer-feedback-event-card p,
+.buyer-feedback-request-card p,
+.buyer-feedback-improvement-card p,
+.buyer-feedback-outcome-card p,
+.buyer-feedback-loop-receipt-card p,
+.buyer-feedback-loop-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.buyer-feedback-event-card footer,
+.buyer-feedback-improvement-card footer {
+  flex-wrap: wrap;
+}
+
+.buyer-feedback-event-card footer span,
+.buyer-feedback-request-card > span,
+.buyer-feedback-improvement-card footer span,
+.buyer-feedback-outcome-card > span {
+  width: max-content;
+  max-width: 100%;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #d9fff7;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.buyer-feedback-loop-digest {
+  min-height: 280px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -9877,6 +10085,12 @@ svg {
     .buyer-access-room-list,
     .buyer-activity-list,
     .buyer-room-routing-list,
+    .buyer-feedback-loop-metrics,
+    .buyer-feedback-loop-actions,
+    .buyer-feedback-event-list,
+    .buyer-feedback-request-list,
+    .buyer-feedback-improvement-list,
+    .buyer-feedback-outcome-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -10078,6 +10292,12 @@ svg {
     .buyer-access-room-card footer,
     .buyer-activity-card header,
     .buyer-room-routing-card header,
+    .buyer-feedback-event-card header,
+    .buyer-feedback-event-card footer,
+    .buyer-feedback-request-card header,
+    .buyer-feedback-improvement-card header,
+    .buyer-feedback-improvement-card footer,
+    .buyer-feedback-outcome-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

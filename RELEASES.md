@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.45 Alpha - Buyer Feedback Loop
+
+Phase: Buyer Feedback Loop
+
+- Added a Buyer Feedback Loop drawer with loop score, feedback event count, evidence request count, outcome count, actions, digest, and receipts.
+- Added structured feedback events from buyer questions, copied excerpts, room friction, approved memory, and revenue motion.
+- Added an evidence request queue that routes buyer feedback into owner-approved proof work before learning changes.
+- Added safe answer improvements that strengthen local answer memory only after source coverage and human approval.
+- Added outcome signals for review friction, answer memory, evidence demand, and revenue movement with privacy-safe learning boundaries.
+- Added buyer feedback loop status, score, events, evidence requests, improvements, outcomes, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v41 with feedback events, evidence requests, answer improvements, outcome signals, and digest.
+- Updated the build phases page with the v0.46 Network Learning Firewall plan.
+
 ## v0.44 Alpha - Buyer Access Room
 
 Phase: Buyer Access Room
