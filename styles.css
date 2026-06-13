@@ -7405,6 +7405,193 @@ svg {
   white-space: pre-wrap;
 }
 
+.buyer-access-room-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1080px, calc(100vw - 248px));
+}
+
+.buyer-access-room-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.buyer-access-room-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(90deg, #eafffb, #f8fbff);
+}
+
+.buyer-access-room-actions > div {
+  display: grid;
+  gap: 4px;
+}
+
+.buyer-access-room-actions strong {
+  color: var(--accent-dark);
+}
+
+.buyer-access-room-body {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(232, 255, 249, 0.78) 0%, rgba(248, 251, 255, 0.94) 48%),
+    #ffffff;
+}
+
+.buyer-access-room-section,
+.buyer-access-room-card,
+.buyer-activity-card,
+.buyer-room-routing-card,
+.buyer-access-room-receipt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.buyer-access-room-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.06);
+}
+
+.buyer-access-room-list,
+.buyer-activity-list,
+.buyer-room-routing-list,
+.buyer-access-room-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.buyer-access-room-list,
+.buyer-activity-list,
+.buyer-room-routing-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.buyer-access-room-card,
+.buyer-activity-card,
+.buyer-room-routing-card,
+.buyer-access-room-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.buyer-access-room-card {
+  border-left: 4px solid var(--blue);
+  background: linear-gradient(180deg, #f2fffc, #fff);
+}
+
+.buyer-access-room-card.is-risk,
+.buyer-activity-card.is-risk,
+.buyer-room-routing-card.is-risk {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.buyer-access-room-card header,
+.buyer-access-room-card footer,
+.buyer-activity-card header,
+.buyer-room-routing-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.buyer-access-room-card header div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.buyer-access-room-card strong,
+.buyer-activity-card strong,
+.buyer-room-routing-card strong,
+.buyer-access-room-receipt-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.buyer-access-room-card b,
+.buyer-activity-card b,
+.buyer-room-routing-card b {
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.buyer-access-room-card.is-risk b,
+.buyer-activity-card.is-risk b,
+.buyer-room-routing-card.is-risk b {
+  color: var(--amber);
+}
+
+.buyer-access-room-card p,
+.buyer-activity-card p,
+.buyer-room-routing-card p,
+.buyer-access-room-receipt-card p,
+.buyer-access-room-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.buyer-access-room-card footer {
+  flex-wrap: wrap;
+}
+
+.buyer-access-room-card footer span,
+.buyer-activity-card span,
+.buyer-room-routing-card span {
+  width: max-content;
+  max-width: 100%;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #d9fff7;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.buyer-activity-card {
+  border-left: 4px solid #1e88e5;
+  background: #f8fdff;
+}
+
+.buyer-room-routing-card {
+  border-left: 4px solid var(--accent);
+  background: #fbfffd;
+}
+
+.buyer-access-room-digest {
+  min-height: 260px;
+  max-height: 420px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -9685,6 +9872,11 @@ svg {
     .packet-builder-list,
     .packet-audience-list,
     .packet-safety-list,
+    .buyer-access-room-metrics,
+    .buyer-access-room-actions,
+    .buyer-access-room-list,
+    .buyer-activity-list,
+    .buyer-room-routing-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -9882,6 +10074,10 @@ svg {
     .packet-card footer,
     .packet-audience-card header,
     .packet-safety-card header,
+    .buyer-access-room-card header,
+    .buyer-access-room-card footer,
+    .buyer-activity-card header,
+    .buyer-room-routing-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.44 Alpha - Buyer Access Room
+
+Phase: Buyer Access Room
+
+- Added a Buyer Access Room drawer with access score, room views, buyer questions, receipt count, actions, digest, and receipts.
+- Added controlled buyer rooms around trust packets with audience scope, packet status, views, questions, expiry, and readiness score.
+- Added buyer activity tracking for packet views, copied excerpts, buyer questions, and expiry risk.
+- Added follow-up routing across security, legal, and AI governance owners.
+- Added room receipts for opened rooms, captured activity, routed follow-ups, and copied room digests.
+- Added buyer access room status, score, view count, question count, routing status, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v40 with controlled rooms, buyer activity, follow-up routing, and room digest.
+- Updated the build phases page with the v0.45 Buyer Feedback Loop plan.
+
 ## v0.43 Alpha - Buyer Trust Packet Studio
 
 Phase: Buyer Trust Packet Studio

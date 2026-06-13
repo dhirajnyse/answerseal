@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.43 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v43";
+const BUILD_VERSION = "v0.44 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v44";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v43",
   "answerseal.workspace.v42",
   "answerseal.workspace.v41",
   "answerseal.workspace.v40",
@@ -741,6 +742,8 @@ function createInitialState() {
     evidencePackActions: createInitialEvidencePackActions(),
     packetStudioOpen: false,
     packetStudioActions: createInitialPacketStudioActions(),
+    buyerAccessRoomOpen: false,
+    buyerAccessRoomActions: createInitialBuyerAccessRoomActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1021,6 +1024,17 @@ function createInitialPacketStudioActions() {
   };
 }
 
+function createInitialBuyerAccessRoomActions() {
+  return {
+    status: "Draft",
+    openedAt: null,
+    activityCapturedAt: null,
+    routedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1163,6 +1177,7 @@ function loadWorkspaceState() {
       buyerGraphActions: normalizeBuyerGraphActions(workspace.buyerGraphActions ?? fresh.buyerGraphActions),
       evidencePackActions: normalizeEvidencePackActions(workspace.evidencePackActions ?? fresh.evidencePackActions),
       packetStudioActions: normalizePacketStudioActions(workspace.packetStudioActions ?? fresh.packetStudioActions),
+      buyerAccessRoomActions: normalizeBuyerAccessRoomActions(workspace.buyerAccessRoomActions ?? fresh.buyerAccessRoomActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1201,6 +1216,7 @@ function loadWorkspaceState() {
       buyerGraphOpen: false,
       evidencePackOpen: false,
       packetStudioOpen: false,
+      buyerAccessRoomOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1941,6 +1957,29 @@ function normalizePacketStudioReceipt(receipt) {
   };
 }
 
+function normalizeBuyerAccessRoomActions(actions) {
+  const status = ["Draft", "Room opened", "Buyer activity captured", "Follow-ups routed"].includes(actions?.status)
+    ? actions.status
+    : "Draft";
+  return {
+    status,
+    openedAt: actions?.openedAt ?? null,
+    activityCapturedAt: actions?.activityCapturedAt ?? null,
+    routedAt: actions?.routedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeBuyerAccessRoomReceipt) : [],
+  };
+}
+
+function normalizeBuyerAccessRoomReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `buyer-access-room-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Buyer access room action"),
+    detail: String(receipt?.detail ?? "Buyer access room action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1997,6 +2036,7 @@ const elements = {
   buyerGraphNavButton: document.querySelector("#buyerGraphNavButton"),
   evidencePackNavButton: document.querySelector("#evidencePackNavButton"),
   packetStudioNavButton: document.querySelector("#packetStudioNavButton"),
+  buyerAccessRoomNavButton: document.querySelector("#buyerAccessRoomNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2610,6 +2650,23 @@ const elements = {
   reviewPacketsButton: document.querySelector("#reviewPacketsButton"),
   sharePacketButton: document.querySelector("#sharePacketButton"),
   copyPacketDigestButton: document.querySelector("#copyPacketDigestButton"),
+  buyerAccessRoomBackdrop: document.querySelector("#buyerAccessRoomBackdrop"),
+  buyerAccessRoomDrawer: document.querySelector("#buyerAccessRoomDrawer"),
+  closeBuyerAccessRoomButton: document.querySelector("#closeBuyerAccessRoomButton"),
+  buyerAccessRoomScore: document.querySelector("#buyerAccessRoomScore"),
+  buyerAccessRoomViewCount: document.querySelector("#buyerAccessRoomViewCount"),
+  buyerAccessRoomQuestionCount: document.querySelector("#buyerAccessRoomQuestionCount"),
+  buyerAccessRoomReceiptCount: document.querySelector("#buyerAccessRoomReceiptCount"),
+  buyerAccessRoomStatus: document.querySelector("#buyerAccessRoomStatus"),
+  buyerAccessRoomList: document.querySelector("#buyerAccessRoomList"),
+  buyerActivityList: document.querySelector("#buyerActivityList"),
+  buyerRoomRoutingList: document.querySelector("#buyerRoomRoutingList"),
+  buyerAccessRoomReceiptList: document.querySelector("#buyerAccessRoomReceiptList"),
+  buyerAccessRoomDigest: document.querySelector("#buyerAccessRoomDigest"),
+  openBuyerAccessRoomButton: document.querySelector("#openBuyerAccessRoomButton"),
+  captureBuyerActivityButton: document.querySelector("#captureBuyerActivityButton"),
+  routeBuyerRoomButton: document.querySelector("#routeBuyerRoomButton"),
+  copyBuyerAccessRoomDigestButton: document.querySelector("#copyBuyerAccessRoomDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2738,6 +2795,7 @@ function bindEvents() {
   elements.buyerGraphNavButton.addEventListener("click", openBuyerTrustGraph);
   elements.evidencePackNavButton.addEventListener("click", openEvidencePackMarketplace);
   elements.packetStudioNavButton.addEventListener("click", openPacketStudio);
+  elements.buyerAccessRoomNavButton.addEventListener("click", openBuyerAccessRoom);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2811,6 +2869,7 @@ function bindEvents() {
     renderBuyerTrustGraph();
     renderEvidencePackMarketplace();
     renderPacketStudio();
+    renderBuyerAccessRoom();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2993,6 +3052,12 @@ function bindEvents() {
   elements.reviewPacketsButton.addEventListener("click", reviewBuyerTrustPackets);
   elements.sharePacketButton.addEventListener("click", shareBuyerTrustPacket);
   elements.copyPacketDigestButton.addEventListener("click", copyPacketStudioDigest);
+  elements.closeBuyerAccessRoomButton.addEventListener("click", closeBuyerAccessRoom);
+  elements.buyerAccessRoomBackdrop.addEventListener("click", closeBuyerAccessRoom);
+  elements.openBuyerAccessRoomButton.addEventListener("click", openControlledBuyerRoom);
+  elements.captureBuyerActivityButton.addEventListener("click", captureBuyerRoomActivity);
+  elements.routeBuyerRoomButton.addEventListener("click", routeBuyerRoomFollowUps);
+  elements.copyBuyerAccessRoomDigestButton.addEventListener("click", copyBuyerAccessRoomDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -3066,6 +3131,7 @@ function bindEvents() {
     if (state.buyerGraphOpen) closeBuyerTrustGraph();
     if (state.evidencePackOpen) closeEvidencePackMarketplace();
     if (state.packetStudioOpen) closePacketStudio();
+    if (state.buyerAccessRoomOpen) closeBuyerAccessRoom();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3106,6 +3172,7 @@ function applyInitialHash() {
   if (hash === "buyer-graph" || hash === "buyers-graph" || hash === "trust-graph" || hash === "buyer-trust") openBuyerTrustGraph();
   if (hash === "evidence-packs" || hash === "packs" || hash === "marketplace" || hash === "proof-packs") openEvidencePackMarketplace();
   if (hash === "packet-studio" || hash === "packets" || hash === "trust-packets" || hash === "buyer-packets") openPacketStudio();
+  if (hash === "buyer-access" || hash === "access-room" || hash === "buyer-room" || hash === "room-access") openBuyerAccessRoom();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3160,6 +3227,7 @@ function render() {
   renderBuyerTrustGraph();
   renderEvidencePackMarketplace();
   renderPacketStudio();
+  renderBuyerAccessRoom();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3965,6 +4033,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.packetStudioNavButton && state.packetStudioOpen) {
     closePacketStudio(false);
   }
+  if (activeButton !== elements.buyerAccessRoomNavButton && state.buyerAccessRoomOpen) {
+    closeBuyerAccessRoom(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3994,6 +4065,7 @@ function setActiveNav(activeButton) {
     elements.buyerGraphNavButton,
     elements.evidencePackNavButton,
     elements.packetStudioNavButton,
+    elements.buyerAccessRoomNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -5302,6 +5374,7 @@ function openPacketStudio() {
   closeIntake(false);
   closeLibrary(false);
   closePortal(false);
+  closeBuyerAccessRoom(false);
   state.packetStudioOpen = true;
   setActiveNav(elements.packetStudioNavButton);
   elements.packetStudioBackdrop.hidden = false;
@@ -5316,6 +5389,61 @@ function closePacketStudio(activateReview = true) {
   elements.packetStudioDrawer.classList.remove("is-open");
   elements.packetStudioDrawer.setAttribute("aria-hidden", "true");
   elements.packetStudioBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openBuyerAccessRoom() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.buyerAccessRoomOpen = true;
+  setActiveNav(elements.buyerAccessRoomNavButton);
+  elements.buyerAccessRoomBackdrop.hidden = false;
+  elements.buyerAccessRoomDrawer.classList.add("is-open");
+  elements.buyerAccessRoomDrawer.setAttribute("aria-hidden", "false");
+  renderBuyerAccessRoom();
+}
+
+function closeBuyerAccessRoom(activateReview = true) {
+  if (!state.buyerAccessRoomOpen && elements.buyerAccessRoomDrawer.getAttribute("aria-hidden") === "true") return;
+  state.buyerAccessRoomOpen = false;
+  elements.buyerAccessRoomDrawer.classList.remove("is-open");
+  elements.buyerAccessRoomDrawer.setAttribute("aria-hidden", "true");
+  elements.buyerAccessRoomBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -5337,6 +5465,7 @@ function openAnalytics() {
   closeBuyerTrustGraph(false);
   closeEvidencePackMarketplace(false);
   closePacketStudio(false);
+  closeBuyerAccessRoom(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -17071,6 +17200,279 @@ function packetStudioDigestText(studio = packetStudioSnapshot()) {
   ].join("\n");
 }
 
+function renderBuyerAccessRoom() {
+  const room = buyerAccessRoomSnapshot();
+
+  elements.buyerAccessRoomScore.textContent = `${room.score}%`;
+  elements.buyerAccessRoomViewCount.textContent = room.viewCount;
+  elements.buyerAccessRoomQuestionCount.textContent = room.questionCount;
+  elements.buyerAccessRoomReceiptCount.textContent = room.receipts.length;
+  elements.buyerAccessRoomStatus.textContent = room.statusLabel;
+  elements.buyerAccessRoomDigest.textContent = buyerAccessRoomDigestText(room);
+
+  elements.buyerAccessRoomList.innerHTML = "";
+  room.rooms.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `buyer-access-room-card ${item.status !== "Open" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.audience)}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+        </div>
+        <b>${item.score}%</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <footer>
+        <span>${escapeHtml(item.status)}</span>
+        <span>${item.views} views</span>
+        <span>${item.questions} questions</span>
+        <span>${escapeHtml(item.expiry)}</span>
+      </footer>
+    `;
+    elements.buyerAccessRoomList.append(card);
+  });
+
+  elements.buyerActivityList.innerHTML = "";
+  room.activity.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `buyer-activity-card ${item.risk === "High" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.event)}</strong>
+        <b>${escapeHtml(item.risk)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <span>${escapeHtml(item.when)}</span>
+    `;
+    elements.buyerActivityList.append(card);
+  });
+
+  elements.buyerRoomRoutingList.innerHTML = "";
+  room.routing.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `buyer-room-routing-card ${item.status !== "Routed" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.owner)}</strong>
+        <b>${escapeHtml(item.status)}</b>
+      </header>
+      <p>${escapeHtml(item.detail)}</p>
+      <span>${escapeHtml(item.sla)}</span>
+    `;
+    elements.buyerRoomRoutingList.append(card);
+  });
+
+  elements.buyerAccessRoomReceiptList.innerHTML = "";
+  if (room.receipts.length === 0) {
+    elements.buyerAccessRoomReceiptList.append(emptyState("No buyer access room receipts yet"));
+  }
+  room.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "buyer-access-room-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.buyerAccessRoomReceiptList.append(card);
+  });
+}
+
+function buyerAccessRoomSnapshot() {
+  const packetStudio = packetStudioSnapshot();
+  const rooms = buyerAccessRooms(packetStudio);
+  const activity = buyerRoomActivity(packetStudio, rooms);
+  const routing = buyerRoomRouting(activity);
+  const openRooms = rooms.filter((room) => room.status === "Open").length;
+  const routed = routing.filter((item) => item.status === "Routed").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        packetStudio.score * 0.3
+          + Math.min(100, openRooms * 26) * 0.28
+          + Math.min(100, routed * 25) * 0.24
+          + Math.max(0, 100 - activity.filter((item) => item.risk === "High").length * 18) * 0.18,
+      ),
+    ),
+  );
+  const statusLabel = state.buyerAccessRoomActions.status === "Draft" ? "Ready to open controlled buyer rooms" : state.buyerAccessRoomActions.status;
+
+  return {
+    score,
+    statusLabel,
+    packetStudio,
+    rooms,
+    activity,
+    routing,
+    viewCount: rooms.reduce((sum, room) => sum + room.views, 0),
+    questionCount: rooms.reduce((sum, room) => sum + room.questions, 0),
+    receipts: state.buyerAccessRoomActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function buyerAccessRooms(packetStudio) {
+  return packetStudio.packets.slice(0, 3).map((packet, index) => {
+    const open = packet.status === "Ready" || packet.score >= 78;
+    return {
+      id: `room-${packet.id}`,
+      title: `${packet.title} Access Room`,
+      audience: packet.audience,
+      status: open ? "Open" : "Gated",
+      score: Math.min(100, Math.round(packet.score * 0.72 + (open ? 18 : 4) + Math.max(0, 10 - index * 2))),
+      views: open ? 2 + index : index,
+      questions: packet.status === "Ready" ? index : index + 1,
+      expiry: packet.expiry,
+      detail: `Scoped room exposes packet status, buyer-safe excerpts, citations, expiry, and follow-up routing for ${packet.audience}.`,
+    };
+  });
+}
+
+function buyerRoomActivity(packetStudio, rooms) {
+  const roomByIndex = rooms;
+  return [
+    {
+      event: "Packet viewed",
+      risk: "Low",
+      when: "Today",
+      detail: `${roomByIndex[0]?.audience ?? "Security reviewer"} opened the primary trust packet and viewed source excerpts.`,
+    },
+    {
+      event: "Evidence excerpt copied",
+      risk: "Low",
+      when: "Today",
+      detail: "Buyer copied a citation-backed security excerpt for internal review notes.",
+    },
+    {
+      event: "Buyer question raised",
+      risk: packetStudio.readyCount >= 3 ? "Medium" : "High",
+      when: "Next action",
+      detail: "Buyer asked whether AI governance wording applies to subcontractors and requires owner routing.",
+    },
+    {
+      event: "Expiry watch",
+      risk: daysUntil(workspaceAccount.expires) <= 3 ? "High" : "Medium",
+      when: workspaceAccount.expires,
+      detail: "Room handoff window should be renewed before follow-up packets are shared.",
+    },
+  ];
+}
+
+function buyerRoomRouting(activity) {
+  return [
+    {
+      owner: "AI Governance",
+      status: activity.some((item) => item.event === "Buyer question raised") ? "Routed" : "Ready",
+      sla: "1 business day",
+      detail: "Review buyer AI governance follow-up and confirm subcontractor wording before packet update.",
+    },
+    {
+      owner: "Security",
+      status: "Routed",
+      sla: "Same day",
+      detail: "Monitor packet views and confirm source excerpts remain buyer-safe.",
+    },
+    {
+      owner: "Legal",
+      status: daysUntil(workspaceAccount.expires) <= 3 ? "Review" : "Routed",
+      sla: "2 business days",
+      detail: "Check room expiry and DPA visibility before extending access.",
+    },
+  ];
+}
+
+function openControlledBuyerRoom() {
+  const room = buyerAccessRoomSnapshot();
+  const detail = `Opened ${room.rooms.filter((item) => item.status === "Open").length}/${room.rooms.length} controlled buyer access rooms with ${room.score}% readiness.`;
+  state.buyerAccessRoomActions.status = "Room opened";
+  state.buyerAccessRoomActions.openedAt = new Date().toISOString();
+  addBuyerAccessRoomReceipt("Buyer access room opened", detail);
+  addAudit("Buyer access room opened", detail);
+  renderBuyerAccessRoom();
+  renderAudit();
+  showToast("Buyer access room opened.");
+}
+
+function captureBuyerRoomActivity() {
+  const room = buyerAccessRoomSnapshot();
+  const detail = `Captured ${room.activity.length} buyer activity signals with ${room.activity.filter((item) => item.risk === "High").length} high-risk item(s).`;
+  state.buyerAccessRoomActions.status = "Buyer activity captured";
+  state.buyerAccessRoomActions.activityCapturedAt = new Date().toISOString();
+  addBuyerAccessRoomReceipt("Buyer activity captured", detail);
+  addAudit("Buyer room activity captured", detail);
+  render();
+  showToast("Buyer activity captured.");
+}
+
+function routeBuyerRoomFollowUps() {
+  const room = buyerAccessRoomSnapshot();
+  const detail = `Routed ${room.routing.length} buyer room follow-up lane(s) across security, legal, and AI governance owners.`;
+  state.buyerAccessRoomActions.status = "Follow-ups routed";
+  state.buyerAccessRoomActions.routedAt = new Date().toISOString();
+  addBuyerAccessRoomReceipt("Buyer room follow-ups routed", detail);
+  addAudit("Buyer room follow-ups routed", detail);
+  render();
+  showToast("Buyer room follow-ups routed.");
+}
+
+function copyBuyerAccessRoomDigest() {
+  const room = buyerAccessRoomSnapshot();
+  state.buyerAccessRoomActions.lastCopiedAt = new Date().toISOString();
+  addBuyerAccessRoomReceipt("Buyer access room digest copied", "Buyer access room digest copied.");
+  addAudit("Buyer access room digest copied", "Buyer access room digest copied.");
+  renderBuyerAccessRoom();
+  renderAudit();
+  copyText(buyerAccessRoomDigestText(room), "Buyer access room digest copied.");
+}
+
+function addBuyerAccessRoomReceipt(action, detail) {
+  state.buyerAccessRoomActions.receipts = [
+    ...(state.buyerAccessRoomActions.receipts ?? []),
+    {
+      id: `buyer-access-room-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function buyerAccessRoomDigestText(room = buyerAccessRoomSnapshot()) {
+  const roomLines = room.rooms.map((item, index) => `${index + 1}. ${item.status}: ${item.title} | ${item.audience} | ${item.score}% | ${item.views} views | ${item.questions} questions | ${item.expiry}`).join("\n");
+  const activityLines = room.activity.map((item, index) => `${index + 1}. ${item.risk}: ${item.event} | ${item.when} | ${item.detail}`).join("\n");
+  const routingLines = room.routing.map((item, index) => `${index + 1}. ${item.status}: ${item.owner} | ${item.sla} | ${item.detail}`).join("\n");
+  const receiptLines = room.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Buyer Access Room",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${room.statusLabel}`,
+    `Access room score: ${room.score}%`,
+    `Room views: ${room.viewCount}`,
+    `Buyer questions: ${room.questionCount}`,
+    "",
+    "Controlled rooms:",
+    roomLines,
+    "",
+    "Buyer activity:",
+    activityLines,
+    "",
+    "Follow-up routing:",
+    routingLines,
+    "",
+    "Receipts:",
+    receiptLines || "No buyer access room receipts yet.",
+    "",
+    "Access room rule:",
+    "- Buyer rooms expose controlled packet views, excerpts, status, expiry, and receipts.",
+    "- Buyer questions are routed back to internal owners before packet language changes.",
+    "- Expired or gated rooms cannot be treated as approved external handoff.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -19367,6 +19769,12 @@ function exportCsv() {
     "Packet Safety Pass",
     "Packet Audiences",
     "Packet Receipts",
+    "Buyer Access Room Status",
+    "Buyer Access Room Score",
+    "Room Views",
+    "Buyer Room Questions",
+    "Buyer Room Routes",
+    "Buyer Room Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -19407,6 +19815,7 @@ function exportCsv() {
     const buyerGraph = buyerTrustGraphSnapshot();
     const evidencePack = evidencePackMarketplaceSnapshot();
     const packetStudio = packetStudioSnapshot();
+    const buyerAccessRoom = buyerAccessRoomSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -19584,6 +19993,12 @@ function exportCsv() {
       `${packetStudio.passedSafety}/${packetStudio.safety.length}`,
       packetStudio.audiences.length,
       packetStudio.receipts.length,
+      buyerAccessRoom.statusLabel,
+      `${buyerAccessRoom.score}%`,
+      buyerAccessRoom.viewCount,
+      buyerAccessRoom.questionCount,
+      `${buyerAccessRoom.routing.filter((item) => item.status === "Routed").length}/${buyerAccessRoom.routing.length}`,
+      buyerAccessRoom.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -19634,6 +20049,7 @@ function exportReviewPack() {
   const buyerGraph = buyerTrustGraphSnapshot();
   const evidencePack = evidencePackMarketplaceSnapshot();
   const packetStudio = packetStudioSnapshot();
+  const buyerAccessRoom = buyerAccessRoomSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -19651,7 +20067,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v39</h1>
+        <h1>AnswerSeal Review Pack v40</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -21866,6 +22282,90 @@ function exportReviewPack() {
         </table>
         <h2>Packet Studio Digest</h2>
         <pre>${escapeHtml(packetStudioDigestText(packetStudio))}</pre>
+        <h2>Buyer Access Room</h2>
+        <p>Status: ${escapeHtml(buyerAccessRoom.statusLabel)} | Room score: ${buyerAccessRoom.score}% | Room views: ${buyerAccessRoom.viewCount} | Buyer questions: ${buyerAccessRoom.questionCount} | Receipts: ${buyerAccessRoom.receipts.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Room</th>
+              <th>Audience</th>
+              <th>Status</th>
+              <th>Score</th>
+              <th>Views</th>
+              <th>Questions</th>
+              <th>Expiry</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerAccessRoom.rooms
+              .map(
+                (room) => `
+                  <tr>
+                    <td>${escapeHtml(room.title)}<br />${escapeHtml(room.detail)}</td>
+                    <td>${escapeHtml(room.audience)}</td>
+                    <td class="${room.status === "Open" ? "ok" : "risk"}">${escapeHtml(room.status)}</td>
+                    <td>${room.score}%</td>
+                    <td>${room.views}</td>
+                    <td>${room.questions}</td>
+                    <td>${escapeHtml(room.expiry)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Room Activity</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>Risk</th>
+              <th>When</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerAccessRoom.activity
+              .map(
+                (activity) => `
+                  <tr>
+                    <td>${escapeHtml(activity.event)}</td>
+                    <td class="${activity.risk === "High" ? "risk" : "ok"}">${escapeHtml(activity.risk)}</td>
+                    <td>${escapeHtml(activity.when)}</td>
+                    <td>${escapeHtml(activity.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Room Follow-Up Routing</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Owner</th>
+              <th>Status</th>
+              <th>SLA</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buyerAccessRoom.routing
+              .map(
+                (route) => `
+                  <tr>
+                    <td>${escapeHtml(route.owner)}</td>
+                    <td class="${route.status === "Routed" ? "ok" : "risk"}">${escapeHtml(route.status)}</td>
+                    <td>${escapeHtml(route.sla)}</td>
+                    <td>${escapeHtml(route.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Buyer Access Room Digest</h2>
+        <pre>${escapeHtml(buyerAccessRoomDigestText(buyerAccessRoom))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -22578,7 +23078,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v39 created with buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v40 created with buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -22606,12 +23106,13 @@ function exportReviewPack() {
   renderBuyerTrustGraph();
   renderEvidencePackMarketplace();
   renderPacketStudio();
+  renderBuyerAccessRoom();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v39 exported.");
+  showToast("Review Pack v40 exported.");
 }
 
 function toCsv(rows) {
@@ -22691,6 +23192,7 @@ function serializeWorkspace() {
     buyerGraphActions: state.buyerGraphActions,
     evidencePackActions: state.evidencePackActions,
     packetStudioActions: state.packetStudioActions,
+    buyerAccessRoomActions: state.buyerAccessRoomActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -22741,6 +23243,7 @@ function resetWorkspace() {
   closeBuyerTrustGraph(false);
   closeEvidencePackMarketplace(false);
   closePacketStudio(false);
+  closeBuyerAccessRoom(false);
   closeWorkspace(false);
   closeLibrary();
   render();

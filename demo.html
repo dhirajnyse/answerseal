@@ -207,6 +207,10 @@
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Packets</span>
           </button>
+          <button class="nav-item" id="buyerAccessRoomNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Access Room</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -269,8 +273,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.43 Alpha</strong>
-          <span>Buyer Trust Packet Studio</span>
+          <strong>v0.44 Alpha</strong>
+          <span>Buyer Access Room</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -282,7 +286,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.43 Alpha</span>
+            <span class="label">Security questionnaire | v0.44 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3660,6 +3664,103 @@
             <span>Copyable buyer handoff brief for sales, security, legal, and procurement</span>
           </div>
           <pre class="packet-studio-digest" id="packetStudioDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="buyer-access-room-backdrop drawer-backdrop" id="buyerAccessRoomBackdrop" hidden></div>
+    <aside class="workspace-drawer buyer-access-room-drawer" id="buyerAccessRoomDrawer" aria-label="Buyer access room" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Buyer Access Room</span>
+          <h2>Track controlled packet access, buyer activity, routing, and expiry</h2>
+        </div>
+        <button class="icon-button" id="closeBuyerAccessRoomButton" type="button" aria-label="Close buyer access room" title="Close buyer access room">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip buyer-access-room-metrics" aria-label="Buyer access room status">
+        <article>
+          <span class="label">Room Score</span>
+          <strong id="buyerAccessRoomScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Views</span>
+          <strong id="buyerAccessRoomViewCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Questions</span>
+          <strong id="buyerAccessRoomQuestionCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Receipts</span>
+          <strong id="buyerAccessRoomReceiptCount">0</strong>
+        </article>
+      </section>
+
+      <section class="buyer-access-room-actions" aria-label="Buyer access room controls">
+        <div>
+          <span class="label">Room Status</span>
+          <strong id="buyerAccessRoomStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="openBuyerAccessRoomButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+          <span>Open</span>
+        </button>
+        <button class="secondary-button" id="captureBuyerActivityButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Activity</span>
+        </button>
+        <button class="secondary-button" id="routeBuyerRoomButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+          <span>Route</span>
+        </button>
+        <button class="secondary-button" id="copyBuyerAccessRoomDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="buyer-access-room-body">
+        <section class="buyer-access-room-section" aria-label="Controlled buyer rooms">
+          <div class="section-heading">
+            <span class="label">Controlled Rooms</span>
+            <span>Scoped packet access with audience, score, views, buyer questions, and expiry</span>
+          </div>
+          <div class="buyer-access-room-list" id="buyerAccessRoomList"></div>
+        </section>
+
+        <section class="buyer-access-room-section" aria-label="Buyer activity">
+          <div class="section-heading">
+            <span class="label">Buyer Activity</span>
+            <span>Packet views, copied excerpts, buyer questions, and expiry risk</span>
+          </div>
+          <div class="buyer-activity-list" id="buyerActivityList"></div>
+        </section>
+
+        <section class="buyer-access-room-section" aria-label="Follow-up routing">
+          <div class="section-heading">
+            <span class="label">Follow-Up Routing</span>
+            <span>Route room signals back to security, legal, and AI governance owners</span>
+          </div>
+          <div class="buyer-room-routing-list" id="buyerRoomRoutingList"></div>
+        </section>
+
+        <section class="buyer-access-room-section" aria-label="Buyer access room receipts">
+          <div class="section-heading">
+            <span class="label">Room Receipts</span>
+            <span>Open, activity, routing, and digest actions recorded for buyer proof handoff</span>
+          </div>
+          <div class="buyer-access-room-receipt-list" id="buyerAccessRoomReceiptList"></div>
+        </section>
+
+        <section class="buyer-access-room-section" aria-label="Buyer access room digest">
+          <div class="section-heading">
+            <span class="label">Access Room Digest</span>
+            <span>Copyable buyer-room brief for sales, security, legal, and customer success</span>
+          </div>
+          <pre class="buyer-access-room-digest" id="buyerAccessRoomDigest"></pre>
         </section>
       </section>
     </aside>
