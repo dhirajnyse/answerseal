@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.41 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v41";
+const BUILD_VERSION = "v0.42 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v42";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v41",
   "answerseal.workspace.v40",
   "answerseal.workspace.v39",
   "answerseal.workspace.v38",
@@ -735,6 +736,8 @@ function createInitialState() {
     revenueLoopActions: createInitialRevenueLoopActions(),
     buyerGraphOpen: false,
     buyerGraphActions: createInitialBuyerGraphActions(),
+    evidencePackOpen: false,
+    evidencePackActions: createInitialEvidencePackActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -993,6 +996,17 @@ function createInitialBuyerGraphActions() {
   };
 }
 
+function createInitialEvidencePackActions() {
+  return {
+    status: "Draft",
+    packagedAt: null,
+    checkedAt: null,
+    boundaryApprovedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1133,6 +1147,7 @@ function loadWorkspaceState() {
       commandCenterActions: normalizeCommandCenterActions(workspace.commandCenterActions ?? fresh.commandCenterActions),
       revenueLoopActions: normalizeRevenueLoopActions(workspace.revenueLoopActions ?? fresh.revenueLoopActions),
       buyerGraphActions: normalizeBuyerGraphActions(workspace.buyerGraphActions ?? fresh.buyerGraphActions),
+      evidencePackActions: normalizeEvidencePackActions(workspace.evidencePackActions ?? fresh.evidencePackActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1169,6 +1184,7 @@ function loadWorkspaceState() {
       commandCenterOpen: false,
       revenueLoopOpen: false,
       buyerGraphOpen: false,
+      evidencePackOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -1863,6 +1879,29 @@ function normalizeBuyerGraphReceipt(receipt) {
   };
 }
 
+function normalizeEvidencePackActions(actions) {
+  const status = ["Draft", "Packs prepared", "Publish checks complete", "Marketplace boundary approved"].includes(actions?.status)
+    ? actions.status
+    : "Draft";
+  return {
+    status,
+    packagedAt: actions?.packagedAt ?? null,
+    checkedAt: actions?.checkedAt ?? null,
+    boundaryApprovedAt: actions?.boundaryApprovedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeEvidencePackReceipt) : [],
+  };
+}
+
+function normalizeEvidencePackReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `evidence-pack-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Evidence pack action"),
+    detail: String(receipt?.detail ?? "Evidence pack marketplace readiness action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -1917,6 +1956,7 @@ const elements = {
   commandCenterNavButton: document.querySelector("#commandCenterNavButton"),
   revenueLoopNavButton: document.querySelector("#revenueLoopNavButton"),
   buyerGraphNavButton: document.querySelector("#buyerGraphNavButton"),
+  evidencePackNavButton: document.querySelector("#evidencePackNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2496,6 +2536,23 @@ const elements = {
   guideBuyerGraphButton: document.querySelector("#guideBuyerGraphButton"),
   guardBuyerGraphButton: document.querySelector("#guardBuyerGraphButton"),
   copyBuyerGraphDigestButton: document.querySelector("#copyBuyerGraphDigestButton"),
+  evidencePackBackdrop: document.querySelector("#evidencePackBackdrop"),
+  evidencePackDrawer: document.querySelector("#evidencePackDrawer"),
+  closeEvidencePackButton: document.querySelector("#closeEvidencePackButton"),
+  evidencePackScore: document.querySelector("#evidencePackScore"),
+  evidencePackReadyCount: document.querySelector("#evidencePackReadyCount"),
+  evidencePackTemplateCount: document.querySelector("#evidencePackTemplateCount"),
+  evidencePackBoundaryCount: document.querySelector("#evidencePackBoundaryCount"),
+  evidencePackStatus: document.querySelector("#evidencePackStatus"),
+  evidencePackCatalogList: document.querySelector("#evidencePackCatalogList"),
+  evidencePackPublishList: document.querySelector("#evidencePackPublishList"),
+  evidencePackBoundaryList: document.querySelector("#evidencePackBoundaryList"),
+  evidencePackReceiptList: document.querySelector("#evidencePackReceiptList"),
+  evidencePackDigest: document.querySelector("#evidencePackDigest"),
+  prepareEvidencePacksButton: document.querySelector("#prepareEvidencePacksButton"),
+  checkEvidencePackButton: document.querySelector("#checkEvidencePackButton"),
+  approveMarketplaceBoundaryButton: document.querySelector("#approveMarketplaceBoundaryButton"),
+  copyEvidencePackDigestButton: document.querySelector("#copyEvidencePackDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2622,6 +2679,7 @@ function bindEvents() {
   elements.commandCenterNavButton.addEventListener("click", openTrustOperationsCommandCenter);
   elements.revenueLoopNavButton.addEventListener("click", openRevenueOutcomeLoop);
   elements.buyerGraphNavButton.addEventListener("click", openBuyerTrustGraph);
+  elements.evidencePackNavButton.addEventListener("click", openEvidencePackMarketplace);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2692,6 +2750,8 @@ function bindEvents() {
     renderAutonomousTrustReleaseTrain();
     renderTrustOperationsCommandCenter();
     renderRevenueOutcomeLoop();
+    renderBuyerTrustGraph();
+    renderEvidencePackMarketplace();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -2862,6 +2922,12 @@ function bindEvents() {
   elements.guideBuyerGraphButton.addEventListener("click", prepareBuyerGraphGuidance);
   elements.guardBuyerGraphButton.addEventListener("click", checkBuyerGraphGuardrails);
   elements.copyBuyerGraphDigestButton.addEventListener("click", copyBuyerTrustGraphDigest);
+  elements.closeEvidencePackButton.addEventListener("click", closeEvidencePackMarketplace);
+  elements.evidencePackBackdrop.addEventListener("click", closeEvidencePackMarketplace);
+  elements.prepareEvidencePacksButton.addEventListener("click", prepareEvidencePacks);
+  elements.checkEvidencePackButton.addEventListener("click", checkEvidencePackPublish);
+  elements.approveMarketplaceBoundaryButton.addEventListener("click", approveEvidencePackBoundary);
+  elements.copyEvidencePackDigestButton.addEventListener("click", copyEvidencePackDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -2933,6 +2999,7 @@ function bindEvents() {
     if (state.commandCenterOpen) closeTrustOperationsCommandCenter();
     if (state.revenueLoopOpen) closeRevenueOutcomeLoop();
     if (state.buyerGraphOpen) closeBuyerTrustGraph();
+    if (state.evidencePackOpen) closeEvidencePackMarketplace();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -2971,6 +3038,7 @@ function applyInitialHash() {
   if (hash === "command" || hash === "command-center" || hash === "trust-ops" || hash === "operations") openTrustOperationsCommandCenter();
   if (hash === "revenue" || hash === "revenue-loop" || hash === "outcome-loop" || hash === "revenue-outcomes") openRevenueOutcomeLoop();
   if (hash === "buyer-graph" || hash === "buyers-graph" || hash === "trust-graph" || hash === "buyer-trust") openBuyerTrustGraph();
+  if (hash === "evidence-packs" || hash === "packs" || hash === "marketplace" || hash === "proof-packs") openEvidencePackMarketplace();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3023,6 +3091,7 @@ function render() {
   renderTrustOperationsCommandCenter();
   renderRevenueOutcomeLoop();
   renderBuyerTrustGraph();
+  renderEvidencePackMarketplace();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3822,6 +3891,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.buyerGraphNavButton && state.buyerGraphOpen) {
     closeBuyerTrustGraph(false);
   }
+  if (activeButton !== elements.evidencePackNavButton && state.evidencePackOpen) {
+    closeEvidencePackMarketplace(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -3849,6 +3921,7 @@ function setActiveNav(activeButton) {
     elements.commandCenterNavButton,
     elements.revenueLoopNavButton,
     elements.buyerGraphNavButton,
+    elements.evidencePackNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -4984,6 +5057,7 @@ function openRevenueOutcomeLoop() {
   closeTrustOperationsCommandCenter(false);
   closeRevenueOutcomeLoop(false);
   closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -5047,6 +5121,7 @@ function openBuyerTrustGraph() {
   closeIntake(false);
   closeLibrary(false);
   closePortal(false);
+  closeEvidencePackMarketplace(false);
   state.buyerGraphOpen = true;
   setActiveNav(elements.buyerGraphNavButton);
   elements.buyerGraphBackdrop.hidden = false;
@@ -5061,6 +5136,59 @@ function closeBuyerTrustGraph(activateReview = true) {
   elements.buyerGraphDrawer.classList.remove("is-open");
   elements.buyerGraphDrawer.setAttribute("aria-hidden", "true");
   elements.buyerGraphBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openEvidencePackMarketplace() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.evidencePackOpen = true;
+  setActiveNav(elements.evidencePackNavButton);
+  elements.evidencePackBackdrop.hidden = false;
+  elements.evidencePackDrawer.classList.add("is-open");
+  elements.evidencePackDrawer.setAttribute("aria-hidden", "false");
+  renderEvidencePackMarketplace();
+}
+
+function closeEvidencePackMarketplace(activateReview = true) {
+  if (!state.evidencePackOpen && elements.evidencePackDrawer.getAttribute("aria-hidden") === "true") return;
+  state.evidencePackOpen = false;
+  elements.evidencePackDrawer.classList.remove("is-open");
+  elements.evidencePackDrawer.setAttribute("aria-hidden", "true");
+  elements.evidencePackBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -5080,6 +5208,7 @@ function openAnalytics() {
   closeTrustOperationsCommandCenter(false);
   closeRevenueOutcomeLoop(false);
   closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -16198,6 +16327,344 @@ function buyerTrustGraphDigestText(graph = buyerTrustGraphSnapshot()) {
   ].join("\n");
 }
 
+function renderEvidencePackMarketplace() {
+  const marketplace = evidencePackMarketplaceSnapshot();
+
+  elements.evidencePackScore.textContent = `${marketplace.score}%`;
+  elements.evidencePackReadyCount.textContent = marketplace.readyCount;
+  elements.evidencePackTemplateCount.textContent = marketplace.packs.length;
+  elements.evidencePackBoundaryCount.textContent = `${marketplace.passedBoundary}/${marketplace.boundaries.length}`;
+  elements.evidencePackStatus.textContent = marketplace.statusLabel;
+  elements.evidencePackDigest.textContent = evidencePackDigestText(marketplace);
+
+  elements.evidencePackCatalogList.innerHTML = "";
+  marketplace.packs.forEach((pack) => {
+    const card = document.createElement("article");
+    card.className = `evidence-pack-card ${pack.status !== "Marketplace ready" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(pack.category)}</span>
+          <strong>${escapeHtml(pack.title)}</strong>
+        </div>
+        <b>${pack.score}%</b>
+      </header>
+      <p>${escapeHtml(pack.detail)}</p>
+      <footer>
+        <span>${escapeHtml(pack.status)}</span>
+        <span>${pack.coverage}/${pack.required.length} sources</span>
+        <span>${escapeHtml(pack.buyerFit)}</span>
+      </footer>
+    `;
+    elements.evidencePackCatalogList.append(card);
+  });
+
+  elements.evidencePackPublishList.innerHTML = "";
+  marketplace.publishChecks.forEach((check) => {
+    const card = document.createElement("article");
+    card.className = `evidence-pack-check-card ${check.status !== "Pass" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(check.title)}</strong>
+        <b>${escapeHtml(check.status)}</b>
+      </header>
+      <p>${escapeHtml(check.detail)}</p>
+      <span>${escapeHtml(check.owner)}</span>
+    `;
+    elements.evidencePackPublishList.append(card);
+  });
+
+  elements.evidencePackBoundaryList.innerHTML = "";
+  marketplace.boundaries.forEach((boundary) => {
+    const card = document.createElement("article");
+    card.className = `evidence-pack-boundary-card ${boundary.status !== "Pass" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(boundary.title)}</strong>
+        <b>${escapeHtml(boundary.status)}</b>
+      </header>
+      <p>${escapeHtml(boundary.detail)}</p>
+      <span>${escapeHtml(boundary.scope)}</span>
+    `;
+    elements.evidencePackBoundaryList.append(card);
+  });
+
+  elements.evidencePackReceiptList.innerHTML = "";
+  if (marketplace.receipts.length === 0) {
+    elements.evidencePackReceiptList.append(emptyState("No evidence pack receipts yet"));
+  }
+  marketplace.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "evidence-pack-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.evidencePackReceiptList.append(card);
+  });
+}
+
+function evidencePackMarketplaceSnapshot() {
+  const buyerGraph = buyerTrustGraphSnapshot();
+  const packs = evidencePackTemplates(buyerGraph);
+  const publishChecks = evidencePackPublishChecks(packs, buyerGraph);
+  const boundaries = evidencePackBoundaries(packs, buyerGraph);
+  const readyCount = packs.filter((pack) => pack.status === "Marketplace ready").length;
+  const passedChecks = publishChecks.filter((check) => check.status === "Pass").length;
+  const passedBoundary = boundaries.filter((boundary) => boundary.status === "Pass").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        Math.min(100, readyCount * 20) * 0.34
+          + Math.min(100, passedChecks * 18) * 0.28
+          + Math.min(100, passedBoundary * 25) * 0.28
+          + buyerGraph.score * 0.1,
+      ),
+    ),
+  );
+  const statusLabel = state.evidencePackActions.status === "Draft" ? "Ready to package governed proof packs" : state.evidencePackActions.status;
+
+  return {
+    score,
+    statusLabel,
+    buyerGraph,
+    packs,
+    publishChecks,
+    boundaries,
+    readyCount,
+    passedBoundary,
+    receipts: state.evidencePackActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function evidencePackTemplates(buyerGraph) {
+  const templates = [
+    {
+      title: "SOC 2 Security Pack",
+      category: "Security",
+      required: ["soc2", "security-policy"],
+      tags: ["encryption", "access", "incident"],
+      buyerFit: "Security reviewer",
+      detail: "Reusable security pack for encryption, access control, incident response, and reviewer confidence.",
+    },
+    {
+      title: "AI Governance Pack",
+      category: "AI Governance",
+      required: ["ai-standard", "security-policy"],
+      tags: ["ai", "training", "human review"],
+      buyerFit: "AI governance reviewer",
+      detail: "Buyer-safe AI pack for model training boundaries, redaction, human approval, and policy evidence.",
+    },
+    {
+      title: "Privacy & DPA Pack",
+      category: "Privacy",
+      required: ["dpa", "ai-standard"],
+      tags: ["privacy", "subprocessor", "deletion"],
+      buyerFit: "Legal reviewer",
+      detail: "Legal-ready pack for DPA language, subprocessor notice, deletion/export commitments, and tenant boundaries.",
+    },
+    {
+      title: "Continuity Pack",
+      category: "Continuity",
+      required: ["bcp", "soc2"],
+      tags: ["backup", "recovery", "continuity"],
+      buyerFit: "Procurement operator",
+      detail: "Operational resilience pack covering backups, RTO/RPO, continuity reviews, and recovery evidence.",
+    },
+    {
+      title: "Access Control Pack",
+      category: "Access",
+      required: ["security-policy", "soc2"],
+      tags: ["sso", "mfa", "access", "privileged"],
+      buyerFit: "Security reviewer",
+      detail: "Access assurance pack for SSO, MFA, least privilege, privileged review, and audit-ready citations.",
+    },
+  ];
+
+  return templates.map((template) => {
+    const sources = template.required.map((id) => state.evidence.find((doc) => doc.id === id)).filter(Boolean);
+    const coverage = sources.length;
+    const freshness = sources.filter((doc) => sourceFreshnessScore(doc.updated) >= 88).length;
+    const matchingQuestions = state.questions.filter((question) =>
+      question.category === template.category || template.tags.some((tag) => question.text.toLowerCase().includes(tag)),
+    );
+    const persona = buyerGraph.personas.find((item) => item.name === template.buyerFit);
+    const blocked = sources.some((doc) => doc.type === "Legacy") || buyerGraph.guardrails.some((item) => item.status !== "Pass" && item.title === "Objection quarantine");
+    const score = Math.round(
+      (coverage / template.required.length) * 42
+        + (freshness / Math.max(1, template.required.length)) * 24
+        + Math.min(1, matchingQuestions.length / 2) * 18
+        + (persona?.status === "Mapped" ? 16 : 8),
+    );
+    return {
+      ...template,
+      sources,
+      coverage,
+      freshness,
+      matchingQuestions: matchingQuestions.length,
+      score: Math.min(100, score),
+      status: blocked ? "Boundary review" : score >= 82 ? "Marketplace ready" : "Needs proof",
+    };
+  });
+}
+
+function evidencePackPublishChecks(packs, buyerGraph) {
+  const ready = packs.filter((pack) => pack.status === "Marketplace ready").length;
+  const fresh = packs.filter((pack) => pack.freshness === pack.required.length).length;
+  const questionCoverage = packs.reduce((sum, pack) => sum + pack.matchingQuestions, 0);
+  const graphReady = buyerGraph.guardrails.filter((item) => item.status === "Pass").length >= 3;
+  return [
+    {
+      title: "Pack coverage",
+      status: ready >= 4 ? "Pass" : "Watch",
+      owner: "Trust Lead",
+      detail: `${ready}/${packs.length} packs are marketplace-ready with complete source bindings and buyer fit.`,
+    },
+    {
+      title: "Fresh source posture",
+      status: fresh >= 4 ? "Pass" : "Watch",
+      owner: "Security",
+      detail: `${fresh}/${packs.length} packs have all required sources marked fresh for buyer reuse.`,
+    },
+    {
+      title: "Questionnaire demand signal",
+      status: questionCoverage >= 8 ? "Pass" : "Watch",
+      owner: "Sales Engineering",
+      detail: `${questionCoverage} live buyer questions map into reusable pack templates.`,
+    },
+    {
+      title: "Buyer graph alignment",
+      status: graphReady ? "Pass" : "Watch",
+      owner: "AI Governance",
+      detail: "Pack publishability is checked against persona, objection, and graph guardrail readiness.",
+    },
+  ];
+}
+
+function evidencePackBoundaries(packs, buyerGraph) {
+  const blocked = packs.filter((pack) => pack.status === "Boundary review").length;
+  return [
+    {
+      title: "Private evidence boundary",
+      status: "Pass",
+      scope: "Tenant-local",
+      detail: "Raw source files, answer text, prompts, contracts, customer names, and owner notes stay inside the workspace.",
+    },
+    {
+      title: "Marketplace pattern boundary",
+      status: blocked === 0 ? "Pass" : "Watch",
+      scope: "Aggregate-ready",
+      detail: `${blocked} pack(s) need boundary review before reusable pattern labels can leave the tenant.`,
+    },
+    {
+      title: "Buyer graph dependency",
+      status: buyerGraph.score >= 80 ? "Pass" : "Watch",
+      scope: "Buyer-aware reuse",
+      detail: `Buyer Trust Graph score is ${buyerGraph.score}%, so pack guidance can be tuned by buyer type.`,
+    },
+    {
+      title: "Learning consent trail",
+      status: state.policyActions.status === "Policy approved" || state.ledgerActions.status === "Ledger approved" ? "Pass" : "Watch",
+      scope: "Governed learning",
+      detail: "Marketplace-ready patterns require policy or ledger approval before contributing to network learning.",
+    },
+  ];
+}
+
+function prepareEvidencePacks() {
+  const marketplace = evidencePackMarketplaceSnapshot();
+  const detail = `Prepared ${marketplace.packs.length} evidence pack templates with ${marketplace.readyCount} marketplace-ready packs and ${marketplace.score}% readiness.`;
+  state.evidencePackActions.status = "Packs prepared";
+  state.evidencePackActions.packagedAt = new Date().toISOString();
+  addEvidencePackReceipt("Evidence packs prepared", detail);
+  addAudit("Evidence packs prepared", detail);
+  renderEvidencePackMarketplace();
+  renderAudit();
+  showToast("Evidence packs prepared.");
+}
+
+function checkEvidencePackPublish() {
+  const marketplace = evidencePackMarketplaceSnapshot();
+  const passed = marketplace.publishChecks.filter((check) => check.status === "Pass").length;
+  const detail = `Checked ${marketplace.publishChecks.length} publish gates with ${passed} passing and ${marketplace.publishChecks.length - passed} watch items.`;
+  state.evidencePackActions.status = "Publish checks complete";
+  state.evidencePackActions.checkedAt = new Date().toISOString();
+  addEvidencePackReceipt("Pack publish checks complete", detail);
+  addAudit("Evidence pack publish checks complete", detail);
+  render();
+  showToast("Pack publish checks complete.");
+}
+
+function approveEvidencePackBoundary() {
+  const marketplace = evidencePackMarketplaceSnapshot();
+  const detail = `Approved marketplace boundary with ${marketplace.passedBoundary}/${marketplace.boundaries.length} boundary gates passing.`;
+  state.evidencePackActions.status = "Marketplace boundary approved";
+  state.evidencePackActions.boundaryApprovedAt = new Date().toISOString();
+  addEvidencePackReceipt("Marketplace boundary approved", detail);
+  addAudit("Evidence pack boundary approved", detail);
+  render();
+  showToast("Marketplace boundary approved.");
+}
+
+function copyEvidencePackDigest() {
+  const marketplace = evidencePackMarketplaceSnapshot();
+  state.evidencePackActions.lastCopiedAt = new Date().toISOString();
+  addEvidencePackReceipt("Evidence pack digest copied", "Evidence pack marketplace readiness digest copied.");
+  addAudit("Evidence pack digest copied", "Evidence pack marketplace readiness digest copied.");
+  renderEvidencePackMarketplace();
+  renderAudit();
+  copyText(evidencePackDigestText(marketplace), "Evidence pack digest copied.");
+}
+
+function addEvidencePackReceipt(action, detail) {
+  state.evidencePackActions.receipts = [
+    ...(state.evidencePackActions.receipts ?? []),
+    {
+      id: `evidence-pack-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function evidencePackDigestText(marketplace = evidencePackMarketplaceSnapshot()) {
+  const packLines = marketplace.packs.map((pack, index) => `${index + 1}. ${pack.status}: ${pack.title} | ${pack.score}% | ${pack.coverage}/${pack.required.length} sources | ${pack.buyerFit}`).join("\n");
+  const checkLines = marketplace.publishChecks.map((check, index) => `${index + 1}. ${check.status}: ${check.title} | ${check.owner} | ${check.detail}`).join("\n");
+  const boundaryLines = marketplace.boundaries.map((boundary, index) => `${index + 1}. ${boundary.status}: ${boundary.title} | ${boundary.scope} | ${boundary.detail}`).join("\n");
+  const receiptLines = marketplace.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Evidence Pack Marketplace Readiness",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${marketplace.statusLabel}`,
+    `Marketplace readiness score: ${marketplace.score}%`,
+    `Marketplace-ready packs: ${marketplace.readyCount}/${marketplace.packs.length}`,
+    `Boundary gates passing: ${marketplace.passedBoundary}/${marketplace.boundaries.length}`,
+    "",
+    "Pack catalog:",
+    packLines,
+    "",
+    "Publish checks:",
+    checkLines,
+    "",
+    "Marketplace boundaries:",
+    boundaryLines,
+    "",
+    "Receipts:",
+    receiptLines || "No evidence pack receipts yet.",
+    "",
+    "Evidence pack rule:",
+    "- Raw files, exact answers, prompts, contracts, customer names, and owner notes stay tenant-local.",
+    "- Marketplace learning can use only proof-pack template, required source type, buyer persona, readiness band, and guardrail label.",
+    "- Packs under boundary review cannot improve other organizations until privacy and policy gates pass.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -18482,6 +18949,12 @@ function exportCsv() {
     "Guidance Paths",
     "Graph Guardrails Pass",
     "Buyer Graph Receipts",
+    "Evidence Pack Status",
+    "Evidence Pack Score",
+    "Marketplace Ready Packs",
+    "Pack Publish Checks Pass",
+    "Marketplace Boundary Pass",
+    "Evidence Pack Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -18520,6 +18993,7 @@ function exportCsv() {
     const command = trustOperationsCommandSnapshot();
     const revenueLoop = revenueOutcomeLoopSnapshot();
     const buyerGraph = buyerTrustGraphSnapshot();
+    const evidencePack = evidencePackMarketplaceSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -18685,6 +19159,12 @@ function exportCsv() {
       buyerGraph.guidance.length,
       buyerGraph.guardrails.filter((item) => item.status === "Pass").length,
       buyerGraph.receipts.length,
+      evidencePack.statusLabel,
+      `${evidencePack.score}%`,
+      `${evidencePack.readyCount}/${evidencePack.packs.length}`,
+      `${evidencePack.publishChecks.filter((check) => check.status === "Pass").length}/${evidencePack.publishChecks.length}`,
+      `${evidencePack.passedBoundary}/${evidencePack.boundaries.length}`,
+      evidencePack.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -18733,6 +19213,7 @@ function exportReviewPack() {
   const command = trustOperationsCommandSnapshot();
   const revenueLoop = revenueOutcomeLoopSnapshot();
   const buyerGraph = buyerTrustGraphSnapshot();
+  const evidencePack = evidencePackMarketplaceSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -18750,7 +19231,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v37</h1>
+        <h1>AnswerSeal Review Pack v38</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -20799,6 +21280,88 @@ function exportReviewPack() {
         </table>
         <h2>Buyer Graph Digest</h2>
         <pre>${escapeHtml(buyerTrustGraphDigestText(buyerGraph))}</pre>
+        <h2>Evidence Pack Marketplace Readiness</h2>
+        <p>Status: ${escapeHtml(evidencePack.statusLabel)} | Readiness score: ${evidencePack.score}% | Ready packs: ${evidencePack.readyCount}/${evidencePack.packs.length} | Boundary gates: ${evidencePack.passedBoundary}/${evidencePack.boundaries.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Pack</th>
+              <th>Status</th>
+              <th>Score</th>
+              <th>Sources</th>
+              <th>Buyer Fit</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${evidencePack.packs
+              .map(
+                (pack) => `
+                  <tr>
+                    <td>${escapeHtml(pack.title)}<br />${escapeHtml(pack.category)}</td>
+                    <td class="${pack.status === "Marketplace ready" ? "ok" : "risk"}">${escapeHtml(pack.status)}</td>
+                    <td>${pack.score}%</td>
+                    <td>${pack.coverage}/${pack.required.length}</td>
+                    <td>${escapeHtml(pack.buyerFit)}</td>
+                    <td>${escapeHtml(pack.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evidence Pack Publish Checks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Check</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${evidencePack.publishChecks
+              .map(
+                (check) => `
+                  <tr>
+                    <td>${escapeHtml(check.title)}</td>
+                    <td class="${check.status === "Pass" ? "ok" : "risk"}">${escapeHtml(check.status)}</td>
+                    <td>${escapeHtml(check.owner)}</td>
+                    <td>${escapeHtml(check.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evidence Pack Marketplace Boundaries</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Boundary</th>
+              <th>Status</th>
+              <th>Scope</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${evidencePack.boundaries
+              .map(
+                (boundary) => `
+                  <tr>
+                    <td>${escapeHtml(boundary.title)}</td>
+                    <td class="${boundary.status === "Pass" ? "ok" : "risk"}">${escapeHtml(boundary.status)}</td>
+                    <td>${escapeHtml(boundary.scope)}</td>
+                    <td>${escapeHtml(boundary.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Evidence Pack Digest</h2>
+        <pre>${escapeHtml(evidencePackDigestText(evidencePack))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -21511,7 +22074,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v37 created with buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v38 created with evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -21537,12 +22100,13 @@ function exportReviewPack() {
   renderTrustOperationsCommandCenter();
   renderRevenueOutcomeLoop();
   renderBuyerTrustGraph();
+  renderEvidencePackMarketplace();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v37 exported.");
+  showToast("Review Pack v38 exported.");
 }
 
 function toCsv(rows) {
@@ -21620,6 +22184,7 @@ function serializeWorkspace() {
     commandCenterActions: state.commandCenterActions,
     revenueLoopActions: state.revenueLoopActions,
     buyerGraphActions: state.buyerGraphActions,
+    evidencePackActions: state.evidencePackActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,

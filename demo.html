@@ -199,6 +199,10 @@
             <svg aria-hidden="true"><use href="#icon-link"></use></svg>
             <span>Buyer Graph</span>
           </button>
+          <button class="nav-item" id="evidencePackNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+            <span>Packs</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -261,8 +265,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.41 Alpha</strong>
-          <span>Buyer Trust Graph</span>
+          <strong>v0.42 Alpha</strong>
+          <span>Evidence Pack Marketplace</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -274,7 +278,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.41 Alpha</span>
+            <span class="label">Security questionnaire | v0.42 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3458,6 +3462,103 @@
             <span>Copyable graph brief for sales, security, legal, AI governance, and founders</span>
           </div>
           <pre class="buyer-graph-digest" id="buyerGraphDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="evidence-pack-backdrop drawer-backdrop" id="evidencePackBackdrop" hidden></div>
+    <aside class="workspace-drawer evidence-pack-drawer" id="evidencePackDrawer" aria-label="Evidence pack marketplace readiness" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Evidence Packs</span>
+          <h2>Package reusable proof without leaking private evidence</h2>
+        </div>
+        <button class="icon-button" id="closeEvidencePackButton" type="button" aria-label="Close evidence packs" title="Close evidence packs">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip evidence-pack-metrics" aria-label="Evidence pack marketplace readiness">
+        <article>
+          <span class="label">Readiness</span>
+          <strong id="evidencePackScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Ready Packs</span>
+          <strong id="evidencePackReadyCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Templates</span>
+          <strong id="evidencePackTemplateCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Boundary</span>
+          <strong id="evidencePackBoundaryCount">0/0</strong>
+        </article>
+      </section>
+
+      <section class="evidence-pack-actions" aria-label="Evidence pack controls">
+        <div>
+          <span class="label">Pack Status</span>
+          <strong id="evidencePackStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="prepareEvidencePacksButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+          <span>Prepare</span>
+        </button>
+        <button class="secondary-button" id="checkEvidencePackButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Check</span>
+        </button>
+        <button class="secondary-button" id="approveMarketplaceBoundaryButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+          <span>Boundary</span>
+        </button>
+        <button class="secondary-button" id="copyEvidencePackDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="evidence-pack-body">
+        <section class="evidence-pack-section" aria-label="Evidence pack catalog">
+          <div class="section-heading">
+            <span class="label">Pack Catalog</span>
+            <span>Reusable proof bundles scored by source coverage, freshness, buyer fit, and boundaries</span>
+          </div>
+          <div class="evidence-pack-catalog-list" id="evidencePackCatalogList"></div>
+        </section>
+
+        <section class="evidence-pack-section" aria-label="Publish checks">
+          <div class="section-heading">
+            <span class="label">Publish Checks</span>
+            <span>Marketplace readiness gates before a pack becomes reusable across reviews</span>
+          </div>
+          <div class="evidence-pack-publish-list" id="evidencePackPublishList"></div>
+        </section>
+
+        <section class="evidence-pack-section" aria-label="Marketplace boundaries">
+          <div class="section-heading">
+            <span class="label">Marketplace Boundary</span>
+            <span>Private source material stays local; only safe proof patterns can generalize</span>
+          </div>
+          <div class="evidence-pack-boundary-list" id="evidencePackBoundaryList"></div>
+        </section>
+
+        <section class="evidence-pack-section" aria-label="Evidence pack receipts">
+          <div class="section-heading">
+            <span class="label">Pack Receipts</span>
+            <span>Actions proving packs were prepared, checked, and boundary-approved</span>
+          </div>
+          <div class="evidence-pack-receipt-list" id="evidencePackReceiptList"></div>
+        </section>
+
+        <section class="evidence-pack-section" aria-label="Evidence pack digest">
+          <div class="section-heading">
+            <span class="label">Pack Digest</span>
+            <span>Copyable readiness brief for founders, sales engineering, security, and legal</span>
+          </div>
+          <pre class="evidence-pack-digest" id="evidencePackDigest"></pre>
         </section>
       </section>
     </aside>

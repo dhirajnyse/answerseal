@@ -7088,6 +7088,167 @@ svg {
   white-space: pre-wrap;
 }
 
+.evidence-pack-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1040px, calc(100vw - 248px));
+}
+
+.evidence-pack-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.evidence-pack-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(90deg, #edfffb, #fff);
+}
+
+.evidence-pack-actions > div {
+  display: grid;
+  gap: 4px;
+}
+
+.evidence-pack-actions strong {
+  color: var(--accent-dark);
+}
+
+.evidence-pack-body {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+}
+
+.evidence-pack-section,
+.evidence-pack-check-card,
+.evidence-pack-boundary-card,
+.evidence-pack-receipt-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.evidence-pack-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.evidence-pack-catalog-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.evidence-pack-publish-list,
+.evidence-pack-boundary-list,
+.evidence-pack-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.evidence-pack-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f0fffb, #fff);
+}
+
+.evidence-pack-check-card,
+.evidence-pack-boundary-card,
+.evidence-pack-receipt-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
+.evidence-pack-card.is-risk,
+.evidence-pack-check-card.is-risk,
+.evidence-pack-boundary-card.is-risk {
+  border-color: #f4d39a;
+  background: #fffaf0;
+}
+
+.evidence-pack-card header,
+.evidence-pack-check-card header,
+.evidence-pack-boundary-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.evidence-pack-card strong,
+.evidence-pack-check-card strong,
+.evidence-pack-boundary-card strong,
+.evidence-pack-receipt-card strong {
+  color: var(--ink);
+}
+
+.evidence-pack-card b,
+.evidence-pack-check-card b,
+.evidence-pack-boundary-card b {
+  flex: 0 0 auto;
+  color: var(--accent-dark);
+}
+
+.evidence-pack-card.is-risk b,
+.evidence-pack-check-card.is-risk b,
+.evidence-pack-boundary-card.is-risk b {
+  color: var(--amber);
+}
+
+.evidence-pack-card footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.evidence-pack-card footer span,
+.evidence-pack-check-card span,
+.evidence-pack-boundary-card span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #ddfbf5;
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.evidence-pack-card p,
+.evidence-pack-check-card p,
+.evidence-pack-boundary-card p,
+.evidence-pack-receipt-card p,
+.evidence-pack-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.evidence-pack-digest {
+  min-height: 260px;
+  max-height: 420px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -9358,6 +9519,11 @@ svg {
     .buyer-persona-list,
     .buyer-objection-list,
     .buyer-graph-guardrail-list,
+    .evidence-pack-metrics,
+    .evidence-pack-actions,
+    .evidence-pack-catalog-list,
+    .evidence-pack-publish-list,
+    .evidence-pack-boundary-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -9547,6 +9713,10 @@ svg {
     .buyer-objection-card footer,
     .buyer-guidance-card,
     .buyer-graph-guardrail-card header,
+    .evidence-pack-card header,
+    .evidence-pack-card footer,
+    .evidence-pack-check-card header,
+    .evidence-pack-boundary-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

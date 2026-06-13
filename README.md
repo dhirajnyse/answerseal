@@ -4,9 +4,9 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.41 Alpha
+**Current version:** v0.42 Alpha
 
-**Current phase:** Buyer Trust Graph
+**Current phase:** Evidence Pack Marketplace
 
 ## Brand
 
@@ -207,6 +207,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Guidance paths that recommend governed proof sequences by buyer type and objection class
 - Graph guardrails that separate tenant-local exact buyer context from aggregate persona, proof, objection, and outcome patterns
 - Buyer graph receipts for mapped personas, prepared guidance, guardrail checks, and copied graph digests
+- Evidence Pack Marketplace drawer with readiness score, ready pack count, template count, boundary gates, digest, and receipts
+- Governed SOC 2, AI governance, privacy, continuity, and access proof pack templates
+- Pack readiness scoring for required source coverage, source freshness, buyer fit, question demand, and buyer graph alignment
+- Publish checks for pack coverage, fresh source posture, questionnaire demand, and buyer graph alignment
+- Marketplace boundaries that separate private source files from reusable aggregate proof-pack patterns
+- Evidence pack receipts for prepared packs, publish checks, boundary approval, and copied readiness digests
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -227,7 +233,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v37 export with buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v38 export with evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -245,13 +251,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.42 Alpha - Evidence Pack Marketplace Readiness
+## Next Phase: v0.43 Alpha - Buyer Trust Packet Studio
 
-- Define SOC 2, AI governance, privacy, continuity, and access proof packs with required evidence and owner gates
-- Score each pack for source freshness, claim coverage, buyer persona fit, and graph guardrail status
-- Generate buyer-safe pack summaries with citations, approved claims, and missing evidence requests
-- Separate private source files from aggregate pack patterns so future marketplace learning remains governed
-- Turn AnswerSeal into a reusable proof-pack platform without weakening tenant boundaries
+- Build buyer-safe packet summaries from approved evidence packs
+- Add audience controls for buyer role, expiry, excerpt depth, and evidence visibility
+- Record packet receipts for build, review, copy, share, expiry, and blocked release events
+- Export packet digests that sales, security, legal, and external buyers can trust
+- Move from reusable internal proof packs to controlled buyer-facing trust packets
 
 ## License
 

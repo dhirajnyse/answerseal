@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.42 Alpha - Evidence Pack Marketplace
+
+Phase: Evidence Pack Marketplace
+
+- Added an Evidence Packs drawer with marketplace readiness score, ready pack count, template count, boundary gate count, actions, digest, and receipts.
+- Added governed SOC 2, AI governance, privacy, continuity, and access proof pack templates.
+- Added pack readiness scoring for required source coverage, source freshness, buyer fit, question demand, and buyer graph alignment.
+- Added publish checks for pack coverage, fresh source posture, questionnaire demand, and buyer graph alignment.
+- Added marketplace boundaries that keep raw files, exact answers, prompts, contracts, customer names, and owner notes tenant-local.
+- Added evidence pack receipts for prepared packs, publish checks, boundary approval, and copied pack digests.
+- Added evidence pack status, score, ready pack count, publish check pass count, boundary pass count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v38 with pack catalog, publish checks, marketplace boundaries, and digest.
+- Updated the build phases page with the v0.43 Buyer Trust Packet Studio plan.
+
 ## v0.41 Alpha - Buyer Trust Graph
 
 Phase: Buyer Trust Graph
