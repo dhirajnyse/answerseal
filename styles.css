@@ -7800,6 +7800,212 @@ svg {
   white-space: pre-wrap;
 }
 
+.network-firewall-drawer {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  width: min(1120px, calc(100vw - 248px));
+}
+
+.network-firewall-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.network-firewall-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(4, auto);
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(90deg, rgba(221, 255, 248, 0.82), rgba(241, 248, 255, 0.95)),
+    #f8fffd;
+}
+
+.network-firewall-actions > div {
+  display: grid;
+  gap: 4px;
+}
+
+.network-firewall-actions strong {
+  color: var(--accent-dark);
+}
+
+.network-firewall-body {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(237, 255, 250, 0.88) 0%, rgba(248, 252, 255, 0.96) 54%),
+    #ffffff;
+}
+
+.network-firewall-section,
+.firewall-boundary-card,
+.firewall-classification-card,
+.firewall-quarantine-card,
+.firewall-benefit-card,
+.network-firewall-receipt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.network-firewall-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(31, 41, 38, 0.055);
+}
+
+.firewall-boundary-list,
+.firewall-classification-list,
+.firewall-quarantine-list,
+.firewall-benefit-list,
+.network-firewall-receipt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.firewall-boundary-list,
+.firewall-classification-list,
+.firewall-quarantine-list,
+.firewall-benefit-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.firewall-boundary-card,
+.firewall-classification-card,
+.firewall-quarantine-card,
+.firewall-benefit-card,
+.network-firewall-receipt-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.firewall-boundary-card {
+  border-left: 4px solid var(--accent);
+  background: #fbfffd;
+}
+
+.firewall-classification-card {
+  border-left: 4px solid #1e88e5;
+  background: #f8fdff;
+}
+
+.firewall-quarantine-card {
+  border-left: 4px solid #26c6da;
+  background: #f8fdff;
+}
+
+.firewall-benefit-card {
+  border-left: 4px solid var(--success);
+  background: #f7fffb;
+}
+
+.firewall-boundary-card.is-risk,
+.firewall-classification-card.is-risk,
+.firewall-quarantine-card.is-risk {
+  border-left-color: var(--amber);
+  background: #fffaf0;
+}
+
+.firewall-boundary-card header,
+.firewall-classification-card header,
+.firewall-classification-card footer,
+.firewall-quarantine-card header,
+.firewall-benefit-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.firewall-boundary-card header div,
+.firewall-classification-card header div,
+.firewall-benefit-card header div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.firewall-boundary-card strong,
+.firewall-classification-card strong,
+.firewall-quarantine-card strong,
+.firewall-benefit-card strong,
+.network-firewall-receipt-card strong {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.firewall-boundary-card b,
+.firewall-classification-card b,
+.firewall-quarantine-card b,
+.firewall-benefit-card b {
+  color: var(--accent-dark);
+  font-size: 0.86rem;
+  font-weight: 950;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.firewall-boundary-card.is-risk b,
+.firewall-classification-card.is-risk b,
+.firewall-quarantine-card.is-risk b {
+  color: var(--amber);
+}
+
+.firewall-boundary-card p,
+.firewall-classification-card p,
+.firewall-quarantine-card p,
+.firewall-benefit-card p,
+.network-firewall-receipt-card p,
+.network-firewall-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.firewall-classification-card footer {
+  flex-wrap: wrap;
+}
+
+.firewall-boundary-card > span,
+.firewall-classification-card footer span,
+.firewall-quarantine-card > span,
+.firewall-benefit-card > span {
+  width: max-content;
+  max-width: 100%;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #d9fff7;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.network-firewall-digest {
+  min-height: 280px;
+  max-height: 440px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .analytics-drawer {
   grid-template-rows: auto auto minmax(0, 1fr);
   width: min(700px, 100vw);
@@ -10091,6 +10297,12 @@ svg {
     .buyer-feedback-request-list,
     .buyer-feedback-improvement-list,
     .buyer-feedback-outcome-list,
+    .network-firewall-metrics,
+    .network-firewall-actions,
+    .firewall-boundary-list,
+    .firewall-classification-list,
+    .firewall-quarantine-list,
+    .firewall-benefit-list,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -10298,6 +10510,11 @@ svg {
     .buyer-feedback-improvement-card header,
     .buyer-feedback-improvement-card footer,
     .buyer-feedback-outcome-card header,
+    .firewall-boundary-card header,
+    .firewall-classification-card header,
+    .firewall-classification-card footer,
+    .firewall-quarantine-card header,
+    .firewall-benefit-card header,
     .analytics-roi-card,
     .analytics-time-row,
     .portal-field-card header,

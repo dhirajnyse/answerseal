@@ -215,6 +215,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Feedback Loop</span>
           </button>
+          <button class="nav-item" id="networkFirewallNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+            <span>Firewall</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -277,8 +281,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.45 Alpha</strong>
-          <span>Buyer Feedback Loop</span>
+          <strong>v0.46 Alpha</strong>
+          <span>Network Learning Firewall</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -290,7 +294,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.45 Alpha</span>
+            <span class="label">Security questionnaire | v0.46 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3870,6 +3874,111 @@
             <span>Copyable closed-loop brief for founders, security, legal, sales, and AI governance</span>
           </div>
           <pre class="buyer-feedback-loop-digest" id="buyerFeedbackLoopDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="network-firewall-backdrop drawer-backdrop" id="networkFirewallBackdrop" hidden></div>
+    <aside class="workspace-drawer network-firewall-drawer" id="networkFirewallDrawer" aria-label="Network learning firewall" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Network Learning Firewall</span>
+          <h2>Let the product learn globally without exposing customer truth</h2>
+        </div>
+        <button class="icon-button" id="closeNetworkFirewallButton" type="button" aria-label="Close network learning firewall" title="Close network learning firewall">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip network-firewall-metrics" aria-label="Network learning firewall status">
+        <article>
+          <span class="label">Firewall Score</span>
+          <strong id="networkFirewallScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Shareable</span>
+          <strong id="firewallShareableCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Blocked</span>
+          <strong id="firewallBlockedCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Quarantine</span>
+          <strong id="firewallQuarantineCount">0</strong>
+        </article>
+      </section>
+
+      <section class="network-firewall-actions" aria-label="Network learning firewall controls">
+        <div>
+          <span class="label">Firewall Status</span>
+          <strong id="networkFirewallStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="classifyNetworkSignalsButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-filter"></use></svg>
+          <span>Classify</span>
+        </button>
+        <button class="secondary-button" id="quarantineDriftButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
+          <span>Quarantine</span>
+        </button>
+        <button class="secondary-button" id="publishNetworkPatternButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Publish</span>
+        </button>
+        <button class="secondary-button" id="copyNetworkFirewallDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="network-firewall-body">
+        <section class="network-firewall-section" aria-label="Learning boundaries">
+          <div class="section-heading">
+            <span class="label">Learning Boundaries</span>
+            <span>Raw customer truth stays local; only safe abstractions can cross the network</span>
+          </div>
+          <div class="firewall-boundary-list" id="firewallBoundaryList"></div>
+        </section>
+
+        <section class="network-firewall-section" aria-label="Signal classification">
+          <div class="section-heading">
+            <span class="label">Signal Classification</span>
+            <span>Each feedback signal is classified before any shared learning path opens</span>
+          </div>
+          <div class="firewall-classification-list" id="firewallClassificationList"></div>
+        </section>
+
+        <section class="network-firewall-section" aria-label="Quarantine queue">
+          <div class="section-heading">
+            <span class="label">Quarantine Queue</span>
+            <span>Weak, stale, raw, or customer-specific signals wait behind a release gate</span>
+          </div>
+          <div class="firewall-quarantine-list" id="firewallQuarantineList"></div>
+        </section>
+
+        <section class="network-firewall-section" aria-label="Network benefit">
+          <div class="section-heading">
+            <span class="label">Network Benefit</span>
+            <span>Every tenant benefits from patterns, never from another tenant's private evidence</span>
+          </div>
+          <div class="firewall-benefit-list" id="firewallBenefitList"></div>
+        </section>
+
+        <section class="network-firewall-section" aria-label="Network firewall receipts">
+          <div class="section-heading">
+            <span class="label">Firewall Receipts</span>
+            <span>Classify, quarantine, publish, and copy actions are recorded for AI governance</span>
+          </div>
+          <div class="network-firewall-receipt-list" id="networkFirewallReceiptList"></div>
+        </section>
+
+        <section class="network-firewall-section" aria-label="Network firewall digest">
+          <div class="section-heading">
+            <span class="label">Firewall Digest</span>
+            <span>Copyable trust brief for privacy, AI governance, security, and enterprise buyers</span>
+          </div>
+          <pre class="network-firewall-digest" id="networkFirewallDigest"></pre>
         </section>
       </section>
     </aside>

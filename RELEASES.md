@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.46 Alpha - Network Learning Firewall
+
+Phase: Network Learning Firewall
+
+- Added a Network Learning Firewall drawer with firewall score, shareable pattern count, blocked signal count, quarantine count, actions, digest, and receipts.
+- Added tenant learning boundaries that keep raw buyer questions, files, prompts, contracts, answers, and customer-specific activity tenant-local.
+- Added signal classification that separates tenant-local memory, blocked data, review-gated signals, and aggregate-safe network patterns.
+- Added drift quarantine for stale, conflicting, raw, customer-specific, or low-confidence signals before cross-tenant reuse.
+- Added network benefit signals that help other organizations through proof categories, outcome bands, and guardrail labels without exposing private evidence.
+- Added network firewall status, score, shareable patterns, blocked signals, quarantine items, benefit signals, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v42 with firewall boundaries, signal classifications, quarantine queue, network benefits, and digest.
+- Updated the build phases page with the v0.47 Sovereign Workspace Console plan.
+
 ## v0.45 Alpha - Buyer Feedback Loop
 
 Phase: Buyer Feedback Loop

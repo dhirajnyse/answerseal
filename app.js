@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.45 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v45";
+const BUILD_VERSION = "v0.46 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v46";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v45",
   "answerseal.workspace.v44",
   "answerseal.workspace.v43",
   "answerseal.workspace.v42",
@@ -747,6 +748,8 @@ function createInitialState() {
     buyerAccessRoomActions: createInitialBuyerAccessRoomActions(),
     buyerFeedbackLoopOpen: false,
     buyerFeedbackLoopActions: createInitialBuyerFeedbackLoopActions(),
+    networkFirewallOpen: false,
+    networkFirewallActions: createInitialNetworkFirewallActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1049,6 +1052,17 @@ function createInitialBuyerFeedbackLoopActions() {
   };
 }
 
+function createInitialNetworkFirewallActions() {
+  return {
+    status: "Draft",
+    classifiedAt: null,
+    quarantinedAt: null,
+    publishedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1193,6 +1207,7 @@ function loadWorkspaceState() {
       packetStudioActions: normalizePacketStudioActions(workspace.packetStudioActions ?? fresh.packetStudioActions),
       buyerAccessRoomActions: normalizeBuyerAccessRoomActions(workspace.buyerAccessRoomActions ?? fresh.buyerAccessRoomActions),
       buyerFeedbackLoopActions: normalizeBuyerFeedbackLoopActions(workspace.buyerFeedbackLoopActions ?? fresh.buyerFeedbackLoopActions),
+      networkFirewallActions: normalizeNetworkFirewallActions(workspace.networkFirewallActions ?? fresh.networkFirewallActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1233,6 +1248,7 @@ function loadWorkspaceState() {
       packetStudioOpen: false,
       buyerAccessRoomOpen: false,
       buyerFeedbackLoopOpen: false,
+      networkFirewallOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2019,6 +2035,29 @@ function normalizeBuyerFeedbackLoopReceipt(receipt) {
   };
 }
 
+function normalizeNetworkFirewallActions(actions) {
+  const status = ["Draft", "Signals classified", "Drift quarantined", "Pattern published"].includes(actions?.status)
+    ? actions.status
+    : "Draft";
+  return {
+    status,
+    classifiedAt: actions?.classifiedAt ?? null,
+    quarantinedAt: actions?.quarantinedAt ?? null,
+    publishedAt: actions?.publishedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeNetworkFirewallReceipt) : [],
+  };
+}
+
+function normalizeNetworkFirewallReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `network-firewall-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Network learning firewall action"),
+    detail: String(receipt?.detail ?? "Network learning firewall action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2077,6 +2116,7 @@ const elements = {
   packetStudioNavButton: document.querySelector("#packetStudioNavButton"),
   buyerAccessRoomNavButton: document.querySelector("#buyerAccessRoomNavButton"),
   buyerFeedbackLoopNavButton: document.querySelector("#buyerFeedbackLoopNavButton"),
+  networkFirewallNavButton: document.querySelector("#networkFirewallNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2725,6 +2765,24 @@ const elements = {
   queueFeedbackEvidenceButton: document.querySelector("#queueFeedbackEvidenceButton"),
   applyFeedbackLearningButton: document.querySelector("#applyFeedbackLearningButton"),
   copyFeedbackLoopDigestButton: document.querySelector("#copyFeedbackLoopDigestButton"),
+  networkFirewallBackdrop: document.querySelector("#networkFirewallBackdrop"),
+  networkFirewallDrawer: document.querySelector("#networkFirewallDrawer"),
+  closeNetworkFirewallButton: document.querySelector("#closeNetworkFirewallButton"),
+  networkFirewallScore: document.querySelector("#networkFirewallScore"),
+  firewallShareableCount: document.querySelector("#firewallShareableCount"),
+  firewallBlockedCount: document.querySelector("#firewallBlockedCount"),
+  firewallQuarantineCount: document.querySelector("#firewallQuarantineCount"),
+  networkFirewallStatus: document.querySelector("#networkFirewallStatus"),
+  firewallBoundaryList: document.querySelector("#firewallBoundaryList"),
+  firewallClassificationList: document.querySelector("#firewallClassificationList"),
+  firewallQuarantineList: document.querySelector("#firewallQuarantineList"),
+  firewallBenefitList: document.querySelector("#firewallBenefitList"),
+  networkFirewallReceiptList: document.querySelector("#networkFirewallReceiptList"),
+  networkFirewallDigest: document.querySelector("#networkFirewallDigest"),
+  classifyNetworkSignalsButton: document.querySelector("#classifyNetworkSignalsButton"),
+  quarantineDriftButton: document.querySelector("#quarantineDriftButton"),
+  publishNetworkPatternButton: document.querySelector("#publishNetworkPatternButton"),
+  copyNetworkFirewallDigestButton: document.querySelector("#copyNetworkFirewallDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2855,6 +2913,7 @@ function bindEvents() {
   elements.packetStudioNavButton.addEventListener("click", openPacketStudio);
   elements.buyerAccessRoomNavButton.addEventListener("click", openBuyerAccessRoom);
   elements.buyerFeedbackLoopNavButton.addEventListener("click", openBuyerFeedbackLoop);
+  elements.networkFirewallNavButton.addEventListener("click", openNetworkFirewall);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2930,6 +2989,7 @@ function bindEvents() {
     renderPacketStudio();
     renderBuyerAccessRoom();
     renderBuyerFeedbackLoop();
+    renderNetworkFirewall();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3124,6 +3184,12 @@ function bindEvents() {
   elements.queueFeedbackEvidenceButton.addEventListener("click", queueFeedbackEvidenceRequests);
   elements.applyFeedbackLearningButton.addEventListener("click", applyBuyerFeedbackLearning);
   elements.copyFeedbackLoopDigestButton.addEventListener("click", copyBuyerFeedbackLoopDigest);
+  elements.closeNetworkFirewallButton.addEventListener("click", closeNetworkFirewall);
+  elements.networkFirewallBackdrop.addEventListener("click", closeNetworkFirewall);
+  elements.classifyNetworkSignalsButton.addEventListener("click", classifyNetworkFirewallSignals);
+  elements.quarantineDriftButton.addEventListener("click", quarantineNetworkFirewallDrift);
+  elements.publishNetworkPatternButton.addEventListener("click", publishNetworkFirewallPattern);
+  elements.copyNetworkFirewallDigestButton.addEventListener("click", copyNetworkFirewallDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -3199,6 +3265,7 @@ function bindEvents() {
     if (state.packetStudioOpen) closePacketStudio();
     if (state.buyerAccessRoomOpen) closeBuyerAccessRoom();
     if (state.buyerFeedbackLoopOpen) closeBuyerFeedbackLoop();
+    if (state.networkFirewallOpen) closeNetworkFirewall();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3241,6 +3308,7 @@ function applyInitialHash() {
   if (hash === "packet-studio" || hash === "packets" || hash === "trust-packets" || hash === "buyer-packets") openPacketStudio();
   if (hash === "buyer-access" || hash === "access-room" || hash === "buyer-room" || hash === "room-access") openBuyerAccessRoom();
   if (hash === "feedback-loop" || hash === "buyer-feedback" || hash === "learning-loop" || hash === "feedback") openBuyerFeedbackLoop();
+  if (hash === "firewall" || hash === "network-firewall" || hash === "learning-firewall" || hash === "privacy-firewall") openNetworkFirewall();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3297,6 +3365,7 @@ function render() {
   renderPacketStudio();
   renderBuyerAccessRoom();
   renderBuyerFeedbackLoop();
+  renderNetworkFirewall();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4108,6 +4177,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.buyerFeedbackLoopNavButton && state.buyerFeedbackLoopOpen) {
     closeBuyerFeedbackLoop(false);
   }
+  if (activeButton !== elements.networkFirewallNavButton && state.networkFirewallOpen) {
+    closeNetworkFirewall(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4139,6 +4211,7 @@ function setActiveNav(activeButton) {
     elements.packetStudioNavButton,
     elements.buyerAccessRoomNavButton,
     elements.buyerFeedbackLoopNavButton,
+    elements.networkFirewallNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -5573,6 +5646,63 @@ function closeBuyerFeedbackLoop(activateReview = true) {
   elements.buyerFeedbackLoopDrawer.classList.remove("is-open");
   elements.buyerFeedbackLoopDrawer.setAttribute("aria-hidden", "true");
   elements.buyerFeedbackLoopBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openNetworkFirewall() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.networkFirewallOpen = true;
+  setActiveNav(elements.networkFirewallNavButton);
+  elements.networkFirewallBackdrop.hidden = false;
+  elements.networkFirewallDrawer.classList.add("is-open");
+  elements.networkFirewallDrawer.setAttribute("aria-hidden", "false");
+  renderNetworkFirewall();
+}
+
+function closeNetworkFirewall(activateReview = true) {
+  if (!state.networkFirewallOpen && elements.networkFirewallDrawer.getAttribute("aria-hidden") === "true") return;
+  state.networkFirewallOpen = false;
+  elements.networkFirewallDrawer.classList.remove("is-open");
+  elements.networkFirewallDrawer.setAttribute("aria-hidden", "true");
+  elements.networkFirewallBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -17968,6 +18098,388 @@ function buyerFeedbackLoopDigestText(loop = buyerFeedbackLoopSnapshot()) {
   ].join("\n");
 }
 
+function renderNetworkFirewall() {
+  const firewall = networkFirewallSnapshot();
+
+  elements.networkFirewallScore.textContent = `${firewall.score}%`;
+  elements.firewallShareableCount.textContent = firewall.shareableCount;
+  elements.firewallBlockedCount.textContent = firewall.blockedCount;
+  elements.firewallQuarantineCount.textContent = firewall.quarantineCount;
+  elements.networkFirewallStatus.textContent = firewall.statusLabel;
+  elements.networkFirewallDigest.textContent = networkFirewallDigestText(firewall);
+
+  elements.firewallBoundaryList.innerHTML = "";
+  firewall.boundaries.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `firewall-boundary-card ${item.status === "Blocked" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.layer)}</span>
+          <strong>${escapeHtml(item.asset)}</strong>
+        </div>
+        <b>${escapeHtml(item.status)}</b>
+      </header>
+      <p>${escapeHtml(item.rule)}</p>
+      <span>${escapeHtml(item.scope)}</span>
+    `;
+    elements.firewallBoundaryList.append(card);
+  });
+
+  elements.firewallClassificationList.innerHTML = "";
+  firewall.classifications.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `firewall-classification-card ${item.decision === "Blocked" || item.decision === "Review gate" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.source)}</span>
+          <strong>${escapeHtml(item.signal)}</strong>
+        </div>
+        <b>${escapeHtml(item.decision)}</b>
+      </header>
+      <p>${escapeHtml(item.reason)}</p>
+      <footer>
+        <span>${escapeHtml(item.privacy)}</span>
+        <span>${escapeHtml(item.payload)}</span>
+      </footer>
+    `;
+    elements.firewallClassificationList.append(card);
+  });
+
+  elements.firewallQuarantineList.innerHTML = "";
+  firewall.quarantine.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = `firewall-quarantine-card ${item.status === "Quarantined" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(item.item)}</strong>
+        <b>${escapeHtml(item.status)}</b>
+      </header>
+      <p>${escapeHtml(item.reason)}</p>
+      <span>${escapeHtml(item.releaseRule)}</span>
+    `;
+    elements.firewallQuarantineList.append(card);
+  });
+
+  elements.firewallBenefitList.innerHTML = "";
+  firewall.benefits.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "firewall-benefit-card";
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(item.audience)}</span>
+          <strong>${escapeHtml(item.pattern)}</strong>
+        </div>
+        <b>${escapeHtml(item.safeSignal)}</b>
+      </header>
+      <p>${escapeHtml(item.benefit)}</p>
+      <span>${escapeHtml(item.guardrail)}</span>
+    `;
+    elements.firewallBenefitList.append(card);
+  });
+
+  elements.networkFirewallReceiptList.innerHTML = "";
+  if (firewall.receipts.length === 0) {
+    elements.networkFirewallReceiptList.append(emptyState("No network firewall receipts yet"));
+  }
+  firewall.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "network-firewall-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.networkFirewallReceiptList.append(card);
+  });
+}
+
+function networkFirewallSnapshot() {
+  const feedbackLoop = buyerFeedbackLoopSnapshot();
+  const network = learningNetworkSnapshot();
+  const graph = federatedGraphSnapshot();
+  const boundaries = networkFirewallBoundaries();
+  const classifications = networkFirewallClassifications(feedbackLoop, network);
+  const quarantine = networkFirewallQuarantine(classifications, feedbackLoop);
+  const benefits = networkFirewallBenefits(network, graph);
+  const shareableCount = classifications.filter((item) => item.decision === "Shareable pattern").length;
+  const blockedCount = classifications.filter((item) => item.decision === "Blocked").length;
+  const quarantineCount = quarantine.filter((item) => item.status === "Quarantined").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        Math.min(100, shareableCount * 20) * 0.24
+          + Math.max(0, 100 - blockedCount * 18) * 0.22
+          + Math.max(0, 100 - quarantineCount * 16) * 0.18
+          + Math.min(100, benefits.length * 22) * 0.18
+          + Math.min(100, network.privacyScore ?? 82) * 0.18,
+      ),
+    ),
+  );
+  const statusLabel = state.networkFirewallActions.status === "Draft" ? "Ready to classify safe network learning" : state.networkFirewallActions.status;
+
+  return {
+    score,
+    statusLabel,
+    shareableCount,
+    blockedCount,
+    quarantineCount,
+    feedbackLoop,
+    network,
+    boundaries,
+    classifications,
+    quarantine,
+    benefits,
+    receipts: state.networkFirewallActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function networkFirewallBoundaries() {
+  return [
+    {
+      layer: "Tenant boundary",
+      asset: "Raw buyer questions, files, prompts, answers",
+      status: "Blocked",
+      scope: "Tenant local only",
+      rule: "Never train shared memory from raw customer text, uploaded evidence, contract terms, or buyer-specific context.",
+    },
+    {
+      layer: "Local memory",
+      asset: "Approved answer improvement",
+      status: "Allowed",
+      scope: "Same tenant, same or fresher evidence",
+      rule: "Exact language can improve only the originating workspace after source coverage and human approval.",
+    },
+    {
+      layer: "Aggregate pattern",
+      asset: "Proof category and friction class",
+      status: "Shareable",
+      scope: "Cross-tenant aggregate",
+      rule: "Other organizations receive only categories such as AI governance proof gap, stale incident evidence, or copied excerpt demand.",
+    },
+    {
+      layer: "Outcome signal",
+      asset: "Deal movement and review friction band",
+      status: "Shareable",
+      scope: "Anonymized threshold band",
+      rule: "Learning can reuse direction, band, and guardrail label, never account names, revenue amounts, or buyer content.",
+    },
+    {
+      layer: "Drift guard",
+      asset: "Conflicting, stale, or low-confidence pattern",
+      status: "Review gate",
+      scope: "Quarantine before reuse",
+      rule: "Any weak signal is held until enough approved workspaces confirm the pattern without policy conflict.",
+    },
+  ];
+}
+
+function networkFirewallClassifications(feedbackLoop, network) {
+  const eventClassifications = feedbackLoop.events.map((event) => {
+    let decision = "Review gate";
+    let payload = "Pattern label only";
+    if (event.risk === "High") {
+      decision = "Blocked";
+      payload = "No network payload";
+    } else if (event.privacy.includes("Tenant") || event.privacy.includes("Local")) {
+      decision = "Tenant local";
+      payload = "Local memory only";
+    } else if (event.privacy.includes("Aggregate")) {
+      decision = "Shareable pattern";
+      payload = "Category, band, guardrail";
+    }
+
+    return {
+      source: event.source,
+      signal: event.signal,
+      privacy: event.privacy,
+      decision,
+      payload,
+      reason: decision === "Shareable pattern"
+        ? "Signal can help the network because it carries no raw buyer content or customer-specific proof."
+        : decision === "Blocked"
+          ? "Signal is high risk or too specific for cross-tenant learning."
+          : "Signal can improve the tenant workspace but needs stricter approval before any network benefit.",
+    };
+  });
+
+  const patternClassifications = (network.patterns ?? []).slice(0, 3).map((pattern) => ({
+    source: "Learning network",
+    signal: pattern.title ?? pattern.name ?? "Safe proof pattern",
+    privacy: "Aggregate-safe",
+    decision: pattern.status === "Ready" || pattern.ready ? "Shareable pattern" : "Review gate",
+    payload: "Pattern label and guardrail",
+    reason: pattern.status === "Ready" || pattern.ready
+      ? "Network pattern is already policy-scoped and can guide future evidence recommendations."
+      : "Pattern remains under review until policy and evidence coverage agree.",
+  }));
+
+  return [...eventClassifications, ...patternClassifications];
+}
+
+function networkFirewallQuarantine(classifications, feedbackLoop) {
+  const needsProof = feedbackLoop.improvements.filter((item) => item.status !== "Approved local memory");
+  const highRisk = classifications.filter((item) => item.decision === "Blocked" || item.decision === "Review gate");
+  return [
+    {
+      item: "Raw buyer wording",
+      status: "Quarantined",
+      reason: "Buyer questions and copied excerpts are never eligible for network learning as raw text.",
+      releaseRule: "Release only a proof category after redaction, approval, and aggregation.",
+    },
+    {
+      item: "Unapproved answer improvements",
+      status: needsProof.length ? "Quarantined" : "Clean",
+      reason: needsProof.length ? `${needsProof.length} draft improvement(s) still need proof before memory changes.` : "All seeded improvements have acceptable source coverage.",
+      releaseRule: "Require approved local memory before reuse.",
+    },
+    {
+      item: "High-risk or review-gated signals",
+      status: highRisk.length ? "Quarantined" : "Clean",
+      reason: highRisk.length ? `${highRisk.length} signal(s) are blocked or require review before sharing.` : "No blocked network signal remains in this snapshot.",
+      releaseRule: "Require policy pass, no conflict, and aggregate-only payload.",
+    },
+    {
+      item: "Drift watch",
+      status: "Clean",
+      reason: "Pattern drift is measured through score bands and guardrail labels rather than exact customer records.",
+      releaseRule: "Quarantine if confidence drops or policy conflicts appear.",
+    },
+  ];
+}
+
+function networkFirewallBenefits(network, graph) {
+  return [
+    {
+      audience: "New customer workspace",
+      pattern: "AI governance evidence demand",
+      safeSignal: "Shareable",
+      benefit: "Future teams can be prompted to attach AI usage, model training, and subprocessor proof earlier.",
+      guardrail: "No customer names, no buyer wording, no source documents.",
+    },
+    {
+      audience: "Security reviewer",
+      pattern: "Freshness gap radar",
+      safeSignal: "Shareable",
+      benefit: "Stale incident, access, or DPA evidence can be flagged before a buyer asks for it.",
+      guardrail: "Only proof category and age band are reused.",
+    },
+    {
+      audience: "Sales engineering",
+      pattern: "Copied excerpt usefulness",
+      safeSignal: "Shareable",
+      benefit: "The product can prioritize evidence excerpts buyers actually rely on without sharing buyer activity logs.",
+      guardrail: "Use aggregate demand, not room-level activity.",
+    },
+    {
+      audience: "Network intelligence",
+      pattern: `${network.readyPatternCount ?? graph.promotions?.length ?? 0} approved pattern(s) ready`,
+      safeSignal: "Guarded",
+      benefit: "AnswerSeal becomes smarter across markets while each tenant keeps its exact evidence private.",
+      guardrail: "Network learning publishes only after firewall receipt.",
+    },
+  ];
+}
+
+function classifyNetworkFirewallSignals() {
+  const firewall = networkFirewallSnapshot();
+  const detail = `Classified ${firewall.classifications.length} learning signal(s): ${firewall.shareableCount} shareable, ${firewall.blockedCount} blocked.`;
+  state.networkFirewallActions.status = "Signals classified";
+  state.networkFirewallActions.classifiedAt = new Date().toISOString();
+  addNetworkFirewallReceipt("Network signals classified", detail);
+  addAudit("Network signals classified", detail);
+  renderNetworkFirewall();
+  renderAudit();
+  showToast("Network learning signals classified.");
+}
+
+function quarantineNetworkFirewallDrift() {
+  const firewall = networkFirewallSnapshot();
+  const detail = `Quarantined ${firewall.quarantineCount} drift or privacy risk item(s) before network reuse.`;
+  state.networkFirewallActions.status = "Drift quarantined";
+  state.networkFirewallActions.quarantinedAt = new Date().toISOString();
+  addNetworkFirewallReceipt("Network drift quarantined", detail);
+  addAudit("Network drift quarantined", detail);
+  render();
+  showToast("Network drift quarantined.");
+}
+
+function publishNetworkFirewallPattern() {
+  const firewall = networkFirewallSnapshot();
+  const detail = `Published ${firewall.shareableCount} aggregate-safe pattern(s) with tenant-local raw data blocked.`;
+  state.networkFirewallActions.status = "Pattern published";
+  state.networkFirewallActions.publishedAt = new Date().toISOString();
+  addNetworkFirewallReceipt("Network-safe pattern published", detail);
+  addAudit("Network-safe pattern published", detail);
+  render();
+  showToast("Network-safe pattern published.");
+}
+
+function copyNetworkFirewallDigest() {
+  const firewall = networkFirewallSnapshot();
+  state.networkFirewallActions.lastCopiedAt = new Date().toISOString();
+  addNetworkFirewallReceipt("Network firewall digest copied", "Network learning firewall digest copied.");
+  addAudit("Network firewall digest copied", "Network learning firewall digest copied.");
+  renderNetworkFirewall();
+  renderAudit();
+  copyText(networkFirewallDigestText(firewall), "Network firewall digest copied.");
+}
+
+function addNetworkFirewallReceipt(action, detail) {
+  state.networkFirewallActions.receipts = [
+    ...(state.networkFirewallActions.receipts ?? []),
+    {
+      id: `network-firewall-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function networkFirewallDigestText(firewall = networkFirewallSnapshot()) {
+  const boundaryLines = firewall.boundaries.map((item, index) => `${index + 1}. ${item.status}: ${item.asset} | ${item.scope} | ${item.rule}`).join("\n");
+  const classificationLines = firewall.classifications.map((item, index) => `${index + 1}. ${item.decision}: ${item.signal} | ${item.privacy} | ${item.payload} | ${item.reason}`).join("\n");
+  const quarantineLines = firewall.quarantine.map((item, index) => `${index + 1}. ${item.status}: ${item.item} | ${item.reason} | ${item.releaseRule}`).join("\n");
+  const benefitLines = firewall.benefits.map((item, index) => `${index + 1}. ${item.safeSignal}: ${item.pattern} | ${item.audience} | ${item.benefit} | ${item.guardrail}`).join("\n");
+  const receiptLines = firewall.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Network Learning Firewall",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${firewall.statusLabel}`,
+    `Firewall score: ${firewall.score}%`,
+    `Shareable patterns: ${firewall.shareableCount}`,
+    `Blocked signals: ${firewall.blockedCount}`,
+    `Quarantined items: ${firewall.quarantineCount}`,
+    "",
+    "Firewall boundaries:",
+    boundaryLines,
+    "",
+    "Signal classifications:",
+    classificationLines,
+    "",
+    "Quarantine queue:",
+    quarantineLines,
+    "",
+    "Network benefit:",
+    benefitLines,
+    "",
+    "Receipts:",
+    receiptLines || "No network firewall receipts yet.",
+    "",
+    "Global learning rule:",
+    "- Every organization's raw questions, files, answers, prompts, and buyer behavior remain tenant-local.",
+    "- The network learns only aggregate proof categories, friction classes, outcome bands, and guardrail labels.",
+    "- Any stale, conflicting, customer-specific, or low-confidence signal is quarantined before it can influence another workspace.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -20277,6 +20789,13 @@ function exportCsv() {
     "Feedback Improvements",
     "Feedback Outcome Signals",
     "Feedback Loop Receipts",
+    "Network Firewall Status",
+    "Network Firewall Score",
+    "Shareable Learning Patterns",
+    "Blocked Learning Signals",
+    "Quarantine Items",
+    "Network Benefit Signals",
+    "Network Firewall Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -20319,6 +20838,7 @@ function exportCsv() {
     const packetStudio = packetStudioSnapshot();
     const buyerAccessRoom = buyerAccessRoomSnapshot();
     const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
+    const networkFirewall = networkFirewallSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -20509,6 +21029,13 @@ function exportCsv() {
       `${buyerFeedbackLoop.improvements.filter((item) => item.status === "Approved local memory").length}/${buyerFeedbackLoop.improvements.length}`,
       buyerFeedbackLoop.outcomes.length,
       buyerFeedbackLoop.receipts.length,
+      networkFirewall.statusLabel,
+      `${networkFirewall.score}%`,
+      networkFirewall.shareableCount,
+      networkFirewall.blockedCount,
+      networkFirewall.quarantineCount,
+      networkFirewall.benefits.length,
+      networkFirewall.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -20561,6 +21088,7 @@ function exportReviewPack() {
   const packetStudio = packetStudioSnapshot();
   const buyerAccessRoom = buyerAccessRoomSnapshot();
   const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
+  const networkFirewall = networkFirewallSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -20578,7 +21106,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v41</h1>
+        <h1>AnswerSeal Review Pack v42</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -22986,6 +23514,113 @@ function exportReviewPack() {
         </table>
         <h2>Buyer Feedback Loop Digest</h2>
         <pre>${escapeHtml(buyerFeedbackLoopDigestText(buyerFeedbackLoop))}</pre>
+        <h2>Network Learning Firewall</h2>
+        <p>Status: ${escapeHtml(networkFirewall.statusLabel)} | Firewall score: ${networkFirewall.score}% | Shareable patterns: ${networkFirewall.shareableCount} | Blocked signals: ${networkFirewall.blockedCount} | Quarantine items: ${networkFirewall.quarantineCount}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Boundary</th>
+              <th>Status</th>
+              <th>Scope</th>
+              <th>Rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${networkFirewall.boundaries
+              .map(
+                (boundary) => `
+                  <tr>
+                    <td>${escapeHtml(boundary.layer)}<br />${escapeHtml(boundary.asset)}</td>
+                    <td class="${boundary.status === "Blocked" ? "risk" : "ok"}">${escapeHtml(boundary.status)}</td>
+                    <td>${escapeHtml(boundary.scope)}</td>
+                    <td>${escapeHtml(boundary.rule)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Firewall Signal Classification</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Privacy</th>
+              <th>Decision</th>
+              <th>Payload</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${networkFirewall.classifications
+              .map(
+                (classification) => `
+                  <tr>
+                    <td>${escapeHtml(classification.source)}<br />${escapeHtml(classification.signal)}</td>
+                    <td>${escapeHtml(classification.privacy)}</td>
+                    <td class="${classification.decision === "Blocked" || classification.decision === "Review gate" ? "risk" : "ok"}">${escapeHtml(classification.decision)}</td>
+                    <td>${escapeHtml(classification.payload)}</td>
+                    <td>${escapeHtml(classification.reason)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Firewall Quarantine Queue</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>Release Rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${networkFirewall.quarantine
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.item)}</td>
+                    <td class="${item.status === "Quarantined" ? "risk" : "ok"}">${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.reason)}</td>
+                    <td>${escapeHtml(item.releaseRule)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network Benefit Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Audience</th>
+              <th>Safe Signal</th>
+              <th>Benefit</th>
+              <th>Guardrail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${networkFirewall.benefits
+              .map(
+                (benefit) => `
+                  <tr>
+                    <td>${escapeHtml(benefit.pattern)}</td>
+                    <td>${escapeHtml(benefit.audience)}</td>
+                    <td>${escapeHtml(benefit.safeSignal)}</td>
+                    <td>${escapeHtml(benefit.benefit)}</td>
+                    <td>${escapeHtml(benefit.guardrail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network Learning Firewall Digest</h2>
+        <pre>${escapeHtml(networkFirewallDigestText(networkFirewall))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -23698,7 +24333,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v41 created with buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v42 created with network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -23728,12 +24363,13 @@ function exportReviewPack() {
   renderPacketStudio();
   renderBuyerAccessRoom();
   renderBuyerFeedbackLoop();
+  renderNetworkFirewall();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v41 exported.");
+  showToast("Review Pack v42 exported.");
 }
 
 function toCsv(rows) {
@@ -23815,6 +24451,7 @@ function serializeWorkspace() {
     packetStudioActions: state.packetStudioActions,
     buyerAccessRoomActions: state.buyerAccessRoomActions,
     buyerFeedbackLoopActions: state.buyerFeedbackLoopActions,
+    networkFirewallActions: state.networkFirewallActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -23867,6 +24504,7 @@ function resetWorkspace() {
   closePacketStudio(false);
   closeBuyerAccessRoom(false);
   closeBuyerFeedbackLoop(false);
+  closeNetworkFirewall(false);
   closeWorkspace(false);
   closeLibrary();
   render();
