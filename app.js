@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.52 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v52";
+const BUILD_VERSION = "v0.53 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v53";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v52",
   "answerseal.workspace.v51",
   "answerseal.workspace.v50",
   "answerseal.workspace.v49",
@@ -769,6 +770,8 @@ function createInitialState() {
     playbookStudioActions: createInitialPlaybookStudioActions(),
     outcomeConsoleOpen: false,
     outcomeConsoleActions: createInitialOutcomeConsoleActions(),
+    policyBoardOpen: false,
+    policyBoardActions: createInitialPolicyBoardActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1145,6 +1148,18 @@ function createInitialOutcomeConsoleActions() {
   };
 }
 
+function createInitialPolicyBoardActions() {
+  return {
+    status: "Board ready",
+    approvedAt: null,
+    simulatedAt: null,
+    gatedAt: null,
+    publishedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1296,6 +1311,7 @@ function loadWorkspaceState() {
       memoryGraphActions: normalizeMemoryGraphActions(workspace.memoryGraphActions ?? fresh.memoryGraphActions),
       playbookStudioActions: normalizePlaybookStudioActions(workspace.playbookStudioActions ?? fresh.playbookStudioActions),
       outcomeConsoleActions: normalizeOutcomeConsoleActions(workspace.outcomeConsoleActions ?? fresh.outcomeConsoleActions),
+      policyBoardActions: normalizePolicyBoardActions(workspace.policyBoardActions ?? fresh.policyBoardActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1344,6 +1360,7 @@ function loadWorkspaceState() {
       memoryGraphOpen: false,
       playbookStudioOpen: false,
       outcomeConsoleOpen: false,
+      policyBoardOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2286,6 +2303,30 @@ function normalizeOutcomeConsoleReceipt(receipt) {
   };
 }
 
+function normalizePolicyBoardActions(actions) {
+  const status = ["Board ready", "Reward rules approved", "Drift simulated", "Owner gates required", "Policy receipts published"].includes(actions?.status)
+    ? actions.status
+    : "Board ready";
+  return {
+    status,
+    approvedAt: actions?.approvedAt ?? null,
+    simulatedAt: actions?.simulatedAt ?? null,
+    gatedAt: actions?.gatedAt ?? null,
+    publishedAt: actions?.publishedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizePolicyBoardReceipt) : [],
+  };
+}
+
+function normalizePolicyBoardReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `policy-board-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Policy board action"),
+    detail: String(receipt?.detail ?? "Reinforcement Policy Board action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2350,6 +2391,7 @@ const elements = {
   memoryGraphNavButton: document.querySelector("#memoryGraphNavButton"),
   playbookStudioNavButton: document.querySelector("#playbookStudioNavButton"),
   outcomeConsoleNavButton: document.querySelector("#outcomeConsoleNavButton"),
+  policyBoardNavButton: document.querySelector("#policyBoardNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2504,6 +2546,25 @@ const elements = {
   tuneOutcomeConsoleButton: document.querySelector("#tuneOutcomeConsoleButton"),
   publishOutcomeConsoleButton: document.querySelector("#publishOutcomeConsoleButton"),
   copyOutcomeConsoleDigestButton: document.querySelector("#copyOutcomeConsoleDigestButton"),
+  policyBoardBackdrop: document.querySelector("#policyBoardBackdrop"),
+  policyBoardDrawer: document.querySelector("#policyBoardDrawer"),
+  closePolicyBoardButton: document.querySelector("#closePolicyBoardButton"),
+  policyBoardScore: document.querySelector("#policyBoardScore"),
+  policyBoardStatus: document.querySelector("#policyBoardStatus"),
+  policyBoardRuleCount: document.querySelector("#policyBoardRuleCount"),
+  policyBoardDriftCount: document.querySelector("#policyBoardDriftCount"),
+  policyBoardOwnerGates: document.querySelector("#policyBoardOwnerGates"),
+  policyBoardSummary: document.querySelector("#policyBoardSummary"),
+  policyBoardRuleList: document.querySelector("#policyBoardRuleList"),
+  policyBoardDriftList: document.querySelector("#policyBoardDriftList"),
+  policyBoardOwnerList: document.querySelector("#policyBoardOwnerList"),
+  policyBoardReceiptList: document.querySelector("#policyBoardReceiptList"),
+  policyBoardDigest: document.querySelector("#policyBoardDigest"),
+  approvePolicyBoardRulesButton: document.querySelector("#approvePolicyBoardRulesButton"),
+  simulatePolicyBoardDriftButton: document.querySelector("#simulatePolicyBoardDriftButton"),
+  requirePolicyBoardOwnersButton: document.querySelector("#requirePolicyBoardOwnersButton"),
+  publishPolicyBoardReceiptsButton: document.querySelector("#publishPolicyBoardReceiptsButton"),
+  copyPolicyBoardDigestButton: document.querySelector("#copyPolicyBoardDigestButton"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -3255,6 +3316,7 @@ function bindEvents() {
   elements.memoryGraphNavButton.addEventListener("click", openMissionMemoryGraph);
   elements.playbookStudioNavButton.addEventListener("click", openTrustPlaybookStudio);
   elements.outcomeConsoleNavButton.addEventListener("click", openOutcomeLearningConsole);
+  elements.policyBoardNavButton.addEventListener("click", openReinforcementPolicyBoard);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -3337,6 +3399,7 @@ function bindEvents() {
     renderMissionMemoryGraph();
     renderTrustPlaybookStudio();
     renderOutcomeLearningConsole();
+    renderReinforcementPolicyBoard();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3608,6 +3671,13 @@ function bindEvents() {
   elements.tuneOutcomeConsoleButton.addEventListener("click", tuneOutcomeLearningPolicy);
   elements.publishOutcomeConsoleButton.addEventListener("click", publishOutcomeLearningSignals);
   elements.copyOutcomeConsoleDigestButton.addEventListener("click", copyOutcomeLearningDigest);
+  elements.closePolicyBoardButton.addEventListener("click", closeReinforcementPolicyBoard);
+  elements.policyBoardBackdrop.addEventListener("click", closeReinforcementPolicyBoard);
+  elements.approvePolicyBoardRulesButton.addEventListener("click", approvePolicyBoardRules);
+  elements.simulatePolicyBoardDriftButton.addEventListener("click", simulatePolicyBoardDrift);
+  elements.requirePolicyBoardOwnersButton.addEventListener("click", requirePolicyBoardOwnerGates);
+  elements.publishPolicyBoardReceiptsButton.addEventListener("click", publishPolicyBoardReceipts);
+  elements.copyPolicyBoardDigestButton.addEventListener("click", copyPolicyBoardDigest);
 
   document.addEventListener("keydown", (event) => {
     const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
@@ -3664,6 +3734,7 @@ function bindEvents() {
     if (state.memoryGraphOpen) closeMissionMemoryGraph();
     if (state.playbookStudioOpen) closeTrustPlaybookStudio();
     if (state.outcomeConsoleOpen) closeOutcomeLearningConsole();
+    if (state.policyBoardOpen) closeReinforcementPolicyBoard();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3713,6 +3784,7 @@ function applyInitialHash() {
   if (hash === "memory" || hash === "memory-graph" || hash === "mission-memory" || hash === "mission-memory-graph") openMissionMemoryGraph();
   if (hash === "playbook-studio" || hash === "trust-playbook-studio" || hash === "playbook-rollout") openTrustPlaybookStudio();
   if (hash === "outcome-console" || hash === "outcome-learning" || hash === "learning-console" || hash === "closed-loop") openOutcomeLearningConsole();
+  if (hash === "policy-board" || hash === "reinforcement-policy" || hash === "reward-policy" || hash === "policy-control") openReinforcementPolicyBoard();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3776,6 +3848,7 @@ function render() {
   renderMissionMemoryGraph();
   renderTrustPlaybookStudio();
   renderOutcomeLearningConsole();
+  renderReinforcementPolicyBoard();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4517,6 +4590,7 @@ function activateWorkspaceNav(target) {
   closeMissionMemoryGraph(false);
   closeTrustPlaybookStudio(false);
   closeOutcomeLearningConsole(false);
+  closeReinforcementPolicyBoard(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -4610,6 +4684,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.outcomeConsoleNavButton && state.outcomeConsoleOpen) {
     closeOutcomeLearningConsole(false);
   }
+  if (activeButton !== elements.policyBoardNavButton && state.policyBoardOpen) {
+    closeReinforcementPolicyBoard(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4647,6 +4724,7 @@ function setActiveNav(activeButton) {
     elements.memoryGraphNavButton,
     elements.playbookStudioNavButton,
     elements.outcomeConsoleNavButton,
+    elements.policyBoardNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -6300,6 +6378,7 @@ function commandCatalog() {
   const memoryGraph = missionMemoryGraphSnapshot();
   const playbookStudio = trustPlaybookStudioSnapshot();
   const outcomeConsole = outcomeLearningConsoleSnapshot();
+  const policyBoard = reinforcementPolicyBoardSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
   const common = [
     {
@@ -6345,6 +6424,17 @@ function commandCatalog() {
       reason: "The Outcome Learning Console closes the loop after rollout while keeping raw buyer context private.",
       run: openOutcomeLearningConsole,
       keywords: ["outcome", "learning", "console", "closed", "loop", "safe", "signals", "tune", "publish"],
+    },
+    {
+      id: "reinforcement-policy-board",
+      scope: "Policy",
+      title: "Open Policy Board",
+      detail: `${policyBoard.rules.filter((rule) => rule.status === "Approved").length}/${policyBoard.rules.length} rules approved, ${policyBoard.driftRisks.filter((risk) => risk.status !== "Clear").length} drift risks, ${policyBoard.ownerGates.filter((gate) => gate.status === "Assigned").length}/${policyBoard.ownerGates.length} owner gates.`,
+      signal: policyBoard.statusLabel,
+      cta: "Open Board",
+      reason: "The Reinforcement Policy Board makes reward rules, drift checks, and owner approvals explicit before learning changes recommendations.",
+      run: openReinforcementPolicyBoard,
+      keywords: ["policy", "board", "reinforcement", "reward", "penalty", "drift", "owner", "receipt"],
     },
     {
       id: "review-desk",
@@ -6471,7 +6561,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v48 with outcome learning console, trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
+      detail: `Create Review Pack v49 with reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -6519,6 +6609,7 @@ function recommendedCommand(commands) {
   const memoryGraph = missionMemoryGraphSnapshot();
   const playbookStudio = trustPlaybookStudioSnapshot();
   const outcomeConsole = outcomeLearningConsoleSnapshot();
+  const policyBoard = reinforcementPolicyBoardSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
 
   const preferredId =
@@ -6528,8 +6619,10 @@ function recommendedCommand(commands) {
         ? "trust-mission"
         : firewall.quarantineCount > 0 || firewall.blockedCount > 0
           ? "trust-mission"
-          : feedback.requests.length > 0
+        : feedback.requests.length > 0
             ? "trust-mission"
+            : state.policyBoardActions.status !== "Board ready" || policyBoard.receipts.length > 0 || state.outcomeConsoleActions.status === "Safe signals published"
+              ? "reinforcement-policy-board"
             : state.outcomeConsoleActions.status !== "Console ready" || outcomeConsole.receipts.length > 0 || state.playbookStudioActions.status === "Rollout approved"
               ? "outcome-learning-console"
             : state.playbookStudioActions.status !== "Studio ready" || playbookStudio.receipts.length > 0
@@ -7704,6 +7797,7 @@ function openOutcomeLearningConsole() {
   closeMissionMemoryGraph(false);
   closeTrustPlaybookStudio(false);
   closeOutcomeLearningConsole(false);
+  closeReinforcementPolicyBoard(false);
   closeWorkspace(false);
   closePipeline(false);
   closeTrustRoom(false);
@@ -7994,6 +8088,7 @@ function captureOutcomeLearning() {
   addOutcomeConsoleReceipt("Outcomes captured", `${consoleState.outcomes.length} rollout outcomes captured with ${consoleState.score}% learning score.`);
   addAudit("Outcome learning captured", consoleState.summary);
   renderOutcomeLearningConsole();
+  renderReinforcementPolicyBoard();
   renderCommandBar();
   showToast("Outcome learning captured.");
 }
@@ -8006,6 +8101,7 @@ function tuneOutcomeLearningPolicy() {
   addOutcomeConsoleReceipt("Policy tuned", `${highPriority} high-priority tuning signal(s) reviewed before reuse.`);
   addAudit("Outcome learning policy tuned", "Outcome console tuned evidence freshness, reward, sharing, and reviewer confidence controls.");
   renderOutcomeLearningConsole();
+  renderReinforcementPolicyBoard();
   renderCommandBar();
   showToast("Outcome learning policy tuned.");
 }
@@ -8017,6 +8113,7 @@ function publishOutcomeLearningSignals() {
   addOutcomeConsoleReceipt("Safe signals published", `${consoleState.safeSignals}/${consoleState.share.length} aggregate-safe signal(s) published to the learning boundary.`);
   addAudit("Outcome learning safe signals published", "Only aggregate proof classes, outcome bands, freshness bands, and guardrail labels were marked shareable.");
   renderOutcomeLearningConsole();
+  renderReinforcementPolicyBoard();
   renderCommandBar();
   showToast("Safe learning signals published.");
 }
@@ -8038,6 +8135,7 @@ function copyOutcomeLearningDigest() {
   addOutcomeConsoleReceipt("Learning digest copied", `${consoleState.outcomes.length} outcomes and ${consoleState.safeSignals} safe signals copied.`);
   addAudit("Outcome learning digest copied", "Outcome Learning Console digest copied for governed rollout review.");
   renderOutcomeLearningConsole();
+  renderReinforcementPolicyBoard();
   copyText(outcomeLearningDigestText(consoleState), "Outcome learning digest copied.");
 }
 
@@ -8072,6 +8170,357 @@ function outcomeLearningDigestText(consoleState = outcomeLearningConsoleSnapshot
     "",
     "Boundary:",
     "Exact buyer wording, evidence files, prompts, answer text, contracts, account names, and workspace notes stay tenant-local. Other organizations receive only aggregate proof classes, freshness bands, outcome bands, and guardrail labels.",
+  ].join("\n");
+}
+
+function openReinforcementPolicyBoard() {
+  closeCommandBar();
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
+  closeNetworkFirewall(false);
+  closeSovereignConsole(false);
+  closeTrustMissionAutopilot(false);
+  closeMissionMemoryGraph(false);
+  closeTrustPlaybookStudio(false);
+  closeOutcomeLearningConsole(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  setActiveNav(elements.policyBoardNavButton);
+  state.policyBoardOpen = true;
+  elements.policyBoardBackdrop.hidden = false;
+  elements.policyBoardDrawer.classList.add("is-open");
+  elements.policyBoardDrawer.setAttribute("aria-hidden", "false");
+  renderReinforcementPolicyBoard();
+  elements.approvePolicyBoardRulesButton.focus();
+  schedulePersist("Policy board ready");
+}
+
+function closeReinforcementPolicyBoard(activateReview = true) {
+  if (!state.policyBoardOpen && elements.policyBoardDrawer.getAttribute("aria-hidden") === "true") return;
+  state.policyBoardOpen = false;
+  elements.policyBoardDrawer.classList.remove("is-open");
+  elements.policyBoardDrawer.setAttribute("aria-hidden", "true");
+  elements.policyBoardBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderReinforcementPolicyBoard() {
+  const board = reinforcementPolicyBoardSnapshot();
+  elements.policyBoardScore.textContent = `${board.score}%`;
+  elements.policyBoardStatus.textContent = board.statusLabel;
+  elements.policyBoardRuleCount.textContent = board.rules.length;
+  elements.policyBoardDriftCount.textContent = board.driftRisks.filter((item) => item.status !== "Clear").length;
+  elements.policyBoardOwnerGates.textContent = `${board.ownerGates.filter((gate) => gate.status === "Assigned").length}/${board.ownerGates.length}`;
+  elements.policyBoardSummary.textContent = board.summary;
+  elements.policyBoardDigest.textContent = policyBoardDigestText(board);
+
+  elements.policyBoardRuleList.innerHTML = "";
+  board.rules.forEach((rule) => {
+    const card = document.createElement("article");
+    card.className = `policy-board-rule-card ${rule.status === "Approved" ? "is-approved" : "is-watch"}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(rule.scope)}</span>
+          <strong>${escapeHtml(rule.title)}</strong>
+        </div>
+        <b>${escapeHtml(rule.weight)}</b>
+      </header>
+      <p>${escapeHtml(rule.detail)}</p>
+      <footer>
+        <span>${escapeHtml(rule.status)}</span>
+        <span>${escapeHtml(rule.owner)}</span>
+      </footer>
+    `;
+    elements.policyBoardRuleList.append(card);
+  });
+
+  elements.policyBoardDriftList.innerHTML = "";
+  board.driftRisks.forEach((risk) => {
+    const card = document.createElement("article");
+    card.className = `policy-board-drift-card ${risk.status === "Clear" ? "is-approved" : "is-watch"}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(risk.title)}</strong>
+        <b>${escapeHtml(risk.status)}</b>
+      </header>
+      <p>${escapeHtml(risk.detail)}</p>
+      <footer>
+        <span>${escapeHtml(risk.simulation)}</span>
+        <span>${escapeHtml(risk.owner)}</span>
+      </footer>
+    `;
+    elements.policyBoardDriftList.append(card);
+  });
+
+  elements.policyBoardOwnerList.innerHTML = "";
+  board.ownerGates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `policy-board-owner-card ${gate.status === "Assigned" ? "is-approved" : "is-watch"}`;
+    card.innerHTML = `
+      <span>${escapeHtml(gate.scope)}</span>
+      <strong>${escapeHtml(gate.owner)}</strong>
+      <p>${escapeHtml(gate.authority)}</p>
+      <small>${escapeHtml(gate.status)} | ${escapeHtml(gate.receipt)}</small>
+    `;
+    elements.policyBoardOwnerList.append(card);
+  });
+
+  elements.policyBoardReceiptList.innerHTML = "";
+  if (board.receipts.length === 0) {
+    elements.policyBoardReceiptList.append(emptyState("No policy board receipts yet"));
+  } else {
+    board.receipts.forEach((receipt) => {
+      const card = document.createElement("article");
+      card.className = "policy-board-receipt-card";
+      card.innerHTML = `
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.detail)}</span>
+        <small>${escapeHtml(formatAuditTime(receipt.at))}</small>
+      `;
+      elements.policyBoardReceiptList.append(card);
+    });
+  }
+}
+
+function reinforcementPolicyBoardSnapshot() {
+  const outcomeConsole = outcomeLearningConsoleSnapshot();
+  const reinforcement = reinforcementControlSnapshot();
+  const evaluation = evaluationLabSnapshot();
+  const policy = learningPolicySnapshot();
+  const enforcement = policyEnforcementSnapshot();
+  const feedback = governanceFeedbackSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const activeRules = policy.rules.filter((rule) => rule.status === "Active").length;
+  const allowedActions = enforcement.allowedCount;
+  const blockedActions = enforcement.blockedCount;
+  const ownerGates = policy.roles.map((role) => ({
+    scope: role.scope,
+    owner: role.owner,
+    authority: role.authority,
+    status: role.status,
+    receipt: role.status === "Assigned" ? "Receipt ready" : "Backup required",
+  }));
+  const rules = [
+    {
+      scope: "Positive reward",
+      title: "Reward accepted sealed answers",
+      weight: reinforcement.rewards.find((reward) => reward.signal === "Accepted sealed answer")?.weight ?? "+12",
+      status: evaluation.regressionCount === 0 && outcomeConsole.quality.filter((item) => item.status === "Pass").length >= 3 ? "Approved" : "Review",
+      owner: "AI Governance",
+      detail: "Accepted answers can improve local ranking only when source coverage, eval, and reviewer agreement stay clean.",
+    },
+    {
+      scope: "Penalty",
+      title: "Penalize weak proof and buyer challenges",
+      weight: reinforcement.rewards.find((reward) => reward.signal === "Buyer challenge")?.weight ?? "-6",
+      status: "Approved",
+      owner: "Security",
+      detail: "Buyer challenges, stale sources, and unsupported claims reduce confidence before another answer can reuse the path.",
+    },
+    {
+      scope: "Network rule",
+      title: "Share aggregate learning only",
+      weight: `+${Math.max(0, outcomeConsole.safeSignals)}`,
+      status: firewall.blockedCount === 0 && policy.openStopCount === 0 ? "Approved" : "Review",
+      owner: "Legal",
+      detail: "Only proof category, freshness band, confidence band, outcome band, and guardrail label can help other organizations.",
+    },
+    {
+      scope: "Speed guardrail",
+      title: "Deadline pressure cannot override proof",
+      weight: blockedActions > 0 ? "Hold" : "Clear",
+      status: blockedActions <= 2 ? "Approved" : "Review",
+      owner: workspaceAccount.currentRole,
+      detail: "Fast answers still need evidence, owner approval, and policy receipts before they influence future recommendations.",
+    },
+  ];
+  const driftRisks = policy.stops.map((stop) => ({
+    title: stop.title,
+    status: stop.status,
+    simulation: stop.threshold,
+    owner: stop.action.includes("Legal") || stop.title.includes("Privacy") ? "Legal" : stop.title.includes("Reviewer") ? "AI Governance" : "Security",
+    detail: stop.detail,
+  }));
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        policy.score * 0.24
+          + reinforcement.score * 0.18
+          + evaluation.score * 0.18
+          + enforcement.score * 0.18
+          + outcomeConsole.score * 0.12
+          + Math.max(0, 100 - blockedActions * 10 - policy.openStopCount * 8) * 0.1,
+      ),
+    ),
+  );
+  const statusLabel =
+    state.policyBoardActions.status === "Board ready" && rules.every((rule) => rule.status === "Approved")
+      ? "Ready for owner signoff"
+      : state.policyBoardActions.status === "Board ready"
+        ? "Needs board review"
+        : state.policyBoardActions.status;
+  const summary = `${rules.filter((rule) => rule.status === "Approved").length}/${rules.length} reward rules are approved, ${driftRisks.filter((risk) => risk.status !== "Clear").length} drift risks remain visible, and ${ownerGates.filter((gate) => gate.status === "Assigned").length}/${ownerGates.length} owner gates are assigned before learning changes behavior.`;
+
+  return {
+    score,
+    statusLabel,
+    summary,
+    rules,
+    driftRisks,
+    ownerGates,
+    allowedActions,
+    blockedActions,
+    activeRules,
+    safeSignals: outcomeConsole.safeSignals,
+    receipts: state.policyBoardActions.receipts.slice(0, 8),
+    outcomeConsole,
+    reinforcement,
+    evaluation,
+    policy,
+    enforcement,
+    feedback,
+    firewall,
+  };
+}
+
+function approvePolicyBoardRules() {
+  const board = reinforcementPolicyBoardSnapshot();
+  state.policyBoardActions.status = "Reward rules approved";
+  state.policyBoardActions.approvedAt = new Date().toISOString();
+  addPolicyBoardReceipt("Reward rules approved", `${board.rules.filter((rule) => rule.status === "Approved").length}/${board.rules.length} reward and penalty rules approved for governed learning.`);
+  addAudit("Policy board rules approved", board.summary);
+  renderReinforcementPolicyBoard();
+  renderCommandBar();
+  showToast("Policy board rules approved.");
+}
+
+function simulatePolicyBoardDrift() {
+  const board = reinforcementPolicyBoardSnapshot();
+  const visibleRisks = board.driftRisks.filter((risk) => risk.status !== "Clear").length;
+  state.policyBoardActions.status = "Drift simulated";
+  state.policyBoardActions.simulatedAt = new Date().toISOString();
+  addPolicyBoardReceipt("Drift simulated", `${visibleRisks} policy drift risk(s) simulated before reward changes can move forward.`);
+  addAudit("Policy board drift simulated", "Reinforcement policy drift was checked against privacy, evaluation, graph, source freshness, reviewer calibration, and open gate stops.");
+  renderReinforcementPolicyBoard();
+  renderCommandBar();
+  showToast("Policy drift simulated.");
+}
+
+function requirePolicyBoardOwnerGates() {
+  const board = reinforcementPolicyBoardSnapshot();
+  const assigned = board.ownerGates.filter((gate) => gate.status === "Assigned").length;
+  state.policyBoardActions.status = "Owner gates required";
+  state.policyBoardActions.gatedAt = new Date().toISOString();
+  addPolicyBoardReceipt("Owner gates required", `${assigned}/${board.ownerGates.length} owners assigned before policy changes can influence recommendations.`);
+  addAudit("Policy board owner gates required", "Security, legal, AI governance, and sales engineering approval gates were kept visible before learning policy promotion.");
+  renderReinforcementPolicyBoard();
+  renderCommandBar();
+  showToast("Owner gates required.");
+}
+
+function publishPolicyBoardReceipts() {
+  const board = reinforcementPolicyBoardSnapshot();
+  state.policyBoardActions.status = "Policy receipts published";
+  state.policyBoardActions.publishedAt = new Date().toISOString();
+  addPolicyBoardReceipt("Policy receipts published", `${board.allowedActions} allowed actions and ${board.blockedActions} held actions published as policy-board evidence.`);
+  addAudit("Policy board receipts published", "Reward rules, drift checks, owner gates, and blocked learning boundaries were published as governed receipts.");
+  renderReinforcementPolicyBoard();
+  renderCommandBar();
+  showToast("Policy receipts published.");
+}
+
+function addPolicyBoardReceipt(action, detail) {
+  state.policyBoardActions.receipts.unshift({
+    id: `policy-board-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.policyBoardActions.receipts = state.policyBoardActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function copyPolicyBoardDigest() {
+  const board = reinforcementPolicyBoardSnapshot();
+  state.policyBoardActions.lastCopiedAt = new Date().toISOString();
+  addPolicyBoardReceipt("Policy board digest copied", `${board.rules.length} rules, ${board.driftRisks.length} drift checks, and ${board.ownerGates.length} owner gates copied.`);
+  addAudit("Policy board digest copied", "Reinforcement Policy Board digest copied for policy approval review.");
+  renderReinforcementPolicyBoard();
+  copyText(policyBoardDigestText(board), "Policy board digest copied.");
+}
+
+function policyBoardDigestText(board = reinforcementPolicyBoardSnapshot()) {
+  const ruleLines = board.rules.map((rule, index) => `${index + 1}. ${rule.status}: ${rule.title} | ${rule.scope} | ${rule.weight} | ${rule.owner}\n   ${rule.detail}`).join("\n");
+  const driftLines = board.driftRisks.map((risk, index) => `${index + 1}. ${risk.status}: ${risk.title} | ${risk.simulation} | ${risk.owner}\n   ${risk.detail}`).join("\n");
+  const ownerLines = board.ownerGates.map((gate, index) => `${index + 1}. ${gate.status}: ${gate.owner} | ${gate.scope} | ${gate.authority}`).join("\n");
+  const receiptLines = board.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Reinforcement Policy Board",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${board.statusLabel}`,
+    `Board score: ${board.score}%`,
+    `Approved rules: ${board.rules.filter((rule) => rule.status === "Approved").length}/${board.rules.length}`,
+    `Drift risks visible: ${board.driftRisks.filter((risk) => risk.status !== "Clear").length}`,
+    `Owner gates assigned: ${board.ownerGates.filter((gate) => gate.status === "Assigned").length}/${board.ownerGates.length}`,
+    `Allowed actions: ${board.allowedActions}`,
+    `Held actions: ${board.blockedActions}`,
+    "",
+    "Summary:",
+    board.summary,
+    "",
+    "Reward and penalty rules:",
+    ruleLines,
+    "",
+    "Policy drift checks:",
+    driftLines,
+    "",
+    "Owner gates:",
+    ownerLines,
+    "",
+    "Receipts:",
+    receiptLines || "No policy board receipts yet.",
+    "",
+    "Board rule:",
+    "Learning may improve the organization only after evidence, eval, privacy, drift, and owner gates pass. Other organizations receive only aggregate-safe labels, never buyer text, answer text, files, prompts, contracts, or account context.",
   ].join("\n");
 }
 
@@ -23561,6 +24010,12 @@ function exportCsv() {
     "Safe Learning Signals",
     "Outcome Learning Lift",
     "Outcome Console Receipts",
+    "Policy Board Status",
+    "Policy Board Score",
+    "Policy Rules Approved",
+    "Policy Drift Risks",
+    "Policy Owner Gates",
+    "Policy Board Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -23610,6 +24065,7 @@ function exportCsv() {
     const memoryGraph = missionMemoryGraphSnapshot();
     const playbookStudio = trustPlaybookStudioSnapshot();
     const outcomeConsole = outcomeLearningConsoleSnapshot();
+    const policyBoard = reinforcementPolicyBoardSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -23847,6 +24303,12 @@ function exportCsv() {
       `${outcomeConsole.safeSignals}/${outcomeConsole.share.length}`,
       `+${outcomeConsole.learningLift}`,
       outcomeConsole.receipts.length,
+      policyBoard.statusLabel,
+      `${policyBoard.score}%`,
+      `${policyBoard.rules.filter((rule) => rule.status === "Approved").length}/${policyBoard.rules.length}`,
+      policyBoard.driftRisks.filter((risk) => risk.status !== "Clear").length,
+      `${policyBoard.ownerGates.filter((gate) => gate.status === "Assigned").length}/${policyBoard.ownerGates.length}`,
+      policyBoard.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -23906,6 +24368,7 @@ function exportReviewPack() {
   const memoryGraph = missionMemoryGraphSnapshot();
   const playbookStudio = trustPlaybookStudioSnapshot();
   const outcomeConsole = outcomeLearningConsoleSnapshot();
+  const policyBoard = reinforcementPolicyBoardSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -23923,7 +24386,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v48</h1>
+        <h1>AnswerSeal Review Pack v49</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -27001,6 +27464,116 @@ function exportReviewPack() {
         </table>
         <h2>Outcome Learning Digest</h2>
         <pre>${escapeHtml(outcomeLearningDigestText(outcomeConsole))}</pre>
+        <h2>Reinforcement Policy Board</h2>
+        <p>Status: ${escapeHtml(policyBoard.statusLabel)} | Board score: ${policyBoard.score}% | Rules approved: ${policyBoard.rules.filter((rule) => rule.status === "Approved").length}/${policyBoard.rules.length} | Drift risks: ${policyBoard.driftRisks.filter((risk) => risk.status !== "Clear").length} | Owner gates: ${policyBoard.ownerGates.filter((gate) => gate.status === "Assigned").length}/${policyBoard.ownerGates.length}</p>
+        <p>${escapeHtml(policyBoard.summary)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th>Scope</th>
+              <th>Weight</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${policyBoard.rules
+              .map(
+                (rule) => `
+                  <tr>
+                    <td>${escapeHtml(rule.title)}</td>
+                    <td>${escapeHtml(rule.scope)}</td>
+                    <td>${escapeHtml(rule.weight)}</td>
+                    <td class="${rule.status === "Approved" ? "ok" : "risk"}">${escapeHtml(rule.status)}</td>
+                    <td>${escapeHtml(rule.owner)}</td>
+                    <td>${escapeHtml(rule.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Policy Drift Checks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Risk</th>
+              <th>Status</th>
+              <th>Simulation</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${policyBoard.driftRisks
+              .map(
+                (risk) => `
+                  <tr>
+                    <td>${escapeHtml(risk.title)}</td>
+                    <td class="${risk.status === "Clear" ? "ok" : "risk"}">${escapeHtml(risk.status)}</td>
+                    <td>${escapeHtml(risk.simulation)}</td>
+                    <td>${escapeHtml(risk.owner)}</td>
+                    <td>${escapeHtml(risk.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Policy Owner Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Scope</th>
+              <th>Owner</th>
+              <th>Authority</th>
+              <th>Status</th>
+              <th>Receipt</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${policyBoard.ownerGates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.scope)}</td>
+                    <td>${escapeHtml(gate.owner)}</td>
+                    <td>${escapeHtml(gate.authority)}</td>
+                    <td class="${gate.status === "Assigned" ? "ok" : "risk"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.receipt)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Policy Board Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(policyBoard.receipts.length ? policyBoard.receipts : [{ action: "Board ready", detail: "No policy board receipts yet.", at: new Date().toISOString() }])
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                    <td>${escapeHtml(formatAuditTime(receipt.at))}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Policy Board Digest</h2>
+        <pre>${escapeHtml(policyBoardDigestText(policyBoard))}</pre>
         <h2>Calm Command Bar</h2>
         <p>Status: ${escapeHtml(commandBar.statusLabel)} | Commands: ${commandBar.commands.length} | Recommended: ${escapeHtml(commandBar.recommended.title)} | Receipts: ${commandBar.receipts.length}</p>
         <table>
@@ -27765,7 +28338,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v48 created with outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v49 created with reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -27802,12 +28375,13 @@ function exportReviewPack() {
   renderMissionMemoryGraph();
   renderTrustPlaybookStudio();
   renderOutcomeLearningConsole();
+  renderReinforcementPolicyBoard();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v48 exported.");
+  showToast("Review Pack v49 exported.");
 }
 
 function toCsv(rows) {
@@ -27896,6 +28470,7 @@ function serializeWorkspace() {
     memoryGraphActions: state.memoryGraphActions,
     playbookStudioActions: state.playbookStudioActions,
     outcomeConsoleActions: state.outcomeConsoleActions,
+    policyBoardActions: state.policyBoardActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,

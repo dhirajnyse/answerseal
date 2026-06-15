@@ -239,6 +239,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Learning</span>
           </button>
+          <button class="nav-item" id="policyBoardNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+            <span>Policy Board</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -301,8 +305,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.52 Alpha</strong>
-          <span>Outcome Learning Console</span>
+          <strong>v0.53 Alpha</strong>
+          <span>Reinforcement Policy Board</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -314,7 +318,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.52 Alpha</span>
+            <span class="label">Security questionnaire | v0.53 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -4933,6 +4937,112 @@
             <span>Publish</span>
           </button>
           <button class="secondary-button" id="copyOutcomeConsoleDigestButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Digest</span>
+          </button>
+        </div>
+      </section>
+    </aside>
+
+    <div class="drawer-backdrop" id="policyBoardBackdrop" hidden></div>
+    <aside class="workspace-drawer policy-board-drawer" id="policyBoardDrawer" aria-hidden="true" aria-labelledby="policyBoardTitle">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Reinforcement control</span>
+          <h2 id="policyBoardTitle">Reinforcement Policy Board</h2>
+        </div>
+        <button class="icon-button" id="closePolicyBoardButton" type="button" aria-label="Close reinforcement policy board" title="Close reinforcement policy board">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="policy-board-body">
+        <section class="memory-strip policy-board-metrics" aria-label="Policy board status">
+          <article>
+            <span class="label">Score</span>
+            <strong id="policyBoardScore">0%</strong>
+          </article>
+          <article>
+            <span class="label">Status</span>
+            <strong id="policyBoardStatus">Board ready</strong>
+          </article>
+          <article>
+            <span class="label">Rules</span>
+            <strong id="policyBoardRuleCount">0</strong>
+          </article>
+          <article>
+            <span class="label">Drift</span>
+            <strong id="policyBoardDriftCount">0</strong>
+          </article>
+          <article>
+            <span class="label">Owners</span>
+            <strong id="policyBoardOwnerGates">0/0</strong>
+          </article>
+        </section>
+
+        <section class="policy-board-summary-card" aria-label="Policy board summary">
+          <span class="label">Board Brief</span>
+          <strong id="policyBoardSummary">Approve reward rules before learning changes behavior.</strong>
+        </section>
+
+        <section class="drawer-section" aria-label="Reward and penalty rules">
+          <div class="section-heading">
+            <span class="label">Rules</span>
+            <span>Reward, penalty, network, speed</span>
+          </div>
+          <div class="policy-board-rule-list" id="policyBoardRuleList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Policy drift checks">
+          <div class="section-heading">
+            <span class="label">Drift</span>
+            <span>Privacy, eval, graph, freshness</span>
+          </div>
+          <div class="policy-board-drift-list" id="policyBoardDriftList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Policy owner gates">
+          <div class="section-heading">
+            <span class="label">Owners</span>
+            <span>Security, legal, AI governance, sales</span>
+          </div>
+          <div class="policy-board-owner-list" id="policyBoardOwnerList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Policy board receipts">
+          <div class="section-heading">
+            <span class="label">Receipts</span>
+            <span>Rules, drift, owner gates, publish</span>
+          </div>
+          <div class="policy-board-receipt-list" id="policyBoardReceiptList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Policy board digest">
+          <div class="section-heading">
+            <span class="label">Digest</span>
+            <span>Copy-ready policy brief</span>
+          </div>
+          <pre class="policy-board-digest" id="policyBoardDigest"></pre>
+        </section>
+
+        <div class="drawer-actions policy-board-actions">
+          <button class="primary-button" id="approvePolicyBoardRulesButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Approve</span>
+          </button>
+          <button class="secondary-button" id="simulatePolicyBoardDriftButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Simulate</span>
+          </button>
+          <button class="secondary-button" id="requirePolicyBoardOwnersButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+            <span>Owners</span>
+          </button>
+          <button class="secondary-button" id="publishPolicyBoardReceiptsButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span>Publish</span>
+          </button>
+          <button class="secondary-button" id="copyPolicyBoardDigestButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
             <span>Digest</span>
           </button>

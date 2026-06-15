@@ -2031,6 +2031,145 @@ svg {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 32%);
 }
 
+.policy-board-drawer {
+  width: min(780px, 100vw);
+}
+
+.policy-board-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 16px;
+  overflow: auto;
+  background:
+    linear-gradient(145deg, rgba(240, 255, 250, 0.82), rgba(241, 248, 255, 0.72)),
+    #ffffff;
+}
+
+.policy-board-metrics {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.policy-board-summary-card,
+.policy-board-rule-card,
+.policy-board-drift-card,
+.policy-board-owner-card,
+.policy-board-receipt-card {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 36px rgba(31, 41, 38, 0.06);
+}
+
+.policy-board-summary-card > strong {
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.policy-board-rule-list,
+.policy-board-drift-list,
+.policy-board-owner-list,
+.policy-board-receipt-list {
+  display: grid;
+  gap: 9px;
+}
+
+.policy-board-rule-card.is-approved,
+.policy-board-drift-card.is-approved,
+.policy-board-owner-card.is-approved {
+  border-left: 4px solid var(--green);
+}
+
+.policy-board-rule-card.is-watch,
+.policy-board-drift-card.is-watch,
+.policy-board-owner-card.is-watch {
+  border-left: 4px solid var(--amber);
+}
+
+.policy-board-rule-card header,
+.policy-board-drift-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.policy-board-rule-card footer,
+.policy-board-drift-card footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.policy-board-rule-card b,
+.policy-board-drift-card b {
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+}
+
+.policy-board-rule-card strong,
+.policy-board-drift-card strong,
+.policy-board-owner-card strong,
+.policy-board-receipt-card strong {
+  color: var(--ink);
+  font-size: 0.92rem;
+  line-height: 1.32;
+}
+
+.policy-board-rule-card p,
+.policy-board-drift-card p,
+.policy-board-owner-card p,
+.policy-board-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.policy-board-owner-card > span,
+.policy-board-owner-card small,
+.policy-board-receipt-card small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.policy-board-digest {
+  min-height: 220px;
+  max-height: 340px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fbfcfb;
+  font-family: inherit;
+  font-size: 0.86rem;
+  line-height: 1.48;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+.policy-board-actions {
+  display: grid;
+  grid-template-columns: 1fr repeat(4, minmax(0, 0.72fr));
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  padding: 10px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 32%);
+}
+
 .library-backdrop {
   position: fixed;
   inset: 0;
@@ -10895,6 +11034,10 @@ svg {
     width: min(760px, 100vw);
   }
 
+  .policy-board-drawer {
+    width: min(760px, 100vw);
+  }
+
   .mission-decision-grid {
     grid-template-columns: 1fr;
   }
@@ -11251,6 +11394,8 @@ svg {
     .playbook-studio-actions,
     .outcome-console-metrics,
     .outcome-console-actions,
+    .policy-board-metrics,
+    .policy-board-actions,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -11286,6 +11431,10 @@ svg {
   }
 
   .outcome-console-body {
+    padding: 12px;
+  }
+
+  .policy-board-body {
     padding: 12px;
   }
 
