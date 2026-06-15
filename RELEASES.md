@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.59 Alpha - Calm First View
+
+Phase: Calm First View
+
+- Rebalanced the landing first viewport so the promise, action, and verifier feel calmer and easier to scan.
+- Reduced the landing verifier field height while keeping the trust score visible on the home page.
+- Removed underline noise from the product spine cards so the workflow reads like a polished product map.
+- Tightened product and pricing page spacing for a more confident buyer presentation.
+- Upgraded export language to Review Pack v55 and moved the next build toward v0.60 AI Artifact Registry.
+
 ## v0.58 Alpha - MVP Core
 
 Phase: MVP Core

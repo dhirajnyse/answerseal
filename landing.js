@@ -30,8 +30,8 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.58 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v58";
+const PUBLIC_BUILD_VERSION = "v0.59 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v59";
 let latestLandingReport = null;
 let activeSealedReport = null;
 
@@ -466,7 +466,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.58 Alpha - MVP Core",
+      "Pilot phase: AnswerSeal v0.59 Alpha - Calm First View",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

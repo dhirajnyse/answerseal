@@ -10603,11 +10603,11 @@ svg {
 .landing-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.98fr) minmax(420px, 0.82fr);
-  gap: clamp(24px, 5vw, 72px);
+  grid-template-columns: minmax(0, 0.92fr) minmax(390px, 0.74fr);
+  gap: clamp(22px, 4.5vw, 58px);
   align-items: center;
-  min-height: min(680px, calc(100svh - 74px));
-  padding: clamp(44px, 7vw, 92px) clamp(18px, 5vw, 78px);
+  min-height: min(620px, calc(100svh - 74px));
+  padding: clamp(32px, 5vw, 68px) clamp(18px, 5vw, 78px);
   overflow: hidden;
   border-bottom: 1px solid rgba(31, 41, 38, 0.1);
 }
@@ -10645,11 +10645,11 @@ svg {
 }
 
 .hero-copy h1 {
-  margin: 18px 0 12px;
+  margin: 16px 0 12px;
   max-width: 620px;
   color: #14201d;
-  font-size: 6.4rem;
-  line-height: 0.9;
+  font-size: clamp(4rem, 7vw, 5.8rem);
+  line-height: 0.94;
   letter-spacing: 0;
 }
 
@@ -10657,7 +10657,7 @@ svg {
   max-width: 620px;
   margin: 0;
   color: #3d4b47;
-  font-size: 1.26rem;
+  font-size: 1.16rem;
   line-height: 1.48;
 }
 
@@ -10669,7 +10669,7 @@ svg {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
 .hero-primary,
@@ -10700,14 +10700,14 @@ svg {
   grid-template-columns: repeat(3, minmax(118px, 1fr));
   gap: 10px;
   width: min(620px, 100%);
-  margin: 34px 0 0;
+  margin: 26px 0 0;
 }
 
 .hero-metrics div {
   display: grid;
   gap: 4px;
-  min-height: 82px;
-  padding: 13px;
+  min-height: 74px;
+  padding: 12px;
   border: 1px solid rgba(31, 41, 38, 0.1);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.74);
@@ -10759,9 +10759,9 @@ svg {
   position: relative;
   z-index: 3;
   display: grid;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
-  padding: 18px;
+  padding: 16px;
   border: 1px solid rgba(0, 168, 137, 0.18);
   border-radius: 8px;
   background:
@@ -10772,30 +10772,30 @@ svg {
 
 .hero-verifier header {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-columns: 60px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
   min-width: 0;
 }
 
 .hero-verifier header img {
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
   filter: drop-shadow(0 12px 24px rgba(0, 120, 109, 0.16));
 }
 
 .hero-verifier h2 {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: var(--ink);
-  font-size: 1.45rem;
+  font-size: 1.32rem;
   line-height: 1.12;
   letter-spacing: 0;
 }
 
 .hero-verifier label {
   display: grid;
-  gap: 7px;
+  gap: 6px;
   min-width: 0;
   color: var(--muted);
   font-size: 0.8rem;
@@ -10809,13 +10809,28 @@ svg {
   resize: vertical;
   border: 1px solid rgba(0, 120, 109, 0.18);
   border-radius: 8px;
-  padding: 10px;
+  padding: 9px 10px;
   color: var(--ink);
   background: rgba(255, 255, 255, 0.92);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.45;
   outline: 0;
+}
+
+.landing-hero .verifier-result {
+  gap: 0;
+  padding-top: 0;
+}
+
+.landing-hero .verifier-save-button,
+.landing-hero .verifier-action-row,
+.landing-hero .pilot-note {
+  display: none;
+}
+
+.landing-hero .verifier-result > div:not(.verifier-score) {
+  display: none;
 }
 
 .hero-verifier textarea:focus {
@@ -11262,7 +11277,7 @@ svg {
 }
 
 .product-spine {
-  padding: clamp(44px, 7vw, 78px) clamp(18px, 5vw, 78px);
+  padding: clamp(36px, 5.6vw, 64px) clamp(18px, 5vw, 78px);
   border-bottom: 1px solid rgba(31, 41, 38, 0.1);
   background:
     linear-gradient(135deg, rgba(234, 253, 248, 0.86) 0%, rgba(255, 255, 255, 0.98) 54%, rgba(232, 244, 255, 0.7) 100%),
@@ -11279,13 +11294,18 @@ svg {
 .spine-grid a {
   display: grid;
   gap: 9px;
-  min-height: 176px;
+  min-height: 164px;
   padding: 16px;
   border: 1px solid rgba(0, 168, 137, 0.18);
   border-radius: 8px;
   color: inherit;
+  text-decoration: none;
   background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 14px 34px rgba(31, 41, 38, 0.06);
+}
+
+.spine-grid a * {
+  text-decoration: none;
 }
 
 .spine-grid a:hover {
@@ -11323,7 +11343,7 @@ svg {
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
   gap: clamp(20px, 5vw, 64px);
   align-items: center;
-  padding: clamp(44px, 7vw, 82px) clamp(18px, 5vw, 78px);
+  padding: clamp(34px, 5vw, 66px) clamp(18px, 5vw, 78px);
   border-bottom: 1px solid rgba(31, 41, 38, 0.1);
 }
 
@@ -11389,7 +11409,7 @@ svg {
 .sealed-report-layout,
 .dashboard-shell,
 .pricing-grid {
-  padding: clamp(36px, 6vw, 70px) clamp(18px, 5vw, 78px);
+  padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
 }
 
 .verifier-workspace {
@@ -12138,6 +12158,10 @@ svg {
     display: grid;
     width: calc(100vw - 28px);
     max-width: 100%;
+  }
+
+  .landing-hero .hero-metrics {
+    display: none;
   }
 
   .hero-primary,
