@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.54 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v54";
+const BUILD_VERSION = "v0.55 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v55";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v54",
   "answerseal.workspace.v53",
   "answerseal.workspace.v52",
   "answerseal.workspace.v51",
@@ -775,6 +776,9 @@ function createInitialState() {
     policyBoardActions: createInitialPolicyBoardActions(),
     globalMatrixOpen: false,
     globalMatrixActions: createInitialGlobalMatrixActions(),
+    trustCheckOpen: false,
+    trustCheck: createInitialTrustCheckState(),
+    trustCheckActions: createInitialTrustCheckActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1175,6 +1179,26 @@ function createInitialGlobalMatrixActions() {
   };
 }
 
+function createInitialTrustCheckState() {
+  return {
+    prompt: "Can we use customer data to train AI models?",
+    answer:
+      "No. Customer content is not used to train foundation models or shared model providers. AI-generated customer-facing security answers require human approval before release, and prompts or outputs containing sensitive customer data are redacted from product analytics.",
+    report: null,
+    savedReports: [],
+  };
+}
+
+function createInitialTrustCheckActions() {
+  return {
+    status: "Ready",
+    checkedAt: null,
+    savedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1328,6 +1352,8 @@ function loadWorkspaceState() {
       outcomeConsoleActions: normalizeOutcomeConsoleActions(workspace.outcomeConsoleActions ?? fresh.outcomeConsoleActions),
       policyBoardActions: normalizePolicyBoardActions(workspace.policyBoardActions ?? fresh.policyBoardActions),
       globalMatrixActions: normalizeGlobalMatrixActions(workspace.globalMatrixActions ?? fresh.globalMatrixActions),
+      trustCheck: normalizeTrustCheckState(workspace.trustCheck ?? fresh.trustCheck),
+      trustCheckActions: normalizeTrustCheckActions(workspace.trustCheckActions ?? fresh.trustCheckActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1378,6 +1404,7 @@ function loadWorkspaceState() {
       outcomeConsoleOpen: false,
       policyBoardOpen: false,
       globalMatrixOpen: false,
+      trustCheckOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2368,6 +2395,58 @@ function normalizeGlobalMatrixReceipt(receipt) {
   };
 }
 
+function normalizeTrustCheckState(trustCheck) {
+  return {
+    prompt: String(trustCheck?.prompt ?? ""),
+    answer: String(trustCheck?.answer ?? ""),
+    report: trustCheck?.report ? normalizeTrustCheckReport(trustCheck.report) : null,
+    savedReports: Array.isArray(trustCheck?.savedReports) ? trustCheck.savedReports.map(normalizeTrustCheckReport) : [],
+  };
+}
+
+function normalizeTrustCheckReport(report) {
+  return {
+    id: String(report?.id ?? `trust-check-report-${Date.now()}`),
+    prompt: String(report?.prompt ?? ""),
+    answer: String(report?.answer ?? ""),
+    score: Number.isFinite(Number(report?.score)) ? Number(report.score) : 0,
+    statusLabel: String(report?.statusLabel ?? "Unchecked"),
+    summary: String(report?.summary ?? "No report summary available."),
+    checks: Array.isArray(report?.checks) ? report.checks.map(normalizeTrustCheckSignal) : [],
+    improvements: Array.isArray(report?.improvements) ? report.improvements.map(String) : [],
+    createdAt: report?.createdAt ?? new Date().toISOString(),
+  };
+}
+
+function normalizeTrustCheckSignal(signal) {
+  return {
+    title: String(signal?.title ?? "Trust check"),
+    status: String(signal?.status ?? "Review"),
+    score: Number.isFinite(Number(signal?.score)) ? Number(signal.score) : 0,
+    detail: String(signal?.detail ?? "Review this answer before reuse."),
+  };
+}
+
+function normalizeTrustCheckActions(actions) {
+  const status = ["Ready", "Checked", "Saved", "Report copied"].includes(actions?.status) ? actions.status : "Ready";
+  return {
+    status,
+    checkedAt: actions?.checkedAt ?? null,
+    savedAt: actions?.savedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeTrustCheckReceipt) : [],
+  };
+}
+
+function normalizeTrustCheckReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `trust-check-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Trust check action"),
+    detail: String(receipt?.detail ?? "Trust Check action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2398,6 +2477,7 @@ const state = loadWorkspaceState();
 const elements = {
   todayLabel: document.querySelector("#todayLabel"),
   reviewNavButton: document.querySelector("#reviewNavButton"),
+  trustCheckNavButton: document.querySelector("#trustCheckNavButton"),
   importNavButton: document.querySelector("#importNavButton"),
   gapNavButton: document.querySelector("#gapNavButton"),
   runNavButton: document.querySelector("#runNavButton"),
@@ -2627,6 +2707,24 @@ const elements = {
   approveGlobalMatrixGatesButton: document.querySelector("#approveGlobalMatrixGatesButton"),
   publishGlobalMatrixReceiptsButton: document.querySelector("#publishGlobalMatrixReceiptsButton"),
   copyGlobalMatrixDigestButton: document.querySelector("#copyGlobalMatrixDigestButton"),
+  trustCheckBackdrop: document.querySelector("#trustCheckBackdrop"),
+  trustCheckDrawer: document.querySelector("#trustCheckDrawer"),
+  closeTrustCheckButton: document.querySelector("#closeTrustCheckButton"),
+  trustCheckScore: document.querySelector("#trustCheckScore"),
+  trustCheckStatus: document.querySelector("#trustCheckStatus"),
+  trustCheckPassCount: document.querySelector("#trustCheckPassCount"),
+  trustCheckSavedCount: document.querySelector("#trustCheckSavedCount"),
+  trustCheckPromptInput: document.querySelector("#trustCheckPromptInput"),
+  trustCheckAnswerInput: document.querySelector("#trustCheckAnswerInput"),
+  trustCheckSummary: document.querySelector("#trustCheckSummary"),
+  trustCheckSignalList: document.querySelector("#trustCheckSignalList"),
+  trustCheckImprovementList: document.querySelector("#trustCheckImprovementList"),
+  trustCheckReport: document.querySelector("#trustCheckReport"),
+  trustCheckSavedList: document.querySelector("#trustCheckSavedList"),
+  runTrustCheckButton: document.querySelector("#runTrustCheckButton"),
+  saveTrustCheckButton: document.querySelector("#saveTrustCheckButton"),
+  copyTrustCheckButton: document.querySelector("#copyTrustCheckButton"),
+  clearTrustCheckButton: document.querySelector("#clearTrustCheckButton"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -3374,6 +3472,7 @@ function bindEvents() {
   elements.buyerFeedbackLoopNavButton.addEventListener("click", openBuyerFeedbackLoop);
   elements.networkFirewallNavButton.addEventListener("click", openNetworkFirewall);
   elements.sovereignNavButton.addEventListener("click", openSovereignConsole);
+  elements.trustCheckNavButton.addEventListener("click", openTrustCheck);
   elements.missionNavButton.addEventListener("click", openTrustMissionAutopilot);
   elements.memoryGraphNavButton.addEventListener("click", openMissionMemoryGraph);
   elements.playbookStudioNavButton.addEventListener("click", openTrustPlaybookStudio);
@@ -3748,6 +3847,14 @@ function bindEvents() {
   elements.approveGlobalMatrixGatesButton.addEventListener("click", approveGlobalMatrixGates);
   elements.publishGlobalMatrixReceiptsButton.addEventListener("click", publishGlobalMatrixReceipts);
   elements.copyGlobalMatrixDigestButton.addEventListener("click", copyGlobalMatrixDigest);
+  elements.closeTrustCheckButton.addEventListener("click", closeTrustCheck);
+  elements.trustCheckBackdrop.addEventListener("click", closeTrustCheck);
+  elements.trustCheckPromptInput.addEventListener("input", updateTrustCheckDraft);
+  elements.trustCheckAnswerInput.addEventListener("input", updateTrustCheckDraft);
+  elements.runTrustCheckButton.addEventListener("click", runTrustCheck);
+  elements.saveTrustCheckButton.addEventListener("click", saveTrustCheckReport);
+  elements.copyTrustCheckButton.addEventListener("click", copyTrustCheckReport);
+  elements.clearTrustCheckButton.addEventListener("click", clearTrustCheck);
 
   document.addEventListener("keydown", (event) => {
     const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
@@ -3806,6 +3913,7 @@ function bindEvents() {
     if (state.outcomeConsoleOpen) closeOutcomeLearningConsole();
     if (state.policyBoardOpen) closeReinforcementPolicyBoard();
     if (state.globalMatrixOpen) closeGlobalEnvironmentMatrix();
+    if (state.trustCheckOpen) closeTrustCheck();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3857,6 +3965,7 @@ function applyInitialHash() {
   if (hash === "outcome-console" || hash === "outcome-learning" || hash === "learning-console" || hash === "closed-loop") openOutcomeLearningConsole();
   if (hash === "policy-board" || hash === "reinforcement-policy" || hash === "reward-policy" || hash === "policy-control") openReinforcementPolicyBoard();
   if (hash === "global-matrix" || hash === "environment-matrix" || hash === "country-matrix" || hash === "launch-matrix") openGlobalEnvironmentMatrix();
+  if (hash === "trust-check" || hash === "answer-check" || hash === "seal-check" || hash === "mvp") openTrustCheck();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3922,6 +4031,7 @@ function render() {
   renderOutcomeLearningConsole();
   renderReinforcementPolicyBoard();
   renderGlobalEnvironmentMatrix();
+  renderTrustCheck();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4763,9 +4873,13 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.globalMatrixNavButton && state.globalMatrixOpen) {
     closeGlobalEnvironmentMatrix(false);
   }
+  if (activeButton !== elements.trustCheckNavButton && state.trustCheckOpen) {
+    closeTrustCheck(false);
+  }
 
   [
     elements.reviewNavButton,
+    elements.trustCheckNavButton,
     elements.importNavButton,
     elements.gapNavButton,
     elements.runNavButton,
@@ -6457,8 +6571,20 @@ function commandCatalog() {
   const outcomeConsole = outcomeLearningConsoleSnapshot();
   const policyBoard = reinforcementPolicyBoardSnapshot();
   const globalMatrix = globalEnvironmentMatrixSnapshot();
+  const trustCheck = trustCheckSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
   const common = [
+    {
+      id: "answer-trust-check",
+      scope: "MVP",
+      title: "Open Answer Trust Check",
+      detail: `${trustCheck.statusLabel} with ${trustCheck.score}% trust score and ${trustCheck.passCount}/${trustCheck.checks.length} checks passing.`,
+      signal: "Can I trust this answer?",
+      cta: "Open Check",
+      reason: "The tight MVP starts with one AI answer, one trust score, and one sealed report before broader governance expands.",
+      run: openTrustCheck,
+      keywords: ["trust", "check", "answer", "qa", "score", "sealed", "report", "prompt", "mvp"],
+    },
     {
       id: "trust-mission",
       scope: "Mission",
@@ -6650,7 +6776,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v50 with global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
+      detail: `Create Review Pack v51 with answer trust check, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -6661,7 +6787,7 @@ function commandCatalog() {
       id: "export-csv",
       scope: "Export",
       title: "Export CSV",
-      detail: "Export questionnaire rows with command, sovereign, firewall, proof, routing, and trace context.",
+      detail: "Export questionnaire rows with Trust Check, command, sovereign, firewall, proof, routing, and trace context.",
       signal: "Spreadsheet handoff",
       cta: "Export CSV",
       reason: "CSV is the fastest handoff for spreadsheet-driven buyer portals.",
@@ -6700,10 +6826,13 @@ function recommendedCommand(commands) {
   const outcomeConsole = outcomeLearningConsoleSnapshot();
   const policyBoard = reinforcementPolicyBoardSnapshot();
   const globalMatrix = globalEnvironmentMatrixSnapshot();
+  const trustCheck = trustCheckSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
 
   const preferredId =
-    needsEvidence > 0 || gaps.highRiskCount > 0
+    !trustCheck.report || trustCheck.score < 74
+      ? "answer-trust-check"
+      : needsEvidence > 0 || gaps.highRiskCount > 0
       ? "trust-mission"
       : sovereign.score < 90 || sovereign.policyOverlays.some((policy) => policy.status !== "Pass")
         ? "trust-mission"
@@ -9035,6 +9164,429 @@ function globalMatrixDigestText(matrix = globalEnvironmentMatrixSnapshot()) {
     "",
     "Matrix rule:",
     "Every country can use the same calm AnswerSeal review desk, but production launch and cross-organization learning require explicit country, environment, residency, owner, and receipt gates.",
+  ].join("\n");
+}
+
+function openTrustCheck() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
+  closeNetworkFirewall(false);
+  closeSovereignConsole(false);
+  closeTrustMissionAutopilot(false);
+  closeMissionMemoryGraph(false);
+  closeTrustPlaybookStudio(false);
+  closeOutcomeLearningConsole(false);
+  closeReinforcementPolicyBoard(false);
+  closeGlobalEnvironmentMatrix(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  setActiveNav(elements.trustCheckNavButton);
+  state.trustCheckOpen = true;
+  elements.trustCheckBackdrop.hidden = false;
+  elements.trustCheckDrawer.classList.add("is-open");
+  elements.trustCheckDrawer.setAttribute("aria-hidden", "false");
+  renderTrustCheck();
+  elements.trustCheckAnswerInput.focus();
+  schedulePersist("Trust check ready");
+}
+
+function closeTrustCheck(activateReview = true) {
+  if (!state.trustCheckOpen && elements.trustCheckDrawer.getAttribute("aria-hidden") === "true") return;
+  state.trustCheckOpen = false;
+  elements.trustCheckDrawer.classList.remove("is-open");
+  elements.trustCheckDrawer.setAttribute("aria-hidden", "true");
+  elements.trustCheckBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderTrustCheck() {
+  const snapshot = trustCheckSnapshot();
+  if (document.activeElement !== elements.trustCheckPromptInput) {
+    elements.trustCheckPromptInput.value = state.trustCheck.prompt;
+  }
+  if (document.activeElement !== elements.trustCheckAnswerInput) {
+    elements.trustCheckAnswerInput.value = state.trustCheck.answer;
+  }
+
+  elements.trustCheckScore.textContent = `${snapshot.score}%`;
+  elements.trustCheckStatus.textContent = snapshot.statusLabel;
+  elements.trustCheckPassCount.textContent = `${snapshot.passCount}/${snapshot.checks.length}`;
+  elements.trustCheckSavedCount.textContent = snapshot.savedReports.length;
+  elements.trustCheckSummary.textContent = snapshot.summary;
+  elements.trustCheckReport.textContent = snapshot.report ? trustCheckReportText(snapshot.report) : "Run the check to create a sealed report.";
+  elements.saveTrustCheckButton.disabled = !snapshot.report;
+  elements.copyTrustCheckButton.disabled = !snapshot.report;
+
+  elements.trustCheckSignalList.innerHTML = "";
+  snapshot.checks.forEach((check) => {
+    const card = document.createElement("article");
+    const className = check.status === "Pass" ? "is-pass" : check.status === "Review" ? "is-review" : "is-risk";
+    card.className = `trust-check-signal-card ${className}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(check.title)}</strong>
+        <b>${escapeHtml(check.status)} | ${check.score}%</b>
+      </header>
+      <p>${escapeHtml(check.detail)}</p>
+    `;
+    elements.trustCheckSignalList.append(card);
+  });
+
+  elements.trustCheckImprovementList.innerHTML = "";
+  const improvements = snapshot.improvements.length > 0 ? snapshot.improvements : ["Run the check to see suggested improvements."];
+  improvements.forEach((improvement, index) => {
+    const card = document.createElement("article");
+    card.className = "trust-check-improvement-card";
+    card.innerHTML = `
+      <span>${String(index + 1).padStart(2, "0")}</span>
+      <p>${escapeHtml(improvement)}</p>
+    `;
+    elements.trustCheckImprovementList.append(card);
+  });
+
+  elements.trustCheckSavedList.innerHTML = "";
+  if (snapshot.savedReports.length === 0) {
+    elements.trustCheckSavedList.append(emptyState("No sealed reports saved yet"));
+  } else {
+    snapshot.savedReports.slice(0, 6).forEach((report) => {
+      const card = document.createElement("article");
+      card.className = "trust-check-saved-card";
+      card.innerHTML = `
+        <header>
+          <strong>${escapeHtml(report.statusLabel)} | ${report.score}%</strong>
+          <span>${escapeHtml(formatAuditTime(report.createdAt))}</span>
+        </header>
+        <p>${escapeHtml(shorten(report.prompt || "Standalone answer", 74))}</p>
+        <small>${escapeHtml(report.summary)}</small>
+      `;
+      card.addEventListener("click", () => {
+        state.trustCheck.prompt = report.prompt;
+        state.trustCheck.answer = report.answer;
+        state.trustCheck.report = normalizeTrustCheckReport(report);
+        renderTrustCheck();
+        schedulePersist("Report restored");
+      });
+      elements.trustCheckSavedList.append(card);
+    });
+  }
+}
+
+function updateTrustCheckDraft() {
+  state.trustCheck.prompt = elements.trustCheckPromptInput.value;
+  state.trustCheck.answer = elements.trustCheckAnswerInput.value;
+  state.trustCheck.report = null;
+  state.trustCheckActions.status = "Ready";
+  renderTrustCheck();
+  schedulePersist();
+}
+
+function runTrustCheck() {
+  const report = buildTrustCheckReport(state.trustCheck.prompt, state.trustCheck.answer);
+  state.trustCheck.report = report;
+  state.trustCheckActions.status = "Checked";
+  state.trustCheckActions.checkedAt = report.createdAt;
+  addTrustCheckReceipt("Answer checked", `${report.statusLabel} at ${report.score}% trust score.`);
+  addAudit("Answer Trust Check run", `${report.statusLabel} report created with ${report.score}% trust score.`);
+  renderTrustCheck();
+  renderCommandBar();
+  showToast("Answer trust check complete.");
+}
+
+function saveTrustCheckReport() {
+  const report = state.trustCheck.report ?? buildTrustCheckReport(state.trustCheck.prompt, state.trustCheck.answer);
+  if (!report.answer.trim()) {
+    showToast("Paste an answer before saving.");
+    return;
+  }
+  state.trustCheck.report = report;
+  state.trustCheck.savedReports = [report, ...state.trustCheck.savedReports.filter((item) => item.id !== report.id)].slice(0, 12);
+  state.trustCheckActions.status = "Saved";
+  state.trustCheckActions.savedAt = new Date().toISOString();
+  addTrustCheckReceipt("Sealed report saved", `${report.statusLabel} report saved locally for reuse.`);
+  addAudit("Answer Trust Check report saved", `${report.statusLabel} report saved with ${report.score}% trust score.`);
+  renderTrustCheck();
+  renderCommandBar();
+  showToast("Sealed report saved.");
+}
+
+function copyTrustCheckReport() {
+  const report = state.trustCheck.report ?? buildTrustCheckReport(state.trustCheck.prompt, state.trustCheck.answer);
+  if (!report.answer.trim()) {
+    showToast("Paste an answer before copying.");
+    return;
+  }
+  state.trustCheck.report = report;
+  state.trustCheckActions.status = "Report copied";
+  state.trustCheckActions.lastCopiedAt = new Date().toISOString();
+  addTrustCheckReceipt("Sealed report copied", `${report.statusLabel} report copied with ${report.checks.length} checks.`);
+  addAudit("Answer Trust Check report copied", `${report.statusLabel} report copied for review or sharing.`);
+  renderTrustCheck();
+  copyText(trustCheckReportText(report), "Sealed report copied.");
+}
+
+function clearTrustCheck() {
+  state.trustCheck.prompt = "";
+  state.trustCheck.answer = "";
+  state.trustCheck.report = null;
+  state.trustCheckActions.status = "Ready";
+  renderTrustCheck();
+  schedulePersist("Trust check cleared");
+  showToast("Trust check cleared.");
+}
+
+function trustCheckSnapshot() {
+  const report = state.trustCheck.report ? normalizeTrustCheckReport(state.trustCheck.report) : null;
+  const checks = report?.checks ?? pendingTrustChecks();
+  const passCount = checks.filter((check) => check.status === "Pass").length;
+  return {
+    prompt: state.trustCheck.prompt,
+    answer: state.trustCheck.answer,
+    report,
+    score: report?.score ?? 0,
+    statusLabel: report?.statusLabel ?? state.trustCheckActions.status,
+    summary: report?.summary ?? "Paste an AI answer, optionally add the original question, then run the trust check.",
+    checks,
+    improvements: report?.improvements ?? [],
+    passCount,
+    savedReports: state.trustCheck.savedReports,
+    receipts: state.trustCheckActions.receipts.slice(0, 8),
+    checkedAt: state.trustCheckActions.checkedAt,
+  };
+}
+
+function pendingTrustChecks() {
+  return ["Clarity", "Factual risk", "Source support", "Unsupported claims", "Actionability"].map((title) => ({
+    title,
+    status: "Ready",
+    score: 0,
+    detail: "Run the check to score this dimension.",
+  }));
+}
+
+function buildTrustCheckReport(prompt, answer) {
+  const cleanPrompt = String(prompt ?? "").trim();
+  const cleanAnswer = String(answer ?? "").trim();
+  const lower = cleanAnswer.toLowerCase();
+  const words = cleanAnswer.split(/\s+/).filter(Boolean);
+  const sentences = splitSentences(cleanAnswer);
+  const averageSentence = sentences.length === 0 ? 0 : Math.round(words.length / sentences.length);
+  const riskyTerms = ["always", "never", "guarantee", "100%", "all customers", "no risk", "fully compliant", "unbreakable", "best in class"];
+  const sourceTerms = ["source", "citation", "according to", "policy", "standard", "soc", "report", "dpa", "contract", "evidence", "audit", "approved"];
+  const actionTerms = ["should", "must", "recommend", "review", "approve", "attach", "update", "next", "route", "use", "copy"];
+  const sourceSignals = countTerms(lower, sourceTerms);
+  const riskySignals = countTerms(lower, riskyTerms);
+  const numericClaims = (cleanAnswer.match(/\b\d+%?|\b[a-z]{2,}\s*\d\b/gi) ?? []).length;
+  const unsupportedClaims = sentences.filter((sentence) => {
+    const sentenceLower = sentence.toLowerCase();
+    const hasClaim = riskyTerms.some((term) => sentenceLower.includes(term)) || /\b(compliant|certified|secure|encrypted|trained|retained|deleted|guaranteed)\b/i.test(sentence);
+    const hasSource = sourceTerms.some((term) => sentenceLower.includes(term));
+    return hasClaim && !hasSource;
+  }).length;
+  const promptTerms = keywordTerms(cleanPrompt.toLowerCase());
+  const promptOverlap = promptTerms.length === 0 ? 1 : promptTerms.filter((term) => lower.includes(term)).length / promptTerms.length;
+  const hasClearAnswer = /^(yes|no|we|our|the system|customer|answerseal)\b/i.test(cleanAnswer) || cleanAnswer.includes(".");
+  const hasActionSignal = actionTerms.some((term) => lower.includes(term)) || /^(yes|no)\b/i.test(cleanAnswer);
+
+  if (!cleanAnswer) {
+    return normalizeTrustCheckReport({
+      id: `trust-check-report-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      prompt: cleanPrompt,
+      answer: cleanAnswer,
+      score: 0,
+      statusLabel: "Empty",
+      summary: "Paste an AI-generated answer before running the trust check.",
+      checks: pendingTrustChecks().map((check) => ({ ...check, status: "Review", detail: "No answer was provided." })),
+      improvements: ["Paste an answer first, then run the trust check."],
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  const clarityScore = Math.max(35, Math.min(100, 100 - Math.max(0, averageSentence - 28) * 2 - (words.length < 18 ? 28 : 0) - (words.length > 240 ? 20 : 0)));
+  const factualRiskScore = Math.max(25, Math.min(100, 94 - riskySignals * 14 - Math.max(0, numericClaims - sourceSignals) * 8));
+  const sourceScore = Math.max(20, Math.min(100, sourceSignals > 0 ? 78 + Math.min(sourceSignals, 3) * 6 : 46));
+  const unsupportedScore = Math.max(20, Math.min(100, 96 - unsupportedClaims * 18));
+  const actionScore = Math.max(35, Math.min(100, (hasClearAnswer ? 55 : 35) + (hasActionSignal ? 30 : 8) + Math.round(promptOverlap * 15)));
+
+  const checks = [
+    {
+      title: "Clarity",
+      score: clarityScore,
+      detail: words.length < 18
+        ? "The answer is very short. Add enough context for a reviewer to understand the decision."
+        : averageSentence > 28
+          ? `Average sentence length is ${averageSentence} words. Shorter sentences will be easier to verify.`
+          : "The answer is concise enough for review and buyer reuse.",
+    },
+    {
+      title: "Factual risk",
+      score: factualRiskScore,
+      detail: riskySignals > 0 || numericClaims > sourceSignals
+        ? "The answer contains absolute or numeric claims that should be tied to evidence before reuse."
+        : "No heavy absolute claims or unsupported numbers were detected.",
+    },
+    {
+      title: "Source support",
+      score: sourceScore,
+      detail: sourceSignals > 0
+        ? `${sourceSignals} source signal${sourceSignals === 1 ? "" : "s"} detected in the answer.`
+        : "No policy, report, citation, or evidence reference is visible in the answer.",
+    },
+    {
+      title: "Unsupported claims",
+      score: unsupportedScore,
+      detail: unsupportedClaims === 0
+        ? "Risky claims appear controlled or source-aware."
+        : `${unsupportedClaims} claim${unsupportedClaims === 1 ? "" : "s"} should be softened or cited before approval.`,
+    },
+    {
+      title: "Actionability",
+      score: actionScore,
+      detail: hasActionSignal
+        ? "The answer gives a clear decision or next reviewer action."
+        : "Add a clear decision, reviewer action, or evidence request so the answer is usable.",
+    },
+  ].map((check) => ({
+    ...check,
+    status: check.score >= 80 ? "Pass" : check.score >= 62 ? "Review" : "Block",
+  }));
+
+  const score = Math.round(checks.reduce((sum, check) => sum + check.score, 0) / checks.length);
+  const statusLabel = score >= 86 && checks.every((check) => check.status === "Pass")
+    ? "Sealed"
+    : score >= 74
+      ? "Needs source"
+      : score >= 58
+        ? "Needs review"
+        : "High risk";
+  const improvements = trustCheckImprovements(checks, { sourceSignals, unsupportedClaims, riskySignals, numericClaims, promptTerms });
+  const summary =
+    statusLabel === "Sealed"
+      ? "This answer is clear, source-aware, and ready to save as a sealed report."
+      : statusLabel === "Needs source"
+        ? "The answer is promising, but it needs explicit source references before reuse."
+        : statusLabel === "Needs review"
+          ? "The answer needs reviewer cleanup before it should be shared."
+          : "The answer should be blocked until the missing proof and risky claims are fixed.";
+
+  return normalizeTrustCheckReport({
+    id: `trust-check-report-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    prompt: cleanPrompt,
+    answer: cleanAnswer,
+    score,
+    statusLabel,
+    summary,
+    checks,
+    improvements,
+    createdAt: new Date().toISOString(),
+  });
+}
+
+function trustCheckImprovements(checks, context) {
+  const improvements = [];
+  if (checks.find((check) => check.title === "Source support")?.status !== "Pass") {
+    improvements.push("Attach at least one named source, such as a policy, SOC report, DPA, standard, or approved answer memory.");
+  }
+  if (context.unsupportedClaims > 0 || context.riskySignals > 0 || context.numericClaims > context.sourceSignals) {
+    improvements.push("Soften absolute claims or add citations for numbers, compliance claims, retention promises, or security guarantees.");
+  }
+  if (checks.find((check) => check.title === "Clarity")?.status !== "Pass") {
+    improvements.push("Rewrite into short reviewer-friendly sentences with one claim per sentence.");
+  }
+  if (checks.find((check) => check.title === "Actionability")?.status !== "Pass") {
+    improvements.push("Add a clear approval decision, next owner, or evidence request so the answer can move forward.");
+  }
+  if (context.promptTerms.length > 0 && checks.find((check) => check.title === "Actionability")?.score < 82) {
+    improvements.push("Mirror the original question terms so reviewers can see the answer is directly responsive.");
+  }
+  if (improvements.length === 0) {
+    improvements.push("Save this as a sealed report and reuse it as approved local answer memory.");
+  }
+  return improvements;
+}
+
+function splitSentences(text) {
+  return String(text ?? "")
+    .replace(/\r/g, " ")
+    .split(/[.!?]+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
+function countTerms(text, terms) {
+  return terms.reduce((sum, term) => sum + (text.includes(term) ? 1 : 0), 0);
+}
+
+function addTrustCheckReceipt(action, detail) {
+  state.trustCheckActions.receipts.unshift({
+    id: `trust-check-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.trustCheckActions.receipts = state.trustCheckActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function trustCheckReportText(report = state.trustCheck.report) {
+  if (!report) return "";
+  const checks = report.checks.map((check) => `- ${check.title}: ${check.status} (${check.score}%) - ${check.detail}`).join("\n");
+  const improvements = report.improvements.map((item, index) => `${index + 1}. ${item}`).join("\n");
+  return [
+    "AnswerSeal Sealed Report",
+    `Build: ${BUILD_VERSION}`,
+    `Created: ${formatDate(report.createdAt)}`,
+    `Decision: ${report.statusLabel}`,
+    `Trust score: ${report.score}%`,
+    "",
+    "Original question or prompt:",
+    report.prompt || "Not provided.",
+    "",
+    "AI-generated answer:",
+    report.answer || "No answer provided.",
+    "",
+    "Trust checks:",
+    checks || "No checks available.",
+    "",
+    "Suggested improvements:",
+    improvements || "No improvements required.",
+    "",
+    "Seal rule:",
+    "A buyer-facing AI answer is not finished until clarity, factual risk, source support, unsupported claims, and actionability are reviewed.",
   ].join("\n");
 }
 
@@ -24537,6 +25089,12 @@ function exportCsv() {
     "Global Launch Gates",
     "Global Learning Boundaries",
     "Global Matrix Receipts",
+    "Trust Check Status",
+    "Trust Check Score",
+    "Trust Check Checks",
+    "Trust Check Saved Reports",
+    "Trust Check Latest Report",
+    "Trust Check Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -24588,6 +25146,7 @@ function exportCsv() {
     const outcomeConsole = outcomeLearningConsoleSnapshot();
     const policyBoard = reinforcementPolicyBoardSnapshot();
     const globalMatrix = globalEnvironmentMatrixSnapshot();
+    const trustCheck = trustCheckSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -24838,6 +25397,12 @@ function exportCsv() {
       `${globalMatrix.passedGates}/${globalMatrix.gates.length}`,
       globalMatrix.learningBoundaries.length,
       globalMatrix.receipts.length,
+      trustCheck.statusLabel,
+      `${trustCheck.score}%`,
+      `${trustCheck.passCount}/${trustCheck.checks.length}`,
+      trustCheck.savedReports.length,
+      trustCheck.report?.summary ?? "No sealed report",
+      trustCheck.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -24898,6 +25463,7 @@ function exportReviewPack() {
   const playbookStudio = trustPlaybookStudioSnapshot();
   const outcomeConsole = outcomeLearningConsoleSnapshot();
   const policyBoard = reinforcementPolicyBoardSnapshot();
+  const trustCheck = trustCheckSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -24910,16 +25476,77 @@ function exportReviewPack() {
           table { border-collapse: collapse; width: 100%; }
           th, td { border: 1px solid #cfd8d2; padding: 8px; vertical-align: top; }
           th { background: #eef3ef; text-align: left; }
+          pre { background: #f7fbf9; border: 1px solid #cfd8d2; padding: 10px; white-space: pre-wrap; }
           .risk { color: #9a6700; }
           .ok { color: #00786d; }
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v50</h1>
+        <h1>AnswerSeal Review Pack v51</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
         <p>Handoff readiness: ${handoff.ready}% | Owner routing: ${routing.routed}/${state.questions.length} assigned | Open risks: ${routing.openRisks}</p>
+        <h2>Answer Trust Check</h2>
+        <p>Status: ${escapeHtml(trustCheck.statusLabel)} | Trust score: ${trustCheck.score}% | Checks passing: ${trustCheck.passCount}/${trustCheck.checks.length} | Saved reports: ${trustCheck.savedReports.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Check</th>
+              <th>Status</th>
+              <th>Score</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trustCheck.checks
+              .map(
+                (check) => `
+                  <tr>
+                    <td>${escapeHtml(check.title)}</td>
+                    <td class="${check.status === "Pass" ? "ok" : "risk"}">${escapeHtml(check.status)}</td>
+                    <td>${check.score}%</td>
+                    <td>${escapeHtml(check.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <p><strong>Seal brief:</strong> ${escapeHtml(trustCheck.summary)}</p>
+        <h3>Suggested Improvements</h3>
+        <ul>
+          ${(trustCheck.improvements.length > 0 ? trustCheck.improvements : ["Run the Answer Trust Check to generate suggested improvements."])
+            .map((item) => `<li>${escapeHtml(item)}</li>`)
+            .join("")}
+        </ul>
+        <h3>Sealed Report</h3>
+        ${trustCheck.report ? `<pre>${escapeHtml(trustCheckReportText(trustCheck.report))}</pre>` : "<p>No sealed report has been generated yet.</p>"}
+        <h3>Saved Sealed Reports</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Saved</th>
+              <th>Decision</th>
+              <th>Score</th>
+              <th>Prompt</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(trustCheck.savedReports.length > 0 ? trustCheck.savedReports : [{ createdAt: new Date().toISOString(), statusLabel: "None", score: 0, prompt: "No saved reports yet." }])
+              .map(
+                (report) => `
+                  <tr>
+                    <td>${escapeHtml(formatAuditTime(report.createdAt))}</td>
+                    <td>${escapeHtml(report.statusLabel)}</td>
+                    <td>${report.score}%</td>
+                    <td>${escapeHtml(report.prompt || "Standalone answer")}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
         <h2>Trust Center Launchpad</h2>
         <p>Status: ${escapeHtml(launch.statusLabel)} | Launch score: ${launch.score}% | Ready packets: ${launch.packetCount}/${launch.packets.length} | Learning signals: ${launch.signalCount}</p>
         <table>
@@ -28998,7 +29625,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v50 created with global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v51 created with Answer Trust Check, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29037,12 +29664,13 @@ function exportReviewPack() {
   renderOutcomeLearningConsole();
   renderReinforcementPolicyBoard();
   renderGlobalEnvironmentMatrix();
+  renderTrustCheck();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v50 exported.");
+  showToast("Review Pack v51 exported.");
 }
 
 function toCsv(rows) {
@@ -29133,6 +29761,8 @@ function serializeWorkspace() {
     outcomeConsoleActions: state.outcomeConsoleActions,
     policyBoardActions: state.policyBoardActions,
     globalMatrixActions: state.globalMatrixActions,
+    trustCheck: state.trustCheck,
+    trustCheckActions: state.trustCheckActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -29194,6 +29824,7 @@ function resetWorkspace() {
   closeOutcomeLearningConsole(false);
   closeReinforcementPolicyBoard(false);
   closeGlobalEnvironmentMatrix(false);
+  closeTrustCheck(false);
   closeWorkspace(false);
   closeLibrary();
   render();

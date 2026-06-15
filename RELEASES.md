@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.55 Alpha - Answer Trust Check
+
+Phase: Answer Trust Check
+
+- Added a Trust Check drawer for the tighter MVP flow: paste an AI-generated answer, optionally include the original question, and run a focused trust review.
+- Added five-part scoring for clarity, factual risk, source support, unsupported claims, and actionability.
+- Added a trust score, seal decision, and suggested improvements before an answer is saved or reused.
+- Added copy-ready sealed reports with the prompt, answer, trust checks, suggested improvements, and reuse rule.
+- Added saved local sealed reports for verified answer memory.
+- Added Trust Check context to CSV export and upgraded review pack export to Review Pack v51 with Answer Trust Check sections.
+- Updated the landing page and build phases page around the tighter MVP and the v0.56 AI Artifact Registry plan.
+
 ## v0.54 Alpha - Global Environment Matrix
 
 Phase: Global Environment Matrix

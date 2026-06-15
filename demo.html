@@ -103,6 +103,10 @@
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Review Desk</span>
           </button>
+          <button class="nav-item" id="trustCheckNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Trust Check</span>
+          </button>
           <button class="nav-item" id="importNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
             <span>Import</span>
@@ -309,8 +313,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
         <span class="label">Build</span>
-          <strong>v0.54 Alpha</strong>
-          <span>Global Environment Matrix</span>
+          <strong>v0.55 Alpha</strong>
+          <span>Answer Trust Check</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -322,7 +326,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.54 Alpha</span>
+            <span class="label">Security questionnaire | v0.55 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -598,6 +602,107 @@
         </section>
       </main>
     </div>
+
+    <div class="drawer-backdrop" id="trustCheckBackdrop" hidden></div>
+    <aside class="workspace-drawer trust-check-drawer" id="trustCheckDrawer" aria-hidden="true" aria-labelledby="trustCheckTitle">
+      <header class="drawer-header">
+        <div>
+          <span class="label">MVP answer QA</span>
+          <h2 id="trustCheckTitle">Answer Trust Check</h2>
+        </div>
+        <button class="icon-button" id="closeTrustCheckButton" type="button" aria-label="Close answer trust check" title="Close answer trust check">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="trust-check-body">
+        <section class="memory-strip trust-check-metrics" aria-label="Trust check status">
+          <article>
+            <span class="label">Trust Score</span>
+            <strong id="trustCheckScore">0%</strong>
+          </article>
+          <article>
+            <span class="label">Status</span>
+            <strong id="trustCheckStatus">Ready</strong>
+          </article>
+          <article>
+            <span class="label">Checks</span>
+            <strong id="trustCheckPassCount">0/5</strong>
+          </article>
+          <article>
+            <span class="label">Saved</span>
+            <strong id="trustCheckSavedCount">0</strong>
+          </article>
+        </section>
+
+        <section class="trust-check-composer" aria-label="Answer trust check inputs">
+          <label>
+            <span class="label">Original question or prompt</span>
+            <textarea id="trustCheckPromptInput" rows="3" placeholder="Optional: paste the original question or prompt."></textarea>
+          </label>
+          <label>
+            <span class="label">AI-generated answer</span>
+            <textarea id="trustCheckAnswerInput" rows="8" placeholder="Paste an AI-generated answer here."></textarea>
+          </label>
+        </section>
+
+        <section class="trust-check-summary-card" aria-label="Trust check summary">
+          <span class="label">Seal Brief</span>
+          <strong id="trustCheckSummary">Paste an answer and run the check.</strong>
+        </section>
+
+        <section class="drawer-section" aria-label="Trust check signals">
+          <div class="section-heading">
+            <span class="label">Checks</span>
+            <span>Clarity, factual risk, sources, claims, actionability</span>
+          </div>
+          <div class="trust-check-signal-list" id="trustCheckSignalList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Suggested improvements">
+          <div class="section-heading">
+            <span class="label">Improvements</span>
+            <span>Suggested edits before reuse</span>
+          </div>
+          <div class="trust-check-improvement-list" id="trustCheckImprovementList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Sealed answer report">
+          <div class="section-heading">
+            <span class="label">Sealed Report</span>
+            <span>Copy-ready verification note</span>
+          </div>
+          <pre class="trust-check-report" id="trustCheckReport"></pre>
+        </section>
+
+        <section class="drawer-section" aria-label="Saved trust check reports">
+          <div class="section-heading">
+            <span class="label">Saved</span>
+            <span>Verified answers kept locally</span>
+          </div>
+          <div class="trust-check-saved-list" id="trustCheckSavedList"></div>
+        </section>
+
+        <div class="drawer-actions trust-check-actions">
+          <button class="primary-button" id="runTrustCheckButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Check Answer</span>
+          </button>
+          <button class="secondary-button" id="saveTrustCheckButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-file"></use></svg>
+            <span>Save</span>
+          </button>
+          <button class="secondary-button" id="copyTrustCheckButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Copy Report</span>
+          </button>
+          <button class="secondary-button" id="clearTrustCheckButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+            <span>Clear</span>
+          </button>
+        </div>
+      </section>
+    </aside>
 
     <div class="workspace-backdrop drawer-backdrop" id="workspaceBackdrop" hidden></div>
     <aside class="workspace-drawer private-workspace-drawer" id="workspaceDrawer" aria-label="Private workspace" aria-hidden="true">
