@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.48 Alpha - Calm Command Bar
+
+Phase: Calm Command Bar
+
+- Added a Calm Command Bar overlay with command search, next-best action recommendation, command metrics, command cards, and command receipts.
+- Added command actions for review desk, evidence panel, evidence gaps, sovereign workspace, network firewall, buyer feedback loop, import studio, data room, trust room, digests, exports, and build phases.
+- Added recommendation logic based on evidence gaps, sovereign readiness, network firewall quarantine, buyer feedback, approvals, and intake state.
+- Added command receipts that record command-run history for calmer handoff and release traceability.
+- Added command bar status, command count, recommended command, last command, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v44 with command catalog, command receipts, and command bar digest.
+- Updated the landing page around command-led simplicity and the build phases page with the v0.49 Trust Mission Autopilot plan.
+
 ## v0.47 Alpha - Sovereign Workspace Console
 
 Phase: Sovereign Workspace Console

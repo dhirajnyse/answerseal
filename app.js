@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.47 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v47";
+const BUILD_VERSION = "v0.48 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v48";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v47",
   "answerseal.workspace.v46",
   "answerseal.workspace.v45",
   "answerseal.workspace.v44",
@@ -753,6 +754,9 @@ function createInitialState() {
     networkFirewallActions: createInitialNetworkFirewallActions(),
     sovereignOpen: false,
     sovereignActions: createInitialSovereignActions(),
+    commandBarOpen: false,
+    commandBarQuery: "",
+    commandBarActions: createInitialCommandBarActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1077,6 +1081,16 @@ function createInitialSovereignActions() {
   };
 }
 
+function createInitialCommandBarActions() {
+  return {
+    status: "Ready",
+    lastOpenedAt: null,
+    lastRunAt: null,
+    lastCommand: "",
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1223,6 +1237,7 @@ function loadWorkspaceState() {
       buyerFeedbackLoopActions: normalizeBuyerFeedbackLoopActions(workspace.buyerFeedbackLoopActions ?? fresh.buyerFeedbackLoopActions),
       networkFirewallActions: normalizeNetworkFirewallActions(workspace.networkFirewallActions ?? fresh.networkFirewallActions),
       sovereignActions: normalizeSovereignActions(workspace.sovereignActions ?? fresh.sovereignActions),
+      commandBarActions: normalizeCommandBarActions(workspace.commandBarActions ?? fresh.commandBarActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1265,6 +1280,8 @@ function loadWorkspaceState() {
       buyerFeedbackLoopOpen: false,
       networkFirewallOpen: false,
       sovereignOpen: false,
+      commandBarOpen: false,
+      commandBarQuery: "",
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2097,6 +2114,26 @@ function normalizeSovereignReceipt(receipt) {
   };
 }
 
+function normalizeCommandBarActions(actions) {
+  const status = ["Ready", "Opened", "Action run"].includes(actions?.status) ? actions.status : "Ready";
+  return {
+    status,
+    lastOpenedAt: actions?.lastOpenedAt ?? null,
+    lastRunAt: actions?.lastRunAt ?? null,
+    lastCommand: String(actions?.lastCommand ?? ""),
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeCommandBarReceipt) : [],
+  };
+}
+
+function normalizeCommandBarReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `command-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Command bar action"),
+    detail: String(receipt?.detail ?? "Command bar action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2227,6 +2264,19 @@ const elements = {
   refreshDraftsButton: document.querySelector("#refreshDraftsButton"),
   exportCsvButton: document.querySelector("#exportCsvButton"),
   exportDocButton: document.querySelector("#exportDocButton"),
+  commandBarButton: document.querySelector("#commandBarButton"),
+  commandBarBackdrop: document.querySelector("#commandBarBackdrop"),
+  commandBarDialog: document.querySelector("#commandBarDialog"),
+  closeCommandBarButton: document.querySelector("#closeCommandBarButton"),
+  commandSearchInput: document.querySelector("#commandSearchInput"),
+  commandRecommendedTitle: document.querySelector("#commandRecommendedTitle"),
+  commandRecommendedDetail: document.querySelector("#commandRecommendedDetail"),
+  commandRecommendedButton: document.querySelector("#commandRecommendedButton"),
+  commandMatchCount: document.querySelector("#commandMatchCount"),
+  commandReceiptCount: document.querySelector("#commandReceiptCount"),
+  commandLastAction: document.querySelector("#commandLastAction"),
+  commandList: document.querySelector("#commandList"),
+  commandReceiptList: document.querySelector("#commandReceiptList"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -2930,6 +2980,7 @@ function init() {
   elements.questionSearch.value = state.search;
   elements.statusFilter.value = state.filter;
   elements.librarySearch.value = state.librarySearch;
+  elements.commandSearchInput.value = state.commandBarQuery;
   elements.workspaceCompany.textContent = workspaceAccount.company;
   elements.workspaceId.textContent = workspaceAccount.workspaceId;
   elements.workspacePlan.textContent = workspaceAccount.plan;
@@ -3050,6 +3101,7 @@ function bindEvents() {
     renderBuyerFeedbackLoop();
     renderNetworkFirewall();
     renderSovereignConsole();
+    renderCommandBar();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3291,9 +3343,27 @@ function bindEvents() {
   elements.refreshDraftsButton.addEventListener("click", refreshDrafts);
   elements.exportCsvButton.addEventListener("click", exportCsv);
   elements.exportDocButton.addEventListener("click", exportReviewPack);
+  elements.commandBarButton.addEventListener("click", openCommandBar);
+  elements.closeCommandBarButton.addEventListener("click", closeCommandBar);
+  elements.commandBarBackdrop.addEventListener("click", closeCommandBar);
+  elements.commandSearchInput.addEventListener("input", (event) => {
+    state.commandBarQuery = event.target.value.trim().toLowerCase();
+    renderCommandBar();
+  });
+  elements.commandRecommendedButton.addEventListener("click", runRecommendedCommand);
 
   document.addEventListener("keydown", (event) => {
+    const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
+    if (openShortcut) {
+      event.preventDefault();
+      openCommandBar();
+      return;
+    }
     if (event.key !== "Escape") return;
+    if (state.commandBarOpen) {
+      closeCommandBar();
+      return;
+    }
     if (state.libraryOpen) closeLibrary();
     if (state.intakeOpen) closeIntake();
     if (state.dataRoomOpen) closeDataRoom();
@@ -3377,6 +3447,7 @@ function applyInitialHash() {
   if (hash === "feedback-loop" || hash === "buyer-feedback" || hash === "learning-loop" || hash === "feedback") openBuyerFeedbackLoop();
   if (hash === "firewall" || hash === "network-firewall" || hash === "learning-firewall" || hash === "privacy-firewall") openNetworkFirewall();
   if (hash === "sovereign" || hash === "regions" || hash === "global" || hash === "environments" || hash === "countries") openSovereignConsole();
+  if (hash === "command-bar" || hash === "actions" || hash === "quick-actions" || hash === "calm-command") openCommandBar();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3435,6 +3506,7 @@ function render() {
   renderBuyerFeedbackLoop();
   renderNetworkFirewall();
   renderSovereignConsole();
+  renderCommandBar();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -5835,6 +5907,339 @@ function closeSovereignConsole(activateReview = true) {
   elements.sovereignDrawer.setAttribute("aria-hidden", "true");
   elements.sovereignBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openCommandBar() {
+  state.commandBarOpen = true;
+  state.commandBarActions.status = "Opened";
+  state.commandBarActions.lastOpenedAt = new Date().toISOString();
+  elements.commandBarBackdrop.hidden = false;
+  elements.commandBarDialog.classList.add("is-open");
+  elements.commandBarDialog.setAttribute("aria-hidden", "false");
+  renderCommandBar();
+  setTimeout(() => elements.commandSearchInput.focus({ preventScroll: true }), 0);
+  schedulePersist("Command ready");
+}
+
+function closeCommandBar() {
+  state.commandBarOpen = false;
+  elements.commandBarDialog.classList.remove("is-open");
+  elements.commandBarDialog.setAttribute("aria-hidden", "true");
+  elements.commandBarBackdrop.hidden = true;
+  state.commandBarQuery = "";
+  elements.commandSearchInput.value = "";
+  renderCommandBar();
+}
+
+function renderCommandBar() {
+  const snapshot = commandBarSnapshot();
+  elements.commandSearchInput.value = state.commandBarQuery;
+  elements.commandMatchCount.textContent = snapshot.filteredCommands.length;
+  elements.commandReceiptCount.textContent = snapshot.receipts.length;
+  elements.commandLastAction.textContent = snapshot.lastAction || "Ready";
+  elements.commandRecommendedTitle.textContent = snapshot.recommended.title;
+  elements.commandRecommendedDetail.textContent = snapshot.recommended.reason;
+  elements.commandRecommendedButton.dataset.commandId = snapshot.recommended.id;
+  elements.commandRecommendedButton.querySelector("span").textContent = snapshot.recommended.cta;
+  elements.commandList.innerHTML = "";
+
+  if (snapshot.filteredCommands.length === 0) {
+    elements.commandList.append(emptyState("No matching commands"));
+  } else {
+    snapshot.filteredCommands.forEach((command) => {
+      const button = document.createElement("button");
+      button.className = `command-card${command.id === snapshot.recommended.id ? " is-recommended" : ""}`;
+      button.type = "button";
+      button.innerHTML = `
+        <header>
+          <span>${escapeHtml(command.scope)}</span>
+          <strong>${escapeHtml(command.title)}</strong>
+        </header>
+        <p>${escapeHtml(command.detail)}</p>
+        <small>${escapeHtml(command.signal)}</small>
+      `;
+      button.addEventListener("click", () => runCommandById(command.id));
+      elements.commandList.append(button);
+    });
+  }
+
+  elements.commandReceiptList.innerHTML = "";
+  if (snapshot.receipts.length === 0) {
+    elements.commandReceiptList.append(emptyState("No command receipts yet"));
+  } else {
+    snapshot.receipts.slice(0, 5).forEach((receipt) => {
+      const card = document.createElement("article");
+      card.className = "command-receipt-card";
+      card.innerHTML = `
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.detail)}</span>
+        <small>${escapeHtml(formatAuditTime(receipt.at))}</small>
+      `;
+      elements.commandReceiptList.append(card);
+    });
+  }
+}
+
+function commandBarSnapshot() {
+  const commands = commandCatalog();
+  const query = state.commandBarQuery;
+  const filteredCommands = query
+    ? commands.filter((command) => command.search.includes(query))
+    : commands;
+  const recommended = recommendedCommand(commands);
+  const receipts = [...state.commandBarActions.receipts].sort((a, b) => new Date(b.at) - new Date(a.at));
+
+  return {
+    statusLabel: state.commandBarActions.status,
+    commands,
+    filteredCommands,
+    recommended,
+    receipts,
+    lastAction: state.commandBarActions.lastCommand,
+    openedAt: state.commandBarActions.lastOpenedAt,
+  };
+}
+
+function commandCatalog() {
+  const activeQuestion = getActiveQuestion();
+  const gaps = gapAutopilotSnapshot();
+  const sovereign = sovereignConsoleSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const feedback = buyerFeedbackLoopSnapshot();
+  const approvedCount = state.questions.filter((question) => question.status === "approved").length;
+  const common = [
+    {
+      id: "review-desk",
+      scope: "Review",
+      title: "Review active question",
+      detail: activeQuestion ? nextActionLabel(activeQuestion) : "Return to the live questionnaire desk.",
+      signal: "Current work",
+      cta: "Open Review",
+      reason: "The current buyer question is still the center of the workflow.",
+      run: () => activateWorkspaceNav("review"),
+      keywords: ["review", "question", "answer", "desk", "current", "active"],
+    },
+    {
+      id: "evidence-panel",
+      scope: "Proof",
+      title: "Open evidence panel",
+      detail: `${coverageSnapshot().score}% evidence coverage across the current vault.`,
+      signal: "Source coverage",
+      cta: "Open Evidence",
+      reason: "Evidence coverage is the fastest way to strengthen weak answers.",
+      run: () => activateWorkspaceNav("evidence"),
+      keywords: ["evidence", "source", "proof", "coverage", "vault"],
+    },
+    {
+      id: "evidence-gaps",
+      scope: "Proof",
+      title: "Open evidence gaps",
+      detail: `${gaps.highRiskCount} high-risk gap${gaps.highRiskCount === 1 ? "" : "s"} across ${gaps.taskCount} gap tasks.`,
+      signal: "Risk reduction",
+      cta: "Open Gaps",
+      reason: "Evidence gaps should be resolved before buyer-facing answers ship.",
+      run: openGapAutopilot,
+      keywords: ["gap", "gaps", "risk", "missing", "stale", "weak", "evidence"],
+    },
+    {
+      id: "sovereign-console",
+      scope: "Global",
+      title: "Open sovereign workspace",
+      detail: `${sovereign.readyRegions}/${sovereign.regions.length} regions ready with ${sovereign.environments.length} environments mapped.`,
+      signal: "Regional readiness",
+      cta: "Open Sovereign",
+      reason: "Regional rollout and environment boundaries are now visible in one calm console.",
+      run: openSovereignConsole,
+      keywords: ["sovereign", "region", "country", "global", "environment", "production", "pilot"],
+    },
+    {
+      id: "network-firewall",
+      scope: "Learning",
+      title: "Open learning firewall",
+      detail: `${firewall.blockedCount} blocked signals and ${firewall.quarantineCount} quarantine items.`,
+      signal: "Privacy boundary",
+      cta: "Open Firewall",
+      reason: "The learning boundary should stay visible before any network-safe pattern is promoted.",
+      run: openNetworkFirewall,
+      keywords: ["firewall", "privacy", "network", "learning", "blocked", "quarantine"],
+    },
+    {
+      id: "buyer-feedback-loop",
+      scope: "Loop",
+      title: "Open buyer feedback loop",
+      detail: `${feedback.events.length} buyer feedback events and ${feedback.requests.length} evidence requests.`,
+      signal: "Closed-loop learning",
+      cta: "Open Loop",
+      reason: "Buyer feedback can turn friction into safer answer memory.",
+      run: openBuyerFeedbackLoop,
+      keywords: ["buyer", "feedback", "loop", "learning", "request", "outcome"],
+    },
+    {
+      id: "import-studio",
+      scope: "Intake",
+      title: "Open import studio",
+      detail: "Bring messy spreadsheet or portal-paste questions into the same review queue.",
+      signal: "Question intake",
+      cta: "Open Import",
+      reason: "Questionnaire intake is the cleanest start for a new buyer review.",
+      run: openImportStudio,
+      keywords: ["import", "spreadsheet", "csv", "portal", "intake", "questionnaire"],
+    },
+    {
+      id: "data-room",
+      scope: "Pilot",
+      title: "Open pilot data room",
+      detail: "Review questionnaire, evidence pack, contract, exports, notes, and close checklist.",
+      signal: "Pilot handoff",
+      cta: "Open Data Room",
+      reason: "The pilot data room keeps proof, notes, and conversion readiness together.",
+      run: openDataRoom,
+      keywords: ["data", "room", "pilot", "contract", "handoff", "close"],
+    },
+    {
+      id: "trust-room",
+      scope: "Buyer",
+      title: "Open buyer trust room",
+      detail: "Prepare scoped buyer-safe answers, excerpts, access policy, and room receipts.",
+      signal: "Buyer handoff",
+      cta: "Open Room",
+      reason: "Trust rooms turn approved evidence into buyer-facing proof safely.",
+      run: openTrustRoom,
+      keywords: ["trust", "room", "buyer", "packet", "share", "external"],
+    },
+    {
+      id: "copy-sovereign-digest",
+      scope: "Copy",
+      title: "Copy sovereign digest",
+      detail: "Copy the region, environment, policy, and rollout brief.",
+      signal: "Founder brief",
+      cta: "Copy Digest",
+      reason: "A clean global rollout brief is useful for founders, security, legal, and regional operators.",
+      run: copySovereignDigest,
+      keywords: ["copy", "sovereign", "digest", "region", "policy", "brief"],
+    },
+    {
+      id: "copy-firewall-digest",
+      scope: "Copy",
+      title: "Copy firewall digest",
+      detail: "Copy the tenant boundary, blocked signal, quarantine, and network benefit brief.",
+      signal: "Governance brief",
+      cta: "Copy Digest",
+      reason: "The firewall digest explains exactly what can learn locally and what can help the network.",
+      run: copyNetworkFirewallDigest,
+      keywords: ["copy", "firewall", "digest", "network", "privacy", "governance"],
+    },
+    {
+      id: "export-review-pack",
+      scope: "Export",
+      title: "Export Review Pack",
+      detail: `Create Review Pack v44 with command bar, sovereign, firewall, learning, proof, and trace sections.`,
+      signal: `${approvedCount} approved`,
+      cta: "Export Pack",
+      reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
+      run: exportReviewPack,
+      keywords: ["export", "review", "pack", "word", "doc", "handoff"],
+    },
+    {
+      id: "export-csv",
+      scope: "Export",
+      title: "Export CSV",
+      detail: "Export questionnaire rows with command, sovereign, firewall, proof, routing, and trace context.",
+      signal: "Spreadsheet handoff",
+      cta: "Export CSV",
+      reason: "CSV is the fastest handoff for spreadsheet-driven buyer portals.",
+      run: exportCsv,
+      keywords: ["export", "csv", "spreadsheet", "portal"],
+    },
+    {
+      id: "build-phases",
+      scope: "Release",
+      title: "Open build phases",
+      detail: "View the current build, release history, and next release roadmap.",
+      signal: BUILD_VERSION,
+      cta: "Open Builds",
+      reason: "Build phases keep every release understandable as the platform expands.",
+      run: () => {
+        window.location.href = "versions.html";
+      },
+      keywords: ["build", "version", "release", "roadmap", "phase"],
+    },
+  ];
+
+  return common.map((command) => ({
+    ...command,
+    search: [command.scope, command.title, command.detail, command.signal, command.cta, ...command.keywords].join(" ").toLowerCase(),
+  }));
+}
+
+function recommendedCommand(commands) {
+  const needsEvidence = state.questions.filter((question) => question.status === "needs-evidence").length;
+  const gaps = gapAutopilotSnapshot();
+  const sovereign = sovereignConsoleSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const feedback = buyerFeedbackLoopSnapshot();
+  const approvedCount = state.questions.filter((question) => question.status === "approved").length;
+
+  const preferredId =
+    needsEvidence > 0 || gaps.highRiskCount > 0
+      ? "evidence-gaps"
+      : sovereign.score < 90 || sovereign.policyOverlays.some((policy) => policy.status !== "Pass")
+        ? "sovereign-console"
+        : firewall.quarantineCount > 0 || firewall.blockedCount > 0
+          ? "network-firewall"
+          : feedback.requests.length > 0
+            ? "buyer-feedback-loop"
+            : approvedCount > 0
+              ? "export-review-pack"
+              : "import-studio";
+
+  return commands.find((command) => command.id === preferredId) ?? commands[0];
+}
+
+function runRecommendedCommand() {
+  const commandId = elements.commandRecommendedButton.dataset.commandId;
+  runCommandById(commandId);
+}
+
+async function runCommandById(commandId) {
+  const command = commandCatalog().find((item) => item.id === commandId);
+  if (!command) return;
+
+  state.commandBarActions.status = "Action run";
+  state.commandBarActions.lastRunAt = new Date().toISOString();
+  state.commandBarActions.lastCommand = command.title;
+  addCommandBarReceipt(command.title, `${command.scope}: ${command.signal}`);
+  addAudit("Command bar action", `${command.title} run from Calm Command Bar.`);
+  await Promise.resolve(command.run());
+  closeCommandBar();
+  renderCommandBar();
+  showToast("Command complete.");
+}
+
+function addCommandBarReceipt(action, detail) {
+  state.commandBarActions.receipts.unshift({
+    id: `command-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.commandBarActions.receipts = state.commandBarActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function commandBarDigestText(snapshot = commandBarSnapshot()) {
+  return [
+    "AnswerSeal Calm Command Bar",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${snapshot.statusLabel}`,
+    `Available commands: ${snapshot.commands.length}`,
+    `Recommended: ${snapshot.recommended.title} | ${snapshot.recommended.signal}`,
+    `Last action: ${snapshot.lastAction || "Ready"}`,
+    `Receipts: ${snapshot.receipts.length}`,
+    "",
+    "Recommended detail:",
+    snapshot.recommended.reason,
+  ].join("\n");
 }
 
 function openAnalytics() {
@@ -21290,6 +21695,11 @@ function exportCsv() {
     "Policy Overlays",
     "Rollout Actions",
     "Sovereign Receipts",
+    "Command Bar Status",
+    "Command Bar Commands",
+    "Recommended Command",
+    "Last Command",
+    "Command Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -21334,6 +21744,7 @@ function exportCsv() {
     const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
     const networkFirewall = networkFirewallSnapshot();
     const sovereign = sovereignConsoleSnapshot();
+    const commandBar = commandBarSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -21538,6 +21949,11 @@ function exportCsv() {
       `${sovereign.policyOverlays.filter((policy) => policy.status === "Pass").length}/${sovereign.policyOverlays.length}`,
       sovereign.rolloutActions.length,
       sovereign.receipts.length,
+      commandBar.statusLabel,
+      commandBar.commands.length,
+      commandBar.recommended.title,
+      commandBar.lastAction || "Ready",
+      commandBar.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -21592,6 +22008,7 @@ function exportReviewPack() {
   const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
   const networkFirewall = networkFirewallSnapshot();
   const sovereign = sovereignConsoleSnapshot();
+  const commandBar = commandBarSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -21609,7 +22026,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v43</h1>
+        <h1>AnswerSeal Review Pack v44</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -24231,6 +24648,58 @@ function exportReviewPack() {
         </table>
         <h2>Sovereign Workspace Digest</h2>
         <pre>${escapeHtml(sovereignDigestText(sovereign))}</pre>
+        <h2>Calm Command Bar</h2>
+        <p>Status: ${escapeHtml(commandBar.statusLabel)} | Commands: ${commandBar.commands.length} | Recommended: ${escapeHtml(commandBar.recommended.title)} | Receipts: ${commandBar.receipts.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Scope</th>
+              <th>Signal</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${commandBar.commands
+              .slice(0, 10)
+              .map(
+                (command) => `
+                  <tr>
+                    <td>${escapeHtml(command.title)}</td>
+                    <td>${escapeHtml(command.scope)}</td>
+                    <td>${escapeHtml(command.signal)}</td>
+                    <td>${escapeHtml(command.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Command Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(commandBar.receipts.length ? commandBar.receipts : [{ action: "Ready", detail: "No command receipts yet.", at: new Date().toISOString() }])
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                    <td>${escapeHtml(formatAuditTime(receipt.at))}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Command Bar Digest</h2>
+        <pre>${escapeHtml(commandBarDigestText(commandBar))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -24943,7 +25412,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v43 created with sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v44 created with calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -24975,12 +25444,13 @@ function exportReviewPack() {
   renderBuyerFeedbackLoop();
   renderNetworkFirewall();
   renderSovereignConsole();
+  renderCommandBar();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v43 exported.");
+  showToast("Review Pack v44 exported.");
 }
 
 function toCsv(rows) {
@@ -25064,6 +25534,7 @@ function serializeWorkspace() {
     buyerFeedbackLoopActions: state.buyerFeedbackLoopActions,
     networkFirewallActions: state.networkFirewallActions,
     sovereignActions: state.sovereignActions,
+    commandBarActions: state.commandBarActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -25118,6 +25589,7 @@ function resetWorkspace() {
   closeBuyerFeedbackLoop(false);
   closeNetworkFirewall(false);
   closeSovereignConsole(false);
+  closeCommandBar();
   closeWorkspace(false);
   closeLibrary();
   render();
