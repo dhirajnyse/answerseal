@@ -18,6 +18,9 @@ const shareLandingReport = document.querySelector("#shareLandingReport");
 const landingSaveStatus = document.querySelector("#landingSaveStatus");
 const savedReportsList = document.querySelector("#savedReportsList");
 const savedReportsCount = document.querySelector("#savedReportsCount");
+const artifactRegistryList = document.querySelector("#artifactRegistryList");
+const artifactRegistryCount = document.querySelector("#artifactRegistryCount");
+const registryTemplateCount = document.querySelector("#registryTemplateCount");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -30,8 +33,9 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.59 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v59";
+const PUBLIC_BUILD_VERSION = "v0.60 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v60";
+const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = ["answerseal.public.reports.v59"];
 let latestLandingReport = null;
 let activeSealedReport = null;
 
@@ -94,6 +98,7 @@ if (shareSealedReport) {
 }
 
 renderSavedReports();
+renderArtifactRegistry();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -259,6 +264,29 @@ function renderCheckList(container, checks = []) {
 }
 
 function readPublicReports() {
+  const keys = [PUBLIC_REPORT_STORAGE_KEY, ...PUBLIC_LEGACY_REPORT_STORAGE_KEYS];
+  const reports = [];
+  const seen = new Set();
+
+  keys.forEach((key) => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+      if (!Array.isArray(parsed)) return;
+      parsed.forEach((report) => {
+        const id = report.id || `${report.createdAt}-${report.prompt}`;
+        if (seen.has(id)) return;
+        seen.add(id);
+        reports.push(report);
+      });
+    } catch (error) {
+      // Ignore malformed local demo storage.
+    }
+  });
+
+  return reports;
+}
+
+function readCurrentPublicReports() {
   try {
     return JSON.parse(localStorage.getItem(PUBLIC_REPORT_STORAGE_KEY) || "[]");
   } catch (error) {
@@ -272,7 +300,7 @@ function savePublicReport(report) {
     id: `seal-${Date.now()}`,
     createdAt: new Date().toISOString(),
   };
-  const reports = [saved, ...readPublicReports().filter((item) => item.id !== saved.id)].slice(0, 12);
+  const reports = [saved, ...readCurrentPublicReports().filter((item) => item.id !== saved.id)].slice(0, 12);
   localStorage.setItem(PUBLIC_REPORT_STORAGE_KEY, JSON.stringify(reports));
   return saved;
 }
@@ -319,6 +347,106 @@ function renderSavedReports() {
     `;
     savedReportsList.append(card);
   });
+}
+
+function renderArtifactRegistry() {
+  if (!artifactRegistryList) return;
+  const artifacts = buildArtifactRegistry();
+  const promotedCount = artifacts.filter((artifact) => artifact.template === "Promoted").length;
+
+  if (artifactRegistryCount) artifactRegistryCount.textContent = `${artifacts.length} artifacts`;
+  if (registryTemplateCount) registryTemplateCount.textContent = `${promotedCount} promoted`;
+  artifactRegistryList.innerHTML = "";
+
+  artifacts.forEach((artifact) => {
+    const card = document.createElement("article");
+    card.className = "artifact-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(artifact.type)}</span>
+        <strong>${escapePublicHtml(artifact.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(artifact.title)}</h3>
+      <p>${escapePublicHtml(artifact.summary)}</p>
+      <dl class="artifact-meta">
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(artifact.owner)}</dd>
+        </div>
+        <div>
+          <dt>Version</dt>
+          <dd>${escapePublicHtml(artifact.version)}</dd>
+        </div>
+        <div>
+          <dt>Review</dt>
+          <dd>${escapePublicHtml(artifact.review)}</dd>
+        </div>
+        <div>
+          <dt>Template</dt>
+          <dd>${escapePublicHtml(artifact.template)}</dd>
+        </div>
+      </dl>
+      <a href="${escapePublicHtml(artifact.href)}">${escapePublicHtml(artifact.action)}</a>
+    `;
+    artifactRegistryList.append(card);
+  });
+}
+
+function buildArtifactRegistry() {
+  const reports = readPublicReports();
+  const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
+    type: "Sealed answer",
+    status: report.status || "Review",
+    title: report.prompt || "Verified AI answer",
+    summary: report.summary || "Saved sealed report with prompt, answer, sources, and trust score.",
+    owner: index % 2 === 0 ? "Security" : "Sales engineer",
+    version: `v${index + 1}.0`,
+    review: Number(report.score) >= 86 ? "Approved" : "Needs proof",
+    template: Number(report.score) >= 86 ? "Promoted" : "Draft",
+    href: getReportShareUrl(report, true),
+    action: "Open sealed report",
+  }));
+
+  const seededArtifacts = [
+    {
+      type: "Prompt",
+      status: "Approved",
+      title: "Customer data training answer prompt",
+      summary: "Reusable prompt that asks the model to answer only from approved AI usage and SOC 2 evidence.",
+      owner: "AI governance",
+      version: "v2.1",
+      review: "Approved",
+      template: "Promoted",
+      href: "verify.html",
+      action: "Verify answer",
+    },
+    {
+      type: "Workflow",
+      status: "Review",
+      title: "Buyer security questionnaire response",
+      summary: "Question intake, source matching, trust score, reviewer approval, and sealed report handoff.",
+      owner: "Revenue security",
+      version: "v1.4",
+      review: "Owner gate",
+      template: "Candidate",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      type: "Agent output",
+      status: "Needs source",
+      title: "Unsupported compliance claim detector",
+      summary: "Agent-generated risk note that must attach a named policy before it can be reused.",
+      owner: "Legal",
+      version: "v0.8",
+      review: "Needs evidence",
+      template: "Blocked",
+      href: "verify.html#risk-flag-engine",
+      action: "Run trust check",
+    },
+  ];
+
+  return [...reportArtifacts, ...seededArtifacts].slice(0, 7);
 }
 
 function renderSealedReportPage() {
@@ -466,7 +594,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.59 Alpha - Calm First View",
+      "Pilot phase: AnswerSeal v0.60 Alpha - AI Artifact Registry",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

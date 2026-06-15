@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.60 Alpha - AI Artifact Registry
+
+Phase: AI Artifact Registry
+
+- Added a dedicated AI Artifact Registry page for sealed answers, prompts, workflows, and agent outputs.
+- Added artifact cards with owner, version, review state, status, and reusable-template readiness.
+- Promoted saved sealed reports into governed answer artifacts while preserving v0.59 local report memory.
+- Added Registry navigation across the public product pages and upgraded the landing product spine to eight modules.
+- Upgraded export language to Review Pack v56 and moved the next build toward v0.61 Versioned Review Loop.
+
 ## v0.59 Alpha - Calm First View
 
 Phase: Calm First View

@@ -11286,7 +11286,7 @@ svg {
 
 .spine-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(146px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin-top: 30px;
 }
@@ -11493,6 +11493,13 @@ svg {
   margin-bottom: 18px;
 }
 
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .dashboard-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -11571,6 +11578,178 @@ svg {
 .public-report-card a {
   color: var(--accent-dark);
   font-weight: 950;
+}
+
+.registry-shell,
+.registry-lanes {
+  padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
+}
+
+.registry-overview,
+.artifact-registry-grid,
+.registry-lane-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.registry-overview {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+.registry-overview article,
+.artifact-card,
+.registry-lane-grid article {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(31, 41, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 38px rgba(31, 41, 38, 0.06);
+}
+
+.registry-overview article {
+  min-height: 142px;
+  background:
+    linear-gradient(180deg, rgba(220, 251, 244, 0.72) 0%, rgba(255, 255, 255, 0.94) 48%),
+    #ffffff;
+}
+
+.registry-overview span,
+.registry-lane-grid span {
+  color: var(--cyan);
+  font-size: 0.8rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.registry-overview strong,
+.registry-lane-grid strong {
+  color: var(--ink);
+  font-size: 1.12rem;
+  line-height: 1.24;
+}
+
+.registry-overview p,
+.artifact-card p,
+.registry-lane-grid p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.artifact-registry-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.artifact-card {
+  min-height: 286px;
+}
+
+.artifact-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.artifact-card header span,
+.artifact-card header strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.artifact-card header span {
+  color: var(--accent-dark);
+  background: #dcfbf4;
+}
+
+.artifact-card header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.artifact-card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.22;
+}
+
+.artifact-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 4px 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 168, 137, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 168, 137, 0.14);
+}
+
+.artifact-meta div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px;
+  background: #fbfffd;
+}
+
+.artifact-meta dt,
+.artifact-meta dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.artifact-meta dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.artifact-meta dd {
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.artifact-card a {
+  align-self: end;
+  color: var(--accent-dark);
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.registry-lanes {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(320px, 1fr);
+  gap: clamp(22px, 5vw, 64px);
+  align-items: start;
+  border-top: 1px solid rgba(31, 41, 38, 0.1);
+  background: #ffffff;
+}
+
+.registry-lanes h2 {
+  max-width: 720px;
+  margin: 14px 0 0;
+  color: #14201d;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.registry-lane-grid {
+  grid-template-columns: 1fr;
 }
 
 .pricing-grid {
@@ -12035,6 +12214,9 @@ svg {
   .sealed-report-layout,
   .dashboard-metrics,
   .public-report-list,
+  .registry-overview,
+  .artifact-registry-grid,
+  .registry-lanes,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -12082,6 +12264,7 @@ svg {
 
   .spine-grid,
   .public-report-list,
+  .artifact-registry-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12099,7 +12282,7 @@ svg {
 
   .landing-nav nav {
     display: grid;
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: repeat(6, auto);
     gap: 4px;
     justify-content: start;
     overflow-x: auto;
@@ -12138,6 +12321,9 @@ svg {
 
   .spine-grid,
   .public-report-list,
+  .registry-overview,
+  .artifact-registry-grid,
+  .registry-lane-grid,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
