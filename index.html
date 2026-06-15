@@ -27,13 +27,13 @@
 
       <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
         <span>Current build</span>
-        <strong>v0.56 Alpha</strong>
+        <strong>v0.57 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
-        <a href="#verifier">Verifier</a>
-        <a href="#seal-path">Seal Path</a>
-        <a href="#proof">Proof</a>
+        <a href="verify.html">Verify</a>
+        <a href="reports.html">Reports</a>
+        <a href="pricing.html">Pricing</a>
         <a href="#pilot">Pilot</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -50,7 +50,7 @@
           </p>
 
           <div class="hero-actions">
-            <a class="hero-primary" href="#verifier">Verify Answer</a>
+            <a class="hero-primary" href="verify.html">Verify Answer</a>
             <a class="hero-secondary" href="demo.html#trust-check">Open Live Demo</a>
           </div>
 
@@ -90,6 +90,8 @@
           </label>
 
           <button class="hero-primary" type="submit">Verify Answer</button>
+          <button class="hero-secondary verifier-save-button" id="saveLandingReport" type="button">Save Sealed Report</button>
+          <p class="pilot-note" id="landingSaveStatus">Saved reports stay in this browser for demo use.</p>
 
           <section class="verifier-result" id="landingVerifierResult" aria-live="polite">
             <div class="verifier-score">
@@ -111,6 +113,51 @@
             </div>
           </section>
         </form>
+      </section>
+
+      <section class="product-spine" aria-label="Product spine">
+        <div class="band-heading">
+          <span class="hero-kicker">v0.57 product spine</span>
+          <h2>Seven calm surfaces, one trust workflow.</h2>
+        </div>
+
+        <div class="spine-grid">
+          <a href="./">
+            <span>01</span>
+            <strong>Landing page</strong>
+            <p>Clear promise, buyer language, and one path into verification.</p>
+          </a>
+          <a href="verify.html">
+            <span>02</span>
+            <strong>Verify answer screen</strong>
+            <p>Paste an AI answer, add an optional prompt, and run the trust check.</p>
+          </a>
+          <a href="verify.html#trust-score-engine">
+            <span>03</span>
+            <strong>Trust score engine</strong>
+            <p>Score factual risk, sources, claims, clarity, compliance, and actionability.</p>
+          </a>
+          <a href="verify.html#risk-flag-engine">
+            <span>04</span>
+            <strong>Risk flag engine</strong>
+            <p>Show missing proof, unsupported claims, compliance exposure, and next action.</p>
+          </a>
+          <a href="report.html">
+            <span>05</span>
+            <strong>Sealed report page</strong>
+            <p>Share the score, flags, improved answer, and report summary.</p>
+          </a>
+          <a href="reports.html">
+            <span>06</span>
+            <strong>Saved reports dashboard</strong>
+            <p>Reuse verified answers as the first AnswerSeal artifact registry.</p>
+          </a>
+          <a href="pricing.html">
+            <span>07</span>
+            <strong>Pricing page</strong>
+            <p>Package verification, governance, reports, and team workflows.</p>
+          </a>
+        </div>
       </section>
 
       <section class="seal-path" id="seal-path" aria-label="Seal Path">
@@ -198,7 +245,7 @@
           <span class="hero-kicker">Private pilot</span>
           <h2>Bring one messy questionnaire. We will prove the seal.</h2>
           <p>
-            The v0.56 pilot is for teams that want a simple way to verify and certify AI-generated answers before they trust, share, or act on them.
+            The v0.57 pilot is for teams that want a simple way to verify and certify AI-generated answers before they trust, share, or act on them.
           </p>
 
           <dl class="pilot-terms" aria-label="Pilot terms">
@@ -235,16 +282,18 @@
             <textarea id="pilotPain" name="pain" rows="4" placeholder="Example: SOC 2 questionnaire blocks enterprise deals every month."></textarea>
           </label>
           <button class="hero-primary" type="submit">Start Pilot Request</button>
-          <p class="pilot-note" id="pilotStatus">AnswerSeal v0.56 Alpha - Trust Layer MVP</p>
+          <p class="pilot-note" id="pilotStatus">AnswerSeal v0.57 Alpha - Product Spine</p>
         </form>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.56 Alpha</span>
+      <span>AnswerSeal v0.57 Alpha</span>
+      <a href="verify.html">Verify</a>
+      <a href="reports.html">Reports</a>
+      <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="versions.html">Build Phases</a>
-      <a href="#pilot">Private Pilot</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>
     </footer>
     <script src="landing.js"></script>

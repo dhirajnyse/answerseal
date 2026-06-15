@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.57 Alpha - Product Spine
+
+Phase: Product Spine
+
+- Added a clearer public product spine: landing page, verifier, sealed report page, saved reports dashboard, and pricing page.
+- Added a standalone Verify Answer screen with the trust score engine, risk flag engine, improved answer, sealed report summary, and save action.
+- Added a local saved reports dashboard so verified AI answers become the first reusable AnswerSeal artifacts.
+- Added a sealed report page that displays score, status, prompt, answer, risk flags, improved answer, and summary.
+- Added Starter, Team, and Enterprise pricing packages around verification, governance, reports, and approval workflows.
+- Upgraded export language to Review Pack v53 and moved the next build toward v0.58 AI Artifact Registry.
+
 ## v0.56 Alpha - Trust Layer MVP
 
 Phase: Trust Layer MVP

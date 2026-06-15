@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.56 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v56";
+const BUILD_VERSION = "v0.57 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v57";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v56",
   "answerseal.workspace.v55",
   "answerseal.workspace.v54",
   "answerseal.workspace.v53",
@@ -6778,7 +6779,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v52 with answer trust check, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
+      detail: `Create Review Pack v53 with answer trust check, product spine, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25525,7 +25526,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v52</h1>
+        <h1>AnswerSeal Review Pack v53</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29670,7 +29671,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v52 created with Answer Trust Check, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v53 created with Answer Trust Check, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29715,7 +29716,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v52 exported.");
+  showToast("Review Pack v53 exported.");
 }
 
 function toCsv(rows) {

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnswerSeal | Verify AI Answer</title>
+    <meta
+      name="description"
+      content="Paste an AI-generated answer, score trust risk, flag unsupported claims, and save a sealed report."
+    />
+    <meta name="theme-color" content="#00a889" />
+    <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="landing-page product-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Certified AI answer trust</small>
+        </span>
+      </a>
+
+      <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
+        <span>Current build</span>
+        <strong>v0.57 Alpha</strong>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="reports.html">Reports</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="./#pilot">Pilot</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-hero">
+        <div>
+          <span class="hero-kicker">Verify answer screen</span>
+          <h1>Paste an AI answer and verify it.</h1>
+          <p>
+            This is the core AnswerSeal action: check an AI-generated answer for trust, risk, missing proof,
+            compliance exposure, and readiness before anyone shares it.
+          </p>
+        </div>
+        <aside class="product-status-card" aria-label="Screen status">
+          <span>Current screen</span>
+          <strong>Verification Workspace</strong>
+          <p>Trust score engine + risk flag engine + sealed report generator.</p>
+        </aside>
+      </section>
+
+      <section class="verifier-workspace" aria-label="Answer verifier">
+        <form class="hero-verifier full-verifier" id="landingVerifier" aria-label="AI answer verifier">
+          <header>
+            <img src="assets/answerseal-3d-logo-bright.png" alt="" />
+            <div>
+              <span class="hero-kicker">One calm input</span>
+              <h2>Verify before you trust, share, or act.</h2>
+            </div>
+          </header>
+
+          <label>
+            <span>Original question or prompt</span>
+            <textarea id="landingPrompt" rows="4" placeholder="Optional: paste the original question, prompt, or buyer request.">Can we use customer data to train AI models?</textarea>
+          </label>
+
+          <label>
+            <span>AI-generated answer</span>
+            <textarea id="landingAnswer" rows="9" placeholder="Paste the AI-generated answer you want to verify.">No. Customer content is not used to train foundation models or shared model providers. This answer is based on the approved AI Usage Standard and should be reviewed before release.</textarea>
+          </label>
+
+          <button class="hero-primary" type="submit">Verify Answer</button>
+          <button class="hero-secondary verifier-save-button" id="saveLandingReport" type="button">Save Sealed Report</button>
+          <p class="pilot-note" id="landingSaveStatus">A saved report will appear on the reports dashboard.</p>
+        </form>
+
+        <section class="verifier-result verifier-result-large" id="landingVerifierResult" aria-live="polite">
+          <div class="verifier-score">
+            <span>Trust score</span>
+            <strong id="landingTrustScore">0%</strong>
+            <b id="landingTrustStatus">Ready</b>
+          </div>
+          <div id="risk-flag-engine">
+            <span class="result-label">Risk flags</span>
+            <ul id="landingRiskFlags"></ul>
+          </div>
+          <div id="trust-score-engine">
+            <span class="result-label">Trust score engine</span>
+            <p>Factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability are scored together.</p>
+          </div>
+          <div>
+            <span class="result-label">Suggested improved answer</span>
+            <p id="landingImprovedAnswer">Run the verifier to generate a safer, clearer answer.</p>
+          </div>
+          <div>
+            <span class="result-label">Sealed report summary</span>
+            <p id="landingReportSummary">No report generated yet.</p>
+          </div>
+          <a class="hero-secondary" href="report.html">Open Sealed Report Page</a>
+        </section>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <span>AnswerSeal v0.57 Alpha</span>
+      <a href="./">Landing</a>
+      <a href="report.html">Sealed Report</a>
+      <a href="reports.html">Saved Reports</a>
+      <a href="pricing.html">Pricing</a>
+    </footer>
+    <script src="landing.js"></script>
+  </body>
+</html>

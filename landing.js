@@ -8,6 +8,21 @@ const landingTrustStatus = document.querySelector("#landingTrustStatus");
 const landingRiskFlags = document.querySelector("#landingRiskFlags");
 const landingImprovedAnswer = document.querySelector("#landingImprovedAnswer");
 const landingReportSummary = document.querySelector("#landingReportSummary");
+const saveLandingReport = document.querySelector("#saveLandingReport");
+const landingSaveStatus = document.querySelector("#landingSaveStatus");
+const savedReportsList = document.querySelector("#savedReportsList");
+const savedReportsCount = document.querySelector("#savedReportsCount");
+const sealedReportScore = document.querySelector("#sealedReportScore");
+const sealedReportStatus = document.querySelector("#sealedReportStatus");
+const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
+const sealedReportAnswer = document.querySelector("#sealedReportAnswer");
+const sealedReportImproved = document.querySelector("#sealedReportImproved");
+const sealedReportFlags = document.querySelector("#sealedReportFlags");
+const sealedReportSummary = document.querySelector("#sealedReportSummary");
+
+const PUBLIC_BUILD_VERSION = "v0.57 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v57";
+let latestLandingReport = null;
 
 if (landingVerifier) {
   landingVerifier.addEventListener("submit", (event) => {
@@ -18,8 +33,25 @@ if (landingVerifier) {
   renderLandingVerification();
 }
 
+if (saveLandingReport) {
+  saveLandingReport.addEventListener("click", () => {
+    if (!latestLandingReport || !latestLandingReport.answer.trim()) {
+      landingSaveStatus.textContent = "Paste and verify an answer before saving a sealed report.";
+      return;
+    }
+
+    const saved = savePublicReport(latestLandingReport);
+    landingSaveStatus.textContent = `Saved ${saved.status} report at ${formatReportTime(saved.createdAt)}.`;
+    renderSavedReports();
+  });
+}
+
+renderSavedReports();
+renderSealedReportPage();
+
 function renderLandingVerification() {
   const report = buildLandingTrustReport(landingPrompt.value, landingAnswer.value);
+  latestLandingReport = report;
   landingTrustScore.textContent = `${report.score}%`;
   landingTrustStatus.textContent = report.status;
   landingImprovedAnswer.textContent = report.improvedAnswer;
@@ -76,7 +108,18 @@ function buildLandingTrustReport(prompt, answer) {
     ? `${status}: ${score}% trust score. ${flags[0]}`
     : "No sealed report yet. Paste an AI answer and verify it.";
 
-  return { score, status, flags, improvedAnswer, summary };
+  return {
+    id: `seal-${Date.now()}`,
+    build: PUBLIC_BUILD_VERSION,
+    createdAt: new Date().toISOString(),
+    prompt: cleanPrompt,
+    answer: cleanAnswer,
+    score,
+    status,
+    flags,
+    improvedAnswer,
+    summary,
+  };
 }
 
 function improveLandingAnswer(answer, context) {
@@ -91,6 +134,99 @@ function improveLandingAnswer(answer, context) {
 
 function countLandingTerms(text, terms) {
   return terms.reduce((sum, term) => sum + (text.includes(term) ? 1 : 0), 0);
+}
+
+function readPublicReports() {
+  try {
+    return JSON.parse(localStorage.getItem(PUBLIC_REPORT_STORAGE_KEY) || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function savePublicReport(report) {
+  const saved = {
+    ...report,
+    id: `seal-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+  };
+  const reports = [saved, ...readPublicReports().filter((item) => item.id !== saved.id)].slice(0, 12);
+  localStorage.setItem(PUBLIC_REPORT_STORAGE_KEY, JSON.stringify(reports));
+  return saved;
+}
+
+function renderSavedReports() {
+  if (!savedReportsList) return;
+  const reports = readPublicReports();
+  if (savedReportsCount) savedReportsCount.textContent = `${reports.length} saved`;
+  savedReportsList.innerHTML = "";
+
+  const visibleReports = reports.length
+    ? reports
+    : [
+        {
+          id: "sample-report",
+          createdAt: new Date().toISOString(),
+          prompt: "Can we use customer data to train AI models?",
+          answer: "No. Customer content is not used to train foundation models or shared model providers.",
+          score: 88,
+          status: "Sealed",
+          flags: ["No major risk flags detected in this quick trust check."],
+          improvedAnswer:
+            "No. Customer content is not used to train foundation models or shared model providers. This answer can be saved as a sealed report with the attached evidence.",
+          summary: "Sealed: 88% trust score. Ready to share with evidence attached.",
+        },
+      ];
+
+  visibleReports.forEach((report) => {
+    const card = document.createElement("article");
+    card.className = "public-report-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(report.status)}</span>
+        <strong>${escapePublicHtml(String(report.score))}%</strong>
+      </header>
+      <h3>${escapePublicHtml(report.prompt || "AI answer verification")}</h3>
+      <p>${escapePublicHtml(report.summary)}</p>
+      <small>${escapePublicHtml(formatReportTime(report.createdAt))}</small>
+      <a href="report.html">Open sealed report</a>
+    `;
+    savedReportsList.append(card);
+  });
+}
+
+function renderSealedReportPage() {
+  if (!sealedReportScore) return;
+  const report =
+    readPublicReports()[0] || buildLandingTrustReport("Can we use customer data to train AI models?", "No. Customer content is not used to train foundation models or shared model providers. This answer is based on the approved AI Usage Standard and should be reviewed before release.");
+
+  sealedReportScore.textContent = `${report.score}%`;
+  sealedReportStatus.textContent = report.status;
+  sealedReportPrompt.textContent = report.prompt || "No prompt attached.";
+  sealedReportAnswer.textContent = report.answer || "No answer attached.";
+  sealedReportImproved.textContent = report.improvedAnswer;
+  sealedReportSummary.textContent = report.summary;
+  sealedReportFlags.innerHTML = "";
+  report.flags.forEach((flag) => {
+    const item = document.createElement("li");
+    item.textContent = flag;
+    sealedReportFlags.append(item);
+  });
+}
+
+function formatReportTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Just now";
+  return date.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function escapePublicHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 if (pilotForm) {
@@ -114,7 +250,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.56 Alpha - Trust Layer MVP",
+      "Pilot phase: AnswerSeal v0.57 Alpha - Product Spine",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
