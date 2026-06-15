@@ -231,6 +231,10 @@
             <svg aria-hidden="true"><use href="#icon-link"></use></svg>
             <span>Memory</span>
           </button>
+          <button class="nav-item" id="playbookStudioNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Studio</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -293,8 +297,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.50 Alpha</strong>
-          <span>Mission Memory Graph</span>
+          <strong>v0.51 Alpha</strong>
+          <span>Trust Playbook Studio</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -306,7 +310,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.50 Alpha</span>
+            <span class="label">Security questionnaire | v0.51 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -4709,6 +4713,112 @@
             <span>Promote Pattern</span>
           </button>
           <button class="secondary-button" id="copyMemoryGraphDigestButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Digest</span>
+          </button>
+        </div>
+      </section>
+    </aside>
+
+    <div class="drawer-backdrop" id="playbookStudioBackdrop" hidden></div>
+    <aside class="workspace-drawer playbook-studio-drawer" id="playbookStudioDrawer" aria-hidden="true" aria-labelledby="playbookStudioTitle">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Trust rollout</span>
+          <h2 id="playbookStudioTitle">Trust Playbook Studio</h2>
+        </div>
+        <button class="icon-button" id="closePlaybookStudioButton" type="button" aria-label="Close playbook studio" title="Close playbook studio">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="playbook-studio-body">
+        <section class="memory-strip playbook-studio-metrics" aria-label="Playbook studio status">
+          <article>
+            <span class="label">Score</span>
+            <strong id="playbookStudioScore">0%</strong>
+          </article>
+          <article>
+            <span class="label">Status</span>
+            <strong id="playbookStudioStatus">Studio ready</strong>
+          </article>
+          <article>
+            <span class="label">Steps</span>
+            <strong id="playbookStudioSteps">0</strong>
+          </article>
+          <article>
+            <span class="label">Lift</span>
+            <strong id="playbookStudioLift">+0</strong>
+          </article>
+        </section>
+
+        <section class="playbook-studio-summary-card" aria-label="Playbook studio summary">
+          <span class="label">Studio Brief</span>
+          <strong id="playbookStudioSummary">Compose a governed playbook before rollout.</strong>
+        </section>
+
+        <section class="drawer-section" aria-label="Composed playbook">
+          <div class="section-heading">
+            <span class="label">Compose</span>
+            <span>Mission, proof, handoff, boundary</span>
+          </div>
+          <div class="playbook-studio-compose-list" id="playbookStudioComposeList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Playbook simulation">
+          <div class="section-heading">
+            <span class="label">Simulate</span>
+            <span>Buyer, network, and regional paths</span>
+          </div>
+          <div class="playbook-studio-simulation-list" id="playbookStudioSimulationList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Playbook approval gates">
+          <div class="section-heading">
+            <span class="label">Approve</span>
+            <span>Source, reviewer, firewall, rollout</span>
+          </div>
+          <div class="playbook-studio-gate-list" id="playbookStudioGateList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Playbook rollout">
+          <div class="section-heading">
+            <span class="label">Rollout</span>
+            <span>Local first, safe pattern second</span>
+          </div>
+          <div class="playbook-studio-rollout-list" id="playbookStudioRolloutList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Playbook studio receipts">
+          <div class="section-heading">
+            <span class="label">Receipts</span>
+            <span>Composed, simulated, approved, copied</span>
+          </div>
+          <div class="playbook-studio-receipt-list" id="playbookStudioReceiptList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Playbook studio digest">
+          <div class="section-heading">
+            <span class="label">Digest</span>
+            <span>Copy-ready rollout brief</span>
+          </div>
+          <pre class="playbook-studio-digest" id="playbookStudioDigest"></pre>
+        </section>
+
+        <div class="drawer-actions playbook-studio-actions">
+          <button class="primary-button" id="composePlaybookStudioButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Compose</span>
+          </button>
+          <button class="secondary-button" id="simulatePlaybookStudioButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Simulate</span>
+          </button>
+          <button class="secondary-button" id="approvePlaybookStudioButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+            <span>Approve</span>
+          </button>
+          <button class="secondary-button" id="copyPlaybookStudioDigestButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
             <span>Digest</span>
           </button>

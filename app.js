@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.50 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v50";
+const BUILD_VERSION = "v0.51 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v51";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v50",
   "answerseal.workspace.v49",
   "answerseal.workspace.v48",
   "answerseal.workspace.v47",
@@ -763,6 +764,8 @@ function createInitialState() {
     missionActions: createInitialMissionActions(),
     memoryGraphOpen: false,
     memoryGraphActions: createInitialMemoryGraphActions(),
+    playbookStudioOpen: false,
+    playbookStudioActions: createInitialPlaybookStudioActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1117,6 +1120,17 @@ function createInitialMemoryGraphActions() {
   };
 }
 
+function createInitialPlaybookStudioActions() {
+  return {
+    status: "Studio ready",
+    composedAt: null,
+    simulatedAt: null,
+    approvedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1266,6 +1280,7 @@ function loadWorkspaceState() {
       commandBarActions: normalizeCommandBarActions(workspace.commandBarActions ?? fresh.commandBarActions),
       missionActions: normalizeMissionActions(workspace.missionActions ?? fresh.missionActions),
       memoryGraphActions: normalizeMemoryGraphActions(workspace.memoryGraphActions ?? fresh.memoryGraphActions),
+      playbookStudioActions: normalizePlaybookStudioActions(workspace.playbookStudioActions ?? fresh.playbookStudioActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1312,6 +1327,7 @@ function loadWorkspaceState() {
       commandBarQuery: "",
       missionOpen: false,
       memoryGraphOpen: false,
+      playbookStudioOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2208,6 +2224,29 @@ function normalizeMemoryGraphReceipt(receipt) {
   };
 }
 
+function normalizePlaybookStudioActions(actions) {
+  const status = ["Studio ready", "Playbook composed", "Simulation ready", "Rollout approved"].includes(actions?.status)
+    ? actions.status
+    : "Studio ready";
+  return {
+    status,
+    composedAt: actions?.composedAt ?? null,
+    simulatedAt: actions?.simulatedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizePlaybookStudioReceipt) : [],
+  };
+}
+
+function normalizePlaybookStudioReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `playbook-studio-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Playbook studio action"),
+    detail: String(receipt?.detail ?? "Trust Playbook Studio action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2270,6 +2309,7 @@ const elements = {
   sovereignNavButton: document.querySelector("#sovereignNavButton"),
   missionNavButton: document.querySelector("#missionNavButton"),
   memoryGraphNavButton: document.querySelector("#memoryGraphNavButton"),
+  playbookStudioNavButton: document.querySelector("#playbookStudioNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2387,6 +2427,24 @@ const elements = {
   mapMemoryGraphButton: document.querySelector("#mapMemoryGraphButton"),
   promoteMemoryPatternButton: document.querySelector("#promoteMemoryPatternButton"),
   copyMemoryGraphDigestButton: document.querySelector("#copyMemoryGraphDigestButton"),
+  playbookStudioBackdrop: document.querySelector("#playbookStudioBackdrop"),
+  playbookStudioDrawer: document.querySelector("#playbookStudioDrawer"),
+  closePlaybookStudioButton: document.querySelector("#closePlaybookStudioButton"),
+  playbookStudioScore: document.querySelector("#playbookStudioScore"),
+  playbookStudioStatus: document.querySelector("#playbookStudioStatus"),
+  playbookStudioSteps: document.querySelector("#playbookStudioSteps"),
+  playbookStudioLift: document.querySelector("#playbookStudioLift"),
+  playbookStudioSummary: document.querySelector("#playbookStudioSummary"),
+  playbookStudioComposeList: document.querySelector("#playbookStudioComposeList"),
+  playbookStudioSimulationList: document.querySelector("#playbookStudioSimulationList"),
+  playbookStudioGateList: document.querySelector("#playbookStudioGateList"),
+  playbookStudioRolloutList: document.querySelector("#playbookStudioRolloutList"),
+  playbookStudioReceiptList: document.querySelector("#playbookStudioReceiptList"),
+  playbookStudioDigest: document.querySelector("#playbookStudioDigest"),
+  composePlaybookStudioButton: document.querySelector("#composePlaybookStudioButton"),
+  simulatePlaybookStudioButton: document.querySelector("#simulatePlaybookStudioButton"),
+  approvePlaybookStudioButton: document.querySelector("#approvePlaybookStudioButton"),
+  copyPlaybookStudioDigestButton: document.querySelector("#copyPlaybookStudioDigestButton"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -3136,6 +3194,7 @@ function bindEvents() {
   elements.sovereignNavButton.addEventListener("click", openSovereignConsole);
   elements.missionNavButton.addEventListener("click", openTrustMissionAutopilot);
   elements.memoryGraphNavButton.addEventListener("click", openMissionMemoryGraph);
+  elements.playbookStudioNavButton.addEventListener("click", openTrustPlaybookStudio);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -3216,6 +3275,7 @@ function bindEvents() {
     renderCommandBar();
     renderTrustMissionAutopilot();
     renderMissionMemoryGraph();
+    renderTrustPlaybookStudio();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3475,6 +3535,12 @@ function bindEvents() {
   elements.mapMemoryGraphButton.addEventListener("click", mapMissionMemoryGraph);
   elements.promoteMemoryPatternButton.addEventListener("click", promoteMissionMemoryPattern);
   elements.copyMemoryGraphDigestButton.addEventListener("click", copyMissionMemoryGraphDigest);
+  elements.closePlaybookStudioButton.addEventListener("click", closeTrustPlaybookStudio);
+  elements.playbookStudioBackdrop.addEventListener("click", closeTrustPlaybookStudio);
+  elements.composePlaybookStudioButton.addEventListener("click", composeTrustPlaybookStudio);
+  elements.simulatePlaybookStudioButton.addEventListener("click", simulateTrustPlaybookStudio);
+  elements.approvePlaybookStudioButton.addEventListener("click", approveTrustPlaybookStudio);
+  elements.copyPlaybookStudioDigestButton.addEventListener("click", copyTrustPlaybookStudioDigest);
 
   document.addEventListener("keydown", (event) => {
     const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
@@ -3529,6 +3595,7 @@ function bindEvents() {
     if (state.sovereignOpen) closeSovereignConsole();
     if (state.missionOpen) closeTrustMissionAutopilot();
     if (state.memoryGraphOpen) closeMissionMemoryGraph();
+    if (state.playbookStudioOpen) closeTrustPlaybookStudio();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3576,6 +3643,7 @@ function applyInitialHash() {
   if (hash === "command-bar" || hash === "actions" || hash === "quick-actions" || hash === "calm-command") openCommandBar();
   if (hash === "mission" || hash === "missions" || hash === "trust-mission" || hash === "autopilot-mission") openTrustMissionAutopilot();
   if (hash === "memory" || hash === "memory-graph" || hash === "mission-memory" || hash === "mission-memory-graph") openMissionMemoryGraph();
+  if (hash === "playbook-studio" || hash === "trust-playbook-studio" || hash === "playbook-rollout") openTrustPlaybookStudio();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3637,6 +3705,7 @@ function render() {
   renderCommandBar();
   renderTrustMissionAutopilot();
   renderMissionMemoryGraph();
+  renderTrustPlaybookStudio();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4376,6 +4445,7 @@ function activateWorkspaceNav(target) {
   closeBuyerTrustGraph(false);
   closeTrustMissionAutopilot(false);
   closeMissionMemoryGraph(false);
+  closeTrustPlaybookStudio(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -4463,6 +4533,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.memoryGraphNavButton && state.memoryGraphOpen) {
     closeMissionMemoryGraph(false);
   }
+  if (activeButton !== elements.playbookStudioNavButton && state.playbookStudioOpen) {
+    closeTrustPlaybookStudio(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4498,6 +4571,7 @@ function setActiveNav(activeButton) {
     elements.sovereignNavButton,
     elements.missionNavButton,
     elements.memoryGraphNavButton,
+    elements.playbookStudioNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -6149,6 +6223,7 @@ function commandCatalog() {
   const feedback = buyerFeedbackLoopSnapshot();
   const mission = trustMissionSnapshot();
   const memoryGraph = missionMemoryGraphSnapshot();
+  const playbookStudio = trustPlaybookStudioSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
   const common = [
     {
@@ -6172,6 +6247,17 @@ function commandCatalog() {
       reason: "The memory graph separates local answer memory from aggregate-safe patterns before learning improves the next review.",
       run: openMissionMemoryGraph,
       keywords: ["memory", "graph", "learning", "local", "network", "pattern", "playbook"],
+    },
+    {
+      id: "trust-playbook-studio",
+      scope: "Studio",
+      title: "Open Playbook Studio",
+      detail: `${playbookStudio.steps.length} rollout steps with +${playbookStudio.expectedLift} expected trust-cycle lift.`,
+      signal: playbookStudio.statusLabel,
+      cta: "Open Studio",
+      reason: "The Studio turns mission memory into a governed playbook that can be composed, simulated, approved, and reused.",
+      run: openTrustPlaybookStudio,
+      keywords: ["studio", "playbook", "compose", "simulate", "approve", "rollout", "reuse"],
     },
     {
       id: "review-desk",
@@ -6298,7 +6384,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v46 with mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
+      detail: `Create Review Pack v47 with trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -6344,6 +6430,7 @@ function recommendedCommand(commands) {
   const firewall = networkFirewallSnapshot();
   const feedback = buyerFeedbackLoopSnapshot();
   const memoryGraph = missionMemoryGraphSnapshot();
+  const playbookStudio = trustPlaybookStudioSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
 
   const preferredId =
@@ -6355,11 +6442,13 @@ function recommendedCommand(commands) {
           ? "trust-mission"
           : feedback.requests.length > 0
             ? "trust-mission"
+            : state.playbookStudioActions.status !== "Studio ready" || playbookStudio.receipts.length > 0
+              ? "trust-playbook-studio"
             : state.missionActions.status === "Outcome captured" || memoryGraph.receipts.length > 0
-              ? "mission-memory-graph"
-            : approvedCount > 0
-              ? "export-review-pack"
-              : "import-studio";
+              ? "trust-playbook-studio"
+              : approvedCount > 0
+                ? "export-review-pack"
+                : "import-studio";
 
   return commands.find((command) => command.id === preferredId) ?? commands[0];
 }
@@ -7091,6 +7180,401 @@ function missionMemoryGraphDigestText(memoryGraph = missionMemoryGraphSnapshot()
     "",
     "Recommended playbooks:",
     playbookLines,
+  ].join("\n");
+}
+
+function openTrustPlaybookStudio() {
+  closeCommandBar();
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
+  closeNetworkFirewall(false);
+  closeSovereignConsole(false);
+  closeTrustMissionAutopilot(false);
+  closeMissionMemoryGraph(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  setActiveNav(elements.playbookStudioNavButton);
+  state.playbookStudioOpen = true;
+  elements.playbookStudioBackdrop.hidden = false;
+  elements.playbookStudioDrawer.classList.add("is-open");
+  elements.playbookStudioDrawer.setAttribute("aria-hidden", "false");
+  renderTrustPlaybookStudio();
+  elements.composePlaybookStudioButton.focus();
+  schedulePersist("Playbook studio ready");
+}
+
+function closeTrustPlaybookStudio(activateReview = true) {
+  if (!state.playbookStudioOpen && elements.playbookStudioDrawer.getAttribute("aria-hidden") === "true") return;
+  state.playbookStudioOpen = false;
+  elements.playbookStudioDrawer.classList.remove("is-open");
+  elements.playbookStudioDrawer.setAttribute("aria-hidden", "true");
+  elements.playbookStudioBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderTrustPlaybookStudio() {
+  const studio = trustPlaybookStudioSnapshot();
+  elements.playbookStudioScore.textContent = `${studio.score}%`;
+  elements.playbookStudioStatus.textContent = studio.statusLabel;
+  elements.playbookStudioSteps.textContent = studio.steps.length;
+  elements.playbookStudioLift.textContent = `+${studio.expectedLift}`;
+  elements.playbookStudioSummary.textContent = studio.summary;
+  elements.playbookStudioDigest.textContent = trustPlaybookStudioDigestText(studio);
+
+  elements.playbookStudioComposeList.innerHTML = "";
+  studio.steps.forEach((step) => {
+    const card = document.createElement("article");
+    card.className = "playbook-studio-step-card";
+    card.innerHTML = `
+      <span>${escapeHtml(step.number)}</span>
+      <strong>${escapeHtml(step.title)}</strong>
+      <p>${escapeHtml(step.detail)}</p>
+      <small>${escapeHtml(step.owner)} | ${escapeHtml(step.signal)}</small>
+    `;
+    elements.playbookStudioComposeList.append(card);
+  });
+
+  elements.playbookStudioSimulationList.innerHTML = "";
+  studio.simulations.forEach((simulation) => {
+    const card = document.createElement("article");
+    card.className = `playbook-studio-simulation-card ${simulation.status === "Ready" ? "is-ready" : "is-watch"}`;
+    card.innerHTML = `
+      <strong>${escapeHtml(simulation.title)}</strong>
+      <p>${escapeHtml(simulation.detail)}</p>
+      <small>${escapeHtml(simulation.status)} | Lift ${escapeHtml(simulation.lift)}</small>
+    `;
+    elements.playbookStudioSimulationList.append(card);
+  });
+
+  elements.playbookStudioGateList.innerHTML = "";
+  studio.gates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `playbook-studio-gate-card ${gate.status === "Pass" ? "is-pass" : "is-review"}`;
+    card.innerHTML = `
+      <strong>${escapeHtml(gate.title)}</strong>
+      <p>${escapeHtml(gate.detail)}</p>
+      <small>${escapeHtml(gate.status)} | ${escapeHtml(gate.owner)}</small>
+    `;
+    elements.playbookStudioGateList.append(card);
+  });
+
+  elements.playbookStudioRolloutList.innerHTML = "";
+  studio.rollout.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "playbook-studio-rollout-card";
+    card.innerHTML = `
+      <span>${escapeHtml(item.stage)}</span>
+      <strong>${escapeHtml(item.title)}</strong>
+      <p>${escapeHtml(item.detail)}</p>
+      <small>${escapeHtml(item.boundary)}</small>
+    `;
+    elements.playbookStudioRolloutList.append(card);
+  });
+
+  elements.playbookStudioReceiptList.innerHTML = "";
+  if (studio.receipts.length === 0) {
+    elements.playbookStudioReceiptList.append(emptyState("No studio receipts yet"));
+  } else {
+    studio.receipts.forEach((receipt) => {
+      const card = document.createElement("article");
+      card.className = "playbook-studio-receipt-card";
+      card.innerHTML = `
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.detail)}</span>
+        <small>${escapeHtml(formatAuditTime(receipt.at))}</small>
+      `;
+      elements.playbookStudioReceiptList.append(card);
+    });
+  }
+}
+
+function trustPlaybookStudioSnapshot() {
+  const mission = trustMissionSnapshot();
+  const memoryGraph = missionMemoryGraphSnapshot();
+  const playbooks = adaptivePlaybookSnapshot();
+  const simulator = policySimulatorSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const feedback = buyerFeedbackLoopSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const activeQuestion = getActiveQuestion();
+  const topPlaybook = playbooks.playbooks[0];
+  const memoryPlaybook = memoryGraph.playbooks[0];
+  const simulationLift = Number.isFinite(Number(simulator.bestLift)) ? Number(simulator.bestLift) : 8;
+  const expectedLift = Math.max(8, Math.min(24, simulationLift + memoryGraph.safePatternCount + Math.max(1, playbooks.playbooks.length)));
+  const sourceGatePass = coverageSnapshot().score >= 80 && gaps.highRiskCount <= 1;
+  const reviewerGatePass = state.questions.some((question) => question.status === "approved") || state.missionActions.status === "Outcome captured";
+  const firewallGatePass = firewall.blockedCount === 0 && firewall.quarantineCount <= 1;
+  const rolloutGatePass = simulator.blockedCount === 0 && playbooks.gates.filter((gate) => gate.status !== "Approved").length <= 1;
+
+  const steps = [
+    {
+      number: "01",
+      title: topPlaybook?.title ?? memoryPlaybook?.title ?? "AI governance proof playbook",
+      owner: mission.owner,
+      signal: mission.statusLabel,
+      detail: topPlaybook?.action ?? memoryPlaybook?.detail ?? "Use the current mission and memory graph to harden buyer-facing AI governance answers.",
+    },
+    {
+      number: "02",
+      title: "Proof move",
+      owner: activeQuestion ? memberForQuestion(activeQuestion).name : "Evidence owner",
+      signal: `${coverageSnapshot().score}% coverage`,
+      detail: mission.proofMove,
+    },
+    {
+      number: "03",
+      title: "Buyer handoff",
+      owner: feedback.requests[0]?.owner ?? "Sales engineer",
+      signal: `${feedback.requests.length} feedback requests`,
+      detail: mission.buyerHandoff,
+    },
+    {
+      number: "04",
+      title: "Learning boundary",
+      owner: "Governance owner",
+      signal: `${memoryGraph.safePatternCount} safe patterns`,
+      detail: memoryGraph.safePatterns[0]?.guardrail
+        ? `${mission.learningBoundary} Guardrail: ${memoryGraph.safePatterns[0].guardrail}.`
+        : mission.learningBoundary,
+    },
+  ];
+
+  const simulations = [
+    {
+      title: "Current buyer review",
+      status: sourceGatePass ? "Ready" : "Watch",
+      lift: `+${expectedLift}`,
+      detail: `Expected to reduce weak proof loops by using ${memoryGraph.nodeCount} memory nodes and ${memoryGraph.safePatternCount} safe pattern classes.`,
+    },
+    {
+      title: "Next enterprise questionnaire",
+      status: firewallGatePass ? "Ready" : "Watch",
+      lift: `+${Math.max(6, expectedLift - 4)}`,
+      detail: "Reuses only category, freshness, and proof-demand classes. Raw answers and buyer wording stay local.",
+    },
+    {
+      title: "Regional rollout",
+      status: rolloutGatePass ? "Ready" : "Watch",
+      lift: `+${Math.max(5, expectedLift - 7)}`,
+      detail: "Tests whether the same proof move survives policy, region, environment, and reviewer gates.",
+    },
+  ];
+
+  const gates = [
+    {
+      title: "Source coverage",
+      status: sourceGatePass ? "Pass" : "Review",
+      owner: "Evidence owner",
+      detail: sourceGatePass
+        ? "Coverage is strong enough to compose the playbook."
+        : "Attach stronger or fresher evidence before this playbook is reused.",
+    },
+    {
+      title: "Reviewer approval",
+      status: reviewerGatePass ? "Pass" : "Review",
+      owner: "Reviewer",
+      detail: reviewerGatePass
+        ? "At least one approved or captured mission outcome can anchor local memory."
+        : "A human approval is required before the playbook can become reusable.",
+    },
+    {
+      title: "Learning firewall",
+      status: firewallGatePass ? "Pass" : "Review",
+      owner: "Governance owner",
+      detail: firewallGatePass
+        ? "No raw answers, files, prompts, or buyer context are eligible for network learning."
+        : "Blocked or quarantined signals must be classified before rollout.",
+    },
+    {
+      title: "Rollout simulation",
+      status: rolloutGatePass ? "Pass" : "Review",
+      owner: "Product owner",
+      detail: rolloutGatePass
+        ? "Simulation is clear enough for a controlled pilot rollout."
+        : "Simulation found rollout gates that need review before broad reuse.",
+    },
+  ];
+
+  const rollout = [
+    {
+      stage: "Pilot",
+      title: "Apply inside Aster Health review",
+      boundary: "Tenant local",
+      detail: "Use the composed playbook only on the active buyer review until the reviewer approves the result.",
+    },
+    {
+      stage: "Memory",
+      title: "Strengthen local answer memory",
+      boundary: "Approved language only",
+      detail: "Approved wording becomes easier to reuse inside the workspace with citations and receipts attached.",
+    },
+    {
+      stage: "Network",
+      title: "Promote aggregate-safe pattern",
+      boundary: "Pattern label only",
+      detail: "Only proof class, freshness class, and outcome band can improve recommendations for other organizations.",
+    },
+    {
+      stage: "Ops",
+      title: "Record rollout receipt",
+      boundary: "Audit trail",
+      detail: "A receipt explains which playbook was composed, simulated, approved, and copied.",
+    },
+  ];
+
+  const passCount = gates.filter((gate) => gate.status === "Pass").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        memoryGraph.score * 0.28
+          + playbooks.score * 0.22
+          + simulator.score * 0.18
+          + mission.score * 0.16
+          + Math.min(100, passCount * 25) * 0.16,
+      ),
+    ),
+  );
+  const statusLabel =
+    state.playbookStudioActions.status === "Studio ready" && passCount >= 3
+      ? "Ready to compose"
+      : state.playbookStudioActions.status === "Studio ready"
+        ? "Needs gate review"
+        : state.playbookStudioActions.status;
+  const summary = `${steps.length} playbook steps convert the memory graph into a governed rollout plan with ${passCount}/${gates.length} gates passing and +${expectedLift} expected trust-cycle lift.`;
+
+  return {
+    score,
+    statusLabel,
+    expectedLift,
+    summary,
+    steps,
+    simulations,
+    gates,
+    rollout,
+    receipts: state.playbookStudioActions.receipts.slice(0, 8),
+  };
+}
+
+function composeTrustPlaybookStudio() {
+  const studio = trustPlaybookStudioSnapshot();
+  state.playbookStudioActions.status = "Playbook composed";
+  state.playbookStudioActions.composedAt = new Date().toISOString();
+  addPlaybookStudioReceipt("Playbook composed", `${studio.steps.length} steps composed from mission memory and adaptive playbooks.`);
+  addAudit("Trust playbook composed", studio.summary);
+  renderTrustPlaybookStudio();
+  renderCommandBar();
+  showToast("Trust playbook composed.");
+}
+
+function simulateTrustPlaybookStudio() {
+  const studio = trustPlaybookStudioSnapshot();
+  state.playbookStudioActions.status = "Simulation ready";
+  state.playbookStudioActions.simulatedAt = new Date().toISOString();
+  addPlaybookStudioReceipt("Playbook simulated", `${studio.simulations.length} paths tested with +${studio.expectedLift} expected lift.`);
+  addAudit("Trust playbook simulated", "Trust Playbook Studio simulation prepared for buyer, network, and regional rollout paths.");
+  renderTrustPlaybookStudio();
+  renderCommandBar();
+  showToast("Trust playbook simulated.");
+}
+
+function approveTrustPlaybookStudio() {
+  const studio = trustPlaybookStudioSnapshot();
+  state.playbookStudioActions.status = "Rollout approved";
+  state.playbookStudioActions.approvedAt = new Date().toISOString();
+  addPlaybookStudioReceipt("Rollout approved", `${studio.gates.filter((gate) => gate.status === "Pass").length}/${studio.gates.length} gates passed for controlled rollout.`);
+  addAudit("Trust playbook rollout approved", "Controlled rollout approved with local memory, safe pattern, and audit boundaries.");
+  renderTrustPlaybookStudio();
+  renderCommandBar();
+  showToast("Trust playbook rollout approved.");
+}
+
+function addPlaybookStudioReceipt(action, detail) {
+  state.playbookStudioActions.receipts.unshift({
+    id: `playbook-studio-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.playbookStudioActions.receipts = state.playbookStudioActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function copyTrustPlaybookStudioDigest() {
+  const studio = trustPlaybookStudioSnapshot();
+  state.playbookStudioActions.lastCopiedAt = new Date().toISOString();
+  addPlaybookStudioReceipt("Studio digest copied", `${studio.steps.length} steps and ${studio.gates.length} gates copied.`);
+  addAudit("Trust playbook studio digest copied", "Trust Playbook Studio digest copied for pilot rollout review.");
+  renderTrustPlaybookStudio();
+  copyText(trustPlaybookStudioDigestText(studio), "Trust playbook digest copied.");
+}
+
+function trustPlaybookStudioDigestText(studio = trustPlaybookStudioSnapshot()) {
+  const stepLines = studio.steps.map((step) => `${step.number}. ${step.title} | ${step.owner} | ${step.signal}\n   ${step.detail}`).join("\n");
+  const simulationLines = studio.simulations.map((simulation, index) => `${index + 1}. ${simulation.title} | ${simulation.status} | ${simulation.lift}\n   ${simulation.detail}`).join("\n");
+  const gateLines = studio.gates.map((gate, index) => `${index + 1}. ${gate.title} | ${gate.status} | ${gate.owner}\n   ${gate.detail}`).join("\n");
+  const rolloutLines = studio.rollout.map((item, index) => `${index + 1}. ${item.stage}: ${item.title} | ${item.boundary}\n   ${item.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Trust Playbook Studio",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${studio.statusLabel}`,
+    `Studio score: ${studio.score}%`,
+    `Expected trust-cycle lift: +${studio.expectedLift}`,
+    "",
+    "Summary:",
+    studio.summary,
+    "",
+    "Composed playbook:",
+    stepLines,
+    "",
+    "Simulation:",
+    simulationLines,
+    "",
+    "Approval gates:",
+    gateLines,
+    "",
+    "Rollout:",
+    rolloutLines,
+    "",
+    "Boundary:",
+    "Use local answer memory inside the tenant. Share only aggregate-safe pattern labels, freshness classes, proof-demand classes, and outcome bands.",
   ].join("\n");
 }
 
@@ -22567,6 +23051,12 @@ function exportCsv() {
     "Memory Local Items",
     "Memory Playbooks",
     "Memory Receipts",
+    "Playbook Studio Status",
+    "Playbook Studio Score",
+    "Studio Steps",
+    "Studio Expected Lift",
+    "Studio Gates Pass",
+    "Studio Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -22614,6 +23104,7 @@ function exportCsv() {
     const commandBar = commandBarSnapshot();
     const mission = trustMissionSnapshot();
     const memoryGraph = missionMemoryGraphSnapshot();
+    const playbookStudio = trustPlaybookStudioSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -22838,6 +23329,12 @@ function exportCsv() {
       memoryGraph.localMemory.length,
       memoryGraph.playbooks.length,
       memoryGraph.receipts.length,
+      playbookStudio.statusLabel,
+      `${playbookStudio.score}%`,
+      playbookStudio.steps.length,
+      `+${playbookStudio.expectedLift}`,
+      `${playbookStudio.gates.filter((gate) => gate.status === "Pass").length}/${playbookStudio.gates.length}`,
+      playbookStudio.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -22895,6 +23392,7 @@ function exportReviewPack() {
   const commandBar = commandBarSnapshot();
   const mission = trustMissionSnapshot();
   const memoryGraph = missionMemoryGraphSnapshot();
+  const playbookStudio = trustPlaybookStudioSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -22912,7 +23410,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v46</h1>
+        <h1>AnswerSeal Review Pack v47</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -25734,6 +26232,133 @@ function exportReviewPack() {
         </table>
         <h2>Memory Graph Digest</h2>
         <pre>${escapeHtml(missionMemoryGraphDigestText(memoryGraph))}</pre>
+        <h2>Trust Playbook Studio</h2>
+        <p>Status: ${escapeHtml(playbookStudio.statusLabel)} | Studio score: ${playbookStudio.score}% | Steps: ${playbookStudio.steps.length} | Expected lift: +${playbookStudio.expectedLift}</p>
+        <p>${escapeHtml(playbookStudio.summary)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Owner</th>
+              <th>Signal</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${playbookStudio.steps
+              .map(
+                (step) => `
+                  <tr>
+                    <td>${escapeHtml(step.number)}<br />${escapeHtml(step.title)}</td>
+                    <td>${escapeHtml(step.owner)}</td>
+                    <td>${escapeHtml(step.signal)}</td>
+                    <td>${escapeHtml(step.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Simulation</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Path</th>
+              <th>Status</th>
+              <th>Lift</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${playbookStudio.simulations
+              .map(
+                (simulation) => `
+                  <tr>
+                    <td>${escapeHtml(simulation.title)}</td>
+                    <td class="${simulation.status === "Ready" ? "ok" : "risk"}">${escapeHtml(simulation.status)}</td>
+                    <td>${escapeHtml(simulation.lift)}</td>
+                    <td>${escapeHtml(simulation.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Approval Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${playbookStudio.gates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Pass" ? "ok" : "risk"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.owner)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Rollout</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Title</th>
+              <th>Boundary</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${playbookStudio.rollout
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.stage)}</td>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.boundary)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Studio Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(playbookStudio.receipts.length ? playbookStudio.receipts : [{ action: "Studio ready", detail: "No playbook studio receipts yet.", at: new Date().toISOString() }])
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                    <td>${escapeHtml(formatAuditTime(receipt.at))}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Playbook Studio Digest</h2>
+        <pre>${escapeHtml(trustPlaybookStudioDigestText(playbookStudio))}</pre>
         <h2>Calm Command Bar</h2>
         <p>Status: ${escapeHtml(commandBar.statusLabel)} | Commands: ${commandBar.commands.length} | Recommended: ${escapeHtml(commandBar.recommended.title)} | Receipts: ${commandBar.receipts.length}</p>
         <table>
@@ -26498,7 +27123,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v46 created with mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v47 created with trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -26533,12 +27158,13 @@ function exportReviewPack() {
   renderCommandBar();
   renderTrustMissionAutopilot();
   renderMissionMemoryGraph();
+  renderTrustPlaybookStudio();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v46 exported.");
+  showToast("Review Pack v47 exported.");
 }
 
 function toCsv(rows) {
@@ -26625,6 +27251,7 @@ function serializeWorkspace() {
     commandBarActions: state.commandBarActions,
     missionActions: state.missionActions,
     memoryGraphActions: state.memoryGraphActions,
+    playbookStudioActions: state.playbookStudioActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -26682,6 +27309,7 @@ function resetWorkspace() {
   closeCommandBar();
   closeTrustMissionAutopilot(false);
   closeMissionMemoryGraph(false);
+  closeTrustPlaybookStudio(false);
   closeWorkspace(false);
   closeLibrary();
   render();

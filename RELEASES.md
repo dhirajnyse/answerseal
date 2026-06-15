@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.51 Alpha - Trust Playbook Studio
+
+Phase: Trust Playbook Studio
+
+- Added a Trust Playbook Studio drawer that turns mission memory into composed, simulated, and approved rollout playbooks.
+- Added studio score, status, rollout step count, expected trust-cycle lift, studio summary, composed playbook steps, simulations, approval gates, rollout plan, digest, and receipts.
+- Added governed actions for composing the playbook, simulating buyer/network/regional rollout, approving controlled rollout, and copying the studio digest.
+- Added Studio to the Calm Command Bar and made it the recommended next action once mission memory is ready for a governed playbook.
+- Added playbook studio status, score, step count, expected lift, gate pass count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v47 with Trust Playbook Studio sections for composition, simulation, gates, rollout, receipts, and digest.
+- Updated the landing page around governed trust playbooks and the build phases page with the v0.52 Outcome Learning Console plan.
+
 ## v0.50 Alpha - Mission Memory Graph
 
 Phase: Mission Memory Graph
