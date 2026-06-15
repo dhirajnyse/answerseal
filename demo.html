@@ -235,6 +235,10 @@
             <svg aria-hidden="true"><use href="#icon-check"></use></svg>
             <span>Studio</span>
           </button>
+          <button class="nav-item" id="outcomeConsoleNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Learning</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -297,8 +301,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.51 Alpha</strong>
-          <span>Trust Playbook Studio</span>
+          <strong>v0.52 Alpha</strong>
+          <span>Outcome Learning Console</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -310,7 +314,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.51 Alpha</span>
+            <span class="label">Security questionnaire | v0.52 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -4819,6 +4823,116 @@
             <span>Approve</span>
           </button>
           <button class="secondary-button" id="copyPlaybookStudioDigestButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Digest</span>
+          </button>
+        </div>
+      </section>
+    </aside>
+
+    <div class="drawer-backdrop" id="outcomeConsoleBackdrop" hidden></div>
+    <aside class="workspace-drawer outcome-console-drawer" id="outcomeConsoleDrawer" aria-hidden="true" aria-labelledby="outcomeConsoleTitle">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Closed-loop learning</span>
+          <h2 id="outcomeConsoleTitle">Outcome Learning Console</h2>
+        </div>
+        <button class="icon-button" id="closeOutcomeConsoleButton" type="button" aria-label="Close outcome learning console" title="Close outcome learning console">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="outcome-console-body">
+        <section class="memory-strip outcome-console-metrics" aria-label="Outcome learning status">
+          <article>
+            <span class="label">Score</span>
+            <strong id="outcomeConsoleScore">0%</strong>
+          </article>
+          <article>
+            <span class="label">Status</span>
+            <strong id="outcomeConsoleStatus">Console ready</strong>
+          </article>
+          <article>
+            <span class="label">Outcomes</span>
+            <strong id="outcomeConsoleOutcomes">0</strong>
+          </article>
+          <article>
+            <span class="label">Safe Signals</span>
+            <strong id="outcomeConsoleSafeSignals">0/0</strong>
+          </article>
+          <article>
+            <span class="label">Lift</span>
+            <strong id="outcomeConsoleLift">+0</strong>
+          </article>
+        </section>
+
+        <section class="outcome-console-summary-card" aria-label="Outcome learning summary">
+          <span class="label">Learning Brief</span>
+          <strong id="outcomeConsoleSummary">Capture outcomes before recommendations learn.</strong>
+        </section>
+
+        <section class="drawer-section" aria-label="Captured outcomes">
+          <div class="section-heading">
+            <span class="label">Capture</span>
+            <span>Rollout, buyer, revenue, boundary</span>
+          </div>
+          <div class="outcome-console-capture-list" id="outcomeConsoleCaptureList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Learning quality gates">
+          <div class="section-heading">
+            <span class="label">Score</span>
+            <span>Evidence, outcome, privacy, eval</span>
+          </div>
+          <div class="outcome-console-quality-list" id="outcomeConsoleQualityList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Outcome learning tuning">
+          <div class="section-heading">
+            <span class="label">Tune</span>
+            <span>Rewards, penalties, reviewer confidence</span>
+          </div>
+          <div class="outcome-console-tune-list" id="outcomeConsoleTuneList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Network safe learning">
+          <div class="section-heading">
+            <span class="label">Share</span>
+            <span>Aggregate-safe only</span>
+          </div>
+          <div class="outcome-console-share-list" id="outcomeConsoleShareList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Outcome learning receipts">
+          <div class="section-heading">
+            <span class="label">Receipts</span>
+            <span>Captured, tuned, published, copied</span>
+          </div>
+          <div class="outcome-console-receipt-list" id="outcomeConsoleReceiptList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Outcome learning digest">
+          <div class="section-heading">
+            <span class="label">Digest</span>
+            <span>Copy-ready closed-loop brief</span>
+          </div>
+          <pre class="outcome-console-digest" id="outcomeConsoleDigest"></pre>
+        </section>
+
+        <div class="drawer-actions outcome-console-actions">
+          <button class="primary-button" id="captureOutcomeConsoleButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Capture</span>
+          </button>
+          <button class="secondary-button" id="tuneOutcomeConsoleButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Tune</span>
+          </button>
+          <button class="secondary-button" id="publishOutcomeConsoleButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span>Publish</span>
+          </button>
+          <button class="secondary-button" id="copyOutcomeConsoleDigestButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
             <span>Digest</span>
           </button>

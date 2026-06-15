@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.52 Alpha - Outcome Learning Console
+
+Phase: Outcome Learning Console
+
+- Added an Outcome Learning Console drawer that captures rollout outcomes, buyer feedback signals, revenue movement, and learning boundary decisions in one calm closed-loop surface.
+- Added learning quality gates for evidence quality, outcome quality, privacy quality, and evaluation quality before recommendations can improve.
+- Added safe tuning actions for proof freshness, rewards, unsafe sharing candidates, and reviewer confidence.
+- Added aggregate-safe sharing signals that distinguish shareable proof classes, freshness bands, outcome bands, and guardrail labels from tenant-local buyer data.
+- Added outcome learning receipts and a copy-ready learning digest for governed rollout review.
+- Added outcome learning context to CSV export and upgraded review pack export to Review Pack v48 with Outcome Learning Console sections.
+- Updated the landing page around closed-loop outcome learning and the build phases page with the v0.53 Reinforcement Policy Board plan.
+
 ## v0.51 Alpha - Trust Playbook Studio
 
 Phase: Trust Playbook Studio

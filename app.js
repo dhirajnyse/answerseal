@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.51 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v51";
+const BUILD_VERSION = "v0.52 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v52";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v51",
   "answerseal.workspace.v50",
   "answerseal.workspace.v49",
   "answerseal.workspace.v48",
@@ -766,6 +767,8 @@ function createInitialState() {
     memoryGraphActions: createInitialMemoryGraphActions(),
     playbookStudioOpen: false,
     playbookStudioActions: createInitialPlaybookStudioActions(),
+    outcomeConsoleOpen: false,
+    outcomeConsoleActions: createInitialOutcomeConsoleActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1131,6 +1134,17 @@ function createInitialPlaybookStudioActions() {
   };
 }
 
+function createInitialOutcomeConsoleActions() {
+  return {
+    status: "Console ready",
+    capturedAt: null,
+    tunedAt: null,
+    publishedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1281,6 +1295,7 @@ function loadWorkspaceState() {
       missionActions: normalizeMissionActions(workspace.missionActions ?? fresh.missionActions),
       memoryGraphActions: normalizeMemoryGraphActions(workspace.memoryGraphActions ?? fresh.memoryGraphActions),
       playbookStudioActions: normalizePlaybookStudioActions(workspace.playbookStudioActions ?? fresh.playbookStudioActions),
+      outcomeConsoleActions: normalizeOutcomeConsoleActions(workspace.outcomeConsoleActions ?? fresh.outcomeConsoleActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1328,6 +1343,7 @@ function loadWorkspaceState() {
       missionOpen: false,
       memoryGraphOpen: false,
       playbookStudioOpen: false,
+      outcomeConsoleOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2247,6 +2263,29 @@ function normalizePlaybookStudioReceipt(receipt) {
   };
 }
 
+function normalizeOutcomeConsoleActions(actions) {
+  const status = ["Console ready", "Outcomes captured", "Policy tuned", "Safe signals published"].includes(actions?.status)
+    ? actions.status
+    : "Console ready";
+  return {
+    status,
+    capturedAt: actions?.capturedAt ?? null,
+    tunedAt: actions?.tunedAt ?? null,
+    publishedAt: actions?.publishedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeOutcomeConsoleReceipt) : [],
+  };
+}
+
+function normalizeOutcomeConsoleReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `outcome-console-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Outcome learning action"),
+    detail: String(receipt?.detail ?? "Outcome Learning Console action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2310,6 +2349,7 @@ const elements = {
   missionNavButton: document.querySelector("#missionNavButton"),
   memoryGraphNavButton: document.querySelector("#memoryGraphNavButton"),
   playbookStudioNavButton: document.querySelector("#playbookStudioNavButton"),
+  outcomeConsoleNavButton: document.querySelector("#outcomeConsoleNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2445,6 +2485,25 @@ const elements = {
   simulatePlaybookStudioButton: document.querySelector("#simulatePlaybookStudioButton"),
   approvePlaybookStudioButton: document.querySelector("#approvePlaybookStudioButton"),
   copyPlaybookStudioDigestButton: document.querySelector("#copyPlaybookStudioDigestButton"),
+  outcomeConsoleBackdrop: document.querySelector("#outcomeConsoleBackdrop"),
+  outcomeConsoleDrawer: document.querySelector("#outcomeConsoleDrawer"),
+  closeOutcomeConsoleButton: document.querySelector("#closeOutcomeConsoleButton"),
+  outcomeConsoleScore: document.querySelector("#outcomeConsoleScore"),
+  outcomeConsoleStatus: document.querySelector("#outcomeConsoleStatus"),
+  outcomeConsoleOutcomes: document.querySelector("#outcomeConsoleOutcomes"),
+  outcomeConsoleSafeSignals: document.querySelector("#outcomeConsoleSafeSignals"),
+  outcomeConsoleLift: document.querySelector("#outcomeConsoleLift"),
+  outcomeConsoleSummary: document.querySelector("#outcomeConsoleSummary"),
+  outcomeConsoleCaptureList: document.querySelector("#outcomeConsoleCaptureList"),
+  outcomeConsoleQualityList: document.querySelector("#outcomeConsoleQualityList"),
+  outcomeConsoleTuneList: document.querySelector("#outcomeConsoleTuneList"),
+  outcomeConsoleShareList: document.querySelector("#outcomeConsoleShareList"),
+  outcomeConsoleReceiptList: document.querySelector("#outcomeConsoleReceiptList"),
+  outcomeConsoleDigest: document.querySelector("#outcomeConsoleDigest"),
+  captureOutcomeConsoleButton: document.querySelector("#captureOutcomeConsoleButton"),
+  tuneOutcomeConsoleButton: document.querySelector("#tuneOutcomeConsoleButton"),
+  publishOutcomeConsoleButton: document.querySelector("#publishOutcomeConsoleButton"),
+  copyOutcomeConsoleDigestButton: document.querySelector("#copyOutcomeConsoleDigestButton"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -3195,6 +3254,7 @@ function bindEvents() {
   elements.missionNavButton.addEventListener("click", openTrustMissionAutopilot);
   elements.memoryGraphNavButton.addEventListener("click", openMissionMemoryGraph);
   elements.playbookStudioNavButton.addEventListener("click", openTrustPlaybookStudio);
+  elements.outcomeConsoleNavButton.addEventListener("click", openOutcomeLearningConsole);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -3276,6 +3336,7 @@ function bindEvents() {
     renderTrustMissionAutopilot();
     renderMissionMemoryGraph();
     renderTrustPlaybookStudio();
+    renderOutcomeLearningConsole();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3541,6 +3602,12 @@ function bindEvents() {
   elements.simulatePlaybookStudioButton.addEventListener("click", simulateTrustPlaybookStudio);
   elements.approvePlaybookStudioButton.addEventListener("click", approveTrustPlaybookStudio);
   elements.copyPlaybookStudioDigestButton.addEventListener("click", copyTrustPlaybookStudioDigest);
+  elements.closeOutcomeConsoleButton.addEventListener("click", closeOutcomeLearningConsole);
+  elements.outcomeConsoleBackdrop.addEventListener("click", closeOutcomeLearningConsole);
+  elements.captureOutcomeConsoleButton.addEventListener("click", captureOutcomeLearning);
+  elements.tuneOutcomeConsoleButton.addEventListener("click", tuneOutcomeLearningPolicy);
+  elements.publishOutcomeConsoleButton.addEventListener("click", publishOutcomeLearningSignals);
+  elements.copyOutcomeConsoleDigestButton.addEventListener("click", copyOutcomeLearningDigest);
 
   document.addEventListener("keydown", (event) => {
     const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
@@ -3596,6 +3663,7 @@ function bindEvents() {
     if (state.missionOpen) closeTrustMissionAutopilot();
     if (state.memoryGraphOpen) closeMissionMemoryGraph();
     if (state.playbookStudioOpen) closeTrustPlaybookStudio();
+    if (state.outcomeConsoleOpen) closeOutcomeLearningConsole();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3644,6 +3712,7 @@ function applyInitialHash() {
   if (hash === "mission" || hash === "missions" || hash === "trust-mission" || hash === "autopilot-mission") openTrustMissionAutopilot();
   if (hash === "memory" || hash === "memory-graph" || hash === "mission-memory" || hash === "mission-memory-graph") openMissionMemoryGraph();
   if (hash === "playbook-studio" || hash === "trust-playbook-studio" || hash === "playbook-rollout") openTrustPlaybookStudio();
+  if (hash === "outcome-console" || hash === "outcome-learning" || hash === "learning-console" || hash === "closed-loop") openOutcomeLearningConsole();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3706,6 +3775,7 @@ function render() {
   renderTrustMissionAutopilot();
   renderMissionMemoryGraph();
   renderTrustPlaybookStudio();
+  renderOutcomeLearningConsole();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4446,6 +4516,7 @@ function activateWorkspaceNav(target) {
   closeTrustMissionAutopilot(false);
   closeMissionMemoryGraph(false);
   closeTrustPlaybookStudio(false);
+  closeOutcomeLearningConsole(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -4536,6 +4607,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.playbookStudioNavButton && state.playbookStudioOpen) {
     closeTrustPlaybookStudio(false);
   }
+  if (activeButton !== elements.outcomeConsoleNavButton && state.outcomeConsoleOpen) {
+    closeOutcomeLearningConsole(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4572,6 +4646,7 @@ function setActiveNav(activeButton) {
     elements.missionNavButton,
     elements.memoryGraphNavButton,
     elements.playbookStudioNavButton,
+    elements.outcomeConsoleNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -6224,6 +6299,7 @@ function commandCatalog() {
   const mission = trustMissionSnapshot();
   const memoryGraph = missionMemoryGraphSnapshot();
   const playbookStudio = trustPlaybookStudioSnapshot();
+  const outcomeConsole = outcomeLearningConsoleSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
   const common = [
     {
@@ -6258,6 +6334,17 @@ function commandCatalog() {
       reason: "The Studio turns mission memory into a governed playbook that can be composed, simulated, approved, and reused.",
       run: openTrustPlaybookStudio,
       keywords: ["studio", "playbook", "compose", "simulate", "approve", "rollout", "reuse"],
+    },
+    {
+      id: "outcome-learning-console",
+      scope: "Learning",
+      title: "Open Outcome Learning",
+      detail: `${outcomeConsole.outcomes.length} outcomes, ${outcomeConsole.safeSignals}/${outcomeConsole.share.length} safe signals, +${outcomeConsole.learningLift} learning lift.`,
+      signal: outcomeConsole.statusLabel,
+      cta: "Open Learning",
+      reason: "The Outcome Learning Console closes the loop after rollout while keeping raw buyer context private.",
+      run: openOutcomeLearningConsole,
+      keywords: ["outcome", "learning", "console", "closed", "loop", "safe", "signals", "tune", "publish"],
     },
     {
       id: "review-desk",
@@ -6384,7 +6471,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v47 with trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
+      detail: `Create Review Pack v48 with outcome learning console, trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -6431,6 +6518,7 @@ function recommendedCommand(commands) {
   const feedback = buyerFeedbackLoopSnapshot();
   const memoryGraph = missionMemoryGraphSnapshot();
   const playbookStudio = trustPlaybookStudioSnapshot();
+  const outcomeConsole = outcomeLearningConsoleSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
 
   const preferredId =
@@ -6442,6 +6530,8 @@ function recommendedCommand(commands) {
           ? "trust-mission"
           : feedback.requests.length > 0
             ? "trust-mission"
+            : state.outcomeConsoleActions.status !== "Console ready" || outcomeConsole.receipts.length > 0 || state.playbookStudioActions.status === "Rollout approved"
+              ? "outcome-learning-console"
             : state.playbookStudioActions.status !== "Studio ready" || playbookStudio.receipts.length > 0
               ? "trust-playbook-studio"
             : state.missionActions.status === "Outcome captured" || memoryGraph.receipts.length > 0
@@ -7575,6 +7665,413 @@ function trustPlaybookStudioDigestText(studio = trustPlaybookStudioSnapshot()) {
     "",
     "Boundary:",
     "Use local answer memory inside the tenant. Share only aggregate-safe pattern labels, freshness classes, proof-demand classes, and outcome bands.",
+  ].join("\n");
+}
+
+function openOutcomeLearningConsole() {
+  closeCommandBar();
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
+  closeNetworkFirewall(false);
+  closeSovereignConsole(false);
+  closeTrustMissionAutopilot(false);
+  closeMissionMemoryGraph(false);
+  closeTrustPlaybookStudio(false);
+  closeOutcomeLearningConsole(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  setActiveNav(elements.outcomeConsoleNavButton);
+  state.outcomeConsoleOpen = true;
+  elements.outcomeConsoleBackdrop.hidden = false;
+  elements.outcomeConsoleDrawer.classList.add("is-open");
+  elements.outcomeConsoleDrawer.setAttribute("aria-hidden", "false");
+  renderOutcomeLearningConsole();
+  elements.captureOutcomeConsoleButton.focus();
+  schedulePersist("Outcome console ready");
+}
+
+function closeOutcomeLearningConsole(activateReview = true) {
+  if (!state.outcomeConsoleOpen && elements.outcomeConsoleDrawer.getAttribute("aria-hidden") === "true") return;
+  state.outcomeConsoleOpen = false;
+  elements.outcomeConsoleDrawer.classList.remove("is-open");
+  elements.outcomeConsoleDrawer.setAttribute("aria-hidden", "true");
+  elements.outcomeConsoleBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderOutcomeLearningConsole() {
+  const consoleState = outcomeLearningConsoleSnapshot();
+  elements.outcomeConsoleScore.textContent = `${consoleState.score}%`;
+  elements.outcomeConsoleStatus.textContent = consoleState.statusLabel;
+  elements.outcomeConsoleOutcomes.textContent = consoleState.outcomes.length;
+  elements.outcomeConsoleSafeSignals.textContent = `${consoleState.safeSignals}/${consoleState.share.length}`;
+  elements.outcomeConsoleLift.textContent = `+${consoleState.learningLift}`;
+  elements.outcomeConsoleSummary.textContent = consoleState.summary;
+  elements.outcomeConsoleDigest.textContent = outcomeLearningDigestText(consoleState);
+
+  elements.outcomeConsoleCaptureList.innerHTML = "";
+  consoleState.outcomes.forEach((outcome) => {
+    const card = document.createElement("article");
+    card.className = `outcome-console-capture-card ${outcome.direction === "Risk" ? "is-risk" : "is-good"}`;
+    card.innerHTML = `
+      <strong>${escapeHtml(outcome.title)}</strong>
+      <p>${escapeHtml(outcome.detail)}</p>
+      <small>${escapeHtml(outcome.result)} | ${escapeHtml(outcome.privacy)}</small>
+    `;
+    elements.outcomeConsoleCaptureList.append(card);
+  });
+
+  elements.outcomeConsoleQualityList.innerHTML = "";
+  consoleState.quality.forEach((quality) => {
+    const card = document.createElement("article");
+    card.className = `outcome-console-quality-card ${quality.status === "Pass" ? "is-pass" : "is-watch"}`;
+    card.innerHTML = `
+      <span>${escapeHtml(quality.score)}</span>
+      <strong>${escapeHtml(quality.title)}</strong>
+      <p>${escapeHtml(quality.detail)}</p>
+      <small>${escapeHtml(quality.status)} | ${escapeHtml(quality.boundary)}</small>
+    `;
+    elements.outcomeConsoleQualityList.append(card);
+  });
+
+  elements.outcomeConsoleTuneList.innerHTML = "";
+  consoleState.tuning.forEach((tuning) => {
+    const card = document.createElement("article");
+    card.className = `outcome-console-tune-card ${tuning.priority === "High" ? "is-risk" : "is-good"}`;
+    card.innerHTML = `
+      <strong>${escapeHtml(tuning.title)}</strong>
+      <p>${escapeHtml(tuning.detail)}</p>
+      <small>${escapeHtml(tuning.priority)} | ${escapeHtml(tuning.effect)}</small>
+    `;
+    elements.outcomeConsoleTuneList.append(card);
+  });
+
+  elements.outcomeConsoleShareList.innerHTML = "";
+  consoleState.share.forEach((signal) => {
+    const card = document.createElement("article");
+    card.className = `outcome-console-share-card ${signal.status === "Shareable" ? "is-shareable" : "is-local"}`;
+    card.innerHTML = `
+      <strong>${escapeHtml(signal.title)}</strong>
+      <p>${escapeHtml(signal.detail)}</p>
+      <small>${escapeHtml(signal.status)} | ${escapeHtml(signal.scope)}</small>
+    `;
+    elements.outcomeConsoleShareList.append(card);
+  });
+
+  elements.outcomeConsoleReceiptList.innerHTML = "";
+  if (consoleState.receipts.length === 0) {
+    elements.outcomeConsoleReceiptList.append(emptyState("No outcome learning receipts yet"));
+  } else {
+    consoleState.receipts.forEach((receipt) => {
+      const card = document.createElement("article");
+      card.className = "outcome-console-receipt-card";
+      card.innerHTML = `
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.detail)}</span>
+        <small>${escapeHtml(formatAuditTime(receipt.at))}</small>
+      `;
+      elements.outcomeConsoleReceiptList.append(card);
+    });
+  }
+}
+
+function outcomeLearningConsoleSnapshot() {
+  const studio = trustPlaybookStudioSnapshot();
+  const memoryGraph = missionMemoryGraphSnapshot();
+  const outcomeMemory = trustOutcomeMemorySnapshot();
+  const buyerLoop = buyerFeedbackLoopSnapshot();
+  const revenueLoop = revenueOutcomeLoopSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const feedback = governanceFeedbackSnapshot();
+  const evaluation = evaluationLabSnapshot();
+  const policy = learningPolicySnapshot();
+  const reinforcement = reinforcementControlSnapshot();
+  const coverage = coverageSnapshot();
+  const activeQuestion = getActiveQuestion();
+
+  const outcomes = [
+    {
+      title: "Playbook rollout result",
+      result: studio.gates.filter((gate) => gate.status === "Pass").length >= 3 ? "Advanced" : "Needs proof",
+      direction: studio.gates.filter((gate) => gate.status === "Pass").length >= 3 ? "Good" : "Risk",
+      privacy: "Tenant local",
+      detail: `${studio.gates.filter((gate) => gate.status === "Pass").length}/${studio.gates.length} studio gates passed after rollout simulation.`,
+    },
+    {
+      title: "Buyer feedback signal",
+      result: buyerLoop.requests.length > 0 ? "Evidence requested" : "Clean",
+      direction: buyerLoop.requests.length > 0 ? "Risk" : "Good",
+      privacy: "Tenant local",
+      detail: `${buyerLoop.requests.length} buyer evidence request(s) and ${buyerLoop.improvements.length} answer improvement(s) are ready for local learning.`,
+    },
+    {
+      title: "Revenue movement",
+      result: revenueLoop.outcomes.some((item) => item.result === "Converted") ? "Converted" : "Advanced",
+      direction: revenueLoop.outcomes.some((item) => item.result === "More proof" || item.result === "Stalled") ? "Risk" : "Good",
+      privacy: "Aggregate outcome class",
+      detail: `${revenueLoop.outcomes.length} buyer outcome events create +${revenueLoop.rewardLift} reward lift without sharing account text.`,
+    },
+    {
+      title: "Network learning boundary",
+      result: firewall.blockedCount > 0 || firewall.quarantineCount > 0 ? "Blocked" : "Clear",
+      direction: firewall.blockedCount > 0 || firewall.quarantineCount > 0 ? "Risk" : "Good",
+      privacy: "Aggregate-safe only",
+      detail: `${firewall.shareableCount} shareable pattern(s), ${firewall.blockedCount} blocked signal(s), and ${firewall.quarantineCount} quarantined item(s).`,
+    },
+  ];
+
+  const quality = [
+    {
+      title: "Evidence quality",
+      score: `${coverage.score}%`,
+      status: coverage.score >= 80 ? "Pass" : "Watch",
+      boundary: "Source-backed",
+      detail: "Learning is allowed only when approved answers still trace to fresh evidence.",
+    },
+    {
+      title: "Outcome quality",
+      score: `${outcomeMemory.score}%`,
+      status: outcomeMemory.score >= 82 ? "Pass" : "Watch",
+      boundary: "Measured result",
+      detail: `${outcomeMemory.events.length} outcome event(s) and ${outcomeMemory.rewards.length} reward signal(s) explain what changed.`,
+    },
+    {
+      title: "Privacy quality",
+      score: `${firewall.score}%`,
+      status: firewall.blockedCount === 0 && firewall.quarantineCount <= 1 ? "Pass" : "Watch",
+      boundary: "No raw buyer data",
+      detail: "The console separates tenant-local facts from aggregate-safe proof and friction classes.",
+    },
+    {
+      title: "Evaluation quality",
+      score: `${evaluation.score}%`,
+      status: evaluation.regressionCount <= 1 && policy.openStopCount <= 1 ? "Pass" : "Watch",
+      boundary: "Regression checked",
+      detail: `${evaluation.passedCount} eval set(s) passed with ${policy.openStopCount} open learning stop(s).`,
+    },
+  ];
+
+  const tuning = [
+    {
+      title: buyerLoop.requests.length > 0 ? "Raise evidence freshness threshold" : "Keep current proof threshold",
+      priority: buyerLoop.requests.length > 0 || coverage.score < 85 ? "High" : "Normal",
+      effect: buyerLoop.requests.length > 0 ? "Reduce repeat proof requests" : "Protect current answer speed",
+      detail: buyerLoop.requests.length > 0
+        ? "Buyer feedback asked for stronger proof, so similar questions should require fresher source coverage before approval."
+        : "Current proof quality is stable enough to keep reviewers moving quickly.",
+    },
+    {
+      title: "Reward sealed answer reuse",
+      priority: revenueLoop.rewardLift >= 3 ? "Normal" : "High",
+      effect: `+${revenueLoop.rewardLift} reward lift`,
+      detail: "Approved answers that move buyer reviews forward should improve local ranking for similar future questions.",
+    },
+    {
+      title: "Penalize unsafe sharing candidates",
+      priority: firewall.blockedCount > 0 || firewall.quarantineCount > 0 ? "High" : "Normal",
+      effect: `${firewall.blockedCount + firewall.quarantineCount} held signal(s)`,
+      detail: "Raw buyer wording, uploaded evidence, and account context remain blocked even when the aggregate pattern is useful.",
+    },
+    {
+      title: "Calibrate reviewer confidence",
+      priority: evaluation.calibrationScore >= 84 ? "Normal" : "High",
+      effect: `${evaluation.calibrationScore}% agreement`,
+      detail: "Reviewer agreement controls how quickly a new outcome can influence future recommendations.",
+    },
+  ];
+
+  const share = [
+    {
+      title: "Proof category improves the network",
+      status: firewall.shareableCount > 0 ? "Shareable" : "Local only",
+      scope: "Aggregate proof class",
+      detail: "Other organizations can benefit from proof category, freshness band, and friction class only.",
+    },
+    {
+      title: "Outcome band improves recommendations",
+      status: revenueLoop.safePatterns.some((item) => item.status === "Shareable") ? "Shareable" : "Local only",
+      scope: "Aggregate outcome band",
+      detail: "The network can learn that a source-backed AI governance answer advanced a review, without account details.",
+    },
+    {
+      title: "Buyer wording remains private",
+      status: "Local only",
+      scope: "Tenant boundary",
+      detail: "Exact questions, prompts, files, answer text, contracts, and account names never leave the workspace.",
+    },
+    {
+      title: "Policy gate records the decision",
+      status: policy.openStopCount === 0 ? "Shareable" : "Local only",
+      scope: "Guardrail label",
+      detail: "Only the allowed/blocked guardrail result can become a network-safe signal after policy stops are clear.",
+    },
+  ];
+
+  const safeSignals = share.filter((signal) => signal.status === "Shareable").length;
+  const passCount = quality.filter((item) => item.status === "Pass").length;
+  const riskCount = outcomes.filter((item) => item.direction === "Risk").length + tuning.filter((item) => item.priority === "High").length;
+  const learningLift = Math.max(5, Math.min(30, studio.expectedLift + revenueLoop.rewardLift + safeSignals - riskCount));
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        studio.score * 0.18
+          + outcomeMemory.score * 0.18
+          + buyerLoop.score * 0.14
+          + revenueLoop.score * 0.14
+          + firewall.score * 0.16
+          + evaluation.score * 0.12
+          + Math.min(100, passCount * 25) * 0.08,
+      ),
+    ),
+  );
+  const statusLabel =
+    state.outcomeConsoleActions.status === "Console ready" && passCount >= 3
+      ? "Ready to learn"
+      : state.outcomeConsoleActions.status === "Console ready"
+        ? "Needs quality check"
+        : state.outcomeConsoleActions.status;
+  const summary = `${outcomes.length} outcome signals are scored through ${quality.length} learning-quality gates. ${safeSignals}/${share.length} signals can help the network, while private buyer context stays local.`;
+
+  return {
+    score,
+    statusLabel,
+    learningLift,
+    summary,
+    outcomes,
+    quality,
+    tuning,
+    share,
+    safeSignals,
+    receipts: state.outcomeConsoleActions.receipts.slice(0, 8),
+    activeQuestion,
+    memoryGraph,
+    feedback,
+    reinforcement,
+  };
+}
+
+function captureOutcomeLearning() {
+  const consoleState = outcomeLearningConsoleSnapshot();
+  state.outcomeConsoleActions.status = "Outcomes captured";
+  state.outcomeConsoleActions.capturedAt = new Date().toISOString();
+  addOutcomeConsoleReceipt("Outcomes captured", `${consoleState.outcomes.length} rollout outcomes captured with ${consoleState.score}% learning score.`);
+  addAudit("Outcome learning captured", consoleState.summary);
+  renderOutcomeLearningConsole();
+  renderCommandBar();
+  showToast("Outcome learning captured.");
+}
+
+function tuneOutcomeLearningPolicy() {
+  const consoleState = outcomeLearningConsoleSnapshot();
+  const highPriority = consoleState.tuning.filter((item) => item.priority === "High").length;
+  state.outcomeConsoleActions.status = "Policy tuned";
+  state.outcomeConsoleActions.tunedAt = new Date().toISOString();
+  addOutcomeConsoleReceipt("Policy tuned", `${highPriority} high-priority tuning signal(s) reviewed before reuse.`);
+  addAudit("Outcome learning policy tuned", "Outcome console tuned evidence freshness, reward, sharing, and reviewer confidence controls.");
+  renderOutcomeLearningConsole();
+  renderCommandBar();
+  showToast("Outcome learning policy tuned.");
+}
+
+function publishOutcomeLearningSignals() {
+  const consoleState = outcomeLearningConsoleSnapshot();
+  state.outcomeConsoleActions.status = "Safe signals published";
+  state.outcomeConsoleActions.publishedAt = new Date().toISOString();
+  addOutcomeConsoleReceipt("Safe signals published", `${consoleState.safeSignals}/${consoleState.share.length} aggregate-safe signal(s) published to the learning boundary.`);
+  addAudit("Outcome learning safe signals published", "Only aggregate proof classes, outcome bands, freshness bands, and guardrail labels were marked shareable.");
+  renderOutcomeLearningConsole();
+  renderCommandBar();
+  showToast("Safe learning signals published.");
+}
+
+function addOutcomeConsoleReceipt(action, detail) {
+  state.outcomeConsoleActions.receipts.unshift({
+    id: `outcome-console-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.outcomeConsoleActions.receipts = state.outcomeConsoleActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function copyOutcomeLearningDigest() {
+  const consoleState = outcomeLearningConsoleSnapshot();
+  state.outcomeConsoleActions.lastCopiedAt = new Date().toISOString();
+  addOutcomeConsoleReceipt("Learning digest copied", `${consoleState.outcomes.length} outcomes and ${consoleState.safeSignals} safe signals copied.`);
+  addAudit("Outcome learning digest copied", "Outcome Learning Console digest copied for governed rollout review.");
+  renderOutcomeLearningConsole();
+  copyText(outcomeLearningDigestText(consoleState), "Outcome learning digest copied.");
+}
+
+function outcomeLearningDigestText(consoleState = outcomeLearningConsoleSnapshot()) {
+  const outcomeLines = consoleState.outcomes.map((outcome, index) => `${index + 1}. ${outcome.result}: ${outcome.title} | ${outcome.privacy}\n   ${outcome.detail}`).join("\n");
+  const qualityLines = consoleState.quality.map((quality, index) => `${index + 1}. ${quality.status}: ${quality.title} | ${quality.score} | ${quality.boundary}\n   ${quality.detail}`).join("\n");
+  const tuningLines = consoleState.tuning.map((tuning, index) => `${index + 1}. ${tuning.priority}: ${tuning.title} | ${tuning.effect}\n   ${tuning.detail}`).join("\n");
+  const shareLines = consoleState.share.map((signal, index) => `${index + 1}. ${signal.status}: ${signal.title} | ${signal.scope}\n   ${signal.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Outcome Learning Console",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${consoleState.statusLabel}`,
+    `Learning score: ${consoleState.score}%`,
+    `Learning lift: +${consoleState.learningLift}`,
+    `Safe signals: ${consoleState.safeSignals}/${consoleState.share.length}`,
+    "",
+    "Summary:",
+    consoleState.summary,
+    "",
+    "Captured outcomes:",
+    outcomeLines,
+    "",
+    "Learning quality:",
+    qualityLines,
+    "",
+    "Tuning actions:",
+    tuningLines,
+    "",
+    "Network-safe sharing:",
+    shareLines,
+    "",
+    "Boundary:",
+    "Exact buyer wording, evidence files, prompts, answer text, contracts, account names, and workspace notes stay tenant-local. Other organizations receive only aggregate proof classes, freshness bands, outcome bands, and guardrail labels.",
   ].join("\n");
 }
 
@@ -23057,6 +23554,13 @@ function exportCsv() {
     "Studio Expected Lift",
     "Studio Gates Pass",
     "Studio Receipts",
+    "Outcome Console Status",
+    "Outcome Console Score",
+    "Outcome Signals",
+    "Learning Quality Pass",
+    "Safe Learning Signals",
+    "Outcome Learning Lift",
+    "Outcome Console Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -23105,6 +23609,7 @@ function exportCsv() {
     const mission = trustMissionSnapshot();
     const memoryGraph = missionMemoryGraphSnapshot();
     const playbookStudio = trustPlaybookStudioSnapshot();
+    const outcomeConsole = outcomeLearningConsoleSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -23335,6 +23840,13 @@ function exportCsv() {
       `+${playbookStudio.expectedLift}`,
       `${playbookStudio.gates.filter((gate) => gate.status === "Pass").length}/${playbookStudio.gates.length}`,
       playbookStudio.receipts.length,
+      outcomeConsole.statusLabel,
+      `${outcomeConsole.score}%`,
+      outcomeConsole.outcomes.length,
+      `${outcomeConsole.quality.filter((item) => item.status === "Pass").length}/${outcomeConsole.quality.length}`,
+      `${outcomeConsole.safeSignals}/${outcomeConsole.share.length}`,
+      `+${outcomeConsole.learningLift}`,
+      outcomeConsole.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -23393,6 +23905,7 @@ function exportReviewPack() {
   const mission = trustMissionSnapshot();
   const memoryGraph = missionMemoryGraphSnapshot();
   const playbookStudio = trustPlaybookStudioSnapshot();
+  const outcomeConsole = outcomeLearningConsoleSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -23410,7 +23923,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v47</h1>
+        <h1>AnswerSeal Review Pack v48</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -26359,6 +26872,135 @@ function exportReviewPack() {
         </table>
         <h2>Playbook Studio Digest</h2>
         <pre>${escapeHtml(trustPlaybookStudioDigestText(playbookStudio))}</pre>
+        <h2>Outcome Learning Console</h2>
+        <p>Status: ${escapeHtml(outcomeConsole.statusLabel)} | Learning score: ${outcomeConsole.score}% | Outcomes: ${outcomeConsole.outcomes.length} | Safe signals: ${outcomeConsole.safeSignals}/${outcomeConsole.share.length} | Learning lift: +${outcomeConsole.learningLift}</p>
+        <p>${escapeHtml(outcomeConsole.summary)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Outcome</th>
+              <th>Result</th>
+              <th>Privacy</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomeConsole.outcomes
+              .map(
+                (outcome) => `
+                  <tr>
+                    <td>${escapeHtml(outcome.title)}</td>
+                    <td class="${outcome.direction === "Risk" ? "risk" : "ok"}">${escapeHtml(outcome.result)}</td>
+                    <td>${escapeHtml(outcome.privacy)}</td>
+                    <td>${escapeHtml(outcome.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Outcome Learning Quality</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>Boundary</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomeConsole.quality
+              .map(
+                (quality) => `
+                  <tr>
+                    <td>${escapeHtml(quality.title)}</td>
+                    <td>${escapeHtml(quality.score)}</td>
+                    <td class="${quality.status === "Pass" ? "ok" : "risk"}">${escapeHtml(quality.status)}</td>
+                    <td>${escapeHtml(quality.boundary)}</td>
+                    <td>${escapeHtml(quality.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Outcome Learning Tuning</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Tuning</th>
+              <th>Priority</th>
+              <th>Effect</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomeConsole.tuning
+              .map(
+                (tuning) => `
+                  <tr>
+                    <td>${escapeHtml(tuning.title)}</td>
+                    <td class="${tuning.priority === "High" ? "risk" : "ok"}">${escapeHtml(tuning.priority)}</td>
+                    <td>${escapeHtml(tuning.effect)}</td>
+                    <td>${escapeHtml(tuning.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network-Safe Learning Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Status</th>
+              <th>Scope</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomeConsole.share
+              .map(
+                (signal) => `
+                  <tr>
+                    <td>${escapeHtml(signal.title)}</td>
+                    <td class="${signal.status === "Shareable" ? "ok" : "risk"}">${escapeHtml(signal.status)}</td>
+                    <td>${escapeHtml(signal.scope)}</td>
+                    <td>${escapeHtml(signal.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Outcome Learning Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(outcomeConsole.receipts.length ? outcomeConsole.receipts : [{ action: "Console ready", detail: "No outcome learning receipts yet.", at: new Date().toISOString() }])
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                    <td>${escapeHtml(formatAuditTime(receipt.at))}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Outcome Learning Digest</h2>
+        <pre>${escapeHtml(outcomeLearningDigestText(outcomeConsole))}</pre>
         <h2>Calm Command Bar</h2>
         <p>Status: ${escapeHtml(commandBar.statusLabel)} | Commands: ${commandBar.commands.length} | Recommended: ${escapeHtml(commandBar.recommended.title)} | Receipts: ${commandBar.receipts.length}</p>
         <table>
@@ -27123,7 +27765,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v47 created with trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v48 created with outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -27159,12 +27801,13 @@ function exportReviewPack() {
   renderTrustMissionAutopilot();
   renderMissionMemoryGraph();
   renderTrustPlaybookStudio();
+  renderOutcomeLearningConsole();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v47 exported.");
+  showToast("Review Pack v48 exported.");
 }
 
 function toCsv(rows) {
@@ -27252,6 +27895,7 @@ function serializeWorkspace() {
     missionActions: state.missionActions,
     memoryGraphActions: state.memoryGraphActions,
     playbookStudioActions: state.playbookStudioActions,
+    outcomeConsoleActions: state.outcomeConsoleActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
