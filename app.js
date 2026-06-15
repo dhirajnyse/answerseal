@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.53 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v53";
+const BUILD_VERSION = "v0.54 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v54";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v53",
   "answerseal.workspace.v52",
   "answerseal.workspace.v51",
   "answerseal.workspace.v50",
@@ -772,6 +773,8 @@ function createInitialState() {
     outcomeConsoleActions: createInitialOutcomeConsoleActions(),
     policyBoardOpen: false,
     policyBoardActions: createInitialPolicyBoardActions(),
+    globalMatrixOpen: false,
+    globalMatrixActions: createInitialGlobalMatrixActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1160,6 +1163,18 @@ function createInitialPolicyBoardActions() {
   };
 }
 
+function createInitialGlobalMatrixActions() {
+  return {
+    status: "Matrix ready",
+    mappedAt: null,
+    simulatedAt: null,
+    approvedAt: null,
+    publishedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1312,6 +1327,7 @@ function loadWorkspaceState() {
       playbookStudioActions: normalizePlaybookStudioActions(workspace.playbookStudioActions ?? fresh.playbookStudioActions),
       outcomeConsoleActions: normalizeOutcomeConsoleActions(workspace.outcomeConsoleActions ?? fresh.outcomeConsoleActions),
       policyBoardActions: normalizePolicyBoardActions(workspace.policyBoardActions ?? fresh.policyBoardActions),
+      globalMatrixActions: normalizeGlobalMatrixActions(workspace.globalMatrixActions ?? fresh.globalMatrixActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1361,6 +1377,7 @@ function loadWorkspaceState() {
       playbookStudioOpen: false,
       outcomeConsoleOpen: false,
       policyBoardOpen: false,
+      globalMatrixOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2327,6 +2344,30 @@ function normalizePolicyBoardReceipt(receipt) {
   };
 }
 
+function normalizeGlobalMatrixActions(actions) {
+  const status = ["Matrix ready", "Country rules mapped", "Launch simulated", "Gates approved", "Launch receipts published"].includes(actions?.status)
+    ? actions.status
+    : "Matrix ready";
+  return {
+    status,
+    mappedAt: actions?.mappedAt ?? null,
+    simulatedAt: actions?.simulatedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    publishedAt: actions?.publishedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeGlobalMatrixReceipt) : [],
+  };
+}
+
+function normalizeGlobalMatrixReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `global-matrix-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Global matrix action"),
+    detail: String(receipt?.detail ?? "Global Environment Matrix action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2392,6 +2433,7 @@ const elements = {
   playbookStudioNavButton: document.querySelector("#playbookStudioNavButton"),
   outcomeConsoleNavButton: document.querySelector("#outcomeConsoleNavButton"),
   policyBoardNavButton: document.querySelector("#policyBoardNavButton"),
+  globalMatrixNavButton: document.querySelector("#globalMatrixNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2565,6 +2607,26 @@ const elements = {
   requirePolicyBoardOwnersButton: document.querySelector("#requirePolicyBoardOwnersButton"),
   publishPolicyBoardReceiptsButton: document.querySelector("#publishPolicyBoardReceiptsButton"),
   copyPolicyBoardDigestButton: document.querySelector("#copyPolicyBoardDigestButton"),
+  globalMatrixBackdrop: document.querySelector("#globalMatrixBackdrop"),
+  globalMatrixDrawer: document.querySelector("#globalMatrixDrawer"),
+  closeGlobalMatrixButton: document.querySelector("#closeGlobalMatrixButton"),
+  globalMatrixScore: document.querySelector("#globalMatrixScore"),
+  globalMatrixStatus: document.querySelector("#globalMatrixStatus"),
+  globalMatrixCountryCount: document.querySelector("#globalMatrixCountryCount"),
+  globalMatrixEnvironmentCount: document.querySelector("#globalMatrixEnvironmentCount"),
+  globalMatrixGateCount: document.querySelector("#globalMatrixGateCount"),
+  globalMatrixSummary: document.querySelector("#globalMatrixSummary"),
+  globalMatrixEnvironmentList: document.querySelector("#globalMatrixEnvironmentList"),
+  globalMatrixCountryList: document.querySelector("#globalMatrixCountryList"),
+  globalMatrixGateList: document.querySelector("#globalMatrixGateList"),
+  globalMatrixLearningList: document.querySelector("#globalMatrixLearningList"),
+  globalMatrixReceiptList: document.querySelector("#globalMatrixReceiptList"),
+  globalMatrixDigest: document.querySelector("#globalMatrixDigest"),
+  mapGlobalMatrixRulesButton: document.querySelector("#mapGlobalMatrixRulesButton"),
+  simulateGlobalMatrixLaunchButton: document.querySelector("#simulateGlobalMatrixLaunchButton"),
+  approveGlobalMatrixGatesButton: document.querySelector("#approveGlobalMatrixGatesButton"),
+  publishGlobalMatrixReceiptsButton: document.querySelector("#publishGlobalMatrixReceiptsButton"),
+  copyGlobalMatrixDigestButton: document.querySelector("#copyGlobalMatrixDigestButton"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -3317,6 +3379,7 @@ function bindEvents() {
   elements.playbookStudioNavButton.addEventListener("click", openTrustPlaybookStudio);
   elements.outcomeConsoleNavButton.addEventListener("click", openOutcomeLearningConsole);
   elements.policyBoardNavButton.addEventListener("click", openReinforcementPolicyBoard);
+  elements.globalMatrixNavButton.addEventListener("click", openGlobalEnvironmentMatrix);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -3678,6 +3741,13 @@ function bindEvents() {
   elements.requirePolicyBoardOwnersButton.addEventListener("click", requirePolicyBoardOwnerGates);
   elements.publishPolicyBoardReceiptsButton.addEventListener("click", publishPolicyBoardReceipts);
   elements.copyPolicyBoardDigestButton.addEventListener("click", copyPolicyBoardDigest);
+  elements.closeGlobalMatrixButton.addEventListener("click", closeGlobalEnvironmentMatrix);
+  elements.globalMatrixBackdrop.addEventListener("click", closeGlobalEnvironmentMatrix);
+  elements.mapGlobalMatrixRulesButton.addEventListener("click", mapGlobalMatrixCountryRules);
+  elements.simulateGlobalMatrixLaunchButton.addEventListener("click", simulateGlobalMatrixLaunch);
+  elements.approveGlobalMatrixGatesButton.addEventListener("click", approveGlobalMatrixGates);
+  elements.publishGlobalMatrixReceiptsButton.addEventListener("click", publishGlobalMatrixReceipts);
+  elements.copyGlobalMatrixDigestButton.addEventListener("click", copyGlobalMatrixDigest);
 
   document.addEventListener("keydown", (event) => {
     const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
@@ -3735,6 +3805,7 @@ function bindEvents() {
     if (state.playbookStudioOpen) closeTrustPlaybookStudio();
     if (state.outcomeConsoleOpen) closeOutcomeLearningConsole();
     if (state.policyBoardOpen) closeReinforcementPolicyBoard();
+    if (state.globalMatrixOpen) closeGlobalEnvironmentMatrix();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3785,6 +3856,7 @@ function applyInitialHash() {
   if (hash === "playbook-studio" || hash === "trust-playbook-studio" || hash === "playbook-rollout") openTrustPlaybookStudio();
   if (hash === "outcome-console" || hash === "outcome-learning" || hash === "learning-console" || hash === "closed-loop") openOutcomeLearningConsole();
   if (hash === "policy-board" || hash === "reinforcement-policy" || hash === "reward-policy" || hash === "policy-control") openReinforcementPolicyBoard();
+  if (hash === "global-matrix" || hash === "environment-matrix" || hash === "country-matrix" || hash === "launch-matrix") openGlobalEnvironmentMatrix();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3849,6 +3921,7 @@ function render() {
   renderTrustPlaybookStudio();
   renderOutcomeLearningConsole();
   renderReinforcementPolicyBoard();
+  renderGlobalEnvironmentMatrix();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4687,6 +4760,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.policyBoardNavButton && state.policyBoardOpen) {
     closeReinforcementPolicyBoard(false);
   }
+  if (activeButton !== elements.globalMatrixNavButton && state.globalMatrixOpen) {
+    closeGlobalEnvironmentMatrix(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4725,6 +4801,7 @@ function setActiveNav(activeButton) {
     elements.playbookStudioNavButton,
     elements.outcomeConsoleNavButton,
     elements.policyBoardNavButton,
+    elements.globalMatrixNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -6379,6 +6456,7 @@ function commandCatalog() {
   const playbookStudio = trustPlaybookStudioSnapshot();
   const outcomeConsole = outcomeLearningConsoleSnapshot();
   const policyBoard = reinforcementPolicyBoardSnapshot();
+  const globalMatrix = globalEnvironmentMatrixSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
   const common = [
     {
@@ -6435,6 +6513,17 @@ function commandCatalog() {
       reason: "The Reinforcement Policy Board makes reward rules, drift checks, and owner approvals explicit before learning changes recommendations.",
       run: openReinforcementPolicyBoard,
       keywords: ["policy", "board", "reinforcement", "reward", "penalty", "drift", "owner", "receipt"],
+    },
+    {
+      id: "global-environment-matrix",
+      scope: "Global",
+      title: "Open Global Matrix",
+      detail: `${globalMatrix.readyCountries}/${globalMatrix.countries.length} countries ready, ${globalMatrix.cleanCells}/${globalMatrix.totalCells} cells unblocked, ${globalMatrix.passedGates}/${globalMatrix.gates.length} launch gates passing.`,
+      signal: globalMatrix.statusLabel,
+      cta: "Open Matrix",
+      reason: "The Global Environment Matrix keeps countries, environments, production gates, and privacy-safe learning boundaries visible before worldwide rollout.",
+      run: openGlobalEnvironmentMatrix,
+      keywords: ["global", "matrix", "country", "environment", "production", "launch", "residency", "learning"],
     },
     {
       id: "review-desk",
@@ -6561,7 +6650,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v49 with reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
+      detail: `Create Review Pack v50 with global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -6610,6 +6699,7 @@ function recommendedCommand(commands) {
   const playbookStudio = trustPlaybookStudioSnapshot();
   const outcomeConsole = outcomeLearningConsoleSnapshot();
   const policyBoard = reinforcementPolicyBoardSnapshot();
+  const globalMatrix = globalEnvironmentMatrixSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
 
   const preferredId =
@@ -6621,6 +6711,8 @@ function recommendedCommand(commands) {
           ? "trust-mission"
         : feedback.requests.length > 0
             ? "trust-mission"
+            : globalMatrix.passedGates < globalMatrix.gates.length || state.globalMatrixActions.status !== "Matrix ready" || globalMatrix.receipts.length > 0
+              ? "global-environment-matrix"
             : state.policyBoardActions.status !== "Board ready" || policyBoard.receipts.length > 0 || state.outcomeConsoleActions.status === "Safe signals published"
               ? "reinforcement-policy-board"
             : state.outcomeConsoleActions.status !== "Console ready" || outcomeConsole.receipts.length > 0 || state.playbookStudioActions.status === "Rollout approved"
@@ -8521,6 +8613,428 @@ function policyBoardDigestText(board = reinforcementPolicyBoardSnapshot()) {
     "",
     "Board rule:",
     "Learning may improve the organization only after evidence, eval, privacy, drift, and owner gates pass. Other organizations receive only aggregate-safe labels, never buyer text, answer text, files, prompts, contracts, or account context.",
+  ].join("\n");
+}
+
+function openGlobalEnvironmentMatrix() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
+  closeNetworkFirewall(false);
+  closeSovereignConsole(false);
+  closeTrustMissionAutopilot(false);
+  closeMissionMemoryGraph(false);
+  closeTrustPlaybookStudio(false);
+  closeOutcomeLearningConsole(false);
+  closeReinforcementPolicyBoard(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  setActiveNav(elements.globalMatrixNavButton);
+  state.globalMatrixOpen = true;
+  elements.globalMatrixBackdrop.hidden = false;
+  elements.globalMatrixDrawer.classList.add("is-open");
+  elements.globalMatrixDrawer.setAttribute("aria-hidden", "false");
+  renderGlobalEnvironmentMatrix();
+  elements.mapGlobalMatrixRulesButton.focus();
+  schedulePersist("Global matrix ready");
+}
+
+function closeGlobalEnvironmentMatrix(activateReview = true) {
+  if (!state.globalMatrixOpen && elements.globalMatrixDrawer.getAttribute("aria-hidden") === "true") return;
+  state.globalMatrixOpen = false;
+  elements.globalMatrixDrawer.classList.remove("is-open");
+  elements.globalMatrixDrawer.setAttribute("aria-hidden", "true");
+  elements.globalMatrixBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderGlobalEnvironmentMatrix() {
+  const matrix = globalEnvironmentMatrixSnapshot();
+  elements.globalMatrixScore.textContent = `${matrix.score}%`;
+  elements.globalMatrixStatus.textContent = matrix.statusLabel;
+  elements.globalMatrixCountryCount.textContent = `${matrix.readyCountries}/${matrix.countries.length}`;
+  elements.globalMatrixEnvironmentCount.textContent = matrix.environments.length;
+  elements.globalMatrixGateCount.textContent = `${matrix.passedGates}/${matrix.gates.length}`;
+  elements.globalMatrixSummary.textContent = matrix.summary;
+  elements.globalMatrixDigest.textContent = globalMatrixDigestText(matrix);
+
+  elements.globalMatrixEnvironmentList.innerHTML = "";
+  matrix.environments.forEach((environment) => {
+    const card = document.createElement("article");
+    card.className = `global-matrix-environment-card ${environment.status === "Blocked" || environment.status === "Gated" ? "is-watch" : "is-ready"}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(environment.stage)}</span>
+          <strong>${escapeHtml(environment.name)}</strong>
+        </div>
+        <b>${escapeHtml(environment.status)}</b>
+      </header>
+      <p>${escapeHtml(environment.detail)}</p>
+      <div class="global-matrix-cell-list">
+        ${environment.cells
+          .map(
+            (cell) => `
+              <span class="${cell.status === "Ready" ? "is-ready" : cell.status === "Blocked" ? "is-blocked" : "is-watch"}">
+                ${escapeHtml(cell.code)} ${escapeHtml(cell.status)}
+              </span>
+            `,
+          )
+          .join("")}
+      </div>
+    `;
+    elements.globalMatrixEnvironmentList.append(card);
+  });
+
+  elements.globalMatrixCountryList.innerHTML = "";
+  matrix.countries.forEach((country) => {
+    const card = document.createElement("article");
+    card.className = `global-matrix-country-card ${country.status === "Ready" ? "is-ready" : "is-watch"}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(country.code)}</span>
+          <strong>${escapeHtml(country.name)}</strong>
+        </div>
+        <b>${escapeHtml(country.status)}</b>
+      </header>
+      <p>${escapeHtml(country.detail)}</p>
+      <footer>
+        <span>${escapeHtml(country.residency)}</span>
+        <span>${escapeHtml(country.learning)}</span>
+      </footer>
+    `;
+    elements.globalMatrixCountryList.append(card);
+  });
+
+  elements.globalMatrixGateList.innerHTML = "";
+  matrix.gates.forEach((gate) => {
+    const card = document.createElement("article");
+    card.className = `global-matrix-gate-card ${gate.status === "Pass" ? "is-ready" : "is-watch"}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(gate.title)}</strong>
+        <b>${escapeHtml(gate.status)}</b>
+      </header>
+      <p>${escapeHtml(gate.detail)}</p>
+      <span>${escapeHtml(gate.owner)}</span>
+    `;
+    elements.globalMatrixGateList.append(card);
+  });
+
+  elements.globalMatrixLearningList.innerHTML = "";
+  matrix.learningBoundaries.forEach((boundary) => {
+    const card = document.createElement("article");
+    card.className = `global-matrix-learning-card ${boundary.status === "Allowed" ? "is-ready" : "is-watch"}`;
+    card.innerHTML = `
+      <span>${escapeHtml(boundary.scope)}</span>
+      <strong>${escapeHtml(boundary.status)}</strong>
+      <p>${escapeHtml(boundary.detail)}</p>
+      <small>${escapeHtml(boundary.countries)}</small>
+    `;
+    elements.globalMatrixLearningList.append(card);
+  });
+
+  elements.globalMatrixReceiptList.innerHTML = "";
+  if (matrix.receipts.length === 0) {
+    elements.globalMatrixReceiptList.append(emptyState("No global matrix receipts yet"));
+  } else {
+    matrix.receipts.forEach((receipt) => {
+      const card = document.createElement("article");
+      card.className = "global-matrix-receipt-card";
+      card.innerHTML = `
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.detail)}</span>
+        <small>${escapeHtml(formatAuditTime(receipt.at))}</small>
+      `;
+      elements.globalMatrixReceiptList.append(card);
+    });
+  }
+}
+
+function globalEnvironmentMatrixSnapshot() {
+  const sovereign = sovereignConsoleSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const policyBoard = reinforcementPolicyBoardSnapshot();
+  const outcomeConsole = outcomeLearningConsoleSnapshot();
+  const countries = sovereign.regions.map((region) => {
+    const productionStatus = region.status === "Ready" && policyBoard.score >= 78 ? "Gated" : region.status === "Prepare" ? "Blocked" : "Review";
+    return {
+      code: region.code,
+      name: region.name,
+      status: region.status,
+      residency: region.residency,
+      policy: region.policy,
+      learning: region.status === "Ready" && firewall.blockedCount === 0 ? "Aggregate-safe learning" : "Tenant-local only",
+      productionStatus,
+      detail: region.detail,
+    };
+  });
+  const environments = sovereign.environments.map((environment, index) => {
+    const cells = countries.map((country) => {
+      const status =
+        environment.name === "Demo"
+          ? "Ready"
+          : environment.name === "Pilot" && country.status !== "Prepare"
+            ? "Ready"
+            : environment.name === "Staging" && country.status === "Ready"
+              ? "Review"
+              : environment.name === "Production"
+                ? country.productionStatus
+                : "Blocked";
+      return {
+        code: country.code,
+        status,
+      };
+    });
+    return {
+      ...environment,
+      stage: `L${index + 1}`,
+      cells,
+    };
+  });
+  const passedCountries = countries.filter((country) => country.status === "Ready").length;
+  const gates = [
+    {
+      title: "Country rules mapped",
+      status: countries.some((country) => country.status === "Prepare") ? "Review" : "Pass",
+      owner: "Legal",
+      detail: `${passedCountries}/${countries.length} launch countries have explicit privacy, residency, and buyer-export posture.`,
+    },
+    {
+      title: "Environment boundaries labeled",
+      status: sovereign.environments.every((environment) => environment.boundary) ? "Pass" : "Review",
+      owner: "Security",
+      detail: "Demo, pilot, staging, and production stay visibly separated before customer data enters the workflow.",
+    },
+    {
+      title: "AI learning boundary approved",
+      status: firewall.blockedCount === 0 && policyBoard.score >= 78 ? "Pass" : "Review",
+      owner: "AI Governance",
+      detail: "Tenant-local learning, aggregate-safe signals, and blocked raw data are checked before any country rollout.",
+    },
+    {
+      title: "Buyer handoff policy ready",
+      status: coverageSnapshot().score >= 80 && state.questions.length > 0 ? "Pass" : "Review",
+      owner: "Sales Engineering",
+      detail: "Buyer-facing exports must keep source citations, review status, and country-specific proof notes intact.",
+    },
+    {
+      title: "Production launch approval",
+      status: state.globalMatrixActions.status === "Gates approved" || state.globalMatrixActions.status === "Launch receipts published" ? "Pass" : "Review",
+      owner: workspaceAccount.currentRole,
+      detail: "Production remains gated until country, environment, learning, and buyer-handoff receipts are published.",
+    },
+  ];
+  const learningBoundaries = [
+    {
+      scope: "Tenant-local memory",
+      status: "Allowed",
+      countries: "All launch countries",
+      detail: "Approved answer language and evidence links can improve the same customer's future reviews.",
+    },
+    {
+      scope: "Aggregate-safe patterns",
+      status: firewall.blockedCount === 0 ? "Allowed" : "Review",
+      countries: countries.filter((country) => country.status === "Ready").map((country) => country.code).join(", ") || "None",
+      detail: "Only proof category, freshness band, confidence band, outcome band, and guardrail label can help other organizations.",
+    },
+    {
+      scope: "Raw buyer text and files",
+      status: "Blocked",
+      countries: "All launch countries",
+      detail: "Buyer questions, prompts, answer text, contracts, files, and account context never cross tenant or country boundaries.",
+    },
+    {
+      scope: "Country-specific overrides",
+      status: countries.some((country) => country.status === "Prepare") ? "Review" : "Allowed",
+      countries: countries.map((country) => country.code).join(", "),
+      detail: "Local policy notes can adjust launch guidance without changing the simple questionnaire review workflow.",
+    },
+  ];
+  const passedGates = gates.filter((gate) => gate.status === "Pass").length;
+  const cleanCells = environments.flatMap((environment) => environment.cells).filter((cell) => cell.status !== "Blocked").length;
+  const totalCells = environments.reduce((sum, environment) => sum + environment.cells.length, 0);
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        (passedCountries / countries.length) * 24
+          + (cleanCells / totalCells) * 22
+          + (passedGates / gates.length) * 24
+          + Math.min(100, policyBoard.score) * 0.16
+          + Math.min(100, outcomeConsole.score) * 0.08
+          + Math.min(100, firewall.score) * 0.06,
+      ),
+    ),
+  );
+  const statusLabel =
+    state.globalMatrixActions.status === "Matrix ready" && passedGates >= 4
+      ? "Ready for country launch review"
+      : state.globalMatrixActions.status === "Matrix ready"
+        ? "Needs country launch mapping"
+        : state.globalMatrixActions.status;
+  const summary = `${passedCountries}/${countries.length} countries are launch-ready, ${cleanCells}/${totalCells} environment-country cells are unblocked, and ${passedGates}/${gates.length} launch gates pass before production or cross-organization learning can move.`;
+
+  return {
+    score,
+    statusLabel,
+    summary,
+    countries,
+    environments,
+    gates,
+    learningBoundaries,
+    readyCountries: passedCountries,
+    passedGates,
+    cleanCells,
+    totalCells,
+    receipts: state.globalMatrixActions.receipts.slice(0, 8),
+    sovereign,
+    firewall,
+    policyBoard,
+    outcomeConsole,
+  };
+}
+
+function mapGlobalMatrixCountryRules() {
+  const matrix = globalEnvironmentMatrixSnapshot();
+  state.globalMatrixActions.status = "Country rules mapped";
+  state.globalMatrixActions.mappedAt = new Date().toISOString();
+  addGlobalMatrixReceipt("Country rules mapped", `${matrix.readyCountries}/${matrix.countries.length} countries mapped to residency, privacy, buyer export, and learning boundaries.`);
+  addAudit("Global matrix country rules mapped", matrix.summary);
+  renderGlobalEnvironmentMatrix();
+  renderCommandBar();
+  showToast("Country rules mapped.");
+}
+
+function simulateGlobalMatrixLaunch() {
+  const matrix = globalEnvironmentMatrixSnapshot();
+  state.globalMatrixActions.status = "Launch simulated";
+  state.globalMatrixActions.simulatedAt = new Date().toISOString();
+  addGlobalMatrixReceipt("Launch simulated", `${matrix.cleanCells}/${matrix.totalCells} environment-country cells stayed unblocked in the launch simulation.`);
+  addAudit("Global matrix launch simulated", "Demo, pilot, staging, production, country rules, and AI learning boundaries were checked before production promotion.");
+  renderGlobalEnvironmentMatrix();
+  renderCommandBar();
+  showToast("Global launch simulated.");
+}
+
+function approveGlobalMatrixGates() {
+  const matrix = globalEnvironmentMatrixSnapshot();
+  state.globalMatrixActions.status = "Gates approved";
+  state.globalMatrixActions.approvedAt = new Date().toISOString();
+  addGlobalMatrixReceipt("Launch gates approved", `${matrix.passedGates}/${matrix.gates.length} launch gates approved or held visibly before production rollout.`);
+  addAudit("Global matrix gates approved", "Country, environment, AI learning, buyer handoff, and production approval gates were reviewed.");
+  renderGlobalEnvironmentMatrix();
+  renderCommandBar();
+  showToast("Global launch gates approved.");
+}
+
+function publishGlobalMatrixReceipts() {
+  const matrix = globalEnvironmentMatrixSnapshot();
+  state.globalMatrixActions.status = "Launch receipts published";
+  state.globalMatrixActions.publishedAt = new Date().toISOString();
+  addGlobalMatrixReceipt("Launch receipts published", `${matrix.countries.length} countries, ${matrix.environments.length} environments, and ${matrix.learningBoundaries.length} learning boundaries published.`);
+  addAudit("Global matrix receipts published", "Global Environment Matrix receipts published for country launch, production gate, and privacy-safe learning review.");
+  renderGlobalEnvironmentMatrix();
+  renderCommandBar();
+  showToast("Global launch receipts published.");
+}
+
+function addGlobalMatrixReceipt(action, detail) {
+  state.globalMatrixActions.receipts.unshift({
+    id: `global-matrix-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.globalMatrixActions.receipts = state.globalMatrixActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function copyGlobalMatrixDigest() {
+  const matrix = globalEnvironmentMatrixSnapshot();
+  state.globalMatrixActions.lastCopiedAt = new Date().toISOString();
+  addGlobalMatrixReceipt("Global matrix digest copied", `${matrix.countries.length} countries, ${matrix.environments.length} environments, and ${matrix.gates.length} launch gates copied.`);
+  addAudit("Global matrix digest copied", "Global Environment Matrix digest copied for multi-country launch review.");
+  renderGlobalEnvironmentMatrix();
+  copyText(globalMatrixDigestText(matrix), "Global matrix digest copied.");
+}
+
+function globalMatrixDigestText(matrix = globalEnvironmentMatrixSnapshot()) {
+  const environmentLines = matrix.environments
+    .map((environment, index) => `${index + 1}. ${environment.name}: ${environment.status} | ${environment.boundary}\n   ${environment.cells.map((cell) => `${cell.code}=${cell.status}`).join(" | ")}\n   ${environment.detail}`)
+    .join("\n");
+  const countryLines = matrix.countries
+    .map((country, index) => `${index + 1}. ${country.status}: ${country.name} | ${country.residency} | ${country.learning}\n   ${country.detail}`)
+    .join("\n");
+  const gateLines = matrix.gates.map((gate, index) => `${index + 1}. ${gate.status}: ${gate.title} | ${gate.owner}\n   ${gate.detail}`).join("\n");
+  const learningLines = matrix.learningBoundaries.map((boundary, index) => `${index + 1}. ${boundary.status}: ${boundary.scope} | ${boundary.countries}\n   ${boundary.detail}`).join("\n");
+  const receiptLines = matrix.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Global Environment Matrix",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${matrix.statusLabel}`,
+    `Matrix score: ${matrix.score}%`,
+    `Countries ready: ${matrix.readyCountries}/${matrix.countries.length}`,
+    `Environment-country cells unblocked: ${matrix.cleanCells}/${matrix.totalCells}`,
+    `Launch gates passed: ${matrix.passedGates}/${matrix.gates.length}`,
+    "",
+    "Summary:",
+    matrix.summary,
+    "",
+    "Environment matrix:",
+    environmentLines,
+    "",
+    "Country rules:",
+    countryLines,
+    "",
+    "Launch gates:",
+    gateLines,
+    "",
+    "AI learning boundaries:",
+    learningLines,
+    "",
+    "Receipts:",
+    receiptLines || "No global matrix receipts yet.",
+    "",
+    "Matrix rule:",
+    "Every country can use the same calm AnswerSeal review desk, but production launch and cross-organization learning require explicit country, environment, residency, owner, and receipt gates.",
   ].join("\n");
 }
 
@@ -24016,6 +24530,13 @@ function exportCsv() {
     "Policy Drift Risks",
     "Policy Owner Gates",
     "Policy Board Receipts",
+    "Global Matrix Status",
+    "Global Matrix Score",
+    "Global Countries Ready",
+    "Global Environment Cells",
+    "Global Launch Gates",
+    "Global Learning Boundaries",
+    "Global Matrix Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -24066,6 +24587,7 @@ function exportCsv() {
     const playbookStudio = trustPlaybookStudioSnapshot();
     const outcomeConsole = outcomeLearningConsoleSnapshot();
     const policyBoard = reinforcementPolicyBoardSnapshot();
+    const globalMatrix = globalEnvironmentMatrixSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -24309,6 +24831,13 @@ function exportCsv() {
       policyBoard.driftRisks.filter((risk) => risk.status !== "Clear").length,
       `${policyBoard.ownerGates.filter((gate) => gate.status === "Assigned").length}/${policyBoard.ownerGates.length}`,
       policyBoard.receipts.length,
+      globalMatrix.statusLabel,
+      `${globalMatrix.score}%`,
+      `${globalMatrix.readyCountries}/${globalMatrix.countries.length}`,
+      `${globalMatrix.cleanCells}/${globalMatrix.totalCells}`,
+      `${globalMatrix.passedGates}/${globalMatrix.gates.length}`,
+      globalMatrix.learningBoundaries.length,
+      globalMatrix.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -24386,7 +24915,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v49</h1>
+        <h1>AnswerSeal Review Pack v50</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -27464,6 +27993,137 @@ function exportReviewPack() {
         </table>
         <h2>Outcome Learning Digest</h2>
         <pre>${escapeHtml(outcomeLearningDigestText(outcomeConsole))}</pre>
+        <h2>Global Environment Matrix</h2>
+        <p>Status: ${escapeHtml(globalMatrix.statusLabel)} | Matrix score: ${globalMatrix.score}% | Countries ready: ${globalMatrix.readyCountries}/${globalMatrix.countries.length} | Environment cells: ${globalMatrix.cleanCells}/${globalMatrix.totalCells} | Launch gates: ${globalMatrix.passedGates}/${globalMatrix.gates.length}</p>
+        <p>${escapeHtml(globalMatrix.summary)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Environment</th>
+              <th>Status</th>
+              <th>Boundary</th>
+              <th>Country Cells</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${globalMatrix.environments
+              .map(
+                (environment) => `
+                  <tr>
+                    <td>${escapeHtml(environment.name)}</td>
+                    <td class="${environment.status === "Ready" ? "ok" : "risk"}">${escapeHtml(environment.status)}</td>
+                    <td>${escapeHtml(environment.boundary)}</td>
+                    <td>${escapeHtml(environment.cells.map((cell) => `${cell.code}: ${cell.status}`).join(" | "))}</td>
+                    <td>${escapeHtml(environment.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Global Country Rules</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Status</th>
+              <th>Residency</th>
+              <th>Learning</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${globalMatrix.countries
+              .map(
+                (country) => `
+                  <tr>
+                    <td>${escapeHtml(country.name)}</td>
+                    <td class="${country.status === "Ready" ? "ok" : "risk"}">${escapeHtml(country.status)}</td>
+                    <td>${escapeHtml(country.residency)}</td>
+                    <td>${escapeHtml(country.learning)}</td>
+                    <td>${escapeHtml(country.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Global Launch Gates</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${globalMatrix.gates
+              .map(
+                (gate) => `
+                  <tr>
+                    <td>${escapeHtml(gate.title)}</td>
+                    <td class="${gate.status === "Pass" ? "ok" : "risk"}">${escapeHtml(gate.status)}</td>
+                    <td>${escapeHtml(gate.owner)}</td>
+                    <td>${escapeHtml(gate.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Global AI Learning Boundaries</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Boundary</th>
+              <th>Status</th>
+              <th>Countries</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${globalMatrix.learningBoundaries
+              .map(
+                (boundary) => `
+                  <tr>
+                    <td>${escapeHtml(boundary.scope)}</td>
+                    <td class="${boundary.status === "Allowed" ? "ok" : "risk"}">${escapeHtml(boundary.status)}</td>
+                    <td>${escapeHtml(boundary.countries)}</td>
+                    <td>${escapeHtml(boundary.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Global Matrix Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(globalMatrix.receipts.length ? globalMatrix.receipts : [{ action: "Matrix ready", detail: "No global matrix receipts yet.", at: new Date().toISOString() }])
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                    <td>${escapeHtml(formatAuditTime(receipt.at))}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Global Matrix Digest</h2>
+        <pre>${escapeHtml(globalMatrixDigestText(globalMatrix))}</pre>
         <h2>Reinforcement Policy Board</h2>
         <p>Status: ${escapeHtml(policyBoard.statusLabel)} | Board score: ${policyBoard.score}% | Rules approved: ${policyBoard.rules.filter((rule) => rule.status === "Approved").length}/${policyBoard.rules.length} | Drift risks: ${policyBoard.driftRisks.filter((risk) => risk.status !== "Clear").length} | Owner gates: ${policyBoard.ownerGates.filter((gate) => gate.status === "Assigned").length}/${policyBoard.ownerGates.length}</p>
         <p>${escapeHtml(policyBoard.summary)}</p>
@@ -28338,7 +28998,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v49 created with reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v50 created with global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -28376,12 +29036,13 @@ function exportReviewPack() {
   renderTrustPlaybookStudio();
   renderOutcomeLearningConsole();
   renderReinforcementPolicyBoard();
+  renderGlobalEnvironmentMatrix();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v49 exported.");
+  showToast("Review Pack v50 exported.");
 }
 
 function toCsv(rows) {
@@ -28471,6 +29132,7 @@ function serializeWorkspace() {
     playbookStudioActions: state.playbookStudioActions,
     outcomeConsoleActions: state.outcomeConsoleActions,
     policyBoardActions: state.policyBoardActions,
+    globalMatrixActions: state.globalMatrixActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -28529,6 +29191,9 @@ function resetWorkspace() {
   closeTrustMissionAutopilot(false);
   closeMissionMemoryGraph(false);
   closeTrustPlaybookStudio(false);
+  closeOutcomeLearningConsole(false);
+  closeReinforcementPolicyBoard(false);
+  closeGlobalEnvironmentMatrix(false);
   closeWorkspace(false);
   closeLibrary();
   render();

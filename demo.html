@@ -243,6 +243,10 @@
             <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
             <span>Policy Board</span>
           </button>
+          <button class="nav-item" id="globalMatrixNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+            <span>Global Matrix</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -304,9 +308,9 @@
         </section>
 
         <section class="sidebar-section" aria-label="Build phase">
-          <span class="label">Build</span>
-          <strong>v0.53 Alpha</strong>
-          <span>Reinforcement Policy Board</span>
+        <span class="label">Build</span>
+          <strong>v0.54 Alpha</strong>
+          <span>Global Environment Matrix</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -318,7 +322,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.53 Alpha</span>
+            <span class="label">Security questionnaire | v0.54 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -5043,6 +5047,120 @@
             <span>Publish</span>
           </button>
           <button class="secondary-button" id="copyPolicyBoardDigestButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Digest</span>
+          </button>
+        </div>
+      </section>
+    </aside>
+
+    <div class="drawer-backdrop" id="globalMatrixBackdrop" hidden></div>
+    <aside class="workspace-drawer global-matrix-drawer" id="globalMatrixDrawer" aria-hidden="true" aria-labelledby="globalMatrixTitle">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Global launch control</span>
+          <h2 id="globalMatrixTitle">Global Environment Matrix</h2>
+        </div>
+        <button class="icon-button" id="closeGlobalMatrixButton" type="button" aria-label="Close global environment matrix" title="Close global environment matrix">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="global-matrix-body">
+        <section class="memory-strip global-matrix-metrics" aria-label="Global environment matrix status">
+          <article>
+            <span class="label">Score</span>
+            <strong id="globalMatrixScore">0%</strong>
+          </article>
+          <article>
+            <span class="label">Status</span>
+            <strong id="globalMatrixStatus">Matrix ready</strong>
+          </article>
+          <article>
+            <span class="label">Countries</span>
+            <strong id="globalMatrixCountryCount">0/0</strong>
+          </article>
+          <article>
+            <span class="label">Environments</span>
+            <strong id="globalMatrixEnvironmentCount">0</strong>
+          </article>
+          <article>
+            <span class="label">Gates</span>
+            <strong id="globalMatrixGateCount">0/0</strong>
+          </article>
+        </section>
+
+        <section class="global-matrix-summary-card" aria-label="Global matrix summary">
+          <span class="label">Matrix Brief</span>
+          <strong id="globalMatrixSummary">Map countries, environments, and learning boundaries before production launch.</strong>
+        </section>
+
+        <section class="drawer-section" aria-label="Environment country matrix">
+          <div class="section-heading">
+            <span class="label">Environment Matrix</span>
+            <span>Demo, pilot, staging, production</span>
+          </div>
+          <div class="global-matrix-environment-list" id="globalMatrixEnvironmentList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Country launch rules">
+          <div class="section-heading">
+            <span class="label">Country Rules</span>
+            <span>Residency, privacy, buyer export</span>
+          </div>
+          <div class="global-matrix-country-list" id="globalMatrixCountryList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Global launch gates">
+          <div class="section-heading">
+            <span class="label">Launch Gates</span>
+            <span>Country, environment, AI, buyer handoff</span>
+          </div>
+          <div class="global-matrix-gate-list" id="globalMatrixGateList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="AI learning boundaries">
+          <div class="section-heading">
+            <span class="label">Learning Boundary</span>
+            <span>Local memory vs aggregate-safe benefit</span>
+          </div>
+          <div class="global-matrix-learning-list" id="globalMatrixLearningList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Global matrix receipts">
+          <div class="section-heading">
+            <span class="label">Receipts</span>
+            <span>Mapping, simulation, gates, publish</span>
+          </div>
+          <div class="global-matrix-receipt-list" id="globalMatrixReceiptList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Global matrix digest">
+          <div class="section-heading">
+            <span class="label">Digest</span>
+            <span>Copy-ready launch brief</span>
+          </div>
+          <pre class="global-matrix-digest" id="globalMatrixDigest"></pre>
+        </section>
+
+        <div class="drawer-actions global-matrix-actions">
+          <button class="primary-button" id="mapGlobalMatrixRulesButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Map</span>
+          </button>
+          <button class="secondary-button" id="simulateGlobalMatrixLaunchButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Simulate</span>
+          </button>
+          <button class="secondary-button" id="approveGlobalMatrixGatesButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-shield"></use></svg>
+            <span>Approve</span>
+          </button>
+          <button class="secondary-button" id="publishGlobalMatrixReceiptsButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span>Publish</span>
+          </button>
+          <button class="secondary-button" id="copyGlobalMatrixDigestButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
             <span>Digest</span>
           </button>
