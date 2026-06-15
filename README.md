@@ -4,11 +4,11 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.48 Alpha
+**Current version:** v0.49 Alpha
 
-**Current phase:** Calm Command Bar
+**Current phase:** Trust Mission Autopilot
 
-**Current release:** v0.48 Alpha - Calm Command Bar
+**Current release:** v0.49 Alpha - Trust Mission Autopilot
 
 ## Brand
 
@@ -244,6 +244,12 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Next-best command recommendation based on evidence gaps, sovereign readiness, firewall quarantine, buyer feedback, approvals, and intake state
 - Command receipts that record command-run history for calmer workspace handoff
 - Command CSV context with command status, command count, recommended command, last command, and receipts
+- Trust Mission Autopilot drawer that turns evidence gaps, buyer feedback, claim trace, sovereign readiness, and learning firewall posture into one owner-led mission
+- Mission score, open signal count, owner, proof move, human gate, buyer handoff, and safe learning boundary in one compact path
+- Mission path for detect, assign, attach proof, human gate, and safe learning
+- Mission signal radar for evidence gaps, buyer feedback, learning firewall, global readiness, and claim trace
+- Mission receipts for launched missions, captured outcomes, and copied mission digests
+- Mission CSV context with status, score, signal count, owner, proof move, human gate, learning boundary, and receipt count
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -264,7 +270,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v44 export with calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v45 export with trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -282,13 +288,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.49 Alpha - Trust Mission Autopilot
+## Next Phase: v0.50 Alpha - Mission Memory Graph
 
-- Convert evidence gaps, buyer feedback, sovereign posture, and learning firewall signals into one clear mission
-- Show the owner, proof move, human gate, buyer-safe handoff, and learning boundary in one compact path
-- Capture outcome and reward signal when a mission closes
-- Separate tenant-local exact learning from aggregate-safe mission patterns
-- Keep the AI loop powerful while the visible workflow stays calm
+- Connect mission receipts to answer quality, buyer friction, owner effort, and proof reuse
+- Promote approved wording and proof moves only inside the originating tenant boundary
+- Share only aggregate proof classes, drift warnings, and playbook labels across organizations
+- Recommend the next trust playbook from mission outcomes without making the interface heavier
+- Keep the closed-loop AI memory visible, governed, and calm
 
 ## License
 

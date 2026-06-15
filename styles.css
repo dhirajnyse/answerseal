@@ -1541,6 +1541,140 @@ svg {
   line-height: 1.35;
 }
 
+.mission-drawer {
+  width: min(620px, 100vw);
+}
+
+.mission-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 16px;
+  overflow: auto;
+  background:
+    linear-gradient(140deg, rgba(236, 253, 245, 0.6), rgba(239, 246, 255, 0.62)),
+    #ffffff;
+}
+
+.mission-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mission-summary-card,
+.mission-stage-card,
+.mission-signal-card,
+.mission-receipt-card {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 36px rgba(31, 41, 38, 0.06);
+}
+
+.mission-summary-card > strong {
+  font-size: 1.04rem;
+  line-height: 1.35;
+}
+
+.mission-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mission-decision-grid article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(20, 184, 166, 0.22);
+  border-radius: 8px;
+  background: #f8fffc;
+}
+
+.mission-decision-grid article:last-child {
+  grid-column: 1 / -1;
+}
+
+.mission-decision-grid span,
+.mission-stage-card span,
+.mission-signal-card span,
+.mission-receipt-card small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.mission-decision-grid b,
+.mission-stage-card strong,
+.mission-signal-card strong,
+.mission-receipt-card strong {
+  color: var(--ink);
+  font-size: 0.92rem;
+  line-height: 1.32;
+}
+
+.drawer-section {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mission-stage-list,
+.mission-signal-list,
+.mission-receipt-list {
+  display: grid;
+  gap: 9px;
+}
+
+.mission-stage-card,
+.mission-signal-card {
+  border-left: 4px solid var(--amber);
+}
+
+.mission-stage-card.is-ready,
+.mission-signal-card.is-clean {
+  border-left-color: var(--green);
+}
+
+.mission-signal-card.is-attention {
+  background: #fffdf7;
+}
+
+.mission-stage-card p,
+.mission-signal-card p,
+.mission-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.mission-stage-card small {
+  width: max-content;
+  min-height: 22px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.mission-actions {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr;
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  padding: 10px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 32%);
+}
+
 .library-backdrop {
   position: fixed;
   inset: 0;
@@ -10389,6 +10523,14 @@ svg {
     grid-template-columns: 1fr;
   }
 
+  .mission-drawer {
+    width: min(620px, 100vw);
+  }
+
+  .mission-decision-grid {
+    grid-template-columns: 1fr;
+  }
+
   .next-action {
     grid-column: 1 / -1;
   }
@@ -10733,6 +10875,8 @@ svg {
     .sovereign-policy-list,
     .sovereign-rollout-list,
     .command-metrics,
+    .mission-metrics,
+    .mission-actions,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -10753,6 +10897,10 @@ svg {
 
   .command-recommended {
     grid-template-columns: 1fr;
+  }
+
+  .mission-body {
+    padding: 12px;
   }
 
   .build-status-panel div {

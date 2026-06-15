@@ -1,5 +1,19 @@
 # AnswerSeal Releases
 
+## v0.49 Alpha - Trust Mission Autopilot
+
+Phase: Trust Mission Autopilot
+
+- Added a Trust Mission Autopilot drawer that converts evidence gaps, buyer feedback, claim trace, sovereign posture, and learning firewall signals into one owner-led mission.
+- Added mission score, open signal count, current mission summary, owner, proof move, human gate, buyer-safe handoff, and learning boundary.
+- Added a five-step mission path for detect, assign, attach proof, human gate, and safe learning.
+- Added mission signal radar for evidence gaps, buyer feedback, learning firewall posture, global readiness, and claim trace.
+- Added mission receipts for launched missions, captured outcomes, and copied mission digests.
+- Added Mission to the Calm Command Bar and made it the recommended action when trust signals need coordinated work.
+- Added mission status, score, signals, owner, proof move, human gate, learning boundary, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v45 with Trust Mission Autopilot sections, mission signals, receipts, and digest.
+- Updated the landing page around mission-led closed-loop trust automation and the build phases page with the v0.50 Mission Memory Graph plan.
+
 ## v0.48 Alpha - Calm Command Bar
 
 Phase: Calm Command Bar

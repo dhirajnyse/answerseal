@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.48 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v48";
+const BUILD_VERSION = "v0.49 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v49";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v48",
   "answerseal.workspace.v47",
   "answerseal.workspace.v46",
   "answerseal.workspace.v45",
@@ -757,6 +758,8 @@ function createInitialState() {
     commandBarOpen: false,
     commandBarQuery: "",
     commandBarActions: createInitialCommandBarActions(),
+    missionOpen: false,
+    missionActions: createInitialMissionActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1091,6 +1094,16 @@ function createInitialCommandBarActions() {
   };
 }
 
+function createInitialMissionActions() {
+  return {
+    status: "Listening",
+    launchedAt: null,
+    outcomeCapturedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1238,6 +1251,7 @@ function loadWorkspaceState() {
       networkFirewallActions: normalizeNetworkFirewallActions(workspace.networkFirewallActions ?? fresh.networkFirewallActions),
       sovereignActions: normalizeSovereignActions(workspace.sovereignActions ?? fresh.sovereignActions),
       commandBarActions: normalizeCommandBarActions(workspace.commandBarActions ?? fresh.commandBarActions),
+      missionActions: normalizeMissionActions(workspace.missionActions ?? fresh.missionActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1282,6 +1296,7 @@ function loadWorkspaceState() {
       sovereignOpen: false,
       commandBarOpen: false,
       commandBarQuery: "",
+      missionOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2134,6 +2149,28 @@ function normalizeCommandBarReceipt(receipt) {
   };
 }
 
+function normalizeMissionActions(actions) {
+  const status = ["Listening", "Mission launched", "Outcome captured"].includes(actions?.status)
+    ? actions.status
+    : "Listening";
+  return {
+    status,
+    launchedAt: actions?.launchedAt ?? null,
+    outcomeCapturedAt: actions?.outcomeCapturedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeMissionReceipt) : [],
+  };
+}
+
+function normalizeMissionReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `mission-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Trust mission action"),
+    detail: String(receipt?.detail ?? "Trust mission action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2194,6 +2231,7 @@ const elements = {
   buyerFeedbackLoopNavButton: document.querySelector("#buyerFeedbackLoopNavButton"),
   networkFirewallNavButton: document.querySelector("#networkFirewallNavButton"),
   sovereignNavButton: document.querySelector("#sovereignNavButton"),
+  missionNavButton: document.querySelector("#missionNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2277,6 +2315,24 @@ const elements = {
   commandLastAction: document.querySelector("#commandLastAction"),
   commandList: document.querySelector("#commandList"),
   commandReceiptList: document.querySelector("#commandReceiptList"),
+  missionBackdrop: document.querySelector("#missionBackdrop"),
+  missionDrawer: document.querySelector("#missionDrawer"),
+  closeMissionButton: document.querySelector("#closeMissionButton"),
+  missionScore: document.querySelector("#missionScore"),
+  missionStatus: document.querySelector("#missionStatus"),
+  missionSignals: document.querySelector("#missionSignals"),
+  missionSummary: document.querySelector("#missionSummary"),
+  missionOwner: document.querySelector("#missionOwner"),
+  missionProofMove: document.querySelector("#missionProofMove"),
+  missionHumanGate: document.querySelector("#missionHumanGate"),
+  missionBuyerHandoff: document.querySelector("#missionBuyerHandoff"),
+  missionLearningBoundary: document.querySelector("#missionLearningBoundary"),
+  missionStageList: document.querySelector("#missionStageList"),
+  missionSignalList: document.querySelector("#missionSignalList"),
+  missionReceiptList: document.querySelector("#missionReceiptList"),
+  launchMissionButton: document.querySelector("#launchMissionButton"),
+  captureMissionOutcomeButton: document.querySelector("#captureMissionOutcomeButton"),
+  copyMissionDigestButton: document.querySelector("#copyMissionDigestButton"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -3024,6 +3080,7 @@ function bindEvents() {
   elements.buyerFeedbackLoopNavButton.addEventListener("click", openBuyerFeedbackLoop);
   elements.networkFirewallNavButton.addEventListener("click", openNetworkFirewall);
   elements.sovereignNavButton.addEventListener("click", openSovereignConsole);
+  elements.missionNavButton.addEventListener("click", openTrustMissionAutopilot);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -3102,6 +3159,7 @@ function bindEvents() {
     renderNetworkFirewall();
     renderSovereignConsole();
     renderCommandBar();
+    renderTrustMissionAutopilot();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3351,6 +3409,11 @@ function bindEvents() {
     renderCommandBar();
   });
   elements.commandRecommendedButton.addEventListener("click", runRecommendedCommand);
+  elements.closeMissionButton.addEventListener("click", closeTrustMissionAutopilot);
+  elements.missionBackdrop.addEventListener("click", closeTrustMissionAutopilot);
+  elements.launchMissionButton.addEventListener("click", launchTrustMission);
+  elements.captureMissionOutcomeButton.addEventListener("click", captureTrustMissionOutcome);
+  elements.copyMissionDigestButton.addEventListener("click", copyTrustMissionDigest);
 
   document.addEventListener("keydown", (event) => {
     const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
@@ -3403,6 +3466,7 @@ function bindEvents() {
     if (state.buyerFeedbackLoopOpen) closeBuyerFeedbackLoop();
     if (state.networkFirewallOpen) closeNetworkFirewall();
     if (state.sovereignOpen) closeSovereignConsole();
+    if (state.missionOpen) closeTrustMissionAutopilot();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3448,6 +3512,7 @@ function applyInitialHash() {
   if (hash === "firewall" || hash === "network-firewall" || hash === "learning-firewall" || hash === "privacy-firewall") openNetworkFirewall();
   if (hash === "sovereign" || hash === "regions" || hash === "global" || hash === "environments" || hash === "countries") openSovereignConsole();
   if (hash === "command-bar" || hash === "actions" || hash === "quick-actions" || hash === "calm-command") openCommandBar();
+  if (hash === "mission" || hash === "missions" || hash === "trust-mission" || hash === "autopilot-mission") openTrustMissionAutopilot();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3507,6 +3572,7 @@ function render() {
   renderNetworkFirewall();
   renderSovereignConsole();
   renderCommandBar();
+  renderTrustMissionAutopilot();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4243,6 +4309,7 @@ function activateWorkspaceNav(target) {
   closeTrustOperationsCommandCenter(false);
   closeRevenueOutcomeLoop(false);
   closeBuyerTrustGraph(false);
+  closeTrustMissionAutopilot(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -4324,6 +4391,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.sovereignNavButton && state.sovereignOpen) {
     closeSovereignConsole(false);
   }
+  if (activeButton !== elements.missionNavButton && state.missionOpen) {
+    closeTrustMissionAutopilot(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4357,6 +4427,7 @@ function setActiveNav(activeButton) {
     elements.buyerFeedbackLoopNavButton,
     elements.networkFirewallNavButton,
     elements.sovereignNavButton,
+    elements.missionNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -6006,8 +6077,20 @@ function commandCatalog() {
   const sovereign = sovereignConsoleSnapshot();
   const firewall = networkFirewallSnapshot();
   const feedback = buyerFeedbackLoopSnapshot();
+  const mission = trustMissionSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
   const common = [
+    {
+      id: "trust-mission",
+      scope: "Mission",
+      title: "Open Trust Mission",
+      detail: `${mission.score}% mission score with ${mission.signalCount} open signals.`,
+      signal: mission.statusLabel,
+      cta: "Open Mission",
+      reason: "The mission turns gaps, buyer feedback, learning guardrails, and rollout posture into one calm next action.",
+      run: openTrustMissionAutopilot,
+      keywords: ["mission", "autopilot", "next", "owner", "proof", "gate", "learning"],
+    },
     {
       id: "review-desk",
       scope: "Review",
@@ -6133,7 +6216,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v44 with command bar, sovereign, firewall, learning, proof, and trace sections.`,
+      detail: `Create Review Pack v45 with trust mission, command bar, sovereign, firewall, learning, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -6182,13 +6265,13 @@ function recommendedCommand(commands) {
 
   const preferredId =
     needsEvidence > 0 || gaps.highRiskCount > 0
-      ? "evidence-gaps"
+      ? "trust-mission"
       : sovereign.score < 90 || sovereign.policyOverlays.some((policy) => policy.status !== "Pass")
-        ? "sovereign-console"
+        ? "trust-mission"
         : firewall.quarantineCount > 0 || firewall.blockedCount > 0
-          ? "network-firewall"
+          ? "trust-mission"
           : feedback.requests.length > 0
-            ? "buyer-feedback-loop"
+            ? "trust-mission"
             : approvedCount > 0
               ? "export-review-pack"
               : "import-studio";
@@ -6239,6 +6322,336 @@ function commandBarDigestText(snapshot = commandBarSnapshot()) {
     "",
     "Recommended detail:",
     snapshot.recommended.reason,
+  ].join("\n");
+}
+
+function openTrustMissionAutopilot() {
+  closeCommandBar();
+  setActiveNav(elements.missionNavButton);
+  state.missionOpen = true;
+  state.missionActions.status = state.missionActions.status === "Listening" ? "Listening" : state.missionActions.status;
+  elements.missionBackdrop.hidden = false;
+  elements.missionDrawer.classList.add("is-open");
+  elements.missionDrawer.setAttribute("aria-hidden", "false");
+  renderTrustMissionAutopilot();
+  elements.launchMissionButton.focus();
+  schedulePersist("Mission ready");
+}
+
+function closeTrustMissionAutopilot(activateReview = true) {
+  if (!state.missionOpen && elements.missionDrawer.getAttribute("aria-hidden") === "true") return;
+  state.missionOpen = false;
+  elements.missionDrawer.classList.remove("is-open");
+  elements.missionDrawer.setAttribute("aria-hidden", "true");
+  elements.missionBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderTrustMissionAutopilot() {
+  const mission = trustMissionSnapshot();
+  elements.missionScore.textContent = `${mission.score}%`;
+  elements.missionStatus.textContent = mission.statusLabel;
+  elements.missionSignals.textContent = mission.signalCount;
+  elements.missionSummary.textContent = mission.summary;
+  elements.missionOwner.textContent = mission.owner;
+  elements.missionProofMove.textContent = mission.proofMove;
+  elements.missionHumanGate.textContent = mission.humanGate;
+  elements.missionBuyerHandoff.textContent = mission.buyerHandoff;
+  elements.missionLearningBoundary.textContent = mission.learningBoundary;
+
+  elements.missionStageList.innerHTML = "";
+  mission.stages.forEach((stage) => {
+    const card = document.createElement("article");
+    card.className = `mission-stage-card ${stage.status === "Ready" ? "is-ready" : "is-watch"}`;
+    card.innerHTML = `
+      <span>${escapeHtml(stage.step)}</span>
+      <strong>${escapeHtml(stage.title)}</strong>
+      <p>${escapeHtml(stage.detail)}</p>
+      <small>${escapeHtml(stage.status)}</small>
+    `;
+    elements.missionStageList.append(card);
+  });
+
+  elements.missionSignalList.innerHTML = "";
+  mission.signals.forEach((signal) => {
+    const item = document.createElement("article");
+    item.className = `mission-signal-card ${signal.status === "Clean" ? "is-clean" : "is-attention"}`;
+    item.innerHTML = `
+      <strong>${escapeHtml(signal.title)}</strong>
+      <span>${escapeHtml(signal.value)}</span>
+      <p>${escapeHtml(signal.detail)}</p>
+    `;
+    elements.missionSignalList.append(item);
+  });
+
+  elements.missionReceiptList.innerHTML = "";
+  if (mission.receipts.length === 0) {
+    elements.missionReceiptList.append(emptyState("No mission receipts yet"));
+  } else {
+    mission.receipts.forEach((receipt) => {
+      const card = document.createElement("article");
+      card.className = "mission-receipt-card";
+      card.innerHTML = `
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.detail)}</span>
+        <small>${escapeHtml(formatAuditTime(receipt.at))}</small>
+      `;
+      elements.missionReceiptList.append(card);
+    });
+  }
+}
+
+function trustMissionSnapshot() {
+  const coverage = coverageSnapshot();
+  const gaps = gapAutopilotSnapshot();
+  const feedback = buyerFeedbackLoopSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const sovereign = sovereignConsoleSnapshot();
+  const routing = ownerRoutingSnapshot();
+  const activeQuestion = getActiveQuestion();
+  const trace = activeQuestion ? claimTraceSnapshot(activeQuestion) : { conflicts: 0, bound: 0, claims: [] };
+  const needsEvidence = state.questions.filter((question) => question.status === "needs-evidence").length;
+  const approved = state.questions.filter((question) => question.status === "approved").length;
+  const owner = gaps.ownerRows[0]?.member.name ?? (activeQuestion ? memberForQuestion(activeQuestion).name : "Security owner");
+  const highSignalCount =
+    needsEvidence
+    + gaps.highRiskCount
+    + feedback.requests.filter((request) => request.status !== "Watching").length
+    + firewall.quarantineCount
+    + firewall.blockedCount
+    + sovereign.policyOverlays.filter((policy) => policy.status !== "Pass").length
+    + trace.conflicts;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        coverage.score * 0.2
+          + Math.max(0, 100 - needsEvidence * 10) * 0.18
+          + Math.max(0, 100 - gaps.highRiskCount * 15) * 0.18
+          + firewall.score * 0.16
+          + sovereign.score * 0.14
+          + Math.min(100, approved * 16) * 0.08
+          + Math.max(0, 100 - trace.conflicts * 18) * 0.06,
+      ),
+    ),
+  );
+  const primary = trustMissionPrimary({ gaps, feedback, firewall, sovereign, activeQuestion, trace, owner });
+  const statusLabel =
+    state.missionActions.status === "Listening"
+      ? highSignalCount > 0
+        ? "Mission ready"
+        : "Monitoring"
+      : state.missionActions.status;
+  const summary = `${primary.title}: ${primary.detail}`;
+  const stages = [
+    {
+      step: "01",
+      title: "Detect mission",
+      detail: primary.detail,
+      status: highSignalCount > 0 ? "Ready" : "Clean",
+    },
+    {
+      step: "02",
+      title: "Assign owner",
+      detail: `${primary.owner} owns the proof move and buyer-safe wording.`,
+      status: routing.openRisks > 0 ? "Watch" : "Ready",
+    },
+    {
+      step: "03",
+      title: "Attach proof",
+      detail: primary.proofMove,
+      status: needsEvidence || gaps.highRiskCount ? "Watch" : "Ready",
+    },
+    {
+      step: "04",
+      title: "Human gate",
+      detail: primary.humanGate,
+      status: trace.conflicts ? "Watch" : "Ready",
+    },
+    {
+      step: "05",
+      title: "Learn safely",
+      detail: primary.learningBoundary,
+      status: firewall.blockedCount || firewall.quarantineCount ? "Watch" : "Ready",
+    },
+  ];
+  const signals = [
+    {
+      title: "Evidence gaps",
+      value: `${gaps.highRiskCount} high-risk`,
+      status: gaps.highRiskCount ? "Attention" : "Clean",
+      detail: `${gaps.taskCount} total gap tasks, ${gaps.requestedCount} evidence requests.`,
+    },
+    {
+      title: "Buyer feedback",
+      value: `${feedback.requests.length} requests`,
+      status: feedback.requests.length ? "Attention" : "Clean",
+      detail: `${feedback.events.length} events feeding local answer memory and safe aggregate patterns.`,
+    },
+    {
+      title: "Learning firewall",
+      value: `${firewall.blockedCount} blocked`,
+      status: firewall.blockedCount || firewall.quarantineCount ? "Attention" : "Clean",
+      detail: `${firewall.shareableCount} shareable patterns, ${firewall.quarantineCount} quarantine items.`,
+    },
+    {
+      title: "Global readiness",
+      value: `${sovereign.score}%`,
+      status: sovereign.score >= 85 ? "Clean" : "Attention",
+      detail: `${sovereign.readyRegions}/${sovereign.regions.length} regions ready with ${sovereign.environments.length} environments mapped.`,
+    },
+    {
+      title: "Claim trace",
+      value: `${trace.conflicts} conflicts`,
+      status: trace.conflicts ? "Attention" : "Clean",
+      detail: `${trace.bound}/${trace.claims.length} claims bound to source on the active answer.`,
+    },
+  ];
+
+  return {
+    score,
+    statusLabel,
+    signalCount: highSignalCount,
+    summary,
+    owner: primary.owner,
+    proofMove: primary.proofMove,
+    humanGate: primary.humanGate,
+    buyerHandoff: primary.buyerHandoff,
+    learningBoundary: primary.learningBoundary,
+    stages,
+    signals,
+    receipts: state.missionActions.receipts.slice(0, 8),
+  };
+}
+
+function trustMissionPrimary({ gaps, feedback, firewall, sovereign, activeQuestion, trace, owner }) {
+  const topGap = gaps.tasks[0];
+  const feedbackRequest = feedback.requests.find((request) => request.status !== "Watching") ?? feedback.requests[0];
+  const policyRisk = sovereign.policyOverlays.find((policy) => policy.status !== "Pass");
+
+  if (topGap) {
+    return {
+      title: "Close evidence gap",
+      detail: topGap.reason,
+      owner: topGap.owner.name,
+      proofMove: topGap.request,
+      humanGate: "Reviewer approves only after source coverage and claim trace are clean.",
+      buyerHandoff: "Ship portal-ready text after the evidence gap receipt is recorded.",
+      learningBoundary: "Exact wording stays tenant-local; only the gap category can inform aggregate patterns.",
+    };
+  }
+
+  if (feedbackRequest) {
+    return {
+      title: "Resolve buyer feedback",
+      detail: feedbackRequest.reason,
+      owner: feedbackRequest.owner,
+      proofMove: feedbackRequest.proof,
+      humanGate: "Owner confirms the buyer clarification before the answer enters local memory.",
+      buyerHandoff: "Send a narrow follow-up packet with the updated answer and citation.",
+      learningBoundary: "Buyer text remains private; only proof-demand class and outcome band are reusable.",
+    };
+  }
+
+  if (firewall.blockedCount || firewall.quarantineCount) {
+    return {
+      title: "Protect learning boundary",
+      detail: `${firewall.blockedCount} blocked signals and ${firewall.quarantineCount} quarantine items need review.`,
+      owner: "Governance owner",
+      proofMove: "Classify signals before any learning is promoted beyond this workspace.",
+      humanGate: "Governance approves aggregate-safe pattern labels.",
+      buyerHandoff: "Keep buyer answer unchanged until the learning boundary is clean.",
+      learningBoundary: "Raw prompts, files, answers, buyer names, and contract terms remain blocked.",
+    };
+  }
+
+  if (policyRisk) {
+    return {
+      title: "Clear rollout policy",
+      detail: policyRisk.detail,
+      owner: policyRisk.owner,
+      proofMove: `${policyRisk.title} needs ${policyRisk.scope} evidence before global rollout.`,
+      humanGate: "Legal or security approves regional policy posture.",
+      buyerHandoff: "Use region-specific evidence notes in the next buyer room.",
+      learningBoundary: "Regional rules determine whether only local memory or aggregate learning can run.",
+    };
+  }
+
+  return {
+    title: "Prepare buyer-safe handoff",
+    detail: activeQuestion ? nextActionLabel(activeQuestion) : "No open mission risk detected.",
+    owner,
+    proofMove: activeQuestion ? `Package "${activeQuestion.text}" with citations and trace status.` : "Export the approved Review Pack.",
+    humanGate: trace.conflicts ? "Resolve trace conflict before shipping." : "Reviewer confirms the final answer and attached citations.",
+    buyerHandoff: "Export Review Pack and portal-ready copy from the calm command bar.",
+    learningBoundary: "Approved language improves local memory; aggregate learning uses only safe pattern labels.",
+  };
+}
+
+function launchTrustMission() {
+  const mission = trustMissionSnapshot();
+  state.missionActions.status = "Mission launched";
+  state.missionActions.launchedAt = new Date().toISOString();
+  addMissionReceipt("Mission launched", `${mission.owner}: ${mission.proofMove}`);
+  addAudit("Trust mission launched", mission.summary);
+  renderTrustMissionAutopilot();
+  renderCommandBar();
+  showToast("Trust mission launched.");
+}
+
+function captureTrustMissionOutcome() {
+  const mission = trustMissionSnapshot();
+  state.missionActions.status = "Outcome captured";
+  state.missionActions.outcomeCapturedAt = new Date().toISOString();
+  addMissionReceipt("Outcome captured", `${mission.signalCount} signals recorded with ${mission.learningBoundary}`);
+  addAudit("Trust mission outcome", "Mission outcome captured for local improvement and aggregate-safe pattern learning.");
+  renderTrustMissionAutopilot();
+  renderCommandBar();
+  showToast("Mission outcome captured.");
+}
+
+function addMissionReceipt(action, detail) {
+  state.missionActions.receipts.unshift({
+    id: `mission-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.missionActions.receipts = state.missionActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function copyTrustMissionDigest() {
+  const mission = trustMissionSnapshot();
+  state.missionActions.lastCopiedAt = new Date().toISOString();
+  addMissionReceipt("Mission digest copied", `${mission.owner}: ${mission.summary}`);
+  addAudit("Mission digest copied", "Trust Mission Autopilot digest copied for the pilot team.");
+  renderTrustMissionAutopilot();
+  copyText(trustMissionDigestText(mission), "Mission digest copied.");
+}
+
+function trustMissionDigestText(mission = trustMissionSnapshot()) {
+  return [
+    "AnswerSeal Trust Mission Autopilot",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${mission.statusLabel}`,
+    `Score: ${mission.score}%`,
+    `Open signals: ${mission.signalCount}`,
+    `Owner: ${mission.owner}`,
+    `Mission: ${mission.summary}`,
+    "",
+    "Proof move:",
+    mission.proofMove,
+    "",
+    "Human gate:",
+    mission.humanGate,
+    "",
+    "Buyer handoff:",
+    mission.buyerHandoff,
+    "",
+    "Learning boundary:",
+    mission.learningBoundary,
   ].join("\n");
 }
 
@@ -21700,6 +22113,14 @@ function exportCsv() {
     "Recommended Command",
     "Last Command",
     "Command Receipts",
+    "Mission Status",
+    "Mission Score",
+    "Mission Signals",
+    "Mission Owner",
+    "Mission Proof Move",
+    "Mission Human Gate",
+    "Mission Learning Boundary",
+    "Mission Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -21745,6 +22166,7 @@ function exportCsv() {
     const networkFirewall = networkFirewallSnapshot();
     const sovereign = sovereignConsoleSnapshot();
     const commandBar = commandBarSnapshot();
+    const mission = trustMissionSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -21954,6 +22376,14 @@ function exportCsv() {
       commandBar.recommended.title,
       commandBar.lastAction || "Ready",
       commandBar.receipts.length,
+      mission.statusLabel,
+      `${mission.score}%`,
+      mission.signalCount,
+      mission.owner,
+      mission.proofMove,
+      mission.humanGate,
+      mission.learningBoundary,
+      mission.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -22009,6 +22439,7 @@ function exportReviewPack() {
   const networkFirewall = networkFirewallSnapshot();
   const sovereign = sovereignConsoleSnapshot();
   const commandBar = commandBarSnapshot();
+  const mission = trustMissionSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -22026,7 +22457,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v44</h1>
+        <h1>AnswerSeal Review Pack v45</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -24648,6 +25079,79 @@ function exportReviewPack() {
         </table>
         <h2>Sovereign Workspace Digest</h2>
         <pre>${escapeHtml(sovereignDigestText(sovereign))}</pre>
+        <h2>Trust Mission Autopilot</h2>
+        <p>Status: ${escapeHtml(mission.statusLabel)} | Mission score: ${mission.score}% | Open signals: ${mission.signalCount} | Owner: ${escapeHtml(mission.owner)}</p>
+        <p>${escapeHtml(mission.summary)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Status</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${mission.stages
+              .map(
+                (stage) => `
+                  <tr>
+                    <td>${escapeHtml(stage.step)} ${escapeHtml(stage.title)}</td>
+                    <td class="${stage.status === "Ready" || stage.status === "Clean" ? "ok" : "risk"}">${escapeHtml(stage.status)}</td>
+                    <td>${escapeHtml(stage.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Mission Signals</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Value</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${mission.signals
+              .map(
+                (signal) => `
+                  <tr>
+                    <td>${escapeHtml(signal.title)}</td>
+                    <td class="${signal.status === "Clean" ? "ok" : "risk"}">${escapeHtml(signal.value)}</td>
+                    <td>${escapeHtml(signal.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Mission Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(mission.receipts.length ? mission.receipts : [{ action: "Listening", detail: "No mission receipts yet.", at: new Date().toISOString() }])
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                    <td>${escapeHtml(formatAuditTime(receipt.at))}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Mission Digest</h2>
+        <pre>${escapeHtml(trustMissionDigestText(mission))}</pre>
         <h2>Calm Command Bar</h2>
         <p>Status: ${escapeHtml(commandBar.statusLabel)} | Commands: ${commandBar.commands.length} | Recommended: ${escapeHtml(commandBar.recommended.title)} | Receipts: ${commandBar.receipts.length}</p>
         <table>
@@ -25412,7 +25916,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v44 created with calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v45 created with trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -25445,12 +25949,13 @@ function exportReviewPack() {
   renderNetworkFirewall();
   renderSovereignConsole();
   renderCommandBar();
+  renderTrustMissionAutopilot();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v44 exported.");
+  showToast("Review Pack v45 exported.");
 }
 
 function toCsv(rows) {
@@ -25535,6 +26040,7 @@ function serializeWorkspace() {
     networkFirewallActions: state.networkFirewallActions,
     sovereignActions: state.sovereignActions,
     commandBarActions: state.commandBarActions,
+    missionActions: state.missionActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -25590,6 +26096,7 @@ function resetWorkspace() {
   closeNetworkFirewall(false);
   closeSovereignConsole(false);
   closeCommandBar();
+  closeTrustMissionAutopilot(false);
   closeWorkspace(false);
   closeLibrary();
   render();

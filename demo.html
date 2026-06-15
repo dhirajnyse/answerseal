@@ -223,6 +223,10 @@
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Sovereign</span>
           </button>
+          <button class="nav-item" id="missionNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Mission</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -285,8 +289,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.48 Alpha</strong>
-          <span>Calm Command Bar</span>
+          <strong>v0.49 Alpha</strong>
+          <span>Trust Mission Autopilot</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -298,7 +302,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.48 Alpha</span>
+            <span class="label">Security questionnaire | v0.49 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -4513,6 +4517,102 @@
           <button class="secondary-button" id="copyPortalFullButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
             <span>Packet</span>
+          </button>
+        </div>
+      </section>
+    </aside>
+
+    <div class="drawer-backdrop" id="missionBackdrop" hidden></div>
+    <aside class="workspace-drawer mission-drawer" id="missionDrawer" aria-hidden="true" aria-labelledby="missionTitle">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Closed-loop AI</span>
+          <h2 id="missionTitle">Trust Mission Autopilot</h2>
+        </div>
+        <button class="icon-button" id="closeMissionButton" type="button" aria-label="Close mission autopilot" title="Close mission autopilot">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="mission-body">
+        <section class="memory-strip mission-metrics" aria-label="Mission status">
+          <article>
+            <span class="label">Score</span>
+            <strong id="missionScore">0%</strong>
+          </article>
+          <article>
+            <span class="label">Status</span>
+            <strong id="missionStatus">Listening</strong>
+          </article>
+          <article>
+            <span class="label">Signals</span>
+            <strong id="missionSignals">0</strong>
+          </article>
+        </section>
+
+        <section class="mission-summary-card" aria-label="Current mission">
+          <span class="label">Current Mission</span>
+          <strong id="missionSummary">Monitoring trust workflow.</strong>
+          <div class="mission-decision-grid">
+            <article>
+              <span>Owner</span>
+              <b id="missionOwner">Security owner</b>
+            </article>
+            <article>
+              <span>Proof Move</span>
+              <b id="missionProofMove">Attach source-backed evidence.</b>
+            </article>
+            <article>
+              <span>Human Gate</span>
+              <b id="missionHumanGate">Reviewer approves before buyer handoff.</b>
+            </article>
+            <article>
+              <span>Buyer Handoff</span>
+              <b id="missionBuyerHandoff">Export the approved response pack.</b>
+            </article>
+            <article>
+              <span>Learning Boundary</span>
+              <b id="missionLearningBoundary">Exact language stays tenant-local.</b>
+            </article>
+          </div>
+        </section>
+
+        <section class="drawer-section" aria-label="Mission stages">
+          <div class="section-heading">
+            <span class="label">Mission Path</span>
+            <span>Detect, own, prove, gate, learn</span>
+          </div>
+          <div class="mission-stage-list" id="missionStageList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Mission signals">
+          <div class="section-heading">
+            <span class="label">Signal Radar</span>
+            <span>What the autopilot is reading</span>
+          </div>
+          <div class="mission-signal-list" id="missionSignalList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Mission receipts">
+          <div class="section-heading">
+            <span class="label">Mission Receipts</span>
+            <span>Closed-loop actions</span>
+          </div>
+          <div class="mission-receipt-list" id="missionReceiptList"></div>
+        </section>
+
+        <div class="drawer-actions mission-actions">
+          <button class="primary-button" id="launchMissionButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Launch Mission</span>
+          </button>
+          <button class="secondary-button" id="captureMissionOutcomeButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+            <span>Capture Outcome</span>
+          </button>
+          <button class="secondary-button" id="copyMissionDigestButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Digest</span>
           </button>
         </div>
       </section>
