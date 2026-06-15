@@ -1675,6 +1675,112 @@ svg {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 32%);
 }
 
+.memory-graph-drawer {
+  width: min(660px, 100vw);
+}
+
+.memory-graph-body {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding: 16px;
+  overflow: auto;
+  background:
+    linear-gradient(140deg, rgba(240, 253, 250, 0.74), rgba(239, 246, 255, 0.58)),
+    #ffffff;
+}
+
+.memory-graph-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.memory-graph-summary-card,
+.memory-node-card,
+.memory-local-card,
+.memory-pattern-card,
+.memory-playbook-card,
+.memory-receipt-card {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 16px 36px rgba(31, 41, 38, 0.06);
+}
+
+.memory-graph-summary-card > strong {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.memory-graph-node-list,
+.memory-local-list,
+.memory-pattern-list,
+.memory-playbook-list,
+.memory-graph-receipt-list {
+  display: grid;
+  gap: 9px;
+}
+
+.memory-node-card,
+.memory-pattern-card {
+  border-left: 4px solid var(--cyan);
+}
+
+.memory-node-card.is-local,
+.memory-pattern-card.is-review {
+  border-left-color: var(--amber);
+}
+
+.memory-node-card.is-shareable,
+.memory-pattern-card.is-shareable {
+  border-left-color: var(--green);
+}
+
+.memory-node-card span,
+.memory-playbook-card span,
+.memory-receipt-card small,
+.memory-local-card small,
+.memory-pattern-card small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.memory-node-card strong,
+.memory-local-card strong,
+.memory-pattern-card strong,
+.memory-playbook-card strong,
+.memory-receipt-card strong {
+  color: var(--ink);
+  font-size: 0.92rem;
+  line-height: 1.32;
+}
+
+.memory-node-card p,
+.memory-local-card p,
+.memory-pattern-card p,
+.memory-playbook-card p,
+.memory-receipt-card span {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.memory-graph-actions {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 0.8fr;
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  padding: 10px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 32%);
+}
+
 .library-backdrop {
   position: fixed;
   inset: 0;
@@ -10527,6 +10633,10 @@ svg {
     width: min(620px, 100vw);
   }
 
+  .memory-graph-drawer {
+    width: min(660px, 100vw);
+  }
+
   .mission-decision-grid {
     grid-template-columns: 1fr;
   }
@@ -10877,6 +10987,8 @@ svg {
     .command-metrics,
     .mission-metrics,
     .mission-actions,
+    .memory-graph-metrics,
+    .memory-graph-actions,
     .analytics-metrics,
     .pilot-terms,
     .seal-path-track,
@@ -10900,6 +11012,10 @@ svg {
   }
 
   .mission-body {
+    padding: 12px;
+  }
+
+  .memory-graph-body {
     padding: 12px;
   }
 

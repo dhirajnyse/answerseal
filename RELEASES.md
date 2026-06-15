@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.50 Alpha - Mission Memory Graph
+
+Phase: Mission Memory Graph
+
+- Added a Mission Memory Graph drawer that connects mission outcomes, local answer memory, proof moves, buyer friction, governed network patterns, and recommended trust playbooks.
+- Added memory score, node count, network-safe pattern count, summary, local memory boundary cards, graph nodes, safe pattern cards, playbook feed, and memory receipts.
+- Added governed actions for mapping the graph, promoting aggregate-safe patterns, and copying a memory graph digest.
+- Added Memory to the Calm Command Bar and made it the recommended action after a mission outcome is captured.
+- Added memory graph status, score, node count, safe pattern count, local memory count, playbook count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v46 with Mission Memory Graph sections, local memory boundary, network-safe patterns, recommended playbooks, receipts, and digest.
+- Updated the landing page around governed mission memory and the build phases page with the v0.51 Trust Playbook Studio plan.
+
 ## v0.49 Alpha - Trust Mission Autopilot
 
 Phase: Trust Mission Autopilot

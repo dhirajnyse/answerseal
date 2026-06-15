@@ -227,6 +227,10 @@
             <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
             <span>Mission</span>
           </button>
+          <button class="nav-item" id="memoryGraphNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Memory</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -289,8 +293,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.49 Alpha</strong>
-          <span>Trust Mission Autopilot</span>
+          <strong>v0.50 Alpha</strong>
+          <span>Mission Memory Graph</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -302,7 +306,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.49 Alpha</span>
+            <span class="label">Security questionnaire | v0.50 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -4611,6 +4615,100 @@
             <span>Capture Outcome</span>
           </button>
           <button class="secondary-button" id="copyMissionDigestButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Digest</span>
+          </button>
+        </div>
+      </section>
+    </aside>
+
+    <div class="drawer-backdrop" id="memoryGraphBackdrop" hidden></div>
+    <aside class="workspace-drawer memory-graph-drawer" id="memoryGraphDrawer" aria-hidden="true" aria-labelledby="memoryGraphTitle">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Closed-loop memory</span>
+          <h2 id="memoryGraphTitle">Mission Memory Graph</h2>
+        </div>
+        <button class="icon-button" id="closeMemoryGraphButton" type="button" aria-label="Close memory graph" title="Close memory graph">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-graph-body">
+        <section class="memory-strip memory-graph-metrics" aria-label="Memory graph status">
+          <article>
+            <span class="label">Score</span>
+            <strong id="memoryGraphScore">0%</strong>
+          </article>
+          <article>
+            <span class="label">Status</span>
+            <strong id="memoryGraphStatus">Graph ready</strong>
+          </article>
+          <article>
+            <span class="label">Nodes</span>
+            <strong id="memoryGraphNodes">0</strong>
+          </article>
+          <article>
+            <span class="label">Safe Patterns</span>
+            <strong id="memoryGraphPatterns">0</strong>
+          </article>
+        </section>
+
+        <section class="memory-graph-summary-card" aria-label="Memory graph summary">
+          <span class="label">Memory Spine</span>
+          <strong id="memoryGraphSummary">Mission outcomes become governed memory only after review.</strong>
+        </section>
+
+        <section class="drawer-section" aria-label="Memory graph nodes">
+          <div class="section-heading">
+            <span class="label">Graph Nodes</span>
+            <span>Outcome, answer, proof, friction, pattern</span>
+          </div>
+          <div class="memory-graph-node-list" id="memoryGraphNodeList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Local memory">
+          <div class="section-heading">
+            <span class="label">Local Memory</span>
+            <span>Never leaves this workspace</span>
+          </div>
+          <div class="memory-local-list" id="memoryLocalList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Network-safe patterns">
+          <div class="section-heading">
+            <span class="label">Network-Safe Patterns</span>
+            <span>Only aggregate classes can help others</span>
+          </div>
+          <div class="memory-pattern-list" id="memoryPatternList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Recommended playbooks">
+          <div class="section-heading">
+            <span class="label">Playbook Feed</span>
+            <span>Next improvement without interface noise</span>
+          </div>
+          <div class="memory-playbook-list" id="memoryPlaybookList"></div>
+        </section>
+
+        <section class="drawer-section" aria-label="Memory graph receipts">
+          <div class="section-heading">
+            <span class="label">Memory Receipts</span>
+            <span>Mapped and promoted actions</span>
+          </div>
+          <div class="memory-graph-receipt-list" id="memoryGraphReceiptList"></div>
+        </section>
+
+        <div class="drawer-actions memory-graph-actions">
+          <button class="primary-button" id="mapMemoryGraphButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+            <span>Map Graph</span>
+          </button>
+          <button class="secondary-button" id="promoteMemoryPatternButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span>Promote Pattern</span>
+          </button>
+          <button class="secondary-button" id="copyMemoryGraphDigestButton" type="button">
             <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
             <span>Digest</span>
           </button>

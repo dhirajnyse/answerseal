@@ -4,11 +4,11 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.49 Alpha
+**Current version:** v0.50 Alpha
 
-**Current phase:** Trust Mission Autopilot
+**Current phase:** Mission Memory Graph
 
-**Current release:** v0.49 Alpha - Trust Mission Autopilot
+**Current release:** v0.50 Alpha - Mission Memory Graph
 
 ## Brand
 
@@ -266,11 +266,16 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Secure workspace accounts drawer with current session, role switching, team invites, and invite acceptance status
 - Organization vault checkpointing for evidence, approved answers, claim traces, and local pilot sync state
 - Access audit copy for reviewer decisions, role changes, invites, exports, and source changes
+- Mission Memory Graph drawer that connects mission outcomes, local answer memory, proof moves, buyer friction, learning boundaries, and playbook recommendations
+- Local memory boundary cards for approved answer language, mission proof moves, and outcome receipts that stay inside the originating tenant
+- Network-safe pattern promotion for aggregate proof classes, drift warnings, regional policy labels, and playbook labels without raw buyer context
+- Memory playbook feed that recommends the next trust improvement while keeping reviewer approval gates visible
+- Copyable memory graph digest, memory receipts, CSV memory context, and Review Pack v46 sections
 - Evidence vault with freshness signals and selected-source detail
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v45 export with trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v46 export with mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -288,13 +293,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.50 Alpha - Mission Memory Graph
+## Next Phase: v0.51 Alpha - Trust Playbook Studio
 
-- Connect mission receipts to answer quality, buyer friction, owner effort, and proof reuse
-- Promote approved wording and proof moves only inside the originating tenant boundary
-- Share only aggregate proof classes, drift warnings, and playbook labels across organizations
-- Recommend the next trust playbook from mission outcomes without making the interface heavier
-- Keep the closed-loop AI memory visible, governed, and calm
+- Compose a trust playbook from a memory pattern, buyer motion, proof sequence, owner, gate, and rollout boundary
+- Simulate buyer paths against evidence gaps, claim conflicts, regional rules, and follow-up pressure
+- Require human approval before playbook guidance changes local memory or buyer-facing language
+- Show one recommended playbook and the reason, keeping the interface calm and easy to scan
+- Keep closed-loop learning governed as the product grows toward multi-country, multi-environment rollout
 
 ## License
 

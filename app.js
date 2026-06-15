@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.49 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v49";
+const BUILD_VERSION = "v0.50 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v50";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v49",
   "answerseal.workspace.v48",
   "answerseal.workspace.v47",
   "answerseal.workspace.v46",
@@ -760,6 +761,8 @@ function createInitialState() {
     commandBarActions: createInitialCommandBarActions(),
     missionOpen: false,
     missionActions: createInitialMissionActions(),
+    memoryGraphOpen: false,
+    memoryGraphActions: createInitialMemoryGraphActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1104,6 +1107,16 @@ function createInitialMissionActions() {
   };
 }
 
+function createInitialMemoryGraphActions() {
+  return {
+    status: "Graph ready",
+    mappedAt: null,
+    promotedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1252,6 +1265,7 @@ function loadWorkspaceState() {
       sovereignActions: normalizeSovereignActions(workspace.sovereignActions ?? fresh.sovereignActions),
       commandBarActions: normalizeCommandBarActions(workspace.commandBarActions ?? fresh.commandBarActions),
       missionActions: normalizeMissionActions(workspace.missionActions ?? fresh.missionActions),
+      memoryGraphActions: normalizeMemoryGraphActions(workspace.memoryGraphActions ?? fresh.memoryGraphActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1297,6 +1311,7 @@ function loadWorkspaceState() {
       commandBarOpen: false,
       commandBarQuery: "",
       missionOpen: false,
+      memoryGraphOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2171,6 +2186,28 @@ function normalizeMissionReceipt(receipt) {
   };
 }
 
+function normalizeMemoryGraphActions(actions) {
+  const status = ["Graph ready", "Graph mapped", "Pattern promoted"].includes(actions?.status)
+    ? actions.status
+    : "Graph ready";
+  return {
+    status,
+    mappedAt: actions?.mappedAt ?? null,
+    promotedAt: actions?.promotedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeMemoryGraphReceipt) : [],
+  };
+}
+
+function normalizeMemoryGraphReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `memory-graph-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Memory graph action"),
+    detail: String(receipt?.detail ?? "Mission memory graph action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2232,6 +2269,7 @@ const elements = {
   networkFirewallNavButton: document.querySelector("#networkFirewallNavButton"),
   sovereignNavButton: document.querySelector("#sovereignNavButton"),
   missionNavButton: document.querySelector("#missionNavButton"),
+  memoryGraphNavButton: document.querySelector("#memoryGraphNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2333,6 +2371,22 @@ const elements = {
   launchMissionButton: document.querySelector("#launchMissionButton"),
   captureMissionOutcomeButton: document.querySelector("#captureMissionOutcomeButton"),
   copyMissionDigestButton: document.querySelector("#copyMissionDigestButton"),
+  memoryGraphBackdrop: document.querySelector("#memoryGraphBackdrop"),
+  memoryGraphDrawer: document.querySelector("#memoryGraphDrawer"),
+  closeMemoryGraphButton: document.querySelector("#closeMemoryGraphButton"),
+  memoryGraphScore: document.querySelector("#memoryGraphScore"),
+  memoryGraphStatus: document.querySelector("#memoryGraphStatus"),
+  memoryGraphNodes: document.querySelector("#memoryGraphNodes"),
+  memoryGraphPatterns: document.querySelector("#memoryGraphPatterns"),
+  memoryGraphSummary: document.querySelector("#memoryGraphSummary"),
+  memoryGraphNodeList: document.querySelector("#memoryGraphNodeList"),
+  memoryLocalList: document.querySelector("#memoryLocalList"),
+  memoryPatternList: document.querySelector("#memoryPatternList"),
+  memoryPlaybookList: document.querySelector("#memoryPlaybookList"),
+  memoryGraphReceiptList: document.querySelector("#memoryGraphReceiptList"),
+  mapMemoryGraphButton: document.querySelector("#mapMemoryGraphButton"),
+  promoteMemoryPatternButton: document.querySelector("#promoteMemoryPatternButton"),
+  copyMemoryGraphDigestButton: document.querySelector("#copyMemoryGraphDigestButton"),
   intakeBackdrop: document.querySelector("#intakeBackdrop"),
   intakeDrawer: document.querySelector("#intakeDrawer"),
   closeIntakeButton: document.querySelector("#closeIntakeButton"),
@@ -3081,6 +3135,7 @@ function bindEvents() {
   elements.networkFirewallNavButton.addEventListener("click", openNetworkFirewall);
   elements.sovereignNavButton.addEventListener("click", openSovereignConsole);
   elements.missionNavButton.addEventListener("click", openTrustMissionAutopilot);
+  elements.memoryGraphNavButton.addEventListener("click", openMissionMemoryGraph);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -3160,6 +3215,7 @@ function bindEvents() {
     renderSovereignConsole();
     renderCommandBar();
     renderTrustMissionAutopilot();
+    renderMissionMemoryGraph();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3414,6 +3470,11 @@ function bindEvents() {
   elements.launchMissionButton.addEventListener("click", launchTrustMission);
   elements.captureMissionOutcomeButton.addEventListener("click", captureTrustMissionOutcome);
   elements.copyMissionDigestButton.addEventListener("click", copyTrustMissionDigest);
+  elements.closeMemoryGraphButton.addEventListener("click", closeMissionMemoryGraph);
+  elements.memoryGraphBackdrop.addEventListener("click", closeMissionMemoryGraph);
+  elements.mapMemoryGraphButton.addEventListener("click", mapMissionMemoryGraph);
+  elements.promoteMemoryPatternButton.addEventListener("click", promoteMissionMemoryPattern);
+  elements.copyMemoryGraphDigestButton.addEventListener("click", copyMissionMemoryGraphDigest);
 
   document.addEventListener("keydown", (event) => {
     const openShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
@@ -3467,6 +3528,7 @@ function bindEvents() {
     if (state.networkFirewallOpen) closeNetworkFirewall();
     if (state.sovereignOpen) closeSovereignConsole();
     if (state.missionOpen) closeTrustMissionAutopilot();
+    if (state.memoryGraphOpen) closeMissionMemoryGraph();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3488,7 +3550,7 @@ function applyInitialHash() {
   if (hash === "network" || hash === "learning-network" || hash === "privacy-network") openLearningNetwork();
   if (hash === "coach" || hash === "proof-coach" || hash === "adaptive-coach") openAdaptiveCoach();
   if (hash === "agent" || hash === "evidence-agent" || hash === "governed-agent") openEvidenceAgent();
-  if (hash === "outcomes" || hash === "outcome-memory" || hash === "trust-memory" || hash === "memory") openOutcomeMemory();
+  if (hash === "outcomes" || hash === "outcome-memory" || hash === "trust-memory") openOutcomeMemory();
   if (hash === "playbooks" || hash === "trust-playbooks" || hash === "adaptive-playbooks" || hash === "strategy") openAdaptivePlaybooks();
   if (hash === "benchmarks" || hash === "benchmark" || hash === "trust-benchmarks" || hash === "readiness") openTrustBenchmarks();
   if (hash === "orchestrator" || hash === "orchestration" || hash === "autonomous-orchestrator" || hash === "work-plan") openTrustOrchestrator();
@@ -3513,6 +3575,7 @@ function applyInitialHash() {
   if (hash === "sovereign" || hash === "regions" || hash === "global" || hash === "environments" || hash === "countries") openSovereignConsole();
   if (hash === "command-bar" || hash === "actions" || hash === "quick-actions" || hash === "calm-command") openCommandBar();
   if (hash === "mission" || hash === "missions" || hash === "trust-mission" || hash === "autopilot-mission") openTrustMissionAutopilot();
+  if (hash === "memory" || hash === "memory-graph" || hash === "mission-memory" || hash === "mission-memory-graph") openMissionMemoryGraph();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3573,6 +3636,7 @@ function render() {
   renderSovereignConsole();
   renderCommandBar();
   renderTrustMissionAutopilot();
+  renderMissionMemoryGraph();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -3654,6 +3718,7 @@ function renderQuestionList() {
       renderEvidenceAgent();
       renderOutcomeMemory();
       renderReinforcementControl();
+      renderMissionMemoryGraph();
       renderAnalytics();
       schedulePersist();
     });
@@ -4310,6 +4375,7 @@ function activateWorkspaceNav(target) {
   closeRevenueOutcomeLoop(false);
   closeBuyerTrustGraph(false);
   closeTrustMissionAutopilot(false);
+  closeMissionMemoryGraph(false);
   const activeButton = target === "evidence" ? elements.evidenceNavButton : elements.reviewNavButton;
   setActiveNav(activeButton);
 
@@ -4394,6 +4460,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.missionNavButton && state.missionOpen) {
     closeTrustMissionAutopilot(false);
   }
+  if (activeButton !== elements.memoryGraphNavButton && state.memoryGraphOpen) {
+    closeMissionMemoryGraph(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4428,6 +4497,7 @@ function setActiveNav(activeButton) {
     elements.networkFirewallNavButton,
     elements.sovereignNavButton,
     elements.missionNavButton,
+    elements.memoryGraphNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -6078,6 +6148,7 @@ function commandCatalog() {
   const firewall = networkFirewallSnapshot();
   const feedback = buyerFeedbackLoopSnapshot();
   const mission = trustMissionSnapshot();
+  const memoryGraph = missionMemoryGraphSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
   const common = [
     {
@@ -6090,6 +6161,17 @@ function commandCatalog() {
       reason: "The mission turns gaps, buyer feedback, learning guardrails, and rollout posture into one calm next action.",
       run: openTrustMissionAutopilot,
       keywords: ["mission", "autopilot", "next", "owner", "proof", "gate", "learning"],
+    },
+    {
+      id: "mission-memory-graph",
+      scope: "Memory",
+      title: "Open Memory Graph",
+      detail: `${memoryGraph.nodeCount} memory nodes with ${memoryGraph.safePatternCount} network-safe patterns.`,
+      signal: memoryGraph.statusLabel,
+      cta: "Open Memory",
+      reason: "The memory graph separates local answer memory from aggregate-safe patterns before learning improves the next review.",
+      run: openMissionMemoryGraph,
+      keywords: ["memory", "graph", "learning", "local", "network", "pattern", "playbook"],
     },
     {
       id: "review-desk",
@@ -6216,7 +6298,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v45 with trust mission, command bar, sovereign, firewall, learning, proof, and trace sections.`,
+      detail: `Create Review Pack v46 with mission memory graph, trust mission, command bar, learning, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -6261,6 +6343,7 @@ function recommendedCommand(commands) {
   const sovereign = sovereignConsoleSnapshot();
   const firewall = networkFirewallSnapshot();
   const feedback = buyerFeedbackLoopSnapshot();
+  const memoryGraph = missionMemoryGraphSnapshot();
   const approvedCount = state.questions.filter((question) => question.status === "approved").length;
 
   const preferredId =
@@ -6272,6 +6355,8 @@ function recommendedCommand(commands) {
           ? "trust-mission"
           : feedback.requests.length > 0
             ? "trust-mission"
+            : state.missionActions.status === "Outcome captured" || memoryGraph.receipts.length > 0
+              ? "mission-memory-graph"
             : approvedCount > 0
               ? "export-review-pack"
               : "import-studio";
@@ -6652,6 +6737,360 @@ function trustMissionDigestText(mission = trustMissionSnapshot()) {
     "",
     "Learning boundary:",
     mission.learningBoundary,
+  ].join("\n");
+}
+
+function openMissionMemoryGraph() {
+  closeCommandBar();
+  setActiveNav(elements.memoryGraphNavButton);
+  state.memoryGraphOpen = true;
+  elements.memoryGraphBackdrop.hidden = false;
+  elements.memoryGraphDrawer.classList.add("is-open");
+  elements.memoryGraphDrawer.setAttribute("aria-hidden", "false");
+  renderMissionMemoryGraph();
+  elements.mapMemoryGraphButton.focus();
+  schedulePersist("Memory graph ready");
+}
+
+function closeMissionMemoryGraph(activateReview = true) {
+  if (!state.memoryGraphOpen && elements.memoryGraphDrawer.getAttribute("aria-hidden") === "true") return;
+  state.memoryGraphOpen = false;
+  elements.memoryGraphDrawer.classList.remove("is-open");
+  elements.memoryGraphDrawer.setAttribute("aria-hidden", "true");
+  elements.memoryGraphBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function renderMissionMemoryGraph() {
+  const memoryGraph = missionMemoryGraphSnapshot();
+  elements.memoryGraphScore.textContent = `${memoryGraph.score}%`;
+  elements.memoryGraphStatus.textContent = memoryGraph.statusLabel;
+  elements.memoryGraphNodes.textContent = memoryGraph.nodeCount;
+  elements.memoryGraphPatterns.textContent = memoryGraph.safePatternCount;
+  elements.memoryGraphSummary.textContent = memoryGraph.summary;
+
+  elements.memoryGraphNodeList.innerHTML = "";
+  memoryGraph.nodes.forEach((node) => {
+    const card = document.createElement("article");
+    card.className = `memory-node-card ${node.shareable ? "is-shareable" : "is-local"}`;
+    card.innerHTML = `
+      <span>${escapeHtml(node.type)}</span>
+      <strong>${escapeHtml(node.title)}</strong>
+      <p>${escapeHtml(node.detail)}</p>
+      <small>${escapeHtml(node.boundary)} | ${escapeHtml(node.signal)}</small>
+    `;
+    elements.memoryGraphNodeList.append(card);
+  });
+
+  elements.memoryLocalList.innerHTML = "";
+  memoryGraph.localMemory.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "memory-local-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(item.title)}</strong>
+      <p>${escapeHtml(item.detail)}</p>
+      <small>${escapeHtml(item.status)} | ${escapeHtml(item.boundary)}</small>
+    `;
+    elements.memoryLocalList.append(card);
+  });
+
+  elements.memoryPatternList.innerHTML = "";
+  memoryGraph.safePatterns.forEach((pattern) => {
+    const card = document.createElement("article");
+    card.className = `memory-pattern-card ${pattern.status === "Shareable" ? "is-shareable" : "is-review"}`;
+    card.innerHTML = `
+      <strong>${escapeHtml(pattern.title)}</strong>
+      <p>${escapeHtml(pattern.detail)}</p>
+      <small>${escapeHtml(pattern.status)} | ${escapeHtml(pattern.guardrail)}</small>
+    `;
+    elements.memoryPatternList.append(card);
+  });
+
+  elements.memoryPlaybookList.innerHTML = "";
+  memoryGraph.playbooks.forEach((playbook) => {
+    const card = document.createElement("article");
+    card.className = "memory-playbook-card";
+    card.innerHTML = `
+      <span>${escapeHtml(playbook.priority)}</span>
+      <strong>${escapeHtml(playbook.title)}</strong>
+      <p>${escapeHtml(playbook.detail)}</p>
+      <small>${escapeHtml(playbook.gate)}</small>
+    `;
+    elements.memoryPlaybookList.append(card);
+  });
+
+  elements.memoryGraphReceiptList.innerHTML = "";
+  if (memoryGraph.receipts.length === 0) {
+    elements.memoryGraphReceiptList.append(emptyState("No memory graph receipts yet"));
+  } else {
+    memoryGraph.receipts.forEach((receipt) => {
+      const card = document.createElement("article");
+      card.className = "memory-receipt-card";
+      card.innerHTML = `
+        <strong>${escapeHtml(receipt.action)}</strong>
+        <span>${escapeHtml(receipt.detail)}</span>
+        <small>${escapeHtml(formatAuditTime(receipt.at))}</small>
+      `;
+      elements.memoryGraphReceiptList.append(card);
+    });
+  }
+}
+
+function missionMemoryGraphSnapshot() {
+  const mission = trustMissionSnapshot();
+  const outcomes = trustOutcomeMemorySnapshot();
+  const playbooks = adaptivePlaybookSnapshot();
+  const feedback = buyerFeedbackLoopSnapshot();
+  const firewall = networkFirewallSnapshot();
+  const federatedGraph = federatedGraphSnapshot();
+  const activeQuestion = getActiveQuestion();
+  const trace = activeQuestion ? claimTraceSnapshot(activeQuestion) : { conflicts: 0, bound: 0, claims: [] };
+  const approvedQuestions = state.questions.filter((question) => question.status === "approved");
+  const approvedQuestion = approvedQuestions[0] ?? activeQuestion;
+  const coverage = coverageSnapshot();
+  const readyCoverage = coverage.items.filter((item) => item.status === "ready");
+  const feedbackRequest = feedback.requests.find((request) => request.status !== "Watching") ?? feedback.requests[0];
+  const graphPromotion = federatedGraph.promotions.find((promotion) => promotion.status === "Eligible") ?? federatedGraph.promotions[0];
+  const topPlaybook = playbooks.playbooks[0];
+
+  const localMemory = [
+    {
+      title: approvedQuestion ? shorten(approvedQuestion.text, 68) : "Approved answer memory",
+      status: approvedQuestion?.status === "approved" ? "Approved local memory" : "Needs proof",
+      boundary: "Tenant local",
+      detail: approvedQuestion
+        ? `${approvedQuestion.sources?.length ?? 0} source${approvedQuestion.sources?.length === 1 ? "" : "s"} and ${approvedQuestion.confidence}% confidence stay inside ${workspaceAccount.company}.`
+        : "No approved answer is ready for local memory yet.",
+    },
+    {
+      title: "Mission proof move",
+      status: state.missionActions.status,
+      boundary: "Tenant local",
+      detail: `${mission.owner}: ${mission.proofMove}`,
+    },
+    {
+      title: "Outcome receipts",
+      status: `${mission.receipts.length + outcomes.receipts.length} receipts`,
+      boundary: "Tenant audit trail",
+      detail: "Receipts connect launched missions, captured outcomes, copied digests, and approved reviewer moves.",
+    },
+  ];
+
+  const safePatterns = [
+    {
+      title: "AI governance proof gap",
+      status: firewall.blockedCount === 0 ? "Shareable" : "Review",
+      guardrail: "No raw answer text",
+      detail: "Across tenants, only the proof-demand class can improve recommendations for AI training questions.",
+    },
+    {
+      title: "Stale incident proof watch",
+      status: coverage.items.some((item) => item.status === "stale") ? "Review" : "Shareable",
+      guardrail: "No source excerpts",
+      detail: "Freshness and category labels can warn other teams before incident notification answers are drafted.",
+    },
+    {
+      title: "Regional rollout proof overlay",
+      status: federatedGraph.gates?.some((gate) => gate.status === "Blocked") ? "Review" : "Shareable",
+      guardrail: "Policy label only",
+      detail: "Country, environment, and policy classes can guide rollout readiness without exposing customer files.",
+    },
+    {
+      title: graphPromotion?.title ?? "Proof reuse pattern",
+      status: graphPromotion?.status === "Eligible" ? "Shareable" : "Review",
+      guardrail: graphPromotion?.guardrail ?? "Aggregate class only",
+      detail: graphPromotion?.detail ?? "Only pattern labels move beyond the originating workspace.",
+    },
+  ];
+
+  const nodes = [
+    {
+      type: "Mission outcome",
+      title: mission.statusLabel,
+      boundary: "Tenant local",
+      signal: `${mission.signalCount} signals`,
+      shareable: false,
+      detail: mission.summary,
+    },
+    {
+      type: "Approved answer",
+      title: approvedQuestion ? shorten(approvedQuestion.text, 58) : "No approved answer yet",
+      boundary: "Local answer memory",
+      signal: `${approvedQuestions.length} approved`,
+      shareable: false,
+      detail: approvedQuestion?.answer
+        ? shorten(approvedQuestion.answer, 132)
+        : "The graph waits for approved, cited language before strengthening local memory.",
+    },
+    {
+      type: "Evidence move",
+      title: readyCoverage[0]?.category ?? "Evidence coverage",
+      boundary: "Tenant proof map",
+      signal: `${coverage.score}% coverage`,
+      shareable: false,
+      detail: readyCoverage[0]
+        ? `${readyCoverage[0].sources} source${readyCoverage[0].sources === 1 ? "" : "s"} are ready for ${readyCoverage[0].category}.`
+        : "Coverage gaps stay visible until the owner attaches stronger proof.",
+    },
+    {
+      type: "Buyer friction",
+      title: feedbackRequest?.title ?? "Buyer feedback class",
+      boundary: "Aggregate-safe class",
+      signal: `${feedback.requests.length} requests`,
+      shareable: true,
+      detail: feedbackRequest?.reason ?? "Only friction category and outcome band can help other organizations.",
+    },
+    {
+      type: "Learning boundary",
+      title: "Network firewall",
+      boundary: "Governed network pattern",
+      signal: `${firewall.shareableCount} shareable`,
+      shareable: true,
+      detail: `${firewall.blockedCount} blocked signals and ${firewall.quarantineCount} quarantine items protect private content.`,
+    },
+    {
+      type: "Next playbook",
+      title: topPlaybook?.title ?? "Trust playbook",
+      boundary: "Recommendation only",
+      signal: topPlaybook ? `${topPlaybook.confidence}% confidence` : "Draft",
+      shareable: true,
+      detail: topPlaybook?.action ?? "Recommend a playbook only after reviewer approval and source coverage are visible.",
+    },
+  ];
+
+  const memoryPlaybooks = [
+    {
+      priority: "01",
+      title: topPlaybook?.title ?? "AI governance answer hardening",
+      detail: topPlaybook?.action ?? "Strengthen answers where buyer AI questions require proof of model training boundaries.",
+      gate: "Reviewer approves wording before local memory changes.",
+    },
+    {
+      priority: "02",
+      title: "Incident proof refresh",
+      detail: "Refresh stale incident response evidence before similar buyer questions enter the queue.",
+      gate: "Evidence owner attaches a current source before reuse.",
+    },
+    {
+      priority: "03",
+      title: "Regional rollout proof pack",
+      detail: "Prepare country-specific proof notes for multi-region buyers without blending environments.",
+      gate: "Sovereign policy overlay stays pass-only for production launch.",
+    },
+  ];
+
+  const localReady = localMemory.filter((item) => item.status !== "Needs proof").length;
+  const shareableReady = safePatterns.filter((pattern) => pattern.status === "Shareable").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        mission.score * 0.24
+          + outcomes.score * 0.2
+          + firewall.score * 0.18
+          + federatedGraph.score * 0.16
+          + Math.min(100, localReady * 26) * 0.1
+          + Math.min(100, shareableReady * 25) * 0.12,
+      ),
+    ),
+  );
+  const statusLabel =
+    state.memoryGraphActions.status === "Graph ready"
+      ? state.missionActions.status === "Outcome captured"
+        ? "Ready to map"
+        : "Listening for outcome"
+      : state.memoryGraphActions.status;
+  const summary = `${nodes.length} memory nodes link mission outcomes, local answer memory, proof moves, buyer friction, and safe pattern classes. Exact answers, files, prompts, and buyer context stay inside ${workspaceAccount.company}.`;
+
+  return {
+    score,
+    statusLabel,
+    nodeCount: nodes.length,
+    safePatternCount: shareableReady,
+    summary,
+    nodes,
+    localMemory,
+    safePatterns,
+    playbooks: memoryPlaybooks,
+    traceConflicts: trace.conflicts,
+    traceBound: trace.bound,
+    receipts: state.memoryGraphActions.receipts.slice(0, 8),
+  };
+}
+
+function mapMissionMemoryGraph() {
+  const memoryGraph = missionMemoryGraphSnapshot();
+  state.memoryGraphActions.status = "Graph mapped";
+  state.memoryGraphActions.mappedAt = new Date().toISOString();
+  addMemoryGraphReceipt("Graph mapped", `${memoryGraph.nodeCount} nodes mapped with ${memoryGraph.safePatternCount} network-safe patterns.`);
+  addAudit("Mission memory graph mapped", memoryGraph.summary);
+  renderMissionMemoryGraph();
+  renderCommandBar();
+  showToast("Mission memory graph mapped.");
+}
+
+function promoteMissionMemoryPattern() {
+  const memoryGraph = missionMemoryGraphSnapshot();
+  state.memoryGraphActions.status = "Pattern promoted";
+  state.memoryGraphActions.promotedAt = new Date().toISOString();
+  addMemoryGraphReceipt("Safe pattern promoted", `${memoryGraph.safePatternCount} aggregate-safe patterns are ready for governed reuse.`);
+  addAudit("Mission memory pattern promoted", "Only aggregate proof classes, drift warnings, and playbook labels were promoted.");
+  renderMissionMemoryGraph();
+  renderCommandBar();
+  showToast("Safe memory pattern promoted.");
+}
+
+function addMemoryGraphReceipt(action, detail) {
+  state.memoryGraphActions.receipts.unshift({
+    id: `memory-graph-receipt-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    action,
+    detail,
+    at: new Date().toISOString(),
+  });
+  state.memoryGraphActions.receipts = state.memoryGraphActions.receipts.slice(0, 12);
+  schedulePersist();
+}
+
+function copyMissionMemoryGraphDigest() {
+  const memoryGraph = missionMemoryGraphSnapshot();
+  state.memoryGraphActions.lastCopiedAt = new Date().toISOString();
+  addMemoryGraphReceipt("Memory graph digest copied", `${memoryGraph.nodeCount} nodes and ${memoryGraph.safePatternCount} safe patterns copied.`);
+  addAudit("Memory graph digest copied", "Mission Memory Graph digest copied for the pilot team.");
+  renderMissionMemoryGraph();
+  copyText(missionMemoryGraphDigestText(memoryGraph), "Memory graph digest copied.");
+}
+
+function missionMemoryGraphDigestText(memoryGraph = missionMemoryGraphSnapshot()) {
+  const nodeLines = memoryGraph.nodes
+    .map((node, index) => `${index + 1}. ${node.type}: ${node.title} | ${node.boundary} | ${node.signal}\n   ${node.detail}`)
+    .join("\n");
+  const patternLines = memoryGraph.safePatterns
+    .map((pattern, index) => `${index + 1}. ${pattern.title} | ${pattern.status} | ${pattern.guardrail}\n   ${pattern.detail}`)
+    .join("\n");
+  const playbookLines = memoryGraph.playbooks
+    .map((playbook, index) => `${index + 1}. ${playbook.title} | ${playbook.gate}\n   ${playbook.detail}`)
+    .join("\n");
+
+  return [
+    "AnswerSeal Mission Memory Graph",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${memoryGraph.statusLabel}`,
+    `Score: ${memoryGraph.score}%`,
+    `Nodes: ${memoryGraph.nodeCount}`,
+    `Network-safe patterns: ${memoryGraph.safePatternCount}`,
+    "",
+    "Summary:",
+    memoryGraph.summary,
+    "",
+    "Memory nodes:",
+    nodeLines,
+    "",
+    "Network-safe patterns:",
+    patternLines,
+    "",
+    "Recommended playbooks:",
+    playbookLines,
   ].join("\n");
 }
 
@@ -22121,6 +22560,13 @@ function exportCsv() {
     "Mission Human Gate",
     "Mission Learning Boundary",
     "Mission Receipts",
+    "Memory Graph Status",
+    "Memory Graph Score",
+    "Memory Graph Nodes",
+    "Memory Safe Patterns",
+    "Memory Local Items",
+    "Memory Playbooks",
+    "Memory Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -22167,6 +22613,7 @@ function exportCsv() {
     const sovereign = sovereignConsoleSnapshot();
     const commandBar = commandBarSnapshot();
     const mission = trustMissionSnapshot();
+    const memoryGraph = missionMemoryGraphSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -22384,6 +22831,13 @@ function exportCsv() {
       mission.humanGate,
       mission.learningBoundary,
       mission.receipts.length,
+      memoryGraph.statusLabel,
+      `${memoryGraph.score}%`,
+      memoryGraph.nodeCount,
+      memoryGraph.safePatternCount,
+      memoryGraph.localMemory.length,
+      memoryGraph.playbooks.length,
+      memoryGraph.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -22440,6 +22894,7 @@ function exportReviewPack() {
   const sovereign = sovereignConsoleSnapshot();
   const commandBar = commandBarSnapshot();
   const mission = trustMissionSnapshot();
+  const memoryGraph = missionMemoryGraphSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -22457,7 +22912,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v45</h1>
+        <h1>AnswerSeal Review Pack v46</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -25152,6 +25607,133 @@ function exportReviewPack() {
         </table>
         <h2>Mission Digest</h2>
         <pre>${escapeHtml(trustMissionDigestText(mission))}</pre>
+        <h2>Mission Memory Graph</h2>
+        <p>Status: ${escapeHtml(memoryGraph.statusLabel)} | Memory score: ${memoryGraph.score}% | Nodes: ${memoryGraph.nodeCount} | Network-safe patterns: ${memoryGraph.safePatternCount}</p>
+        <p>${escapeHtml(memoryGraph.summary)}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Node</th>
+              <th>Boundary</th>
+              <th>Signal</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${memoryGraph.nodes
+              .map(
+                (node) => `
+                  <tr>
+                    <td>${escapeHtml(node.type)}<br />${escapeHtml(node.title)}</td>
+                    <td class="${node.shareable ? "ok" : "risk"}">${escapeHtml(node.boundary)}</td>
+                    <td>${escapeHtml(node.signal)}</td>
+                    <td>${escapeHtml(node.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Local Memory Boundary</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Memory</th>
+              <th>Status</th>
+              <th>Boundary</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${memoryGraph.localMemory
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.status)}</td>
+                    <td>${escapeHtml(item.boundary)}</td>
+                    <td>${escapeHtml(item.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Network-Safe Patterns</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Status</th>
+              <th>Guardrail</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${memoryGraph.safePatterns
+              .map(
+                (pattern) => `
+                  <tr>
+                    <td>${escapeHtml(pattern.title)}</td>
+                    <td class="${pattern.status === "Shareable" ? "ok" : "risk"}">${escapeHtml(pattern.status)}</td>
+                    <td>${escapeHtml(pattern.guardrail)}</td>
+                    <td>${escapeHtml(pattern.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Memory Recommended Playbooks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>Playbook</th>
+              <th>Gate</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${memoryGraph.playbooks
+              .map(
+                (playbook) => `
+                  <tr>
+                    <td>${escapeHtml(playbook.priority)}</td>
+                    <td>${escapeHtml(playbook.title)}</td>
+                    <td>${escapeHtml(playbook.gate)}</td>
+                    <td>${escapeHtml(playbook.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Memory Graph Receipts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(memoryGraph.receipts.length ? memoryGraph.receipts : [{ action: "Graph ready", detail: "No memory graph receipts yet.", at: new Date().toISOString() }])
+              .map(
+                (receipt) => `
+                  <tr>
+                    <td>${escapeHtml(receipt.action)}</td>
+                    <td>${escapeHtml(receipt.detail)}</td>
+                    <td>${escapeHtml(formatAuditTime(receipt.at))}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Memory Graph Digest</h2>
+        <pre>${escapeHtml(missionMemoryGraphDigestText(memoryGraph))}</pre>
         <h2>Calm Command Bar</h2>
         <p>Status: ${escapeHtml(commandBar.statusLabel)} | Commands: ${commandBar.commands.length} | Recommended: ${escapeHtml(commandBar.recommended.title)} | Receipts: ${commandBar.receipts.length}</p>
         <table>
@@ -25916,7 +26498,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v45 created with trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v46 created with mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -25950,12 +26532,13 @@ function exportReviewPack() {
   renderSovereignConsole();
   renderCommandBar();
   renderTrustMissionAutopilot();
+  renderMissionMemoryGraph();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v45 exported.");
+  showToast("Review Pack v46 exported.");
 }
 
 function toCsv(rows) {
@@ -26041,6 +26624,7 @@ function serializeWorkspace() {
     sovereignActions: state.sovereignActions,
     commandBarActions: state.commandBarActions,
     missionActions: state.missionActions,
+    memoryGraphActions: state.memoryGraphActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -26097,6 +26681,7 @@ function resetWorkspace() {
   closeSovereignConsole(false);
   closeCommandBar();
   closeTrustMissionAutopilot(false);
+  closeMissionMemoryGraph(false);
   closeWorkspace(false);
   closeLibrary();
   render();
