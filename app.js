@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.55 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v55";
+const BUILD_VERSION = "v0.56 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v56";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v55",
   "answerseal.workspace.v54",
   "answerseal.workspace.v53",
   "answerseal.workspace.v52",
@@ -2412,6 +2413,7 @@ function normalizeTrustCheckReport(report) {
     score: Number.isFinite(Number(report?.score)) ? Number(report.score) : 0,
     statusLabel: String(report?.statusLabel ?? "Unchecked"),
     summary: String(report?.summary ?? "No report summary available."),
+    improvedAnswer: String(report?.improvedAnswer ?? ""),
     checks: Array.isArray(report?.checks) ? report.checks.map(normalizeTrustCheckSignal) : [],
     improvements: Array.isArray(report?.improvements) ? report.improvements.map(String) : [],
     createdAt: report?.createdAt ?? new Date().toISOString(),
@@ -6776,7 +6778,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v51 with answer trust check, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
+      detail: `Create Review Pack v52 with answer trust check, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -9390,7 +9392,7 @@ function trustCheckSnapshot() {
 }
 
 function pendingTrustChecks() {
-  return ["Clarity", "Factual risk", "Source support", "Unsupported claims", "Actionability"].map((title) => ({
+  return ["Factual risk", "Missing sources", "Unsupported claims", "Clarity", "Compliance risk", "Actionability"].map((title) => ({
     title,
     status: "Ready",
     score: 0,
@@ -9408,8 +9410,10 @@ function buildTrustCheckReport(prompt, answer) {
   const riskyTerms = ["always", "never", "guarantee", "100%", "all customers", "no risk", "fully compliant", "unbreakable", "best in class"];
   const sourceTerms = ["source", "citation", "according to", "policy", "standard", "soc", "report", "dpa", "contract", "evidence", "audit", "approved"];
   const actionTerms = ["should", "must", "recommend", "review", "approve", "attach", "update", "next", "route", "use", "copy"];
+  const complianceTerms = ["gdpr", "hipaa", "soc 2", "iso 27001", "pci", "regulation", "law", "legal", "compliance", "certified", "certification", "retention", "delete", "deletion", "personal data", "customer data"];
   const sourceSignals = countTerms(lower, sourceTerms);
   const riskySignals = countTerms(lower, riskyTerms);
+  const complianceSignals = countTerms(lower, complianceTerms);
   const numericClaims = (cleanAnswer.match(/\b\d+%?|\b[a-z]{2,}\s*\d\b/gi) ?? []).length;
   const unsupportedClaims = sentences.filter((sentence) => {
     const sentenceLower = sentence.toLowerCase();
@@ -9440,18 +9444,10 @@ function buildTrustCheckReport(prompt, answer) {
   const factualRiskScore = Math.max(25, Math.min(100, 94 - riskySignals * 14 - Math.max(0, numericClaims - sourceSignals) * 8));
   const sourceScore = Math.max(20, Math.min(100, sourceSignals > 0 ? 78 + Math.min(sourceSignals, 3) * 6 : 46));
   const unsupportedScore = Math.max(20, Math.min(100, 96 - unsupportedClaims * 18));
+  const complianceScore = Math.max(25, Math.min(100, complianceSignals === 0 ? 88 : 92 - Math.max(0, complianceSignals - sourceSignals) * 12 - riskySignals * 8));
   const actionScore = Math.max(35, Math.min(100, (hasClearAnswer ? 55 : 35) + (hasActionSignal ? 30 : 8) + Math.round(promptOverlap * 15)));
 
   const checks = [
-    {
-      title: "Clarity",
-      score: clarityScore,
-      detail: words.length < 18
-        ? "The answer is very short. Add enough context for a reviewer to understand the decision."
-        : averageSentence > 28
-          ? `Average sentence length is ${averageSentence} words. Shorter sentences will be easier to verify.`
-          : "The answer is concise enough for review and buyer reuse.",
-    },
     {
       title: "Factual risk",
       score: factualRiskScore,
@@ -9460,7 +9456,7 @@ function buildTrustCheckReport(prompt, answer) {
         : "No heavy absolute claims or unsupported numbers were detected.",
     },
     {
-      title: "Source support",
+      title: "Missing sources",
       score: sourceScore,
       detail: sourceSignals > 0
         ? `${sourceSignals} source signal${sourceSignals === 1 ? "" : "s"} detected in the answer.`
@@ -9472,6 +9468,24 @@ function buildTrustCheckReport(prompt, answer) {
       detail: unsupportedClaims === 0
         ? "Risky claims appear controlled or source-aware."
         : `${unsupportedClaims} claim${unsupportedClaims === 1 ? "" : "s"} should be softened or cited before approval.`,
+    },
+    {
+      title: "Clarity",
+      score: clarityScore,
+      detail: words.length < 18
+        ? "The answer is very short. Add enough context for a reviewer to understand the decision."
+        : averageSentence > 28
+          ? `Average sentence length is ${averageSentence} words. Shorter sentences will be easier to verify.`
+          : "The answer is concise enough for review and buyer reuse.",
+    },
+    {
+      title: "Compliance risk",
+      score: complianceScore,
+      detail: complianceSignals > sourceSignals
+        ? "Compliance or regulated-data terms appear without enough visible evidence support."
+        : complianceSignals > 0
+          ? "Compliance-sensitive terms are present and appear source-aware."
+          : "No obvious regulated-data, certification, or compliance commitment was detected.",
     },
     {
       title: "Actionability",
@@ -9493,7 +9507,8 @@ function buildTrustCheckReport(prompt, answer) {
       : score >= 58
         ? "Needs review"
         : "High risk";
-  const improvements = trustCheckImprovements(checks, { sourceSignals, unsupportedClaims, riskySignals, numericClaims, promptTerms });
+  const improvements = trustCheckImprovements(checks, { sourceSignals, unsupportedClaims, riskySignals, numericClaims, complianceSignals, promptTerms });
+  const improvedAnswer = improveTrustCheckAnswer(cleanAnswer, checks, { sourceSignals, unsupportedClaims, riskySignals, complianceSignals, hasActionSignal });
   const summary =
     statusLabel === "Sealed"
       ? "This answer is clear, source-aware, and ready to save as a sealed report."
@@ -9510,6 +9525,7 @@ function buildTrustCheckReport(prompt, answer) {
     score,
     statusLabel,
     summary,
+    improvedAnswer,
     checks,
     improvements,
     createdAt: new Date().toISOString(),
@@ -9518,11 +9534,14 @@ function buildTrustCheckReport(prompt, answer) {
 
 function trustCheckImprovements(checks, context) {
   const improvements = [];
-  if (checks.find((check) => check.title === "Source support")?.status !== "Pass") {
+  if (checks.find((check) => check.title === "Missing sources")?.status !== "Pass") {
     improvements.push("Attach at least one named source, such as a policy, SOC report, DPA, standard, or approved answer memory.");
   }
   if (context.unsupportedClaims > 0 || context.riskySignals > 0 || context.numericClaims > context.sourceSignals) {
     improvements.push("Soften absolute claims or add citations for numbers, compliance claims, retention promises, or security guarantees.");
+  }
+  if (context.complianceSignals > context.sourceSignals || checks.find((check) => check.title === "Compliance risk")?.status !== "Pass") {
+    improvements.push("Flag any legal, privacy, certification, or regulated-data statement for compliance review before sharing.");
   }
   if (checks.find((check) => check.title === "Clarity")?.status !== "Pass") {
     improvements.push("Rewrite into short reviewer-friendly sentences with one claim per sentence.");
@@ -9537,6 +9556,27 @@ function trustCheckImprovements(checks, context) {
     improvements.push("Save this as a sealed report and reuse it as approved local answer memory.");
   }
   return improvements;
+}
+
+function improveTrustCheckAnswer(answer, checks, context) {
+  if (!answer.trim()) return "Paste an AI-generated answer, then run the trust check.";
+  const additions = [];
+  if (checks.find((check) => check.title === "Missing sources")?.status !== "Pass") {
+    additions.push("Attach a named policy, report, contract, or approved answer before sharing.");
+  }
+  if (context.unsupportedClaims > 0 || context.riskySignals > 0) {
+    additions.push("Replace absolute or unsupported claims with evidence-backed wording.");
+  }
+  if (context.complianceSignals > context.sourceSignals || checks.find((check) => check.title === "Compliance risk")?.status !== "Pass") {
+    additions.push("Route legal, privacy, certification, or customer-data claims for compliance review.");
+  }
+  if (!context.hasActionSignal) {
+    additions.push("State the next reviewer action or approval decision.");
+  }
+  if (additions.length === 0) {
+    return `${answer.trim()} This answer can be saved as a sealed report with the attached evidence.`;
+  }
+  return `${answer.trim()} ${additions.join(" ")}`;
 }
 
 function splitSentences(text) {
@@ -9585,8 +9625,11 @@ function trustCheckReportText(report = state.trustCheck.report) {
     "Suggested improvements:",
     improvements || "No improvements required.",
     "",
+    "Suggested improved answer:",
+    report.improvedAnswer || "Run the trust check to generate a suggested improved answer.",
+    "",
     "Seal rule:",
-    "A buyer-facing AI answer is not finished until clarity, factual risk, source support, unsupported claims, and actionability are reviewed.",
+    "An AI-generated answer is not finished until factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability are reviewed.",
   ].join("\n");
 }
 
@@ -25482,7 +25525,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v51</h1>
+        <h1>AnswerSeal Review Pack v52</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -25514,6 +25557,8 @@ function exportReviewPack() {
           </tbody>
         </table>
         <p><strong>Seal brief:</strong> ${escapeHtml(trustCheck.summary)}</p>
+        <h3>Suggested Improved Answer</h3>
+        <p>${escapeHtml(trustCheck.report?.improvedAnswer || "Run the Answer Trust Check to generate a suggested improved answer.")}</p>
         <h3>Suggested Improvements</h3>
         <ul>
           ${(trustCheck.improvements.length > 0 ? trustCheck.improvements : ["Run the Answer Trust Check to generate suggested improvements."])
@@ -29625,7 +29670,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v51 created with Answer Trust Check, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v52 created with Answer Trust Check, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29670,7 +29715,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v51 exported.");
+  showToast("Review Pack v52 exported.");
 }
 
 function toCsv(rows) {

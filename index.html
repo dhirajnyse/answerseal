@@ -27,32 +27,31 @@
 
       <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
         <span>Current build</span>
-        <strong>v0.55 Alpha</strong>
+        <strong>v0.56 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
+        <a href="#verifier">Verifier</a>
         <a href="#seal-path">Seal Path</a>
-        <a href="#workflow">Workflow</a>
         <a href="#proof">Proof</a>
         <a href="#pilot">Pilot</a>
-        <a class="nav-demo-link" href="demo.html">Open Demo</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
     </header>
 
     <main>
       <section class="landing-hero">
         <div class="hero-copy">
-          <span class="hero-kicker">AI answer trust check</span>
+          <span class="hero-kicker">AI trust layer</span>
           <h1>AnswerSeal</h1>
           <p class="hero-lede">
-            <span>Verify and certify AI-generated answers before you trust, share, or act on them.</span>
-            <span>Score clarity, source gaps, risky claims, and actionability.</span>
-            <span>Save a copy-ready sealed report.</span>
+            <span>Paste an AI answer and verify it.</span>
+            <span>AnswerSeal checks risk, missing proof, compliance exposure, clarity, and actionability before teams trust, share, or act.</span>
           </p>
 
           <div class="hero-actions">
-            <a class="hero-primary" href="#pilot">Join Private Pilot</a>
-            <a class="hero-secondary" href="demo.html">Open Live Demo</a>
+            <a class="hero-primary" href="#verifier">Verify Answer</a>
+            <a class="hero-secondary" href="demo.html#trust-check">Open Live Demo</a>
           </div>
 
           <dl class="hero-metrics" aria-label="Product signals">
@@ -71,18 +70,47 @@
           </dl>
         </div>
 
-        <div class="hero-visual" aria-label="AnswerSeal brand mark and product preview">
-          <img class="hero-logo" src="assets/answerseal-3d-logo-bright.png" alt="AnswerSeal shield, document, checkmark, and citation link" />
-          <div class="hero-preview" aria-hidden="true">
-            <div class="preview-topline">
-              <span>Needs Evidence</span>
-              <strong>78%</strong>
+        <form class="hero-verifier" id="landingVerifier" aria-label="AI answer verifier">
+          <header>
+            <img src="assets/answerseal-3d-logo-bright.png" alt="" />
+            <div>
+              <span class="hero-kicker">First screen</span>
+              <h2 id="verifier">Paste an AI answer and verify it.</h2>
             </div>
-            <p>Do you use customer data to train AI models?</p>
-            <div class="preview-answer">No. Customer content is not used to train foundation models or shared model providers.</div>
-            <div class="preview-source">AI Usage Standard - May 16</div>
-          </div>
-        </div>
+          </header>
+
+          <label>
+            <span>Original question or prompt</span>
+            <textarea id="landingPrompt" rows="3" placeholder="Optional: paste the original question, prompt, or buyer request.">Can we use customer data to train AI models?</textarea>
+          </label>
+
+          <label>
+            <span>AI-generated answer</span>
+            <textarea id="landingAnswer" rows="7" placeholder="Paste the AI-generated answer you want to verify.">No. Customer content is not used to train foundation models or shared model providers. This answer is based on the approved AI Usage Standard and should be reviewed before release.</textarea>
+          </label>
+
+          <button class="hero-primary" type="submit">Verify Answer</button>
+
+          <section class="verifier-result" id="landingVerifierResult" aria-live="polite">
+            <div class="verifier-score">
+              <span>Trust score</span>
+              <strong id="landingTrustScore">0%</strong>
+              <b id="landingTrustStatus">Ready</b>
+            </div>
+            <div>
+              <span class="result-label">Risk flags</span>
+              <ul id="landingRiskFlags"></ul>
+            </div>
+            <div>
+              <span class="result-label">Suggested improved answer</span>
+              <p id="landingImprovedAnswer">Run the verifier to generate a safer, clearer answer.</p>
+            </div>
+            <div>
+              <span class="result-label">Sealed report summary</span>
+              <p id="landingReportSummary">No report generated yet.</p>
+            </div>
+          </section>
+        </form>
       </section>
 
       <section class="seal-path" id="seal-path" aria-label="Seal Path">
@@ -105,7 +133,7 @@
           <article>
             <span>Trust Check</span>
             <strong>Risk is visible</strong>
-            <p>Clarity, factual risk, sources, unsupported claims, and actionability are scored.</p>
+            <p>Factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability are scored.</p>
           </article>
           <article>
             <span>Report</span>
@@ -130,7 +158,7 @@
           <article>
             <span>02</span>
             <h3>Run trust check</h3>
-            <p>AnswerSeal scores clarity, factual risk, missing sources, unsupported claims, and actionability.</p>
+            <p>AnswerSeal scores factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability.</p>
           </article>
           <article>
             <span>03</span>
@@ -155,8 +183,8 @@
             <span>Every response shows the evidence behind it.</span>
           </div>
           <div>
-            <strong>Answer Trust Check</strong>
-            <span>Every pasted AI answer gets a score, a decision, and suggested improvements.</span>
+            <strong>Trust layer for AI work</strong>
+            <span>Every pasted AI answer gets a score, risk flags, missing-source warnings, and a sealed report summary.</span>
           </div>
           <div>
             <strong>Pilot data room</strong>
@@ -170,7 +198,7 @@
           <span class="hero-kicker">Private pilot</span>
           <h2>Bring one messy questionnaire. We will prove the seal.</h2>
           <p>
-            The v0.55 pilot is for teams that want a simple way to decide whether an AI answer is clear, supported, safe, and reusable.
+            The v0.56 pilot is for teams that want a simple way to verify and certify AI-generated answers before they trust, share, or act on them.
           </p>
 
           <dl class="pilot-terms" aria-label="Pilot terms">
@@ -207,14 +235,14 @@
             <textarea id="pilotPain" name="pain" rows="4" placeholder="Example: SOC 2 questionnaire blocks enterprise deals every month."></textarea>
           </label>
           <button class="hero-primary" type="submit">Start Pilot Request</button>
-          <p class="pilot-note" id="pilotStatus">AnswerSeal v0.55 Alpha - Answer Trust Check</p>
+          <p class="pilot-note" id="pilotStatus">AnswerSeal v0.56 Alpha - Trust Layer MVP</p>
         </form>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.55 Alpha</span>
-      <a href="demo.html">Live Demo</a>
+      <span>AnswerSeal v0.56 Alpha</span>
+      <a href="demo.html#trust-check">Live Demo</a>
       <a href="versions.html">Build Phases</a>
       <a href="#pilot">Private Pilot</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

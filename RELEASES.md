@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.56 Alpha - Trust Layer MVP
+
+Phase: Trust Layer MVP
+
+- Repositioned AnswerSeal as the trust layer for AI-generated work.
+- Added a first-screen verifier focused on one clear action: paste an AI answer and verify it.
+- Added landing-page trust results with trust score, risk flags, missing-source warnings, suggested improved answer, and sealed report summary.
+- Expanded Answer Trust Check scoring to six dimensions: factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability.
+- Added compliance-risk detection for legal, privacy, certification, retention, and customer-data claims that need proof.
+- Upgraded export language to Review Pack v52 and updated build phases toward v0.57 AI Artifact Registry.
+- Clarified the long-term path toward Notion + GitHub + QA for AI answers, prompts, workflows, and agents.
+
 ## v0.55 Alpha - Answer Trust Check
 
 Phase: Answer Trust Check
