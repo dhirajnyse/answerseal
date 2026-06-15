@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v0.58 Alpha - MVP Core
+
+Phase: MVP Core
+
+- Turned the pasted product direction into a tighter working MVP flow: paste answer, optional prompt, optional proof, verify, save, copy, and share.
+- Added source/evidence input to the public verifier so missing-source warnings can be resolved with policy, report, citation, SOC, audit, URL, or approved-answer context.
+- Added check-by-check trust scoring for factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability.
+- Added dedicated missing-source warnings and unsupported-claim warnings in the verifier result.
+- Added copyable sealed report text and self-contained report links that can open a report from the URL hash.
+- Updated saved report dashboard links to open the generated sealed report artifact.
+- Upgraded export language to Review Pack v54 and moved the next build toward v0.59 AI Artifact Registry.
+
 ## v0.57 Alpha - Product Spine
 
 Phase: Product Spine

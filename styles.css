@@ -11224,6 +11224,43 @@ svg {
   cursor: pointer;
 }
 
+.verifier-action-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.verifier-action-row .hero-secondary {
+  width: 100%;
+  border: 1px solid rgba(0, 120, 109, 0.22);
+  cursor: pointer;
+}
+
+.check-list {
+  list-style: none;
+  padding-left: 0 !important;
+}
+
+.check-list li {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid rgba(0, 168, 137, 0.14);
+  border-radius: 8px;
+  background: rgba(247, 251, 250, 0.82);
+}
+
+.check-list strong {
+  color: var(--ink);
+  font-size: 0.88rem;
+}
+
+.check-list span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.38;
+}
+
 .product-spine {
   padding: clamp(44px, 7vw, 78px) clamp(18px, 5vw, 78px);
   border-bottom: 1px solid rgba(31, 41, 38, 0.1);
@@ -12072,6 +12109,10 @@ svg {
   }
 
   .verifier-score {
+    grid-template-columns: 1fr;
+  }
+
+  .verifier-action-row {
     grid-template-columns: 1fr;
   }
 

@@ -27,7 +27,7 @@
 
       <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
         <span>Current build</span>
-        <strong>v0.57 Alpha</strong>
+        <strong>v0.58 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -89,8 +89,17 @@
             <textarea id="landingAnswer" rows="7" placeholder="Paste the AI-generated answer you want to verify.">No. Customer content is not used to train foundation models or shared model providers. This answer is based on the approved AI Usage Standard and should be reviewed before release.</textarea>
           </label>
 
+          <label>
+            <span>Sources or evidence</span>
+            <textarea id="landingSources" rows="3" placeholder="Optional: paste source names, citations, policy titles, SOC report notes, or URLs.">AI Usage Standard - May 16; SOC 2 Type II Report</textarea>
+          </label>
+
           <button class="hero-primary" type="submit">Verify Answer</button>
           <button class="hero-secondary verifier-save-button" id="saveLandingReport" type="button">Save Sealed Report</button>
+          <div class="verifier-action-row">
+            <button class="hero-secondary" id="copyLandingReport" type="button">Copy Report</button>
+            <button class="hero-secondary" id="shareLandingReport" type="button">Copy Share Link</button>
+          </div>
           <p class="pilot-note" id="landingSaveStatus">Saved reports stay in this browser for demo use.</p>
 
           <section class="verifier-result" id="landingVerifierResult" aria-live="polite">
@@ -102,6 +111,18 @@
             <div>
               <span class="result-label">Risk flags</span>
               <ul id="landingRiskFlags"></ul>
+            </div>
+            <div>
+              <span class="result-label">Trust checks</span>
+              <ul class="check-list" id="landingCheckList"></ul>
+            </div>
+            <div>
+              <span class="result-label">Missing source warnings</span>
+              <ul id="landingMissingSources"></ul>
+            </div>
+            <div>
+              <span class="result-label">Unsupported claim warnings</span>
+              <ul id="landingUnsupportedClaims"></ul>
             </div>
             <div>
               <span class="result-label">Suggested improved answer</span>
@@ -117,8 +138,8 @@
 
       <section class="product-spine" aria-label="Product spine">
         <div class="band-heading">
-          <span class="hero-kicker">v0.57 product spine</span>
-          <h2>Seven calm surfaces, one trust workflow.</h2>
+          <span class="hero-kicker">v0.58 MVP core</span>
+          <h2>One verification flow, from pasted answer to sealed report.</h2>
         </div>
 
         <div class="spine-grid">
@@ -245,7 +266,7 @@
           <span class="hero-kicker">Private pilot</span>
           <h2>Bring one messy questionnaire. We will prove the seal.</h2>
           <p>
-            The v0.57 pilot is for teams that want a simple way to verify and certify AI-generated answers before they trust, share, or act on them.
+            The v0.58 pilot is for teams that want a simple way to verify and certify AI-generated answers before they trust, share, or act on them.
           </p>
 
           <dl class="pilot-terms" aria-label="Pilot terms">
@@ -282,13 +303,13 @@
             <textarea id="pilotPain" name="pain" rows="4" placeholder="Example: SOC 2 questionnaire blocks enterprise deals every month."></textarea>
           </label>
           <button class="hero-primary" type="submit">Start Pilot Request</button>
-          <p class="pilot-note" id="pilotStatus">AnswerSeal v0.57 Alpha - Product Spine</p>
+          <p class="pilot-note" id="pilotStatus">AnswerSeal v0.58 Alpha - MVP Core</p>
         </form>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.57 Alpha</span>
+      <span>AnswerSeal v0.58 Alpha</span>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
       <a href="pricing.html">Pricing</a>

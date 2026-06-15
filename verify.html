@@ -24,7 +24,7 @@
 
       <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
         <span>Current build</span>
-        <strong>v0.57 Alpha</strong>
+        <strong>v0.58 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -43,7 +43,7 @@
           <h1>Paste an AI answer and verify it.</h1>
           <p>
             This is the core AnswerSeal action: check an AI-generated answer for trust, risk, missing proof,
-            compliance exposure, and readiness before anyone shares it.
+            compliance exposure, source support, and readiness before anyone shares it.
           </p>
         </div>
         <aside class="product-status-card" aria-label="Screen status">
@@ -73,8 +73,17 @@
             <textarea id="landingAnswer" rows="9" placeholder="Paste the AI-generated answer you want to verify.">No. Customer content is not used to train foundation models or shared model providers. This answer is based on the approved AI Usage Standard and should be reviewed before release.</textarea>
           </label>
 
+          <label>
+            <span>Sources or evidence</span>
+            <textarea id="landingSources" rows="4" placeholder="Optional: paste source names, citations, policy titles, SOC report notes, or URLs.">AI Usage Standard - May 16; SOC 2 Type II Report; Information Security Policy</textarea>
+          </label>
+
           <button class="hero-primary" type="submit">Verify Answer</button>
           <button class="hero-secondary verifier-save-button" id="saveLandingReport" type="button">Save Sealed Report</button>
+          <div class="verifier-action-row">
+            <button class="hero-secondary" id="copyLandingReport" type="button">Copy Report</button>
+            <button class="hero-secondary" id="shareLandingReport" type="button">Copy Share Link</button>
+          </div>
           <p class="pilot-note" id="landingSaveStatus">A saved report will appear on the reports dashboard.</p>
         </form>
 
@@ -90,7 +99,15 @@
           </div>
           <div id="trust-score-engine">
             <span class="result-label">Trust score engine</span>
-            <p>Factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability are scored together.</p>
+            <ul class="check-list" id="landingCheckList"></ul>
+          </div>
+          <div>
+            <span class="result-label">Missing source warnings</span>
+            <ul id="landingMissingSources"></ul>
+          </div>
+          <div>
+            <span class="result-label">Unsupported claim warnings</span>
+            <ul id="landingUnsupportedClaims"></ul>
           </div>
           <div>
             <span class="result-label">Suggested improved answer</span>
@@ -106,7 +123,7 @@
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.57 Alpha</span>
+      <span>AnswerSeal v0.58 Alpha</span>
       <a href="./">Landing</a>
       <a href="report.html">Sealed Report</a>
       <a href="reports.html">Saved Reports</a>
