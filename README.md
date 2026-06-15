@@ -2,7 +2,7 @@
 
 ![AnswerSeal 3D brand mark](assets/answerseal-3d-logo-bright.png)
 
-AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
+AnswerSeal helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current static MVP starts with B2B SaaS security questionnaires as the first wedge: paste an answer, score its trust signals, generate a sealed report, and reuse only what is backed by proof.
 
 **Current version:** v0.55 Alpha
 
@@ -13,7 +13,7 @@ AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It hel
 ## Brand
 
 - **Name:** AnswerSeal
-- **Positioning:** security questionnaire answers sealed to approved evidence
+- **Positioning:** verify and certify AI-generated answers before teams trust, share, or act on them
 - **Tagline:** Seal every answer to evidence.
 - **Promise:** no source, no answer
 - **Personality:** calm, precise, enterprise-ready, quietly confident
