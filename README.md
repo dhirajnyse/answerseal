@@ -4,11 +4,11 @@
 
 AnswerSeal is a static MVP for a B2B SaaS security questionnaire copilot. It helps teams draft buyer questionnaire answers from approved evidence, review confidence, flag weak sources, approve answers, and export a response pack.
 
-**Current version:** v0.46 Alpha
+**Current version:** v0.47 Alpha
 
-**Current phase:** Network Learning Firewall
+**Current phase:** Sovereign Workspace Console
 
-**Current release:** v0.46 Alpha - Network Learning Firewall
+**Current release:** v0.47 Alpha - Sovereign Workspace Console
 
 ## Brand
 
@@ -235,6 +235,11 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Signal classification that separates local memory, blocked data, review-gated data, and aggregate-safe network patterns
 - Drift quarantine for stale, conflicting, raw, customer-specific, or low-confidence learning signals before cross-tenant reuse
 - Network benefit signals that help other organizations through proof categories, outcome bands, and guardrail labels without exposing private evidence
+- Sovereign Workspace Console drawer with sovereign score, ready regions, environments, policy overlays, rollout actions, receipts, and digest
+- Region posture for US, EU, UAE-GCC, and India/APAC expansion with residency and policy readiness
+- Environment boundaries for demo, pilot, staging, and production so rollout control stays simple
+- Policy overlays for data residency, AI learning, buyer export controls, and country launch posture
+- Rollout actions for regional pilots, production gates, and multi-country expansion
 - Private workspace drawer with account context, reviewer roles, owner routing, and routed question counts
 - Secure handoff summary with copyable pilot link and workspace readiness score
 - Pilot Data Room drawer with questionnaire, evidence pack, contract, and export folders
@@ -255,7 +260,7 @@ Security questionnaires slow down enterprise deals because answers are scattered
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v42 export with network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v43 export with sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -273,13 +278,13 @@ Security questionnaires slow down enterprise deals because answers are scattered
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.47 Alpha - Sovereign Workspace Console
+## Next Phase: v0.48 Alpha - Calm Command Bar
 
-- Add a calm region and country posture view for multi-country trust operations
-- Separate demo, pilot, staging, and production environments without changing the user workflow
-- Map data residency, privacy, AI governance, and security policy overlays to the same answer desk
-- Show rollout readiness as simple regional status instead of a complex admin console
-- Prepare AnswerSeal for multi-environment and multi-country expansion
+- Find questions, evidence, owners, builds, regions, and buyer rooms from one field
+- Run approved actions without hunting through drawers
+- Show the next-best action from evidence gaps, region posture, buyer friction, and release state
+- Reduce visible surface area as the product expands
+- Keep the UI simpler as the intelligence layer gets deeper
 
 ## License
 

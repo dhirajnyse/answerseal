@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v0.47 Alpha - Sovereign Workspace Console
+
+Phase: Sovereign Workspace Console
+
+- Added a Sovereign Workspace Console drawer with sovereign score, region readiness, environment boundaries, policy overlays, rollout actions, digest, and receipts.
+- Added region posture for US, EU, UAE-GCC, and India/APAC expansion so multi-country readiness is visible without an admin-heavy screen.
+- Added environment boundaries for demo, pilot, staging, and production so teams can separate rollout risk without changing the main review workflow.
+- Added policy overlays for data residency, AI learning boundaries, buyer export controls, and country launch posture.
+- Added rollout actions for regional pilots, policy review, production gates, and multi-country expansion planning.
+- Added sovereign workspace status, score, ready regions, environment count, policy pass count, rollout action count, and receipt count to CSV exports.
+- Upgraded review pack export to Review Pack v43 with sovereign regions, environments, policy overlays, rollout actions, receipts, and digest.
+- Updated the build phases page with the v0.48 Calm Command Bar plan.
+
 ## v0.46 Alpha - Network Learning Firewall
 
 Phase: Network Learning Firewall

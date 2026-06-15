@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.46 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v46";
+const BUILD_VERSION = "v0.47 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v47";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v46",
   "answerseal.workspace.v45",
   "answerseal.workspace.v44",
   "answerseal.workspace.v43",
@@ -750,6 +751,8 @@ function createInitialState() {
     buyerFeedbackLoopActions: createInitialBuyerFeedbackLoopActions(),
     networkFirewallOpen: false,
     networkFirewallActions: createInitialNetworkFirewallActions(),
+    sovereignOpen: false,
+    sovereignActions: createInitialSovereignActions(),
     analyticsOpen: false,
     portalOpen: false,
     portal: createInitialPortalState(),
@@ -1063,6 +1066,17 @@ function createInitialNetworkFirewallActions() {
   };
 }
 
+function createInitialSovereignActions() {
+  return {
+    status: "Draft",
+    mappedAt: null,
+    syncedAt: null,
+    approvedAt: null,
+    lastCopiedAt: null,
+    receipts: [],
+  };
+}
+
 function createInitialTrustRoom() {
   return {
     status: "Draft",
@@ -1208,6 +1222,7 @@ function loadWorkspaceState() {
       buyerAccessRoomActions: normalizeBuyerAccessRoomActions(workspace.buyerAccessRoomActions ?? fresh.buyerAccessRoomActions),
       buyerFeedbackLoopActions: normalizeBuyerFeedbackLoopActions(workspace.buyerFeedbackLoopActions ?? fresh.buyerFeedbackLoopActions),
       networkFirewallActions: normalizeNetworkFirewallActions(workspace.networkFirewallActions ?? fresh.networkFirewallActions),
+      sovereignActions: normalizeSovereignActions(workspace.sovereignActions ?? fresh.sovereignActions),
       search: "",
       filter: "all",
       librarySearch: "",
@@ -1249,6 +1264,7 @@ function loadWorkspaceState() {
       buyerAccessRoomOpen: false,
       buyerFeedbackLoopOpen: false,
       networkFirewallOpen: false,
+      sovereignOpen: false,
       analyticsOpen: false,
       portalOpen: false,
     };
@@ -2058,6 +2074,29 @@ function normalizeNetworkFirewallReceipt(receipt) {
   };
 }
 
+function normalizeSovereignActions(actions) {
+  const status = ["Draft", "Regions mapped", "Environments synced", "Policy overlay approved"].includes(actions?.status)
+    ? actions.status
+    : "Draft";
+  return {
+    status,
+    mappedAt: actions?.mappedAt ?? null,
+    syncedAt: actions?.syncedAt ?? null,
+    approvedAt: actions?.approvedAt ?? null,
+    lastCopiedAt: actions?.lastCopiedAt ?? null,
+    receipts: Array.isArray(actions?.receipts) ? actions.receipts.map(normalizeSovereignReceipt) : [],
+  };
+}
+
+function normalizeSovereignReceipt(receipt) {
+  return {
+    id: String(receipt?.id ?? `sovereign-receipt-${Date.now()}`),
+    action: String(receipt?.action ?? "Sovereign workspace action"),
+    detail: String(receipt?.detail ?? "Sovereign workspace action was recorded."),
+    at: receipt?.at ?? new Date().toISOString(),
+  };
+}
+
 function normalizeImportRow(row) {
   const text = String(row?.question ?? row?.text ?? "Imported buyer question");
   const category = String(row?.category ?? inferCategory(text.toLowerCase()));
@@ -2117,6 +2156,7 @@ const elements = {
   buyerAccessRoomNavButton: document.querySelector("#buyerAccessRoomNavButton"),
   buyerFeedbackLoopNavButton: document.querySelector("#buyerFeedbackLoopNavButton"),
   networkFirewallNavButton: document.querySelector("#networkFirewallNavButton"),
+  sovereignNavButton: document.querySelector("#sovereignNavButton"),
   workspaceNavButton: document.querySelector("#workspaceNavButton"),
   pipelineNavButton: document.querySelector("#pipelineNavButton"),
   trustRoomNavButton: document.querySelector("#trustRoomNavButton"),
@@ -2783,6 +2823,24 @@ const elements = {
   quarantineDriftButton: document.querySelector("#quarantineDriftButton"),
   publishNetworkPatternButton: document.querySelector("#publishNetworkPatternButton"),
   copyNetworkFirewallDigestButton: document.querySelector("#copyNetworkFirewallDigestButton"),
+  sovereignBackdrop: document.querySelector("#sovereignBackdrop"),
+  sovereignDrawer: document.querySelector("#sovereignDrawer"),
+  closeSovereignButton: document.querySelector("#closeSovereignButton"),
+  sovereignScore: document.querySelector("#sovereignScore"),
+  regionReadyCount: document.querySelector("#regionReadyCount"),
+  sovereignEnvironmentCount: document.querySelector("#sovereignEnvironmentCount"),
+  sovereignPolicyCount: document.querySelector("#sovereignPolicyCount"),
+  sovereignStatus: document.querySelector("#sovereignStatus"),
+  sovereignRegionList: document.querySelector("#sovereignRegionList"),
+  sovereignEnvironmentList: document.querySelector("#sovereignEnvironmentList"),
+  sovereignPolicyList: document.querySelector("#sovereignPolicyList"),
+  sovereignRolloutList: document.querySelector("#sovereignRolloutList"),
+  sovereignReceiptList: document.querySelector("#sovereignReceiptList"),
+  sovereignDigest: document.querySelector("#sovereignDigest"),
+  mapSovereignRegionsButton: document.querySelector("#mapSovereignRegionsButton"),
+  syncSovereignEnvironmentsButton: document.querySelector("#syncSovereignEnvironmentsButton"),
+  approveSovereignPolicyButton: document.querySelector("#approveSovereignPolicyButton"),
+  copySovereignDigestButton: document.querySelector("#copySovereignDigestButton"),
   analyticsBackdrop: document.querySelector("#analyticsBackdrop"),
   analyticsDrawer: document.querySelector("#analyticsDrawer"),
   closeAnalyticsButton: document.querySelector("#closeAnalyticsButton"),
@@ -2914,6 +2972,7 @@ function bindEvents() {
   elements.buyerAccessRoomNavButton.addEventListener("click", openBuyerAccessRoom);
   elements.buyerFeedbackLoopNavButton.addEventListener("click", openBuyerFeedbackLoop);
   elements.networkFirewallNavButton.addEventListener("click", openNetworkFirewall);
+  elements.sovereignNavButton.addEventListener("click", openSovereignConsole);
   elements.workspaceNavButton.addEventListener("click", openWorkspace);
   elements.pipelineNavButton.addEventListener("click", openPipeline);
   elements.trustRoomNavButton.addEventListener("click", openTrustRoom);
@@ -2990,6 +3049,7 @@ function bindEvents() {
     renderBuyerAccessRoom();
     renderBuyerFeedbackLoop();
     renderNetworkFirewall();
+    renderSovereignConsole();
     renderAnalytics();
     renderAccess();
     renderLibrary();
@@ -3190,6 +3250,12 @@ function bindEvents() {
   elements.quarantineDriftButton.addEventListener("click", quarantineNetworkFirewallDrift);
   elements.publishNetworkPatternButton.addEventListener("click", publishNetworkFirewallPattern);
   elements.copyNetworkFirewallDigestButton.addEventListener("click", copyNetworkFirewallDigest);
+  elements.closeSovereignButton.addEventListener("click", closeSovereignConsole);
+  elements.sovereignBackdrop.addEventListener("click", closeSovereignConsole);
+  elements.mapSovereignRegionsButton.addEventListener("click", mapSovereignRegions);
+  elements.syncSovereignEnvironmentsButton.addEventListener("click", syncSovereignEnvironments);
+  elements.approveSovereignPolicyButton.addEventListener("click", approveSovereignPolicy);
+  elements.copySovereignDigestButton.addEventListener("click", copySovereignDigest);
   elements.closeAnalyticsButton.addEventListener("click", closeAnalytics);
   elements.analyticsBackdrop.addEventListener("click", closeAnalytics);
   elements.copyAnalyticsDigestButton.addEventListener("click", copyAnalyticsDigest);
@@ -3266,6 +3332,7 @@ function bindEvents() {
     if (state.buyerAccessRoomOpen) closeBuyerAccessRoom();
     if (state.buyerFeedbackLoopOpen) closeBuyerFeedbackLoop();
     if (state.networkFirewallOpen) closeNetworkFirewall();
+    if (state.sovereignOpen) closeSovereignConsole();
     if (state.analyticsOpen) closeAnalytics();
     if (state.portalOpen) closePortal();
   });
@@ -3309,6 +3376,7 @@ function applyInitialHash() {
   if (hash === "buyer-access" || hash === "access-room" || hash === "buyer-room" || hash === "room-access") openBuyerAccessRoom();
   if (hash === "feedback-loop" || hash === "buyer-feedback" || hash === "learning-loop" || hash === "feedback") openBuyerFeedbackLoop();
   if (hash === "firewall" || hash === "network-firewall" || hash === "learning-firewall" || hash === "privacy-firewall") openNetworkFirewall();
+  if (hash === "sovereign" || hash === "regions" || hash === "global" || hash === "environments" || hash === "countries") openSovereignConsole();
   if (hash === "analytics" || hash === "deal-desk") openAnalytics();
   if (hash === "access" || hash === "accounts") openAccess();
   if (hash === "data-room" || hash === "dataroom") openDataRoom();
@@ -3366,6 +3434,7 @@ function render() {
   renderBuyerAccessRoom();
   renderBuyerFeedbackLoop();
   renderNetworkFirewall();
+  renderSovereignConsole();
   renderAnalytics();
   renderAccess();
   renderDataRoom();
@@ -4180,6 +4249,9 @@ function setActiveNav(activeButton) {
   if (activeButton !== elements.networkFirewallNavButton && state.networkFirewallOpen) {
     closeNetworkFirewall(false);
   }
+  if (activeButton !== elements.sovereignNavButton && state.sovereignOpen) {
+    closeSovereignConsole(false);
+  }
 
   [
     elements.reviewNavButton,
@@ -4212,6 +4284,7 @@ function setActiveNav(activeButton) {
     elements.buyerAccessRoomNavButton,
     elements.buyerFeedbackLoopNavButton,
     elements.networkFirewallNavButton,
+    elements.sovereignNavButton,
     elements.workspaceNavButton,
     elements.pipelineNavButton,
     elements.trustRoomNavButton,
@@ -5703,6 +5776,64 @@ function closeNetworkFirewall(activateReview = true) {
   elements.networkFirewallDrawer.classList.remove("is-open");
   elements.networkFirewallDrawer.setAttribute("aria-hidden", "true");
   elements.networkFirewallBackdrop.hidden = true;
+  if (activateReview) setActiveNav(elements.reviewNavButton);
+}
+
+function openSovereignConsole() {
+  closeImportStudio(false);
+  closeGapAutopilot(false);
+  closeAutonomousRuns(false);
+  closeTrustLaunchpad(false);
+  closeLearningNetwork(false);
+  closeAdaptiveCoach(false);
+  closeEvidenceAgent(false);
+  closeOutcomeMemory(false);
+  closeAdaptivePlaybooks(false);
+  closeTrustBenchmarks(false);
+  closeTrustOrchestrator(false);
+  closeFederatedGraph(false);
+  closePolicySimulator(false);
+  closeReinforcementControl(false);
+  closeEvaluationLab(false);
+  closeLearningLedger(false);
+  closeLearningPolicyGovernor(false);
+  closePolicyEnforcementAgent(false);
+  closeGovernanceFeedbackLoop(false);
+  closeContinuousTrustOptimizer(false);
+  closeAutonomousTrustReleaseTrain(false);
+  closeTrustOperationsCommandCenter(false);
+  closeRevenueOutcomeLoop(false);
+  closeBuyerTrustGraph(false);
+  closeEvidencePackMarketplace(false);
+  closePacketStudio(false);
+  closeBuyerAccessRoom(false);
+  closeBuyerFeedbackLoop(false);
+  closeNetworkFirewall(false);
+  closeWorkspace(false);
+  closePipeline(false);
+  closeTrustRoom(false);
+  closeFollowUp(false);
+  closeConnectors(false);
+  closeAnalytics(false);
+  closeAccess(false);
+  closeDataRoom(false);
+  closeIntake(false);
+  closeLibrary(false);
+  closePortal(false);
+  state.sovereignOpen = true;
+  setActiveNav(elements.sovereignNavButton);
+  elements.sovereignBackdrop.hidden = false;
+  elements.sovereignDrawer.classList.add("is-open");
+  elements.sovereignDrawer.setAttribute("aria-hidden", "false");
+  renderSovereignConsole();
+}
+
+function closeSovereignConsole(activateReview = true) {
+  if (!state.sovereignOpen && elements.sovereignDrawer.getAttribute("aria-hidden") === "true") return;
+  state.sovereignOpen = false;
+  elements.sovereignDrawer.classList.remove("is-open");
+  elements.sovereignDrawer.setAttribute("aria-hidden", "true");
+  elements.sovereignBackdrop.hidden = true;
   if (activateReview) setActiveNav(elements.reviewNavButton);
 }
 
@@ -18480,6 +18611,362 @@ function networkFirewallDigestText(firewall = networkFirewallSnapshot()) {
   ].join("\n");
 }
 
+function renderSovereignConsole() {
+  const consoleState = sovereignConsoleSnapshot();
+
+  elements.sovereignScore.textContent = `${consoleState.score}%`;
+  elements.regionReadyCount.textContent = `${consoleState.readyRegions}/${consoleState.regions.length}`;
+  elements.sovereignEnvironmentCount.textContent = consoleState.environments.length;
+  elements.sovereignPolicyCount.textContent = consoleState.policyOverlays.length;
+  elements.sovereignStatus.textContent = consoleState.statusLabel;
+  elements.sovereignDigest.textContent = sovereignDigestText(consoleState);
+
+  elements.sovereignRegionList.innerHTML = "";
+  consoleState.regions.forEach((region) => {
+    const card = document.createElement("article");
+    card.className = `sovereign-region-card ${region.status !== "Ready" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(region.code)}</span>
+          <strong>${escapeHtml(region.name)}</strong>
+        </div>
+        <b>${escapeHtml(region.status)}</b>
+      </header>
+      <p>${escapeHtml(region.detail)}</p>
+      <footer>
+        <span>${escapeHtml(region.residency)}</span>
+        <span>${escapeHtml(region.policy)}</span>
+      </footer>
+    `;
+    elements.sovereignRegionList.append(card);
+  });
+
+  elements.sovereignEnvironmentList.innerHTML = "";
+  consoleState.environments.forEach((environment) => {
+    const card = document.createElement("article");
+    card.className = `sovereign-environment-card ${environment.status === "Blocked" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(environment.name)}</strong>
+        <b>${escapeHtml(environment.status)}</b>
+      </header>
+      <p>${escapeHtml(environment.detail)}</p>
+      <span>${escapeHtml(environment.boundary)}</span>
+    `;
+    elements.sovereignEnvironmentList.append(card);
+  });
+
+  elements.sovereignPolicyList.innerHTML = "";
+  consoleState.policyOverlays.forEach((policy) => {
+    const card = document.createElement("article");
+    card.className = `sovereign-policy-card ${policy.status !== "Pass" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <div>
+          <span class="label">${escapeHtml(policy.scope)}</span>
+          <strong>${escapeHtml(policy.title)}</strong>
+        </div>
+        <b>${escapeHtml(policy.status)}</b>
+      </header>
+      <p>${escapeHtml(policy.detail)}</p>
+      <span>${escapeHtml(policy.owner)}</span>
+    `;
+    elements.sovereignPolicyList.append(card);
+  });
+
+  elements.sovereignRolloutList.innerHTML = "";
+  consoleState.rolloutActions.forEach((action) => {
+    const card = document.createElement("article");
+    card.className = `sovereign-rollout-card ${action.status !== "Ready" ? "is-risk" : ""}`;
+    card.innerHTML = `
+      <header>
+        <strong>${escapeHtml(action.title)}</strong>
+        <b>${escapeHtml(action.status)}</b>
+      </header>
+      <p>${escapeHtml(action.detail)}</p>
+      <span>${escapeHtml(action.next)}</span>
+    `;
+    elements.sovereignRolloutList.append(card);
+  });
+
+  elements.sovereignReceiptList.innerHTML = "";
+  if (consoleState.receipts.length === 0) {
+    elements.sovereignReceiptList.append(emptyState("No sovereign workspace receipts yet"));
+  }
+  consoleState.receipts.forEach((receipt) => {
+    const card = document.createElement("article");
+    card.className = "sovereign-receipt-card";
+    card.innerHTML = `
+      <strong>${escapeHtml(receipt.action)}</strong>
+      <p>${escapeHtml(receipt.detail)}</p>
+      <span>${formatAuditTime(receipt.at)}</span>
+    `;
+    elements.sovereignReceiptList.append(card);
+  });
+}
+
+function sovereignConsoleSnapshot() {
+  const firewall = networkFirewallSnapshot();
+  const regions = sovereignRegions(firewall);
+  const environments = sovereignEnvironments();
+  const policyOverlays = sovereignPolicyOverlays(regions, firewall);
+  const rolloutActions = sovereignRolloutActions(regions, environments, policyOverlays);
+  const readyRegions = regions.filter((region) => region.status === "Ready").length;
+  const passPolicies = policyOverlays.filter((policy) => policy.status === "Pass").length;
+  const cleanEnvironments = environments.filter((environment) => environment.status !== "Blocked").length;
+  const readyRollouts = rolloutActions.filter((action) => action.status === "Ready").length;
+  const score = Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        (readyRegions / regions.length) * 28
+          + (cleanEnvironments / environments.length) * 22
+          + (passPolicies / policyOverlays.length) * 22
+          + (readyRollouts / rolloutActions.length) * 16
+          + Math.min(100, firewall.score) * 0.12,
+      ),
+    ),
+  );
+  const statusLabel = state.sovereignActions.status === "Draft" ? "Ready to map global rollout posture" : state.sovereignActions.status;
+
+  return {
+    score,
+    statusLabel,
+    readyRegions,
+    regions,
+    environments,
+    policyOverlays,
+    rolloutActions,
+    firewall,
+    receipts: state.sovereignActions.receipts.slice(-8).reverse(),
+  };
+}
+
+function sovereignRegions(firewall) {
+  return [
+    {
+      code: "US",
+      name: "United States",
+      status: "Ready",
+      residency: "US data room",
+      policy: "SOC 2 / AI governance",
+      detail: "Buyer questionnaires can use the standard SOC 2, AI usage, privacy, and incident evidence paths.",
+    },
+    {
+      code: "EU",
+      name: "European Union",
+      status: firewall.blockedCount > 0 ? "Review" : "Ready",
+      residency: "EU residency review",
+      policy: "GDPR / DPA overlay",
+      detail: "EU rollout requires DPA visibility and aggregate-only network learning receipts before production promotion.",
+    },
+    {
+      code: "UAE-GCC",
+      name: "UAE and GCC",
+      status: "Ready",
+      residency: "Regional policy pack",
+      policy: "Local privacy and AI posture",
+      detail: "Pilot posture is ready with controlled buyer rooms, regional policy notes, and source-backed answer export.",
+    },
+    {
+      code: "IN-APAC",
+      name: "India and APAC",
+      status: "Prepare",
+      residency: "Policy mapping needed",
+      policy: "Country-specific privacy overlay",
+      detail: "Needs local privacy mapping and support-owner coverage before production workspace launch.",
+    },
+  ];
+}
+
+function sovereignEnvironments() {
+  return [
+    {
+      name: "Demo",
+      status: "Ready",
+      boundary: "Public static showcase",
+      detail: "Marketing and founder-led demos can show workflow without live customer data.",
+    },
+    {
+      name: "Pilot",
+      status: "Ready",
+      boundary: "Private customer workspace",
+      detail: "Pilot teams can upload one questionnaire and three proof assets with tenant-local memory.",
+    },
+    {
+      name: "Staging",
+      status: "Review",
+      boundary: "Controlled test workspace",
+      detail: "Staging requires environment labels, test evidence, and network firewall receipts before production.",
+    },
+    {
+      name: "Production",
+      status: "Gated",
+      boundary: "Customer data boundary",
+      detail: "Production promotion waits for region policy overlay, audit retention, and admin access policy.",
+    },
+  ];
+}
+
+function sovereignPolicyOverlays(regions, firewall) {
+  return [
+    {
+      title: "Data residency posture",
+      scope: `${regions.filter((region) => region.status === "Ready").length}/${regions.length} regions ready`,
+      status: regions.some((region) => region.status === "Prepare") ? "Review" : "Pass",
+      owner: "Security",
+      detail: "Region-specific data room, storage, and export posture is visible before customer rollout.",
+    },
+    {
+      title: "AI learning boundary",
+      scope: "Network learning",
+      status: firewall.blockedCount > 0 ? "Review" : "Pass",
+      owner: "AI Governance",
+      detail: "Raw customer data remains tenant-local; aggregate patterns require firewall classification and receipts.",
+    },
+    {
+      title: "Buyer export control",
+      scope: "Trust rooms and packets",
+      status: "Pass",
+      owner: "Legal",
+      detail: "Buyer-facing exports stay tied to approved evidence, expiry windows, and audience controls.",
+    },
+    {
+      title: "Country policy overlay",
+      scope: "Multi-country launch",
+      status: "Review",
+      owner: "Operations",
+      detail: "Country-specific privacy, AI, and security labels are mapped before production expansion.",
+    },
+  ];
+}
+
+function sovereignRolloutActions(regions, environments, policies) {
+  return [
+    {
+      title: "Open UAE-GCC pilot workspace",
+      status: "Ready",
+      detail: "Regional posture is ready for a controlled private pilot using tenant-local evidence memory.",
+      next: "Invite one pilot account with one questionnaire and three proof assets.",
+    },
+    {
+      title: "Prepare EU policy overlay",
+      status: policies.some((policy) => policy.scope.includes("Network")) ? "Review" : "Ready",
+      detail: "EU launch needs DPA evidence visibility and learning firewall receipts for aggregate patterns.",
+      next: "Attach DPA proof and approve network learning boundary.",
+    },
+    {
+      title: "Separate production from pilot",
+      status: environments.some((environment) => environment.name === "Production" && environment.status === "Gated") ? "Review" : "Ready",
+      detail: "Production should stay gated until admin access, audit retention, and regional policies are approved.",
+      next: "Create production checklist from access, policy, and firewall receipts.",
+    },
+    {
+      title: "Map APAC launch path",
+      status: regions.some((region) => region.code === "IN-APAC" && region.status === "Prepare") ? "Prepare" : "Ready",
+      detail: "APAC expansion needs country policy labels and support-owner coverage before launch.",
+      next: "Collect local privacy and AI governance requirements.",
+    },
+  ];
+}
+
+function mapSovereignRegions() {
+  const consoleState = sovereignConsoleSnapshot();
+  const detail = `Mapped ${consoleState.regions.length} region posture(s), with ${consoleState.readyRegions} ready for controlled rollout.`;
+  state.sovereignActions.status = "Regions mapped";
+  state.sovereignActions.mappedAt = new Date().toISOString();
+  addSovereignReceipt("Sovereign regions mapped", detail);
+  addAudit("Sovereign regions mapped", detail);
+  renderSovereignConsole();
+  renderAudit();
+  showToast("Sovereign regions mapped.");
+}
+
+function syncSovereignEnvironments() {
+  const consoleState = sovereignConsoleSnapshot();
+  const detail = `Synced ${consoleState.environments.length} environment boundary label(s) across demo, pilot, staging, and production.`;
+  state.sovereignActions.status = "Environments synced";
+  state.sovereignActions.syncedAt = new Date().toISOString();
+  addSovereignReceipt("Sovereign environments synced", detail);
+  addAudit("Sovereign environments synced", detail);
+  render();
+  showToast("Sovereign environments synced.");
+}
+
+function approveSovereignPolicy() {
+  const consoleState = sovereignConsoleSnapshot();
+  const detail = `Approved ${consoleState.policyOverlays.filter((policy) => policy.status === "Pass").length}/${consoleState.policyOverlays.length} policy overlay(s) for global rollout planning.`;
+  state.sovereignActions.status = "Policy overlay approved";
+  state.sovereignActions.approvedAt = new Date().toISOString();
+  addSovereignReceipt("Sovereign policy overlay approved", detail);
+  addAudit("Sovereign policy overlay approved", detail);
+  render();
+  showToast("Sovereign policy overlay approved.");
+}
+
+function copySovereignDigest() {
+  const consoleState = sovereignConsoleSnapshot();
+  state.sovereignActions.lastCopiedAt = new Date().toISOString();
+  addSovereignReceipt("Sovereign digest copied", "Sovereign workspace digest copied.");
+  addAudit("Sovereign digest copied", "Sovereign workspace digest copied.");
+  renderSovereignConsole();
+  renderAudit();
+  copyText(sovereignDigestText(consoleState), "Sovereign digest copied.");
+}
+
+function addSovereignReceipt(action, detail) {
+  state.sovereignActions.receipts = [
+    ...(state.sovereignActions.receipts ?? []),
+    {
+      id: `sovereign-receipt-${Date.now()}`,
+      action,
+      detail,
+      at: new Date().toISOString(),
+    },
+  ].slice(-12);
+  schedulePersist();
+}
+
+function sovereignDigestText(consoleState = sovereignConsoleSnapshot()) {
+  const regionLines = consoleState.regions.map((region, index) => `${index + 1}. ${region.code}: ${region.status} | ${region.residency} | ${region.policy} | ${region.detail}`).join("\n");
+  const environmentLines = consoleState.environments.map((environment, index) => `${index + 1}. ${environment.name}: ${environment.status} | ${environment.boundary} | ${environment.detail}`).join("\n");
+  const policyLines = consoleState.policyOverlays.map((policy, index) => `${index + 1}. ${policy.status}: ${policy.title} | ${policy.scope} | ${policy.owner} | ${policy.detail}`).join("\n");
+  const rolloutLines = consoleState.rolloutActions.map((action, index) => `${index + 1}. ${action.status}: ${action.title} | ${action.detail} | ${action.next}`).join("\n");
+  const receiptLines = consoleState.receipts.map((receipt, index) => `${index + 1}. ${receipt.action} - ${formatAuditTime(receipt.at)} - ${receipt.detail}`).join("\n");
+
+  return [
+    "AnswerSeal Sovereign Workspace Console",
+    `Build: ${BUILD_VERSION}`,
+    `Status: ${consoleState.statusLabel}`,
+    `Sovereign score: ${consoleState.score}%`,
+    `Ready regions: ${consoleState.readyRegions}/${consoleState.regions.length}`,
+    `Environments: ${consoleState.environments.length}`,
+    `Policy overlays: ${consoleState.policyOverlays.length}`,
+    "",
+    "Region posture:",
+    regionLines,
+    "",
+    "Environment boundaries:",
+    environmentLines,
+    "",
+    "Policy overlays:",
+    policyLines,
+    "",
+    "Rollout actions:",
+    rolloutLines,
+    "",
+    "Receipts:",
+    receiptLines || "No sovereign workspace receipts yet.",
+    "",
+    "Global rollout rule:",
+    "- Keep demo, pilot, staging, and production visibly separated.",
+    "- Map country and regional policy posture before customer evidence enters production.",
+    "- Preserve the same simple answer desk while expanding across environments and countries.",
+  ].join("\n");
+}
+
 function renderConnectors() {
   const vault = connectorSnapshot();
 
@@ -20796,6 +21283,13 @@ function exportCsv() {
     "Quarantine Items",
     "Network Benefit Signals",
     "Network Firewall Receipts",
+    "Sovereign Workspace Status",
+    "Sovereign Workspace Score",
+    "Ready Regions",
+    "Sovereign Environments",
+    "Policy Overlays",
+    "Rollout Actions",
+    "Sovereign Receipts",
     "Trace",
     "Answer",
     "Sources",
@@ -20839,6 +21333,7 @@ function exportCsv() {
     const buyerAccessRoom = buyerAccessRoomSnapshot();
     const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
     const networkFirewall = networkFirewallSnapshot();
+    const sovereign = sovereignConsoleSnapshot();
     return [
       question.text,
       formatStatus(question.status),
@@ -21036,6 +21531,13 @@ function exportCsv() {
       networkFirewall.quarantineCount,
       networkFirewall.benefits.length,
       networkFirewall.receipts.length,
+      sovereign.statusLabel,
+      `${sovereign.score}%`,
+      `${sovereign.readyRegions}/${sovereign.regions.length}`,
+      sovereign.environments.length,
+      `${sovereign.policyOverlays.filter((policy) => policy.status === "Pass").length}/${sovereign.policyOverlays.length}`,
+      sovereign.rolloutActions.length,
+      sovereign.receipts.length,
       `${trace.bound}/${trace.claims.length} bound, ${trace.conflicts} conflicts, ${trace.averageRank}% rank`,
       question.answer,
       (question.sources ?? []).map((id) => getEvidenceById(id)?.title).filter(Boolean).join("; "),
@@ -21089,6 +21591,7 @@ function exportReviewPack() {
   const buyerAccessRoom = buyerAccessRoomSnapshot();
   const buyerFeedbackLoop = buyerFeedbackLoopSnapshot();
   const networkFirewall = networkFirewallSnapshot();
+  const sovereign = sovereignConsoleSnapshot();
   const html = `
     <!doctype html>
     <html>
@@ -21106,7 +21609,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v42</h1>
+        <h1>AnswerSeal Review Pack v43</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -23621,6 +24124,113 @@ function exportReviewPack() {
         </table>
         <h2>Network Learning Firewall Digest</h2>
         <pre>${escapeHtml(networkFirewallDigestText(networkFirewall))}</pre>
+        <h2>Sovereign Workspace Console</h2>
+        <p>Status: ${escapeHtml(sovereign.statusLabel)} | Sovereign score: ${sovereign.score}% | Ready regions: ${sovereign.readyRegions}/${sovereign.regions.length} | Environments: ${sovereign.environments.length} | Policy overlays: ${sovereign.policyOverlays.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Region</th>
+              <th>Status</th>
+              <th>Residency</th>
+              <th>Policy</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sovereign.regions
+              .map(
+                (region) => `
+                  <tr>
+                    <td>${escapeHtml(region.code)}<br />${escapeHtml(region.name)}</td>
+                    <td class="${region.status === "Ready" ? "ok" : "risk"}">${escapeHtml(region.status)}</td>
+                    <td>${escapeHtml(region.residency)}</td>
+                    <td>${escapeHtml(region.policy)}</td>
+                    <td>${escapeHtml(region.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Sovereign Environments</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Environment</th>
+              <th>Status</th>
+              <th>Boundary</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sovereign.environments
+              .map(
+                (environment) => `
+                  <tr>
+                    <td>${escapeHtml(environment.name)}</td>
+                    <td class="${environment.status === "Ready" ? "ok" : "risk"}">${escapeHtml(environment.status)}</td>
+                    <td>${escapeHtml(environment.boundary)}</td>
+                    <td>${escapeHtml(environment.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Sovereign Policy Overlays</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Policy</th>
+              <th>Scope</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sovereign.policyOverlays
+              .map(
+                (policy) => `
+                  <tr>
+                    <td>${escapeHtml(policy.title)}</td>
+                    <td>${escapeHtml(policy.scope)}</td>
+                    <td class="${policy.status === "Pass" ? "ok" : "risk"}">${escapeHtml(policy.status)}</td>
+                    <td>${escapeHtml(policy.owner)}</td>
+                    <td>${escapeHtml(policy.detail)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Sovereign Rollout Actions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Status</th>
+              <th>Detail</th>
+              <th>Next</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sovereign.rolloutActions
+              .map(
+                (action) => `
+                  <tr>
+                    <td>${escapeHtml(action.title)}</td>
+                    <td class="${action.status === "Ready" ? "ok" : "risk"}">${escapeHtml(action.status)}</td>
+                    <td>${escapeHtml(action.detail)}</td>
+                    <td>${escapeHtml(action.next)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <h2>Sovereign Workspace Digest</h2>
+        <pre>${escapeHtml(sovereignDigestText(sovereign))}</pre>
         <h2>Launch Digest</h2>
         <pre>${escapeHtml(launchDigestText(launch))}</pre>
         <h2>Autonomous Review Run</h2>
@@ -24333,7 +24943,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v42 created with network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v43 created with sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, trust room, multi-buyer pipeline, deal analytics, buyer portal autofill, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -24364,12 +24974,13 @@ function exportReviewPack() {
   renderBuyerAccessRoom();
   renderBuyerFeedbackLoop();
   renderNetworkFirewall();
+  renderSovereignConsole();
   renderPipeline();
   renderTrustRoom();
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v42 exported.");
+  showToast("Review Pack v43 exported.");
 }
 
 function toCsv(rows) {
@@ -24452,6 +25063,7 @@ function serializeWorkspace() {
     buyerAccessRoomActions: state.buyerAccessRoomActions,
     buyerFeedbackLoopActions: state.buyerFeedbackLoopActions,
     networkFirewallActions: state.networkFirewallActions,
+    sovereignActions: state.sovereignActions,
     activeQuestionId: state.activeQuestionId,
     activeDocId: state.activeDocId,
     audit: state.audit,
@@ -24505,6 +25117,7 @@ function resetWorkspace() {
   closeBuyerAccessRoom(false);
   closeBuyerFeedbackLoop(false);
   closeNetworkFirewall(false);
+  closeSovereignConsole(false);
   closeWorkspace(false);
   closeLibrary();
   render();

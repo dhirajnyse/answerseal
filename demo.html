@@ -219,6 +219,10 @@
             <svg aria-hidden="true"><use href="#icon-lock"></use></svg>
             <span>Firewall</span>
           </button>
+          <button class="nav-item" id="sovereignNavButton" type="button">
+            <svg aria-hidden="true"><use href="#icon-users"></use></svg>
+            <span>Sovereign</span>
+          </button>
           <button class="nav-item" id="workspaceNavButton" type="button">
             <svg aria-hidden="true"><use href="#icon-users"></use></svg>
             <span>Workspace</span>
@@ -281,8 +285,8 @@
 
         <section class="sidebar-section" aria-label="Build phase">
           <span class="label">Build</span>
-          <strong>v0.46 Alpha</strong>
-          <span>Network Learning Firewall</span>
+          <strong>v0.47 Alpha</strong>
+          <span>Sovereign Workspace Console</span>
         </section>
 
         <section class="sidebar-section compact" aria-label="Workspace rules">
@@ -294,7 +298,7 @@
       <main class="workspace" id="review-desk">
         <header class="topbar">
           <div class="title-block">
-            <span class="label">Security questionnaire | v0.46 Alpha</span>
+            <span class="label">Security questionnaire | v0.47 Alpha</span>
             <h1>Aster Health vendor review</h1>
           </div>
 
@@ -3979,6 +3983,111 @@
             <span>Copyable trust brief for privacy, AI governance, security, and enterprise buyers</span>
           </div>
           <pre class="network-firewall-digest" id="networkFirewallDigest"></pre>
+        </section>
+      </section>
+    </aside>
+
+    <div class="sovereign-backdrop drawer-backdrop" id="sovereignBackdrop" hidden></div>
+    <aside class="workspace-drawer sovereign-drawer" id="sovereignDrawer" aria-label="Sovereign workspace console" aria-hidden="true">
+      <header class="drawer-header">
+        <div>
+          <span class="label">Sovereign Workspace Console</span>
+          <h2>Global rollout without global chaos</h2>
+        </div>
+        <button class="icon-button" id="closeSovereignButton" type="button" aria-label="Close sovereign workspace console" title="Close sovereign workspace console">
+          <svg aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </header>
+
+      <section class="memory-strip sovereign-metrics" aria-label="Sovereign workspace status">
+        <article>
+          <span class="label">Sovereign Score</span>
+          <strong id="sovereignScore">0%</strong>
+        </article>
+        <article>
+          <span class="label">Regions</span>
+          <strong id="regionReadyCount">0/0</strong>
+        </article>
+        <article>
+          <span class="label">Environments</span>
+          <strong id="sovereignEnvironmentCount">0</strong>
+        </article>
+        <article>
+          <span class="label">Policies</span>
+          <strong id="sovereignPolicyCount">0</strong>
+        </article>
+      </section>
+
+      <section class="sovereign-actions" aria-label="Sovereign workspace controls">
+        <div>
+          <span class="label">Global Status</span>
+          <strong id="sovereignStatus">Draft</strong>
+        </div>
+        <button class="primary-button" id="mapSovereignRegionsButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-link"></use></svg>
+          <span>Map</span>
+        </button>
+        <button class="secondary-button" id="syncSovereignEnvironmentsButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          <span>Sync</span>
+        </button>
+        <button class="secondary-button" id="approveSovereignPolicyButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-check"></use></svg>
+          <span>Approve</span>
+        </button>
+        <button class="secondary-button" id="copySovereignDigestButton" type="button">
+          <svg aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <span>Copy</span>
+        </button>
+      </section>
+
+      <section class="sovereign-body">
+        <section class="sovereign-section" aria-label="Region posture">
+          <div class="section-heading">
+            <span class="label">Region Posture</span>
+            <span>Countries and regions shown as simple readiness states for calm expansion</span>
+          </div>
+          <div class="sovereign-region-list" id="sovereignRegionList"></div>
+        </section>
+
+        <section class="sovereign-section" aria-label="Environment boundaries">
+          <div class="section-heading">
+            <span class="label">Environment Boundaries</span>
+            <span>Demo, pilot, staging, and production stay visibly separated</span>
+          </div>
+          <div class="sovereign-environment-list" id="sovereignEnvironmentList"></div>
+        </section>
+
+        <section class="sovereign-section" aria-label="Policy overlays">
+          <div class="section-heading">
+            <span class="label">Policy Overlays</span>
+            <span>Regional privacy, AI governance, security, and export rules mapped to one workflow</span>
+          </div>
+          <div class="sovereign-policy-list" id="sovereignPolicyList"></div>
+        </section>
+
+        <section class="sovereign-section" aria-label="Rollout actions">
+          <div class="section-heading">
+            <span class="label">Rollout Actions</span>
+            <span>Next moves for regional pilots, production gates, and country launches</span>
+          </div>
+          <div class="sovereign-rollout-list" id="sovereignRolloutList"></div>
+        </section>
+
+        <section class="sovereign-section" aria-label="Sovereign receipts">
+          <div class="section-heading">
+            <span class="label">Sovereign Receipts</span>
+            <span>Mapping, environment sync, policy approval, and digest actions recorded</span>
+          </div>
+          <div class="sovereign-receipt-list" id="sovereignReceiptList"></div>
+        </section>
+
+        <section class="sovereign-section" aria-label="Sovereign digest">
+          <div class="section-heading">
+            <span class="label">Sovereign Digest</span>
+            <span>Copyable global rollout brief for founders, security, legal, and regional operators</span>
+          </div>
+          <pre class="sovereign-digest" id="sovereignDigest"></pre>
         </section>
       </section>
     </aside>
