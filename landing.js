@@ -21,6 +21,9 @@ const savedReportsCount = document.querySelector("#savedReportsCount");
 const artifactRegistryList = document.querySelector("#artifactRegistryList");
 const artifactRegistryCount = document.querySelector("#artifactRegistryCount");
 const registryTemplateCount = document.querySelector("#registryTemplateCount");
+const reviewLoopList = document.querySelector("#reviewLoopList");
+const reviewLoopCount = document.querySelector("#reviewLoopCount");
+const reviewPromotionStatus = document.querySelector("#reviewPromotionStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -33,9 +36,9 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.60 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v60";
-const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = ["answerseal.public.reports.v59"];
+const PUBLIC_BUILD_VERSION = "v0.61 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v61";
+const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = ["answerseal.public.reports.v60", "answerseal.public.reports.v59"];
 let latestLandingReport = null;
 let activeSealedReport = null;
 
@@ -99,6 +102,7 @@ if (shareSealedReport) {
 
 renderSavedReports();
 renderArtifactRegistry();
+renderReviewLoop();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -392,6 +396,57 @@ function renderArtifactRegistry() {
   });
 }
 
+function renderReviewLoop() {
+  if (!reviewLoopList) return;
+  const reviewItems = buildReviewLoopItems();
+  const readyCount = reviewItems.filter((item) => item.decision === "Promote").length;
+
+  if (reviewLoopCount) reviewLoopCount.textContent = `${reviewItems.length} review requests`;
+  if (reviewPromotionStatus) {
+    reviewPromotionStatus.textContent = `${readyCount} artifact${readyCount === 1 ? " is" : "s are"} ready for template promotion.`;
+  }
+
+  reviewLoopList.innerHTML = "";
+  reviewItems.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "review-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(item.artifactType)}</span>
+        <strong>${escapePublicHtml(item.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(item.title)}</h3>
+      <p>${escapePublicHtml(item.note)}</p>
+      <dl class="review-meta">
+        <div>
+          <dt>Reviewer</dt>
+          <dd>${escapePublicHtml(item.reviewer)}</dd>
+        </div>
+        <div>
+          <dt>Version</dt>
+          <dd>${escapePublicHtml(item.version)}</dd>
+        </div>
+        <div>
+          <dt>Risk move</dt>
+          <dd>${escapePublicHtml(item.riskMove)}</dd>
+        </div>
+        <div>
+          <dt>Decision</dt>
+          <dd>${escapePublicHtml(item.decision)}</dd>
+        </div>
+      </dl>
+      <div class="diff-block" aria-label="Change comparison">
+        <span>Before</span>
+        <p>${escapePublicHtml(item.before)}</p>
+        <span>After</span>
+        <p>${escapePublicHtml(item.after)}</p>
+      </div>
+      <a href="${escapePublicHtml(item.href)}">${escapePublicHtml(item.action)}</a>
+    `;
+    reviewLoopList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -447,6 +502,77 @@ function buildArtifactRegistry() {
   ];
 
   return [...reportArtifacts, ...seededArtifacts].slice(0, 7);
+}
+
+function buildReviewLoopItems() {
+  const reports = readPublicReports();
+  const reportItems = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 86;
+    return {
+      artifactType: "Sealed answer",
+      state: ready ? "Approved" : "Review",
+      title: report.prompt || "Verified AI answer",
+      note: ready
+        ? "Source-backed answer is ready for template promotion after receipt capture."
+        : "Answer needs one more owner review before it becomes reusable knowledge.",
+      reviewer: index % 2 === 0 ? "AI governance" : "Security",
+      version: `v${index + 2}.1 -> v${index + 2}.2`,
+      riskMove: ready ? "Review to low" : "Medium to review",
+      decision: ready ? "Promote" : "Hold",
+      before: report.answer || "Previous answer did not include enough review context.",
+      after: report.improvedAnswer || report.summary || "Improved answer keeps the source and review note attached.",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededItems = [
+    {
+      artifactType: "Prompt",
+      state: "Approved",
+      title: "Customer data training answer prompt",
+      note: "Prompt version now requires named sources and a reviewer note before output reuse.",
+      reviewer: "AI governance",
+      version: "v2.1 -> v2.2",
+      riskMove: "Medium to low",
+      decision: "Promote",
+      before: "Answer from approved context.",
+      after: "Answer only from attached AI Usage Standard, SOC 2 report, and reviewer-approved source notes.",
+      href: "registry.html",
+      action: "Open registry",
+    },
+    {
+      artifactType: "Workflow",
+      state: "Owner gate",
+      title: "Buyer security questionnaire workflow",
+      note: "Workflow added legal approval before compliance-sensitive answers can be copied into a buyer portal.",
+      reviewer: "Legal",
+      version: "v1.4 -> v1.5",
+      riskMove: "High to medium",
+      decision: "Route",
+      before: "Reviewer approves answer after source match.",
+      after: "Security approves source match, legal approves compliance wording, then portal copy is enabled.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      artifactType: "Agent output",
+      state: "Needs source",
+      title: "Unsupported claim detector",
+      note: "Agent output cannot become reusable until a named policy source is attached.",
+      reviewer: "Security",
+      version: "v0.8 -> v0.9",
+      riskMove: "Blocked to review",
+      decision: "Hold",
+      before: "Flag broad security claims.",
+      after: "Flag broad claims and require policy, report, or approved answer evidence before reuse.",
+      href: "verify.html#risk-flag-engine",
+      action: "Run trust check",
+    },
+  ];
+
+  return [...reportItems, ...seededItems].slice(0, 6);
 }
 
 function renderSealedReportPage() {
@@ -594,7 +720,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.60 Alpha - AI Artifact Registry",
+      "Pilot phase: AnswerSeal v0.61 Alpha - Versioned Review Loop",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

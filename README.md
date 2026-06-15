@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.60 Alpha
+**Current version:** v0.61 Alpha
 
-**Current phase:** AI Artifact Registry
+**Current phase:** Versioned Review Loop
 
-**Current release:** v0.60 Alpha - AI Artifact Registry
+**Current release:** v0.61 Alpha - Versioned Review Loop
 
 ## Brand
 
@@ -40,6 +40,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - AI Artifact Registry page for sealed answers, prompts, workflows, and agent outputs
 - Artifact owner, version, review state, and reusable-template readiness cards
 - Saved sealed reports can appear as governed answer artifacts while older local report memory is preserved
+- Versioned Review Loop page for reviewable AI artifacts before reuse
+- Version notes, reviewer requests, diff-style answer comparisons, risk movement, and promotion receipts
+- Registry and saved reports now route naturally into the review loop
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -57,7 +60,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v56 export with AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v57 export with Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -319,7 +322,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v56 export with AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v57 export with Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -328,6 +331,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `report.html` - Shareable sealed report page
 - `reports.html` - Saved sealed reports dashboard
 - `registry.html` - AI Artifact Registry for governed answers, prompts, workflows, agent outputs, owners, versions, and templates
+- `reviews.html` - Versioned Review Loop for version notes, reviewer requests, diffs, and promotion receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -342,12 +346,12 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.61 Alpha - Versioned Review Loop
+## Next Phase: v0.62 Alpha - Evaluation Bench
 
-- Add version notes so AI work has reviewable changes instead of disposable chat fragments
-- Route review requests to security, legal, AI governance, sales, and product owners
-- Compare old answer, new answer, source changes, and risk movement before approval
-- Record promotion receipts when an artifact becomes a reusable template
+- Add reusable test cases so AI work can be checked before approval
+- Compare candidate outputs from different models or prompt versions
+- Stress test unsupported claims, missing proof, compliance exposure, and risky certainty
+- Block template promotion when a newer answer performs worse than the sealed baseline
 - Treat PromptLayer-style prompt libraries, prompt testing, model connectors, and approved prompt versions as future modules inside AnswerSeal
 - Keep the first MVP simple while opening the path toward Notion + GitHub + QA for AI work
 

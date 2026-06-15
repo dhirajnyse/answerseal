@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnswerSeal | Versioned Review Loop</title>
+    <meta
+      name="description"
+      content="AnswerSeal versioned review loop for AI answers, prompts, workflows, and agent outputs before promotion."
+    />
+    <meta name="theme-color" content="#00a889" />
+    <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="landing-page product-page review-loop-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Certified AI answer trust</small>
+        </span>
+      </a>
+
+      <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
+        <span>Current build</span>
+        <strong>v0.61 Alpha</strong>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="verify.html">Verify</a>
+        <a href="reports.html">Reports</a>
+        <a href="registry.html">Registry</a>
+        <a href="reviews.html" aria-current="page">Reviews</a>
+        <a href="pricing.html">Pricing</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-hero review-loop-hero">
+        <div>
+          <span class="hero-kicker">Versioned review loop</span>
+          <h1>AI work now has a review trail before reuse.</h1>
+          <p>
+            v0.61 adds a calm pull-request style loop for trusted AI artifacts: version notes,
+            reviewer requests, change comparison, and a promotion receipt before anything becomes a template.
+          </p>
+        </div>
+        <aside class="product-status-card">
+          <span>Review loop alpha</span>
+          <strong id="reviewLoopCount">3 review requests</strong>
+          <p id="reviewPromotionStatus">1 artifact is ready for template promotion.</p>
+        </aside>
+      </section>
+
+      <section class="review-shell" aria-label="Versioned review workspace">
+        <div class="dashboard-toolbar">
+          <span class="hero-kicker">Current review requests</span>
+          <div class="dashboard-actions">
+            <a class="hero-secondary" href="registry.html">Open Registry</a>
+            <a class="hero-primary" href="verify.html">Verify New Answer</a>
+          </div>
+        </div>
+
+        <div class="review-loop-grid" id="reviewLoopList"></div>
+      </section>
+
+      <section class="review-flow" aria-label="Review loop method">
+        <div>
+          <span class="hero-kicker">Review method</span>
+          <h2>Like a pull request, but for AI answers.</h2>
+          <p>
+            Teams can see what changed, who needs to approve it, whether the risk moved,
+            and why the artifact is safe to reuse.
+          </p>
+        </div>
+
+        <div class="review-flow-grid">
+          <article>
+            <span>01</span>
+            <strong>Version note</strong>
+            <p>Every changed answer or prompt explains why it changed.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <strong>Reviewer request</strong>
+            <p>Security, legal, AI governance, sales, or product owners approve the right part.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <strong>Diff check</strong>
+            <p>Old answer, new answer, source changes, and risk movement stay visible.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <strong>Promotion receipt</strong>
+            <p>Approved artifacts get a receipt before they become reusable templates.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="receipt-section" aria-label="Promotion receipt">
+        <div>
+          <span class="hero-kicker">Promotion receipt</span>
+          <h2>No silent reuse.</h2>
+          <p>
+            Reusable AI work should carry the same calm governance as production code:
+            owner, version, evidence, reviewer, approval state, and rollback note.
+          </p>
+        </div>
+        <div class="receipt-strip">
+          <article>
+            <span>Owner</span>
+            <strong>AI governance</strong>
+            <p>Accountable for approved prompt and answer templates.</p>
+          </article>
+          <article>
+            <span>Version</span>
+            <strong>v2.2</strong>
+            <p>Source language tightened after review.</p>
+          </article>
+          <article>
+            <span>Gate</span>
+            <strong>Promote with receipt</strong>
+            <p>Template reuse is allowed only with attached proof.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <span>AnswerSeal v0.61 Alpha</span>
+      <a href="verify.html">Verify</a>
+      <a href="reports.html">Reports</a>
+      <a href="registry.html">Registry</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="versions.html">Build Phases</a>
+    </footer>
+    <script src="landing.js"></script>
+  </body>
+</html>

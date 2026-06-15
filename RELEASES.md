@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.61 Alpha - Versioned Review Loop
+
+Phase: Versioned Review Loop
+
+- Added a dedicated Reviews page for versioned AI artifact review.
+- Added review cards with version notes, reviewers, risk movement, decisions, and before/after comparisons.
+- Connected Registry, Reports, Verify, Pricing, and the landing product spine to the new review loop.
+- Upgraded public storage to v0.61 while preserving v0.60 and v0.59 report memory.
+- Upgraded export language to Review Pack v57 and moved the next build toward v0.62 Evaluation Bench.
+
 ## v0.60 Alpha - AI Artifact Registry
 
 Phase: AI Artifact Registry
