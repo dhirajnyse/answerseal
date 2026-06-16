@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.65 Alpha
+**Current version:** v0.66 Alpha
 
-**Current phase:** Trust Policy Gateway
+**Current phase:** Buyer Trust Portal
 
-**Current release:** v0.65 Alpha - Trust Policy Gateway
+**Current release:** v0.66 Alpha - Buyer Trust Portal
 
 ## Brand
 
@@ -55,6 +55,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust Policy Gateway page for allow, hold, and block decisions across answers, prompts, connectors, learning signals, and rollout paths
 - Policy cards show the rule, scope, owner, enforcement preview, and receipt path before reuse
 - Verification, reports, registry, reviews, evaluation, connectors, and learning now route naturally into the Trust Policy Gateway
+- Buyer Trust Portal page for buyer-safe rooms, trust packets, evidence access levels, and activity receipts
+- Buyer portal cards show access level, source summary, buyer activity, owner, and receipt before proof is shared
+- Verification, reports, registry, reviews, evaluation, connectors, learning, and policy now route naturally into the Buyer Trust Portal
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -72,7 +75,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v61 export with Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v62 export with Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -334,7 +337,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v61 export with Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v62 export with Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -348,6 +351,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `connectors.html` - Model Connector Lab for governed model paths, source routes, connector policy, bench gates, and reuse decisions
 - `learning.html` - Learning Signal Loop for outcome signals, improvement proposals, privacy boundaries, owner approvals, and rollback notes
 - `policy.html` - Trust Policy Gateway for allow, hold, and block decisions across governed AI paths
+- `buyer.html` - Buyer Trust Portal for buyer-safe rooms, trust packets, evidence access levels, and activity receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -362,13 +366,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.66 Alpha - Buyer Trust Portal
+## Next Phase: v0.67 Alpha - Buyer Proof Concierge
 
-- Add a buyer-safe room for scoped sealed reports, policy decisions, and source summaries
-- Package approved answers, evidence summaries, and reviewer notes into shareable trust packets
-- Control buyer access by summary, excerpt, sealed report, or full data room path
-- Track buyer views, requested evidence, open concerns, and next best follow-up
-- Keep the portal calm while expanding toward enterprise buyer review workflows
+- Capture buyer comments, missing proof, and follow-up questions directly from trust packets
+- Route proof requests to the right owner with answer, evidence, policy, and buyer context attached
+- Draft safer buyer replies from sealed evidence, policy decisions, and approved source excerpts
+- Convert resolved buyer concerns into reusable proof patterns without leaking private customer context
+- Keep the concierge calm while expanding toward enterprise buyer review workflows
 
 ## License
 

@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.66 Alpha - Buyer Trust Portal
+
+Phase: Buyer Trust Portal
+
+- Added a dedicated Buyer Trust Portal page for buyer-safe trust packets, evidence access levels, activity receipts, and owner routing.
+- Added buyer portal cards for sealed answer packets, scoped buyer rooms, source excerpt requests, activity receipts, region-gated access, and saved sealed report packets.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Model Connector Lab, Learning Signal Loop, Trust Policy Gateway, Pricing, and the landing product spine to the new Buyer path.
+- Upgraded public storage to v0.66 while preserving v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v62 and moved the next build toward v0.67 Buyer Proof Concierge.
+
 ## v0.65 Alpha - Trust Policy Gateway
 
 Phase: Trust Policy Gateway

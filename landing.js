@@ -36,6 +36,9 @@ const learningBoundaryStatus = document.querySelector("#learningBoundaryStatus")
 const policyGatewayList = document.querySelector("#policyGatewayList");
 const policyGatewayScore = document.querySelector("#policyGatewayScore");
 const policyDecisionStatus = document.querySelector("#policyDecisionStatus");
+const buyerPortalList = document.querySelector("#buyerPortalList");
+const buyerPortalScore = document.querySelector("#buyerPortalScore");
+const buyerActivityStatus = document.querySelector("#buyerActivityStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -48,9 +51,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.65 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v65";
+const PUBLIC_BUILD_VERSION = "v0.66 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v66";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v65",
   "answerseal.public.reports.v64",
   "answerseal.public.reports.v63",
   "answerseal.public.reports.v62",
@@ -126,6 +130,7 @@ renderEvaluationBench();
 renderConnectorLab();
 renderLearningSignalLoop();
 renderPolicyGateway();
+renderBuyerTrustPortal();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -673,6 +678,57 @@ function renderPolicyGateway() {
   });
 }
 
+function renderBuyerTrustPortal() {
+  if (!buyerPortalList) return;
+  const packets = buildBuyerTrustPortalItems();
+  const readyCount = packets.filter((packet) => packet.status === "Ready").length;
+  const portalScore = Math.round((readyCount / Math.max(packets.length, 1)) * 100);
+  const openActivityCount = packets.filter((packet) => packet.activity !== "Closed").length;
+
+  if (buyerPortalScore) buyerPortalScore.textContent = `${portalScore}% buyer-ready`;
+  if (buyerActivityStatus) {
+    buyerActivityStatus.textContent = `${openActivityCount} buyer touchpoint${openActivityCount === 1 ? "" : "s"} still need a clean receipt or follow-up.`;
+  }
+
+  buyerPortalList.innerHTML = "";
+  packets.forEach((packet) => {
+    const card = document.createElement("article");
+    card.className = "buyer-portal-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(packet.type)}</span>
+        <strong>${escapePublicHtml(packet.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(packet.title)}</h3>
+      <p>${escapePublicHtml(packet.summary)}</p>
+      <dl class="buyer-portal-meta">
+        <div>
+          <dt>Access</dt>
+          <dd>${escapePublicHtml(packet.access)}</dd>
+        </div>
+        <div>
+          <dt>Evidence</dt>
+          <dd>${escapePublicHtml(packet.evidence)}</dd>
+        </div>
+        <div>
+          <dt>Activity</dt>
+          <dd>${escapePublicHtml(packet.activity)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(packet.owner)}</dd>
+        </div>
+      </dl>
+      <div class="buyer-portal-receipt">
+        <span>Buyer receipt</span>
+        <p>${escapePublicHtml(packet.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(packet.href)}">${escapePublicHtml(packet.action)}</a>
+    `;
+    buyerPortalList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -1057,6 +1113,97 @@ function buildPolicyGatewayItems() {
   return [...reportPolicies, ...seededPolicies].slice(0, 7);
 }
 
+function buildBuyerTrustPortalItems() {
+  const reports = readPublicReports();
+  const reportPackets = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 86;
+    return {
+      type: "Sealed answer packet",
+      status: ready ? "Ready" : "Review",
+      title: report.prompt || "Verified AI answer",
+      summary: "Buyer-safe packet with score, source summary, improved wording, and reuse decision.",
+      access: ready ? "Sealed report" : "Summary only",
+      evidence: report.sources || "Attached sources",
+      activity: ready ? "Viewed" : "Needs owner note",
+      owner: index % 2 === 0 ? "Revenue security" : "Sales engineer",
+      receipt: report.summary || "Attach a buyer-safe summary before sending the packet outside the workspace.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed packet",
+    };
+  });
+
+  const seededPackets = [
+    {
+      type: "Buyer room",
+      status: "Ready",
+      title: "Aster Health security review room",
+      summary: "One quiet room for the buyer to inspect sealed AI answers, policy decisions, and approved source summaries.",
+      access: "Scoped link",
+      evidence: "6 source summaries",
+      activity: "2 buyer views",
+      owner: "Revenue security",
+      receipt: "Buyer saw the AI usage answer, SOC 2 summary, policy gateway decision, and next evidence owner.",
+      href: "report.html",
+      action: "Open sample packet",
+    },
+    {
+      type: "Trust packet",
+      status: "Ready",
+      title: "Customer data training answer packet",
+      summary: "Approved answer, source titles, policy decision, and reviewer note packaged for enterprise review.",
+      access: "Sealed report",
+      evidence: "AI Usage Standard",
+      activity: "Question answered",
+      owner: "AI governance",
+      receipt: "Packet can be shared because the answer is evidence-backed, policy-allowed, and human-reviewed.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      type: "Evidence access",
+      status: "Hold",
+      title: "SOC 2 report excerpt request",
+      summary: "Buyer wants more proof, but full evidence access must stay scoped to approved excerpts.",
+      access: "Excerpt only",
+      evidence: "SOC 2 Type II",
+      activity: "Follow-up open",
+      owner: "Security",
+      receipt: "Share the control summary and sealed answer first; hold full report access until NDA and owner approval.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      type: "Portal policy",
+      status: "Ready",
+      title: "Buyer activity receipt",
+      summary: "Portal activity becomes a clean follow-up signal without exposing private workspace notes.",
+      access: "Activity summary",
+      evidence: "Policy receipt",
+      activity: "Closed",
+      owner: "Sales engineer",
+      receipt: "Buyer viewed the packet, no sensitive notes were exposed, and the follow-up was routed internally.",
+      href: "learning.html",
+      action: "Open learning",
+    },
+    {
+      type: "Access boundary",
+      status: "Review",
+      title: "EU buyer source-room policy",
+      summary: "Country-specific buyer rooms need residency, export, and evidence-access rules before launch.",
+      access: "Region gated",
+      evidence: "Policy map",
+      activity: "Owner review",
+      owner: "Operations",
+      receipt: "Keep the room internal until region policy, data boundary, and buyer export scope are approved.",
+      href: "versions.html",
+      action: "Open build phases",
+    },
+  ];
+
+  return [...reportPackets, ...seededPackets].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -1273,7 +1420,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.65 Alpha - Trust Policy Gateway",
+      "Pilot phase: AnswerSeal v0.66 Alpha - Buyer Trust Portal",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

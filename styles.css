@@ -12245,6 +12245,188 @@ svg {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.buyer-portal-shell,
+.buyer-portal-method,
+.buyer-portal-access-section {
+  padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
+}
+
+.buyer-portal-grid,
+.buyer-portal-method-grid,
+.buyer-portal-access-strip {
+  display: grid;
+  gap: 12px;
+}
+
+.buyer-portal-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.buyer-portal-card,
+.buyer-portal-method-grid article,
+.buyer-portal-access-strip article {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(31, 41, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 16px 38px rgba(31, 41, 38, 0.06);
+}
+
+.buyer-portal-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.buyer-portal-card header span,
+.buyer-portal-card header strong,
+.buyer-portal-method-grid span,
+.buyer-portal-access-strip span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.buyer-portal-card header span,
+.buyer-portal-method-grid span,
+.buyer-portal-access-strip span {
+  color: var(--accent-dark);
+  background: #dcfbf4;
+}
+
+.buyer-portal-card header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.buyer-portal-card h3,
+.buyer-portal-method-grid strong,
+.buyer-portal-access-strip strong {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.22;
+}
+
+.buyer-portal-card p,
+.buyer-portal-method p,
+.buyer-portal-method-grid p,
+.buyer-portal-access-section p,
+.buyer-portal-access-strip p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.buyer-portal-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 168, 137, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 168, 137, 0.14);
+}
+
+.buyer-portal-meta div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px;
+  background: #fbfffd;
+}
+
+.buyer-portal-meta dt,
+.buyer-portal-meta dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.buyer-portal-meta dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.buyer-portal-meta dd {
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.buyer-portal-receipt {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(25, 132, 235, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(237, 247, 255, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.buyer-portal-receipt span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.buyer-portal-card a {
+  align-self: end;
+  color: var(--accent-dark);
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.buyer-portal-method,
+.buyer-portal-access-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 72px);
+  align-items: start;
+  border-top: 1px solid rgba(31, 41, 38, 0.1);
+}
+
+.buyer-portal-method {
+  background:
+    linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
+    #ffffff;
+}
+
+.buyer-portal-access-section {
+  background: #ffffff;
+}
+
+.buyer-portal-method h2,
+.buyer-portal-access-section h2 {
+  max-width: 720px;
+  margin: 14px 0 14px;
+  color: #14201d;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.buyer-portal-method-grid,
+.buyer-portal-access-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12725,6 +12907,9 @@ svg {
   .gateway-policy-grid,
   .gateway-method,
   .gateway-enforcement-section,
+  .buyer-portal-grid,
+  .buyer-portal-method,
+  .buyer-portal-access-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -12778,6 +12963,7 @@ svg {
   .connector-lab-grid,
   .learning-signal-grid,
   .gateway-policy-grid,
+  .buyer-portal-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12857,6 +13043,10 @@ svg {
   .gateway-method-grid,
   .gateway-enforcement-strip,
   .gateway-meta,
+  .buyer-portal-grid,
+  .buyer-portal-method-grid,
+  .buyer-portal-access-strip,
+  .buyer-portal-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
@@ -13185,6 +13375,7 @@ svg {
     .connector-card footer,
     .learning-card header,
     .gateway-card header,
+    .buyer-portal-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,
@@ -13505,6 +13696,7 @@ svg {
     .connector-card footer,
     .learning-card header,
     .gateway-card header,
+    .buyer-portal-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,
