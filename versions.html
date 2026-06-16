@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.61 Alpha</strong>
+        <strong>v0.62 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -36,6 +36,7 @@
         <a href="reports.html">Reports</a>
         <a href="registry.html">Registry</a>
         <a href="reviews.html">Reviews</a>
+        <a href="evaluation.html">Bench</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -45,15 +46,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.61 Alpha</h1>
+          <h1>AnswerSeal v0.62 Alpha</h1>
           <p>
-            This release turns the registry into a reviewable system: sealed answers, prompts, workflows, and agent outputs can show version notes, reviewer requests, risk movement, and promotion receipts before reuse.
+            This release adds the QA layer: sealed answers, prompts, workflows, and agent outputs can run through reusable tests, model and prompt comparison, hallucination challenge, source freshness checks, and regression gates before reuse.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Versioned Review Loop</h2>
+          <h2>Evaluation Bench</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -61,11 +62,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Review loop page, version notes, reviewer requests, diff-style change comparison, promotion receipts, registry handoff, and Review Pack v57</dd>
+              <dd>Evaluation Bench page, test cases, model and prompt comparison, hallucination challenge, source freshness checks, regression gates, review handoff, and Review Pack v58</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.62 Alpha - Evaluation Bench</dd>
+              <dd>v0.63 Alpha - Model Connector Lab</dd>
             </div>
           </dl>
         </aside>
@@ -81,6 +82,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.62 Alpha</strong>
+            </header>
+            <h3>Evaluation Bench</h3>
+            <p>Added a public Evaluation Bench with reusable artifact tests, model and prompt comparison, hallucination challenge, source freshness checks, regression gates, and bench handoff from registry and reviews.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.61 Alpha</strong>
             </header>
             <h3>Versioned Review Loop</h3>
@@ -632,44 +642,45 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.62 Alpha - Evaluation Bench</h2>
+          <h2>v0.63 Alpha - Model Connector Lab</h2>
           <p>
-            The next release should add a QA bench for trusted AI work: test cases, model comparison, hallucination challenge, source freshness checks, and regression gates before promotion.
+            The next release should prepare AnswerSeal for connected AI work: model connectors, prompt version routing, candidate output capture, cost and latency posture, and governed connector policies.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Test cases</h3>
-            <p>Run each answer, prompt, workflow, or agent output through reusable quality checks before approval.</p>
+            <h3>Connector catalog</h3>
+            <p>Show model providers, approved use cases, policy limits, and environment readiness in one calm view.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Model comparison</h3>
-            <p>Compare candidate outputs from different models or prompt versions before a reviewer promotes one.</p>
+            <h3>Prompt routing</h3>
+            <p>Route answer, prompt, workflow, and agent tests to the right approved model path.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Hallucination challenge</h3>
-            <p>Stress test unsupported claims, missing proof, compliance exposure, and risky certainty.</p>
+            <h3>Candidate capture</h3>
+            <p>Store output candidates with score, risk, cost, latency, and evaluation result before review.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Regression gate</h3>
-            <p>Block template promotion when a newer answer performs worse than the sealed baseline.</p>
+            <h3>Connector policy</h3>
+            <p>Block unsafe model use when evidence, privacy, or enterprise policy requirements are not met.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.61 Alpha</span>
+      <span>AnswerSeal v0.62 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
       <a href="registry.html">Registry</a>
       <a href="reviews.html">Reviews</a>
+      <a href="evaluation.html">Bench</a>
       <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

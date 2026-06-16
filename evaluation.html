@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnswerSeal | Evaluation Bench</title>
+    <meta
+      name="description"
+      content="AnswerSeal Evaluation Bench tests AI answers, prompts, workflows, and agent outputs before promotion."
+    />
+    <meta name="theme-color" content="#00a889" />
+    <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="landing-page product-page evaluation-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Certified AI answer trust</small>
+        </span>
+      </a>
+
+      <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
+        <span>Current build</span>
+        <strong>v0.62 Alpha</strong>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="verify.html">Verify</a>
+        <a href="reports.html">Reports</a>
+        <a href="registry.html">Registry</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="evaluation.html" aria-current="page">Bench</a>
+        <a href="pricing.html">Pricing</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-hero evaluation-hero">
+        <div>
+          <span class="hero-kicker">Evaluation bench</span>
+          <h1>Test AI work before it becomes trusted work.</h1>
+          <p>
+            v0.62 adds a QA bench for sealed AI artifacts: reusable test cases, model and prompt comparison,
+            hallucination challenge, source freshness checks, and regression gates before promotion.
+          </p>
+        </div>
+        <aside class="product-status-card">
+          <span>Bench alpha</span>
+          <strong id="evaluationBenchScore">92% ready</strong>
+          <p id="evaluationRegressionStatus">Regression gate is watching sealed baselines.</p>
+        </aside>
+      </section>
+
+      <section class="evaluation-shell" aria-label="Evaluation bench">
+        <div class="dashboard-toolbar">
+          <span class="hero-kicker">Artifact tests</span>
+          <div class="dashboard-actions">
+            <a class="hero-secondary" href="reviews.html">Open Reviews</a>
+            <a class="hero-secondary" href="registry.html">Open Registry</a>
+            <a class="hero-primary" href="verify.html">Verify New Answer</a>
+          </div>
+        </div>
+
+        <div class="evaluation-bench-grid" id="evaluationBenchList"></div>
+      </section>
+
+      <section class="evaluation-method" aria-label="Evaluation method">
+        <div>
+          <span class="hero-kicker">QA method</span>
+          <h2>The bench asks the hard questions before buyers do.</h2>
+          <p>
+            Each artifact is tested for proof, risk, clarity, compliance sensitivity, and whether a new version
+            is actually safer than the sealed baseline.
+          </p>
+        </div>
+
+        <div class="evaluation-method-grid">
+          <article>
+            <span>01</span>
+            <strong>Test cases</strong>
+            <p>Reusable checks follow every answer, prompt, workflow, or agent output.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <strong>Comparison</strong>
+            <p>Candidate outputs are judged against source coverage and the approved baseline.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <strong>Challenge</strong>
+            <p>Unsupported claims, weak proof, and overconfident wording are pushed into review.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <strong>Gate</strong>
+            <p>Promotion is blocked when a new version is weaker than the sealed answer.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="regression-section" aria-label="Regression gate">
+        <div>
+          <span class="hero-kicker">Regression gate</span>
+          <h2>Better is required.</h2>
+          <p>
+            The bench does not reward novelty. It rewards safer, clearer, better sourced answers that can survive
+            legal, security, buyer, and governance review.
+          </p>
+        </div>
+        <div class="regression-strip">
+          <article>
+            <span>Baseline</span>
+            <strong>Sealed report</strong>
+            <p>Approved answer, score, source trail, and version receipt.</p>
+          </article>
+          <article>
+            <span>Candidate</span>
+            <strong>New output</strong>
+            <p>Fresh answer, prompt variant, workflow result, or agent output.</p>
+          </article>
+          <article>
+            <span>Decision</span>
+            <strong>Promote or hold</strong>
+            <p>Only stronger outputs move back into the review loop.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <span>AnswerSeal v0.62 Alpha</span>
+      <a href="verify.html">Verify</a>
+      <a href="reports.html">Reports</a>
+      <a href="registry.html">Registry</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="versions.html">Build Phases</a>
+    </footer>
+    <script src="landing.js"></script>
+  </body>
+</html>

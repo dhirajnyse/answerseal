@@ -11286,7 +11286,7 @@ svg {
 
 .spine-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
   margin-top: 30px;
 }
@@ -11584,7 +11584,10 @@ svg {
 .registry-lanes,
 .review-shell,
 .review-flow,
-.receipt-section {
+.receipt-section,
+.evaluation-shell,
+.evaluation-method,
+.regression-section {
   padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
 }
 
@@ -11757,18 +11760,25 @@ svg {
 
 .review-loop-grid,
 .review-flow-grid,
-.receipt-strip {
+.receipt-strip,
+.evaluation-bench-grid,
+.evaluation-method-grid,
+.regression-strip {
   display: grid;
   gap: 12px;
 }
 
-.review-loop-grid {
+.review-loop-grid,
+.evaluation-bench-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .review-card,
 .review-flow-grid article,
-.receipt-strip article {
+.receipt-strip article,
+.evaluation-card,
+.evaluation-method-grid article,
+.regression-strip article {
   display: grid;
   align-content: start;
   gap: 12px;
@@ -11780,7 +11790,8 @@ svg {
   box-shadow: 0 16px 38px rgba(31, 41, 38, 0.06);
 }
 
-.review-card header {
+.review-card header,
+.evaluation-card header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11790,7 +11801,11 @@ svg {
 .review-card header span,
 .review-card header strong,
 .review-flow-grid span,
-.receipt-strip span {
+.receipt-strip span,
+.evaluation-card header span,
+.evaluation-card header strong,
+.evaluation-method-grid span,
+.regression-strip span {
   display: inline-flex;
   align-items: center;
   width: fit-content;
@@ -11804,19 +11819,26 @@ svg {
 
 .review-card header span,
 .review-flow-grid span,
-.receipt-strip span {
+.receipt-strip span,
+.evaluation-card header span,
+.evaluation-method-grid span,
+.regression-strip span {
   color: var(--accent-dark);
   background: #dcfbf4;
 }
 
-.review-card header strong {
+.review-card header strong,
+.evaluation-card header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
 
 .review-card h3,
 .review-flow-grid strong,
-.receipt-strip strong {
+.receipt-strip strong,
+.evaluation-card h3,
+.evaluation-method-grid strong,
+.regression-strip strong {
   margin: 0;
   color: var(--ink);
   font-size: 1.15rem;
@@ -11827,13 +11849,19 @@ svg {
 .review-flow p,
 .review-flow-grid p,
 .receipt-section p,
-.receipt-strip p {
+.receipt-strip p,
+.evaluation-card p,
+.evaluation-method p,
+.evaluation-method-grid p,
+.regression-section p,
+.regression-strip p {
   margin: 0;
   color: var(--muted);
   line-height: 1.5;
 }
 
-.review-meta {
+.review-meta,
+.evaluation-meta {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
@@ -11844,7 +11872,8 @@ svg {
   background: rgba(0, 168, 137, 0.14);
 }
 
-.review-meta div {
+.review-meta div,
+.evaluation-meta div {
   display: grid;
   gap: 3px;
   min-width: 0;
@@ -11853,26 +11882,31 @@ svg {
 }
 
 .review-meta dt,
-.review-meta dd {
+.review-meta dd,
+.evaluation-meta dt,
+.evaluation-meta dd {
   margin: 0;
   min-width: 0;
 }
 
-.review-meta dt {
+.review-meta dt,
+.evaluation-meta dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
   text-transform: uppercase;
 }
 
-.review-meta dd {
+.review-meta dd,
+.evaluation-meta dd {
   color: var(--ink);
   font-size: 0.84rem;
   font-weight: 850;
   overflow-wrap: anywhere;
 }
 
-.diff-block {
+.diff-block,
+.evaluation-finding {
   display: grid;
   gap: 8px;
   padding: 14px;
@@ -11883,14 +11917,16 @@ svg {
     #ffffff;
 }
 
-.diff-block span {
+.diff-block span,
+.evaluation-finding span {
   color: var(--muted);
   font-size: 0.74rem;
   font-weight: 950;
   text-transform: uppercase;
 }
 
-.review-card a {
+.review-card a,
+.evaluation-card a {
   align-self: end;
   color: var(--accent-dark);
   font-weight: 950;
@@ -11898,7 +11934,9 @@ svg {
 }
 
 .review-flow,
-.receipt-section {
+.receipt-section,
+.evaluation-method,
+.regression-section {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: clamp(24px, 5vw, 72px);
@@ -11906,18 +11944,22 @@ svg {
   border-top: 1px solid rgba(31, 41, 38, 0.1);
 }
 
-.review-flow {
+.review-flow,
+.evaluation-method {
   background:
     linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
     #ffffff;
 }
 
-.receipt-section {
+.receipt-section,
+.regression-section {
   background: #ffffff;
 }
 
 .review-flow h2,
-.receipt-section h2 {
+.receipt-section h2,
+.evaluation-method h2,
+.regression-section h2 {
   max-width: 720px;
   margin: 14px 0 14px;
   color: #14201d;
@@ -11927,7 +11969,9 @@ svg {
 }
 
 .review-flow-grid,
-.receipt-strip {
+.receipt-strip,
+.evaluation-method-grid,
+.regression-strip {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -12399,6 +12443,9 @@ svg {
   .review-loop-grid,
   .review-flow,
   .receipt-section,
+  .evaluation-bench-grid,
+  .evaluation-method,
+  .regression-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -12448,6 +12495,7 @@ svg {
   .public-report-list,
   .artifact-registry-grid,
   .review-loop-grid,
+  .evaluation-bench-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12464,11 +12512,11 @@ svg {
   }
 
   .landing-nav nav {
-    display: grid;
-    grid-template-columns: repeat(6, auto);
-    gap: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
     justify-content: start;
-    overflow-x: auto;
+    overflow: visible;
   }
 
   .landing-nav nav a {
@@ -12511,6 +12559,10 @@ svg {
   .review-flow-grid,
   .receipt-strip,
   .review-meta,
+  .evaluation-bench-grid,
+  .evaluation-method-grid,
+  .regression-strip,
+  .evaluation-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
@@ -12754,6 +12806,9 @@ svg {
     .review-flow-grid,
     .receipt-strip,
     .review-meta,
+    .evaluation-method-grid,
+    .regression-strip,
+    .evaluation-meta,
     .coverage-grid,
     .analytics-grid,
     .portal-actions {

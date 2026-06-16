@@ -24,6 +24,9 @@ const registryTemplateCount = document.querySelector("#registryTemplateCount");
 const reviewLoopList = document.querySelector("#reviewLoopList");
 const reviewLoopCount = document.querySelector("#reviewLoopCount");
 const reviewPromotionStatus = document.querySelector("#reviewPromotionStatus");
+const evaluationBenchList = document.querySelector("#evaluationBenchList");
+const evaluationBenchScore = document.querySelector("#evaluationBenchScore");
+const evaluationRegressionStatus = document.querySelector("#evaluationRegressionStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -36,9 +39,9 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.61 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v61";
-const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = ["answerseal.public.reports.v60", "answerseal.public.reports.v59"];
+const PUBLIC_BUILD_VERSION = "v0.62 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v62";
+const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = ["answerseal.public.reports.v61", "answerseal.public.reports.v60", "answerseal.public.reports.v59"];
 let latestLandingReport = null;
 let activeSealedReport = null;
 
@@ -103,6 +106,7 @@ if (shareSealedReport) {
 renderSavedReports();
 renderArtifactRegistry();
 renderReviewLoop();
+renderEvaluationBench();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -447,6 +451,56 @@ function renderReviewLoop() {
   });
 }
 
+function renderEvaluationBench() {
+  if (!evaluationBenchList) return;
+  const tests = buildEvaluationBenchItems();
+  const passedCount = tests.filter((test) => test.result === "Pass").length;
+  const readyScore = Math.round((passedCount / Math.max(tests.length, 1)) * 100);
+
+  if (evaluationBenchScore) evaluationBenchScore.textContent = `${readyScore}% ready`;
+  if (evaluationRegressionStatus) {
+    evaluationRegressionStatus.textContent = `${tests.length - passedCount} test${tests.length - passedCount === 1 ? "" : "s"} still need review before promotion.`;
+  }
+
+  evaluationBenchList.innerHTML = "";
+  tests.forEach((test) => {
+    const card = document.createElement("article");
+    card.className = "evaluation-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(test.type)}</span>
+        <strong>${escapePublicHtml(test.result)}</strong>
+      </header>
+      <h3>${escapePublicHtml(test.title)}</h3>
+      <p>${escapePublicHtml(test.summary)}</p>
+      <dl class="evaluation-meta">
+        <div>
+          <dt>Baseline</dt>
+          <dd>${escapePublicHtml(test.baseline)}</dd>
+        </div>
+        <div>
+          <dt>Candidate</dt>
+          <dd>${escapePublicHtml(test.candidate)}</dd>
+        </div>
+        <div>
+          <dt>Risk</dt>
+          <dd>${escapePublicHtml(test.risk)}</dd>
+        </div>
+        <div>
+          <dt>Gate</dt>
+          <dd>${escapePublicHtml(test.gate)}</dd>
+        </div>
+      </dl>
+      <div class="evaluation-finding">
+        <span>Finding</span>
+        <p>${escapePublicHtml(test.finding)}</p>
+      </div>
+      <a href="${escapePublicHtml(test.href)}">${escapePublicHtml(test.action)}</a>
+    `;
+    evaluationBenchList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -502,6 +556,86 @@ function buildArtifactRegistry() {
   ];
 
   return [...reportArtifacts, ...seededArtifacts].slice(0, 7);
+}
+
+function buildEvaluationBenchItems() {
+  const reports = readPublicReports();
+  const reportTests = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const pass = score >= 86;
+    return {
+      type: "Sealed baseline",
+      result: pass ? "Pass" : "Review",
+      title: report.prompt || "Verified AI answer",
+      summary: pass
+        ? "Saved answer is strong enough to act as an evaluation baseline."
+        : "Saved answer should not become a regression baseline until proof improves.",
+      baseline: `${score}% sealed`,
+      candidate: `v${index + 1}.1 test`,
+      risk: pass ? "Low" : "Medium",
+      gate: pass ? "Allow compare" : "Hold",
+      finding: report.summary || "Use the sealed report score, source trail, and risk flags as the baseline.",
+      href: getReportShareUrl(report, true),
+      action: "Open baseline",
+    };
+  });
+
+  const seededTests = [
+    {
+      type: "Hallucination challenge",
+      result: "Pass",
+      title: "Customer data training answer",
+      summary: "Challenge absolute language and require the answer to stay inside named policy evidence.",
+      baseline: "94% sealed",
+      candidate: "Prompt v2.2",
+      risk: "Low",
+      gate: "Promote",
+      finding: "Candidate preserved source-backed wording and did not add unsupported training claims.",
+      href: "reviews.html",
+      action: "Open review",
+    },
+    {
+      type: "Model comparison",
+      result: "Review",
+      title: "SOC 2 control answer variant",
+      summary: "Compare two candidate answers before one becomes reusable questionnaire language.",
+      baseline: "88% sealed",
+      candidate: "Model B draft",
+      risk: "Medium",
+      gate: "Needs source",
+      finding: "Candidate is clearer but removed the SOC 2 report reference, so promotion is blocked.",
+      href: "verify.html",
+      action: "Run verifier",
+    },
+    {
+      type: "Freshness check",
+      result: "Pass",
+      title: "AI usage standard source posture",
+      summary: "Confirm the source is current enough to support answer reuse across teams.",
+      baseline: "May 16 source",
+      candidate: "Current policy note",
+      risk: "Low",
+      gate: "Allow reuse",
+      finding: "Source freshness supports template reuse with the owner receipt attached.",
+      href: "registry.html",
+      action: "Open registry",
+    },
+    {
+      type: "Regression gate",
+      result: "Blocked",
+      title: "Overconfident security claim",
+      summary: "Prevent a newer answer from replacing the sealed baseline when it increases risk.",
+      baseline: "Sealed answer",
+      candidate: "Guarantee wording",
+      risk: "High",
+      gate: "Block",
+      finding: "Candidate used guarantee-style language and should be routed back to review.",
+      href: "reviews.html",
+      action: "Open reviews",
+    },
+  ];
+
+  return [...reportTests, ...seededTests].slice(0, 7);
 }
 
 function buildReviewLoopItems() {
@@ -720,7 +854,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.61 Alpha - Versioned Review Loop",
+      "Pilot phase: AnswerSeal v0.62 Alpha - Evaluation Bench",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

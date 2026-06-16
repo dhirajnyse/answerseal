@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.62 Alpha - Evaluation Bench
+
+Phase: Evaluation Bench
+
+- Added a dedicated Evaluation Bench page for QA checks before AI artifacts are promoted.
+- Added bench cards for sealed baselines, model comparison, hallucination challenge, source freshness, and regression gates.
+- Connected Registry, Reviews, Reports, Verify, Pricing, and the landing product spine to the new Bench path.
+- Upgraded public storage to v0.62 while preserving v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v58 and moved the next build toward v0.63 Model Connector Lab.
+
 ## v0.61 Alpha - Versioned Review Loop
 
 Phase: Versioned Review Loop
