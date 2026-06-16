@@ -11590,7 +11590,10 @@ svg {
 .regression-section,
 .connector-shell,
 .connector-method,
-.connector-policy-section {
+.connector-policy-section,
+.learning-shell,
+.learning-method,
+.learning-boundary-section {
   padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
 }
 
@@ -11769,14 +11772,18 @@ svg {
 .regression-strip,
 .connector-lab-grid,
 .connector-method-grid,
-.connector-policy-strip {
+.connector-policy-strip,
+.learning-signal-grid,
+.learning-method-grid,
+.learning-boundary-strip {
   display: grid;
   gap: 12px;
 }
 
 .review-loop-grid,
 .evaluation-bench-grid,
-.connector-lab-grid {
+.connector-lab-grid,
+.learning-signal-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -11788,7 +11795,10 @@ svg {
 .regression-strip article,
 .connector-card,
 .connector-method-grid article,
-.connector-policy-strip article {
+.connector-policy-strip article,
+.learning-card,
+.learning-method-grid article,
+.learning-boundary-strip article {
   display: grid;
   align-content: start;
   gap: 12px;
@@ -11802,7 +11812,8 @@ svg {
 
 .review-card header,
 .evaluation-card header,
-.connector-card header {
+.connector-card header,
+.learning-card header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11820,7 +11831,11 @@ svg {
 .connector-card header span,
 .connector-card header strong,
 .connector-method-grid span,
-.connector-policy-strip span {
+.connector-policy-strip span,
+.learning-card header span,
+.learning-card header strong,
+.learning-method-grid span,
+.learning-boundary-strip span {
   display: inline-flex;
   align-items: center;
   width: fit-content;
@@ -11840,14 +11855,18 @@ svg {
 .regression-strip span,
 .connector-card header span,
 .connector-method-grid span,
-.connector-policy-strip span {
+.connector-policy-strip span,
+.learning-card header span,
+.learning-method-grid span,
+.learning-boundary-strip span {
   color: var(--accent-dark);
   background: #dcfbf4;
 }
 
 .review-card header strong,
 .evaluation-card header strong,
-.connector-card header strong {
+.connector-card header strong,
+.learning-card header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -11860,7 +11879,10 @@ svg {
 .regression-strip strong,
 .connector-card h3,
 .connector-method-grid strong,
-.connector-policy-strip strong {
+.connector-policy-strip strong,
+.learning-card h3,
+.learning-method-grid strong,
+.learning-boundary-strip strong {
   margin: 0;
   color: var(--ink);
   font-size: 1.15rem;
@@ -11881,7 +11903,12 @@ svg {
 .connector-method p,
 .connector-method-grid p,
 .connector-policy-section p,
-.connector-policy-strip p {
+.connector-policy-strip p,
+.learning-card p,
+.learning-method p,
+.learning-method-grid p,
+.learning-boundary-section p,
+.learning-boundary-strip p {
   margin: 0;
   color: var(--muted);
   line-height: 1.5;
@@ -11889,7 +11916,8 @@ svg {
 
 .review-meta,
 .evaluation-meta,
-.connector-meta {
+.connector-meta,
+.learning-meta {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
@@ -11902,7 +11930,8 @@ svg {
 
 .review-meta div,
 .evaluation-meta div,
-.connector-meta div {
+.connector-meta div,
+.learning-meta div {
   display: grid;
   gap: 3px;
   min-width: 0;
@@ -11915,14 +11944,17 @@ svg {
 .evaluation-meta dt,
 .evaluation-meta dd,
 .connector-meta dt,
-.connector-meta dd {
+.connector-meta dd,
+.learning-meta dt,
+.learning-meta dd {
   margin: 0;
   min-width: 0;
 }
 
 .review-meta dt,
 .evaluation-meta dt,
-.connector-meta dt {
+.connector-meta dt,
+.learning-meta dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
@@ -11931,7 +11963,8 @@ svg {
 
 .review-meta dd,
 .evaluation-meta dd,
-.connector-meta dd {
+.connector-meta dd,
+.learning-meta dd {
   color: var(--ink);
   font-size: 0.84rem;
   font-weight: 850;
@@ -11940,7 +11973,8 @@ svg {
 
 .diff-block,
 .evaluation-finding,
-.connector-finding {
+.connector-finding,
+.learning-finding {
   display: grid;
   gap: 8px;
   padding: 14px;
@@ -11953,7 +11987,8 @@ svg {
 
 .diff-block span,
 .evaluation-finding span,
-.connector-finding span {
+.connector-finding span,
+.learning-finding span {
   color: var(--muted);
   font-size: 0.74rem;
   font-weight: 950;
@@ -11962,7 +11997,8 @@ svg {
 
 .review-card a,
 .evaluation-card a,
-.connector-card a {
+.connector-card a,
+.learning-card a {
   align-self: end;
   color: var(--accent-dark);
   font-weight: 950;
@@ -11974,7 +12010,9 @@ svg {
 .evaluation-method,
 .regression-section,
 .connector-method,
-.connector-policy-section {
+.connector-policy-section,
+.learning-method,
+.learning-boundary-section {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: clamp(24px, 5vw, 72px);
@@ -11984,7 +12022,8 @@ svg {
 
 .review-flow,
 .evaluation-method,
-.connector-method {
+.connector-method,
+.learning-method {
   background:
     linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
     #ffffff;
@@ -11992,7 +12031,8 @@ svg {
 
 .receipt-section,
 .regression-section,
-.connector-policy-section {
+.connector-policy-section,
+.learning-boundary-section {
   background: #ffffff;
 }
 
@@ -12001,7 +12041,9 @@ svg {
 .evaluation-method h2,
 .regression-section h2,
 .connector-method h2,
-.connector-policy-section h2 {
+.connector-policy-section h2,
+.learning-method h2,
+.learning-boundary-section h2 {
   max-width: 720px;
   margin: 14px 0 14px;
   color: #14201d;
@@ -12015,7 +12057,9 @@ svg {
 .evaluation-method-grid,
 .regression-strip,
 .connector-method-grid,
-.connector-policy-strip {
+.connector-policy-strip,
+.learning-method-grid,
+.learning-boundary-strip {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -12493,6 +12537,9 @@ svg {
   .connector-lab-grid,
   .connector-method,
   .connector-policy-section,
+  .learning-signal-grid,
+  .learning-method,
+  .learning-boundary-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -12544,6 +12591,7 @@ svg {
   .review-loop-grid,
   .evaluation-bench-grid,
   .connector-lab-grid,
+  .learning-signal-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12615,6 +12663,10 @@ svg {
   .connector-method-grid,
   .connector-policy-strip,
   .connector-meta,
+  .learning-signal-grid,
+  .learning-method-grid,
+  .learning-boundary-strip,
+  .learning-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
@@ -12941,6 +12993,7 @@ svg {
     .follow-up-loop-row,
     .connector-card header,
     .connector-card footer,
+    .learning-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,
@@ -13259,6 +13312,7 @@ svg {
     .follow-up-loop-row,
     .connector-card header,
     .connector-card footer,
+    .learning-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,

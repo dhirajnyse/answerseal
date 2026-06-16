@@ -30,6 +30,9 @@ const evaluationRegressionStatus = document.querySelector("#evaluationRegression
 const connectorLabList = document.querySelector("#connectorLabList");
 const connectorPolicyScore = document.querySelector("#connectorPolicyScore");
 const connectorRoutingStatus = document.querySelector("#connectorRoutingStatus");
+const learningSignalList = document.querySelector("#learningSignalList");
+const learningSignalScore = document.querySelector("#learningSignalScore");
+const learningBoundaryStatus = document.querySelector("#learningBoundaryStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -42,9 +45,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.63 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v63";
+const PUBLIC_BUILD_VERSION = "v0.64 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v64";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v63",
   "answerseal.public.reports.v62",
   "answerseal.public.reports.v61",
   "answerseal.public.reports.v60",
@@ -116,6 +120,7 @@ renderArtifactRegistry();
 renderReviewLoop();
 renderEvaluationBench();
 renderConnectorLab();
+renderLearningSignalLoop();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -561,6 +566,57 @@ function renderConnectorLab() {
   });
 }
 
+function renderLearningSignalLoop() {
+  if (!learningSignalList) return;
+  const signals = buildLearningSignalItems();
+  const approvedCount = signals.filter((signal) => signal.status === "Approved").length;
+  const readyScore = Math.round((approvedCount / Math.max(signals.length, 1)) * 100);
+
+  if (learningSignalScore) learningSignalScore.textContent = `${readyScore}% governed`;
+  if (learningBoundaryStatus) {
+    const reviewCount = signals.length - approvedCount;
+    learningBoundaryStatus.textContent = `${reviewCount} learning signal${reviewCount === 1 ? "" : "s"} still need owner approval before behavior changes.`;
+  }
+
+  learningSignalList.innerHTML = "";
+  signals.forEach((signal) => {
+    const card = document.createElement("article");
+    card.className = "learning-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(signal.type)}</span>
+        <strong>${escapePublicHtml(signal.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(signal.title)}</h3>
+      <p>${escapePublicHtml(signal.summary)}</p>
+      <dl class="learning-meta">
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(signal.signal)}</dd>
+        </div>
+        <div>
+          <dt>Proposal</dt>
+          <dd>${escapePublicHtml(signal.proposal)}</dd>
+        </div>
+        <div>
+          <dt>Boundary</dt>
+          <dd>${escapePublicHtml(signal.boundary)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(signal.owner)}</dd>
+        </div>
+      </dl>
+      <div class="learning-finding">
+        <span>Rollback note</span>
+        <p>${escapePublicHtml(signal.rollback)}</p>
+      </div>
+      <a href="${escapePublicHtml(signal.href)}">${escapePublicHtml(signal.action)}</a>
+    `;
+    learningSignalList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -774,6 +830,84 @@ function buildConnectorLabItems() {
   ];
 
   return [...reportConnectors, ...seededConnectors].slice(0, 6);
+}
+
+function buildLearningSignalItems() {
+  const reports = readPublicReports();
+  const reportSignals = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const approved = score >= 90;
+    return {
+      type: "Sealed report outcome",
+      status: approved ? "Approved" : "Review",
+      title: report.prompt || "Verified answer outcome",
+      summary: "Saved sealed report can become a learning signal only after outcome, boundary, and owner receipt are attached.",
+      signal: `${score}% trust score`,
+      proposal: approved ? "Promote answer pattern" : "Hold for more evidence",
+      boundary: "Org-private",
+      owner: index % 2 === 0 ? "AI governance" : "Security",
+      rollback: report.summary || "Keep the sealed baseline unchanged until a reviewer approves the proposed learning change.",
+      href: getReportShareUrl(report, true),
+      action: "Open signal source",
+    };
+  });
+
+  const seededSignals = [
+    {
+      type: "Buyer outcome",
+      status: "Approved",
+      title: "Buyer accepted sourced AI usage answer",
+      summary: "The approved wording helped the review move forward without a follow-up evidence request.",
+      signal: "Accepted without objection",
+      proposal: "Promote phrase",
+      boundary: "Org-private",
+      owner: "Revenue security",
+      rollback: "Keep the prior sealed wording as fallback if the promoted phrase reduces source confidence.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      type: "Reviewer edit",
+      status: "Review",
+      title: "Security reviewer tightened a compliance claim",
+      summary: "The edit is useful, but it must be approved before prompts or connector rules learn from it.",
+      signal: "Manual correction",
+      proposal: "Tighten prompt rule",
+      boundary: "Evidence only",
+      owner: "Security",
+      rollback: "Restore the previous prompt rule if the next evaluation bench detects weaker clarity.",
+      href: "reviews.html",
+      action: "Open reviews",
+    },
+    {
+      type: "Connector result",
+      status: "Approved",
+      title: "Evidence retrieval path reduced unsupported claims",
+      summary: "Connector routing improved source coverage while keeping customer data out of shared learning.",
+      signal: "Risk reduction",
+      proposal: "Prefer retrieval path",
+      boundary: "No customer data",
+      owner: "AI governance",
+      rollback: "Fallback to the baseline verifier model path if retrieval freshness drops below policy.",
+      href: "connectors.html",
+      action: "Open connectors",
+    },
+    {
+      type: "Network pattern",
+      status: "Blocked",
+      title: "Cross-account benchmark needs privacy review",
+      summary: "Aggregate patterns can help every workspace, but this signal cannot move until tenant boundaries are proven.",
+      signal: "Shared pattern",
+      proposal: "Publish benchmark",
+      boundary: "Needs privacy review",
+      owner: "Data protection",
+      rollback: "Do not expose the pattern outside the source workspace until aggregation rules are approved.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+  ];
+
+  return [...reportSignals, ...seededSignals].slice(0, 7);
 }
 
 function buildReviewLoopItems() {
@@ -992,7 +1126,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.63 Alpha - Model Connector Lab",
+      "Pilot phase: AnswerSeal v0.64 Alpha - Learning Signal Loop",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.64 Alpha - Learning Signal Loop
+
+Phase: Learning Signal Loop
+
+- Added a dedicated Learning Signal Loop page for outcome signals, improvement proposals, privacy boundaries, owner approvals, and rollback notes.
+- Added governed learning cards for buyer outcomes, reviewer edits, connector results, cross-account patterns, and saved sealed report signals.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Model Connector Lab, Pricing, and the landing product spine to the new Learning path.
+- Upgraded public storage to v0.64 while preserving v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v60 and moved the next build toward v0.65 Trust Policy Gateway.
+
 ## v0.63 Alpha - Model Connector Lab
 
 Phase: Model Connector Lab
