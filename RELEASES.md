@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.68 Alpha - Proof Learning Memory
+
+Phase: Proof Learning Memory
+
+- Added a dedicated Proof Learning Memory page for accepted proof patterns, tenant-safe boundaries, owner approvals, reusable templates, blocked unsafe learning, and reuse-lift tracking.
+- Added memory cards for model-training proof, SOC 2 excerpt-first responses, regional evidence boundaries, procurement portal wording, quarantined legacy claims, and saved sealed report patterns.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Model Connector Lab, Learning Signal Loop, Trust Policy Gateway, Buyer Trust Portal, Buyer Proof Concierge, Pricing, and the landing product spine to the new Memory path.
+- Upgraded public storage to v0.68 while preserving v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v64 and moved the next build toward v0.69 Tenant-Safe Proof Network.
+
 ## v0.67 Alpha - Buyer Proof Concierge
 
 Phase: Buyer Proof Concierge

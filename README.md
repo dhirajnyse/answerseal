@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.67 Alpha
+**Current version:** v0.68 Alpha
 
-**Current phase:** Buyer Proof Concierge
+**Current phase:** Proof Learning Memory
 
-**Current release:** v0.67 Alpha - Buyer Proof Concierge
+**Current release:** v0.68 Alpha - Proof Learning Memory
 
 ## Brand
 
@@ -61,6 +61,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Buyer Proof Concierge page for buyer concerns, owner routing, evidence paths, safe reply drafts, and closed-loop learning
 - Concierge cards show owner, proof, policy, next action, buyer-safe reply copy, and reusable learning boundaries
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, and buyer rooms now route naturally into the Buyer Proof Concierge
+- Proof Learning Memory page for approved reusable proof patterns, tenant-safe boundaries, approval receipts, and reuse lift
+- Memory cards show boundary, approval state, reuse permission, lift signal, learning rule, and memory receipt before a pattern becomes reusable
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, and the concierge now route naturally into Proof Learning Memory
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -78,7 +81,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v63 export with Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v64 export with Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -340,7 +343,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v63 export with Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v64 export with Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -356,6 +359,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `policy.html` - Trust Policy Gateway for allow, hold, and block decisions across governed AI paths
 - `buyer.html` - Buyer Trust Portal for buyer-safe rooms, trust packets, evidence access levels, and activity receipts
 - `concierge.html` - Buyer Proof Concierge for routed buyer concerns, safe reply drafts, proof closure, and reusable learning signals
+- `memory.html` - Proof Learning Memory for governed proof patterns, tenant-safe boundaries, approvals, and reuse lift
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -370,13 +374,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.68 Alpha - Proof Learning Memory
+## Next Phase: v0.69 Alpha - Tenant-Safe Proof Network
 
-- Promote buyer-accepted replies into reusable proof patterns without keeping private buyer details
-- Separate tenant-local exact memory from generalized proof learning that can safely improve future replies
-- Require owner approval before a proof pattern becomes a default answer, template, or benchmark
-- Show reuse lift across response time, risk flags, repeated objections, and accepted proof patterns
-- Keep learning calm, explicit, and policy-gated before expanding across organizations
+- Decide which approved memories are safe enough to become aggregate network proof signals
+- Block raw buyer data, exact wording, documents, prompts, and account notes from network learning
+- Show who approved each abstract signal, why it is safe, and which tenants may benefit from it
+- Measure whether safe network patterns reduce repeated objections without weakening governance
+- Keep multi-organization learning opt-in, policy-gated, auditable, and calm
 
 ## License
 

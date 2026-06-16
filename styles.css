@@ -12621,6 +12621,200 @@ svg {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.proof-memory-shell,
+.proof-memory-method,
+.proof-memory-boundary-section {
+  padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
+}
+
+.proof-memory-grid,
+.proof-memory-method-grid,
+.proof-memory-boundary-strip {
+  display: grid;
+  gap: 12px;
+}
+
+.proof-memory-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.proof-memory-card,
+.proof-memory-method-grid article,
+.proof-memory-boundary-strip article {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(31, 41, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 38px rgba(31, 41, 38, 0.06);
+}
+
+.proof-memory-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.proof-memory-card header span,
+.proof-memory-card header strong,
+.proof-memory-method-grid span,
+.proof-memory-boundary-strip span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.proof-memory-card header span,
+.proof-memory-method-grid span,
+.proof-memory-boundary-strip span {
+  color: var(--accent-dark);
+  background: #dcfbf4;
+}
+
+.proof-memory-card header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-memory-card h3,
+.proof-memory-method-grid strong,
+.proof-memory-boundary-strip strong {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.22;
+}
+
+.proof-memory-card p,
+.proof-memory-method p,
+.proof-memory-method-grid p,
+.proof-memory-boundary-section p,
+.proof-memory-boundary-strip p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.proof-memory-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 168, 137, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 168, 137, 0.14);
+}
+
+.proof-memory-meta div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px;
+  background: #fbfffd;
+}
+
+.proof-memory-meta dt,
+.proof-memory-meta dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.proof-memory-meta dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.proof-memory-meta dd {
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.proof-memory-rule,
+.proof-memory-receipt {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 8px;
+}
+
+.proof-memory-rule {
+  border: 1px solid rgba(25, 132, 235, 0.14);
+  background:
+    linear-gradient(180deg, rgba(237, 247, 255, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.proof-memory-receipt {
+  border: 1px solid rgba(0, 168, 137, 0.16);
+  background:
+    linear-gradient(180deg, rgba(220, 251, 244, 0.72) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.proof-memory-rule span,
+.proof-memory-receipt span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.proof-memory-card a {
+  align-self: end;
+  color: var(--accent-dark);
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.proof-memory-method,
+.proof-memory-boundary-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 72px);
+  align-items: start;
+  border-top: 1px solid rgba(31, 41, 38, 0.1);
+}
+
+.proof-memory-method {
+  background:
+    linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
+    #ffffff;
+}
+
+.proof-memory-boundary-section {
+  background: #ffffff;
+}
+
+.proof-memory-method h2,
+.proof-memory-boundary-section h2 {
+  max-width: 720px;
+  margin: 14px 0 14px;
+  color: #14201d;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.proof-memory-method-grid,
+.proof-memory-boundary-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -13107,6 +13301,9 @@ svg {
   .proof-concierge-grid,
   .proof-concierge-method,
   .proof-concierge-loop-section,
+  .proof-memory-grid,
+  .proof-memory-method,
+  .proof-memory-boundary-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13162,6 +13359,7 @@ svg {
   .gateway-policy-grid,
   .buyer-portal-grid,
   .proof-concierge-grid,
+  .proof-memory-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13249,6 +13447,10 @@ svg {
   .proof-concierge-method-grid,
   .proof-concierge-loop-strip,
   .proof-concierge-meta,
+  .proof-memory-grid,
+  .proof-memory-method-grid,
+  .proof-memory-boundary-strip,
+  .proof-memory-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
@@ -13579,6 +13781,7 @@ svg {
     .gateway-card header,
     .buyer-portal-card header,
     .proof-concierge-card header,
+    .proof-memory-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,
@@ -13901,6 +14104,7 @@ svg {
     .gateway-card header,
     .buyer-portal-card header,
     .proof-concierge-card header,
+    .proof-memory-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,

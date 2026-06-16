@@ -42,6 +42,9 @@ const buyerActivityStatus = document.querySelector("#buyerActivityStatus");
 const proofConciergeList = document.querySelector("#proofConciergeList");
 const proofConciergeScore = document.querySelector("#proofConciergeScore");
 const proofConciergeStatus = document.querySelector("#proofConciergeStatus");
+const proofMemoryList = document.querySelector("#proofMemoryList");
+const proofMemoryScore = document.querySelector("#proofMemoryScore");
+const proofMemoryStatus = document.querySelector("#proofMemoryStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -54,9 +57,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.67 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v67";
+const PUBLIC_BUILD_VERSION = "v0.68 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v68";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v67",
   "answerseal.public.reports.v66",
   "answerseal.public.reports.v65",
   "answerseal.public.reports.v64",
@@ -136,6 +140,7 @@ renderLearningSignalLoop();
 renderPolicyGateway();
 renderBuyerTrustPortal();
 renderProofConcierge();
+renderProofLearningMemory();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -790,6 +795,61 @@ function renderProofConcierge() {
   });
 }
 
+function renderProofLearningMemory() {
+  if (!proofMemoryList) return;
+  const patterns = buildProofLearningMemoryItems();
+  const approvedCount = patterns.filter((pattern) => pattern.status === "Approved").length;
+  const reviewCount = patterns.filter((pattern) => pattern.status === "Review").length;
+  const memoryScore = Math.round((approvedCount / Math.max(patterns.length, 1)) * 100);
+
+  if (proofMemoryScore) proofMemoryScore.textContent = `${memoryScore}% approved memory`;
+  if (proofMemoryStatus) {
+    proofMemoryStatus.textContent = `${reviewCount} proof pattern${reviewCount === 1 ? "" : "s"} still need owner approval before reuse.`;
+  }
+
+  proofMemoryList.innerHTML = "";
+  patterns.forEach((pattern) => {
+    const card = document.createElement("article");
+    card.className = "proof-memory-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(pattern.type)}</span>
+        <strong>${escapePublicHtml(pattern.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(pattern.title)}</h3>
+      <p>${escapePublicHtml(pattern.summary)}</p>
+      <dl class="proof-memory-meta">
+        <div>
+          <dt>Boundary</dt>
+          <dd>${escapePublicHtml(pattern.boundary)}</dd>
+        </div>
+        <div>
+          <dt>Approval</dt>
+          <dd>${escapePublicHtml(pattern.approval)}</dd>
+        </div>
+        <div>
+          <dt>Reuse</dt>
+          <dd>${escapePublicHtml(pattern.reuse)}</dd>
+        </div>
+        <div>
+          <dt>Lift</dt>
+          <dd>${escapePublicHtml(pattern.lift)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Learning rule</span>
+        <p>${escapePublicHtml(pattern.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Memory receipt</span>
+        <p>${escapePublicHtml(pattern.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(pattern.href)}">${escapePublicHtml(pattern.action)}</a>
+    `;
+    proofMemoryList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -1371,6 +1431,105 @@ function buildProofConciergeItems() {
   return [...reportConcerns, ...seededConcerns].slice(0, 8);
 }
 
+function buildProofLearningMemoryItems() {
+  const reports = readPublicReports();
+  const reportPatterns = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const approved = score >= 90;
+    return {
+      type: "Saved proof pattern",
+      status: approved ? "Approved" : "Review",
+      title: report.prompt || "Verified AI answer pattern",
+      summary: "Saved sealed report can become reusable memory only after the exact buyer context is stripped out.",
+      boundary: "Tenant-local exact",
+      approval: approved ? "Owner approved" : "Owner needed",
+      reuse: approved ? "Template draft" : "Hold",
+      lift: approved ? "Faster answer" : "Unknown",
+      rule: approved
+        ? "Promote the generalized proof pattern, not the buyer-specific wording, files, or portal activity."
+        : "Keep this report local until a reviewer confirms the source quality and reusable wording.",
+      receipt: report.summary || "Memory waits for approval because reusable proof must be source-backed and customer-safe.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededPatterns = [
+    {
+      type: "Accepted pattern",
+      status: "Approved",
+      title: "Model-training answer proof pattern",
+      summary: "Accepted buyer reply becomes the default proof pattern for customer-data training questions.",
+      boundary: "Generalized only",
+      approval: "AI governance",
+      reuse: "Default answer",
+      lift: "5x faster",
+      rule: "Reuse the source-backed structure and policy citation; never reuse buyer names, portal notes, or private objections.",
+      receipt: "Pattern promoted after buyer acceptance, owner approval, and policy confirmation.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      type: "Excerpt pattern",
+      status: "Review",
+      title: "SOC 2 excerpt-first response",
+      summary: "Security wants to test whether excerpt-first replies reduce full-report requests without over-sharing.",
+      boundary: "Security review",
+      approval: "Security owner",
+      reuse: "Pilot only",
+      lift: "Needs data",
+      rule: "The pattern cannot become default until the owner confirms which excerpt language is buyer-safe.",
+      receipt: "Review remains open because source access level and NDA conditions still matter.",
+      href: "policy.html",
+      action: "Open policy gateway",
+    },
+    {
+      type: "Regional memory",
+      status: "Review",
+      title: "EU evidence-processing boundary",
+      summary: "Regional replies need an approved country boundary before they can help future buyer rooms.",
+      boundary: "Region-gated",
+      approval: "Operations",
+      reuse: "EU only",
+      lift: "Risk reduction",
+      rule: "Reuse only within the approved region until residency, export, and evidence-access rules are confirmed.",
+      receipt: "Memory stays scoped because geographic rules can change the safe answer.",
+      href: "versions.html",
+      action: "Open build phases",
+    },
+    {
+      type: "Portal wording",
+      status: "Approved",
+      title: "Short procurement-field answer",
+      summary: "Accepted short-form copy becomes a reusable portal variant for questionnaire fields.",
+      boundary: "No buyer data",
+      approval: "Sales engineering",
+      reuse: "Portal template",
+      lift: "Less rewrite",
+      rule: "Reuse the compact answer format only when the same source names and policy decision are still current.",
+      receipt: "Pattern approved because it preserves source names, human review, and concise buyer language.",
+      href: "verify.html",
+      action: "Verify answer",
+    },
+    {
+      type: "Quarantine",
+      status: "Blocked",
+      title: "Legacy service-improvement claim",
+      summary: "Old wording sounds helpful but could imply training or analytics use beyond approved policy.",
+      boundary: "Do not learn",
+      approval: "Blocked",
+      reuse: "Never",
+      lift: "Risk avoided",
+      rule: "Do not promote ambiguous legacy claims into shared memory, even if they once answered a buyer quickly.",
+      receipt: "Pattern blocked because safe learning must penalize speed when proof quality is weak.",
+      href: "learning.html",
+      action: "Open learning loop",
+    },
+  ];
+
+  return [...reportPatterns, ...seededPatterns].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -1587,7 +1746,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.67 Alpha - Buyer Proof Concierge",
+      "Pilot phase: AnswerSeal v0.68 Alpha - Proof Learning Memory",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
