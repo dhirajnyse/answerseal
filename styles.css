@@ -12063,6 +12063,188 @@ svg {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.gateway-shell,
+.gateway-method,
+.gateway-enforcement-section {
+  padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
+}
+
+.gateway-policy-grid,
+.gateway-method-grid,
+.gateway-enforcement-strip {
+  display: grid;
+  gap: 12px;
+}
+
+.gateway-policy-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gateway-card,
+.gateway-method-grid article,
+.gateway-enforcement-strip article {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(31, 41, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 16px 38px rgba(31, 41, 38, 0.06);
+}
+
+.gateway-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gateway-card header span,
+.gateway-card header strong,
+.gateway-method-grid span,
+.gateway-enforcement-strip span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.gateway-card header span,
+.gateway-method-grid span,
+.gateway-enforcement-strip span {
+  color: var(--accent-dark);
+  background: #dcfbf4;
+}
+
+.gateway-card header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.gateway-card h3,
+.gateway-method-grid strong,
+.gateway-enforcement-strip strong {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.22;
+}
+
+.gateway-card p,
+.gateway-method p,
+.gateway-method-grid p,
+.gateway-enforcement-section p,
+.gateway-enforcement-strip p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.gateway-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 168, 137, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 168, 137, 0.14);
+}
+
+.gateway-meta div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px;
+  background: #fbfffd;
+}
+
+.gateway-meta dt,
+.gateway-meta dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.gateway-meta dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.gateway-meta dd {
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.gateway-finding {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(25, 132, 235, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(237, 247, 255, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.gateway-finding span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.gateway-card a {
+  align-self: end;
+  color: var(--accent-dark);
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.gateway-method,
+.gateway-enforcement-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 72px);
+  align-items: start;
+  border-top: 1px solid rgba(31, 41, 38, 0.1);
+}
+
+.gateway-method {
+  background:
+    linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
+    #ffffff;
+}
+
+.gateway-enforcement-section {
+  background: #ffffff;
+}
+
+.gateway-method h2,
+.gateway-enforcement-section h2 {
+  max-width: 720px;
+  margin: 14px 0 14px;
+  color: #14201d;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.gateway-method-grid,
+.gateway-enforcement-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12540,6 +12722,9 @@ svg {
   .learning-signal-grid,
   .learning-method,
   .learning-boundary-section,
+  .gateway-policy-grid,
+  .gateway-method,
+  .gateway-enforcement-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -12592,6 +12777,7 @@ svg {
   .evaluation-bench-grid,
   .connector-lab-grid,
   .learning-signal-grid,
+  .gateway-policy-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12667,6 +12853,10 @@ svg {
   .learning-method-grid,
   .learning-boundary-strip,
   .learning-meta,
+  .gateway-policy-grid,
+  .gateway-method-grid,
+  .gateway-enforcement-strip,
+  .gateway-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
@@ -12994,6 +13184,7 @@ svg {
     .connector-card header,
     .connector-card footer,
     .learning-card header,
+    .gateway-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,
@@ -13313,6 +13504,7 @@ svg {
     .connector-card header,
     .connector-card footer,
     .learning-card header,
+    .gateway-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,

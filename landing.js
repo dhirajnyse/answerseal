@@ -33,6 +33,9 @@ const connectorRoutingStatus = document.querySelector("#connectorRoutingStatus")
 const learningSignalList = document.querySelector("#learningSignalList");
 const learningSignalScore = document.querySelector("#learningSignalScore");
 const learningBoundaryStatus = document.querySelector("#learningBoundaryStatus");
+const policyGatewayList = document.querySelector("#policyGatewayList");
+const policyGatewayScore = document.querySelector("#policyGatewayScore");
+const policyDecisionStatus = document.querySelector("#policyDecisionStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -45,9 +48,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.64 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v64";
+const PUBLIC_BUILD_VERSION = "v0.65 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v65";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v64",
   "answerseal.public.reports.v63",
   "answerseal.public.reports.v62",
   "answerseal.public.reports.v61",
@@ -121,6 +125,7 @@ renderReviewLoop();
 renderEvaluationBench();
 renderConnectorLab();
 renderLearningSignalLoop();
+renderPolicyGateway();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -617,6 +622,57 @@ function renderLearningSignalLoop() {
   });
 }
 
+function renderPolicyGateway() {
+  if (!policyGatewayList) return;
+  const policies = buildPolicyGatewayItems();
+  const allowedCount = policies.filter((policy) => policy.decision === "Allow").length;
+  const watchCount = policies.length - allowedCount;
+  const readyScore = Math.round((allowedCount / Math.max(policies.length, 1)) * 100);
+
+  if (policyGatewayScore) policyGatewayScore.textContent = `${readyScore}% allowed`;
+  if (policyDecisionStatus) {
+    policyDecisionStatus.textContent = `${watchCount} policy path${watchCount === 1 ? "" : "s"} still need owner decision before use.`;
+  }
+
+  policyGatewayList.innerHTML = "";
+  policies.forEach((policy) => {
+    const card = document.createElement("article");
+    card.className = "gateway-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(policy.type)}</span>
+        <strong>${escapePublicHtml(policy.decision)}</strong>
+      </header>
+      <h3>${escapePublicHtml(policy.title)}</h3>
+      <p>${escapePublicHtml(policy.summary)}</p>
+      <dl class="gateway-meta">
+        <div>
+          <dt>Path</dt>
+          <dd>${escapePublicHtml(policy.path)}</dd>
+        </div>
+        <div>
+          <dt>Rule</dt>
+          <dd>${escapePublicHtml(policy.rule)}</dd>
+        </div>
+        <div>
+          <dt>Scope</dt>
+          <dd>${escapePublicHtml(policy.scope)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(policy.owner)}</dd>
+        </div>
+      </dl>
+      <div class="gateway-finding">
+        <span>Enforcement</span>
+        <p>${escapePublicHtml(policy.enforcement)}</p>
+      </div>
+      <a href="${escapePublicHtml(policy.href)}">${escapePublicHtml(policy.action)}</a>
+    `;
+    policyGatewayList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -910,6 +966,97 @@ function buildLearningSignalItems() {
   return [...reportSignals, ...seededSignals].slice(0, 7);
 }
 
+function buildPolicyGatewayItems() {
+  const reports = readPublicReports();
+  const reportPolicies = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const decision = score >= 90 ? "Allow" : score >= 75 ? "Hold" : "Block";
+    return {
+      type: "Sealed report policy",
+      decision,
+      title: report.prompt || "Verified AI answer",
+      summary: "Saved answer can travel only when the trust score, sources, and reviewer receipt match policy.",
+      path: `Report memory v${index + 1}`,
+      rule: decision === "Allow" ? "Evidence attached" : decision === "Hold" ? "Owner review" : "No external use",
+      scope: "Buyer-facing answer",
+      owner: decision === "Allow" ? "Revenue security" : "AI governance",
+      enforcement: report.summary || "Keep the answer local until the source trail and decision receipt are complete.",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededPolicies = [
+    {
+      type: "Answer release",
+      decision: "Allow",
+      title: "Buyer-facing answer release",
+      summary: "A verified answer can be reused when proof, score, improved wording, and report receipt are visible.",
+      path: "Answer verifier",
+      rule: "No source, no answer",
+      scope: "Buyer portal text",
+      owner: "Revenue security",
+      enforcement: "Every copied answer needs score, sources, improved wording, and a sealed report.",
+      href: "verify.html",
+      action: "Verify answer",
+    },
+    {
+      type: "Learning boundary",
+      decision: "Hold",
+      title: "Cross-workspace learning signal",
+      summary: "Network learning is valuable, but it must be aggregated and approved before helping other workspaces.",
+      path: "Learning loop",
+      rule: "Aggregate only",
+      scope: "Network benchmark",
+      owner: "Data protection",
+      enforcement: "Org-private signals cannot be shared until privacy-safe aggregation and owner approval are attached.",
+      href: "learning.html",
+      action: "Open learning",
+    },
+    {
+      type: "Model route",
+      decision: "Allow",
+      title: "Private model connector route",
+      summary: "Sensitive work can use a private endpoint when route policy, source handling, and bench gates are visible.",
+      path: "Private endpoint",
+      rule: "Sensitive data boundary",
+      scope: "Regulated workspace",
+      owner: "Security",
+      enforcement: "Route only when workspace policy, source handling, and bench gate are visible.",
+      href: "connectors.html",
+      action: "Open connectors",
+    },
+    {
+      type: "Agent action",
+      decision: "Block",
+      title: "Autonomous answer publisher",
+      summary: "Agents may draft and prepare receipts, but external submission stays blocked without human approval.",
+      path: "Agent workflow",
+      rule: "Human approval required",
+      scope: "External submission",
+      owner: "AI governance",
+      enforcement: "Agent may draft, but cannot publish buyer-facing answers without reviewer seal.",
+      href: "reviews.html",
+      action: "Open reviews",
+    },
+    {
+      type: "Environment rule",
+      decision: "Hold",
+      title: "Multi-country rollout rule",
+      summary: "Global launches need country, residency, privacy, and learning boundaries before rollout expands.",
+      path: "Environment gateway",
+      rule: "Country override",
+      scope: "UAE, US, EU pilots",
+      owner: "Operations",
+      enforcement: "Launch only when residency, privacy, export, and learning-boundary rules are mapped.",
+      href: "versions.html",
+      action: "Open build phases",
+    },
+  ];
+
+  return [...reportPolicies, ...seededPolicies].slice(0, 7);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -1126,7 +1273,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.64 Alpha - Learning Signal Loop",
+      "Pilot phase: AnswerSeal v0.65 Alpha - Trust Policy Gateway",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

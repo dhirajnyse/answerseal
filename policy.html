@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnswerSeal | Trust Policy Gateway</title>
+    <meta
+      name="description"
+      content="AnswerSeal Trust Policy Gateway turns AI answer, prompt, connector, and learning paths into clear allow, hold, or block decisions."
+    />
+    <meta name="theme-color" content="#00a889" />
+    <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="landing-page product-page gateway-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Certified AI answer trust</small>
+        </span>
+      </a>
+
+      <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
+        <span>Current build</span>
+        <strong>v0.65 Alpha</strong>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="verify.html">Verify</a>
+        <a href="reports.html">Reports</a>
+        <a href="registry.html">Registry</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="evaluation.html">Bench</a>
+        <a href="connectors.html">Connectors</a>
+        <a href="learning.html">Learning</a>
+        <a href="policy.html" aria-current="page">Policy</a>
+        <a href="pricing.html">Pricing</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-hero gateway-hero">
+        <div>
+          <span class="hero-kicker">Trust policy gateway</span>
+          <h1>Turn AI governance into one calm decision.</h1>
+          <p>
+            v0.65 adds the policy gateway: every answer, prompt, connector, learning signal, and rollout path gets an
+            allow, hold, or block decision with the rule, scope, owner, and receipt visible before use.
+          </p>
+        </div>
+        <aside class="product-status-card">
+          <span>Policy readiness</span>
+          <strong id="policyGatewayScore">40% allowed</strong>
+          <p id="policyDecisionStatus">Policy paths are waiting for owner decisions.</p>
+        </aside>
+      </section>
+
+      <section class="gateway-shell" aria-label="Trust policy gateway">
+        <div class="dashboard-toolbar">
+          <span class="hero-kicker">Policy decisions</span>
+          <div class="dashboard-actions">
+            <a class="hero-secondary" href="learning.html">Open Learning Loop</a>
+            <a class="hero-secondary" href="connectors.html">Open Connectors</a>
+            <a class="hero-secondary" href="evaluation.html">Open Bench</a>
+            <a class="hero-primary" href="verify.html">Verify New Answer</a>
+          </div>
+        </div>
+
+        <div class="gateway-policy-grid" id="policyGatewayList"></div>
+      </section>
+
+      <section class="gateway-method" aria-label="Policy method">
+        <div>
+          <span class="hero-kicker">Gateway method</span>
+          <h2>Every AI path needs a rule before it gets reach.</h2>
+          <p>
+            The gateway turns scattered governance into a simple decision receipt: what path is being used, what rule
+            controls it, where it can travel, and who owns the final approval.
+          </p>
+        </div>
+
+        <div class="gateway-method-grid">
+          <article>
+            <span>01</span>
+            <strong>Path</strong>
+            <p>Name the answer, prompt, connector, agent route, learning signal, or rollout environment.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <strong>Rule</strong>
+            <p>Attach the controlling policy, approval gate, source requirement, or privacy boundary.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <strong>Scope</strong>
+            <p>Define where the output can travel: local workspace, buyer portal, region, network, or blocked zone.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <strong>Receipt</strong>
+            <p>Keep the decision, owner, evidence, and next action visible before reuse or promotion.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="gateway-enforcement-section" aria-label="Policy enforcement">
+        <div>
+          <span class="hero-kicker">Decision language</span>
+          <h2>The safest policy is visible before the action.</h2>
+          <p>
+            AnswerSeal should feel simple because the hard governance work is compressed into three visible decisions
+            that every team can understand without reading a policy manual.
+          </p>
+        </div>
+        <div class="gateway-enforcement-strip">
+          <article>
+            <span>Allow</span>
+            <strong>Ready to use</strong>
+            <p>The answer or workflow has proof, owner approval, source support, and a receipt.</p>
+          </article>
+          <article>
+            <span>Hold</span>
+            <strong>Needs owner decision</strong>
+            <p>The path may be useful, but privacy, source, region, or reviewer status must be resolved.</p>
+          </article>
+          <article>
+            <span>Block</span>
+            <strong>Do not release</strong>
+            <p>The action cannot travel because it is unsupported, over-automated, or outside policy.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <span>AnswerSeal v0.65 Alpha</span>
+      <a href="verify.html">Verify</a>
+      <a href="reports.html">Reports</a>
+      <a href="registry.html">Registry</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="evaluation.html">Bench</a>
+      <a href="connectors.html">Connectors</a>
+      <a href="learning.html">Learning</a>
+      <a href="policy.html">Policy</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="versions.html">Build Phases</a>
+    </footer>
+    <script src="landing.js"></script>
+  </body>
+</html>

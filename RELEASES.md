@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.65 Alpha - Trust Policy Gateway
+
+Phase: Trust Policy Gateway
+
+- Added a dedicated Trust Policy Gateway page for allow, hold, and block decisions across governed AI paths.
+- Added policy cards for buyer-facing answers, cross-workspace learning, private connectors, autonomous publishing, multi-country rollout, and saved sealed report policies.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Model Connector Lab, Learning Signal Loop, Pricing, and the landing product spine to the new Policy path.
+- Upgraded public storage to v0.65 while preserving v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v61 and moved the next build toward v0.66 Buyer Trust Portal.
+
 ## v0.64 Alpha - Learning Signal Loop
 
 Phase: Learning Signal Loop
