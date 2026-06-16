@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.63 Alpha - Model Connector Lab
+
+Phase: Model Connector Lab
+
+- Added a dedicated Model Connector Lab page for governed model paths, source routes, policy limits, bench gates, and reuse decisions.
+- Added connector cards for verifier model path, private endpoint, evidence retrieval, autonomous agent workflow, and saved-report source baselines.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Pricing, and the landing product spine to the new Connector path.
+- Upgraded public storage to v0.63 while preserving v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v59 and moved the next build toward v0.64 Learning Signal Loop.
+
 ## v0.62 Alpha - Evaluation Bench
 
 Phase: Evaluation Bench

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnswerSeal | Model Connector Lab</title>
+    <meta
+      name="description"
+      content="AnswerSeal Model Connector Lab governs model paths, source routing, evaluation gates, and reusable AI outputs."
+    />
+    <meta name="theme-color" content="#00a889" />
+    <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="landing-page product-page connector-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Certified AI answer trust</small>
+        </span>
+      </a>
+
+      <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
+        <span>Current build</span>
+        <strong>v0.63 Alpha</strong>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="verify.html">Verify</a>
+        <a href="reports.html">Reports</a>
+        <a href="registry.html">Registry</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="evaluation.html">Bench</a>
+        <a href="connectors.html" aria-current="page">Connectors</a>
+        <a href="pricing.html">Pricing</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-hero connector-hero">
+        <div>
+          <span class="hero-kicker">Model connector lab</span>
+          <h1>Connect AI sources without losing control.</h1>
+          <p>
+            v0.63 adds the first calm connector layer: model paths, source routing, policy limits, evaluation gates,
+            and reuse decisions stay visible before any AI output becomes trusted work.
+          </p>
+        </div>
+        <aside class="product-status-card">
+          <span>Connector policy</span>
+          <strong id="connectorPolicyScore">75% governed</strong>
+          <p id="connectorRoutingStatus">Connector routing is waiting for policy review.</p>
+        </aside>
+      </section>
+
+      <section class="connector-shell" aria-label="Model connector lab">
+        <div class="dashboard-toolbar">
+          <span class="hero-kicker">Approved paths</span>
+          <div class="dashboard-actions">
+            <a class="hero-secondary" href="evaluation.html">Open Bench</a>
+            <a class="hero-secondary" href="reviews.html">Open Reviews</a>
+            <a class="hero-primary" href="verify.html">Verify New Answer</a>
+          </div>
+        </div>
+
+        <div class="connector-lab-grid" id="connectorLabList"></div>
+      </section>
+
+      <section class="connector-method" aria-label="Connector method">
+        <div>
+          <span class="hero-kicker">Routing method</span>
+          <h2>Every model path gets a policy before it gets power.</h2>
+          <p>
+            The connector lab keeps model choice, source access, human review, and evaluation gates in one quiet
+            control surface so teams can expand AI use without expanding risk.
+          </p>
+        </div>
+
+        <div class="connector-method-grid">
+          <article>
+            <span>01</span>
+            <strong>Declare the path</strong>
+            <p>Name the model, retrieval source, workflow, or agent output path before teams reuse it.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <strong>Attach policy</strong>
+            <p>Connect data boundaries, evidence rules, reviewer gates, and allowed use cases.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <strong>Run the bench</strong>
+            <p>Candidate outputs must pass trust checks and regression gates before promotion.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <strong>Reuse safely</strong>
+            <p>Only approved connector paths become reusable AI work across the organization.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="connector-policy-section" aria-label="Connector policy">
+        <div>
+          <span class="hero-kicker">Policy gateway</span>
+          <h2>The connector is approved only when the route is explainable.</h2>
+          <p>
+            This is the foundation for the closed-loop SaaS future: every output can learn from outcomes, but only
+            inside approved boundaries with sources, owners, and review receipts attached.
+          </p>
+        </div>
+        <div class="connector-policy-strip">
+          <article>
+            <span>Model</span>
+            <strong>Which system answered?</strong>
+            <p>The model path is named before the answer enters verification.</p>
+          </article>
+          <article>
+            <span>Source</span>
+            <strong>What proof was allowed?</strong>
+            <p>Retrieval stays limited to approved policies, reports, and sealed baselines.</p>
+          </article>
+          <article>
+            <span>Gate</span>
+            <strong>Who can promote it?</strong>
+            <p>Human review and bench results decide whether the output can be reused.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <span>AnswerSeal v0.63 Alpha</span>
+      <a href="verify.html">Verify</a>
+      <a href="reports.html">Reports</a>
+      <a href="registry.html">Registry</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="evaluation.html">Bench</a>
+      <a href="connectors.html">Connectors</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="versions.html">Build Phases</a>
+    </footer>
+    <script src="landing.js"></script>
+  </body>
+</html>

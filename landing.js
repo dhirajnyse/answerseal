@@ -27,6 +27,9 @@ const reviewPromotionStatus = document.querySelector("#reviewPromotionStatus");
 const evaluationBenchList = document.querySelector("#evaluationBenchList");
 const evaluationBenchScore = document.querySelector("#evaluationBenchScore");
 const evaluationRegressionStatus = document.querySelector("#evaluationRegressionStatus");
+const connectorLabList = document.querySelector("#connectorLabList");
+const connectorPolicyScore = document.querySelector("#connectorPolicyScore");
+const connectorRoutingStatus = document.querySelector("#connectorRoutingStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -39,9 +42,14 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.62 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v62";
-const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = ["answerseal.public.reports.v61", "answerseal.public.reports.v60", "answerseal.public.reports.v59"];
+const PUBLIC_BUILD_VERSION = "v0.63 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v63";
+const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v62",
+  "answerseal.public.reports.v61",
+  "answerseal.public.reports.v60",
+  "answerseal.public.reports.v59",
+];
 let latestLandingReport = null;
 let activeSealedReport = null;
 
@@ -107,6 +115,7 @@ renderSavedReports();
 renderArtifactRegistry();
 renderReviewLoop();
 renderEvaluationBench();
+renderConnectorLab();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -501,6 +510,57 @@ function renderEvaluationBench() {
   });
 }
 
+function renderConnectorLab() {
+  if (!connectorLabList) return;
+  const connectors = buildConnectorLabItems();
+  const governedCount = connectors.filter((connector) => connector.status === "Approved").length;
+  const readyScore = Math.round((governedCount / Math.max(connectors.length, 1)) * 100);
+
+  if (connectorPolicyScore) connectorPolicyScore.textContent = `${readyScore}% governed`;
+  if (connectorRoutingStatus) {
+    const reviewCount = connectors.length - governedCount;
+    connectorRoutingStatus.textContent = `${reviewCount} connector${reviewCount === 1 ? "" : "s"} still need policy review before automatic routing.`;
+  }
+
+  connectorLabList.innerHTML = "";
+  connectors.forEach((connector) => {
+    const card = document.createElement("article");
+    card.className = "connector-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(connector.type)}</span>
+        <strong>${escapePublicHtml(connector.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(connector.title)}</h3>
+      <p>${escapePublicHtml(connector.summary)}</p>
+      <dl class="connector-meta">
+        <div>
+          <dt>Model path</dt>
+          <dd>${escapePublicHtml(connector.modelPath)}</dd>
+        </div>
+        <div>
+          <dt>Policy</dt>
+          <dd>${escapePublicHtml(connector.policy)}</dd>
+        </div>
+        <div>
+          <dt>Bench gate</dt>
+          <dd>${escapePublicHtml(connector.benchGate)}</dd>
+        </div>
+        <div>
+          <dt>Reuse</dt>
+          <dd>${escapePublicHtml(connector.reuse)}</dd>
+        </div>
+      </dl>
+      <div class="connector-finding">
+        <span>Routing rule</span>
+        <p>${escapePublicHtml(connector.finding)}</p>
+      </div>
+      <a href="${escapePublicHtml(connector.href)}">${escapePublicHtml(connector.action)}</a>
+    `;
+    connectorLabList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -636,6 +696,84 @@ function buildEvaluationBenchItems() {
   ];
 
   return [...reportTests, ...seededTests].slice(0, 7);
+}
+
+function buildConnectorLabItems() {
+  const reports = readPublicReports();
+  const reportConnectors = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const approved = score >= 86;
+    return {
+      type: "Sealed report source",
+      status: approved ? "Approved" : "Review",
+      title: report.prompt || "Verified answer baseline",
+      summary: "Saved report can act as a connector baseline when the source trail remains attached.",
+      modelPath: `Report memory v${index + 1}`,
+      policy: approved ? "Evidence required" : "Owner review",
+      benchGate: approved ? "Compare allowed" : "Bench first",
+      reuse: approved ? "Template candidate" : "Hold",
+      finding: report.summary || "Route saved report memory into verification before it becomes reusable prompt context.",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededConnectors = [
+    {
+      type: "Model connector",
+      status: "Approved",
+      title: "Answer verifier model path",
+      summary: "Primary reasoning path for checking pasted AI answers before a team trusts or shares them.",
+      modelPath: "Reasoning model",
+      policy: "No source, no answer",
+      benchGate: "Required",
+      reuse: "Allowed after seal",
+      finding: "Every output must return score, flags, missing sources, unsupported claims, and an improved answer.",
+      href: "verify.html",
+      action: "Run verifier",
+    },
+    {
+      type: "Private connector",
+      status: "Review",
+      title: "Sensitive workspace model path",
+      summary: "Private deployment path for regulated teams that need stricter data boundaries.",
+      modelPath: "Private endpoint",
+      policy: "Data boundary review",
+      benchGate: "Required",
+      reuse: "Limited",
+      finding: "Sensitive prompts can route here only after workspace policy, source handling, and reviewer approval are attached.",
+      href: "reviews.html",
+      action: "Open reviews",
+    },
+    {
+      type: "Retrieval connector",
+      status: "Approved",
+      title: "Evidence vault retrieval path",
+      summary: "Approved policies, SOC reports, DPAs, and sealed reports become the source layer for verification.",
+      modelPath: "Evidence retrieval",
+      policy: "Fresh source required",
+      benchGate: "Freshness check",
+      reuse: "Allowed",
+      finding: "Answers can cite this connector only when source freshness, owner, and coverage are visible.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+    {
+      type: "Agent connector",
+      status: "Blocked",
+      title: "Autonomous answer publisher",
+      summary: "Agent output cannot publish buyer-facing answers without human review and a sealed report.",
+      modelPath: "Agent workflow",
+      policy: "Human approval",
+      benchGate: "Regression gate",
+      reuse: "Blocked",
+      finding: "Automatic publishing stays blocked until the candidate beats the sealed baseline and a reviewer approves it.",
+      href: "registry.html",
+      action: "Open registry",
+    },
+  ];
+
+  return [...reportConnectors, ...seededConnectors].slice(0, 6);
 }
 
 function buildReviewLoopItems() {
@@ -854,7 +992,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.62 Alpha - Evaluation Bench",
+      "Pilot phase: AnswerSeal v0.63 Alpha - Model Connector Lab",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

@@ -11587,7 +11587,10 @@ svg {
 .receipt-section,
 .evaluation-shell,
 .evaluation-method,
-.regression-section {
+.regression-section,
+.connector-shell,
+.connector-method,
+.connector-policy-section {
   padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
 }
 
@@ -11763,13 +11766,17 @@ svg {
 .receipt-strip,
 .evaluation-bench-grid,
 .evaluation-method-grid,
-.regression-strip {
+.regression-strip,
+.connector-lab-grid,
+.connector-method-grid,
+.connector-policy-strip {
   display: grid;
   gap: 12px;
 }
 
 .review-loop-grid,
-.evaluation-bench-grid {
+.evaluation-bench-grid,
+.connector-lab-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -11778,7 +11785,10 @@ svg {
 .receipt-strip article,
 .evaluation-card,
 .evaluation-method-grid article,
-.regression-strip article {
+.regression-strip article,
+.connector-card,
+.connector-method-grid article,
+.connector-policy-strip article {
   display: grid;
   align-content: start;
   gap: 12px;
@@ -11791,7 +11801,8 @@ svg {
 }
 
 .review-card header,
-.evaluation-card header {
+.evaluation-card header,
+.connector-card header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11805,7 +11816,11 @@ svg {
 .evaluation-card header span,
 .evaluation-card header strong,
 .evaluation-method-grid span,
-.regression-strip span {
+.regression-strip span,
+.connector-card header span,
+.connector-card header strong,
+.connector-method-grid span,
+.connector-policy-strip span {
   display: inline-flex;
   align-items: center;
   width: fit-content;
@@ -11822,13 +11837,17 @@ svg {
 .receipt-strip span,
 .evaluation-card header span,
 .evaluation-method-grid span,
-.regression-strip span {
+.regression-strip span,
+.connector-card header span,
+.connector-method-grid span,
+.connector-policy-strip span {
   color: var(--accent-dark);
   background: #dcfbf4;
 }
 
 .review-card header strong,
-.evaluation-card header strong {
+.evaluation-card header strong,
+.connector-card header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -11838,7 +11857,10 @@ svg {
 .receipt-strip strong,
 .evaluation-card h3,
 .evaluation-method-grid strong,
-.regression-strip strong {
+.regression-strip strong,
+.connector-card h3,
+.connector-method-grid strong,
+.connector-policy-strip strong {
   margin: 0;
   color: var(--ink);
   font-size: 1.15rem;
@@ -11854,14 +11876,20 @@ svg {
 .evaluation-method p,
 .evaluation-method-grid p,
 .regression-section p,
-.regression-strip p {
+.regression-strip p,
+.connector-card p,
+.connector-method p,
+.connector-method-grid p,
+.connector-policy-section p,
+.connector-policy-strip p {
   margin: 0;
   color: var(--muted);
   line-height: 1.5;
 }
 
 .review-meta,
-.evaluation-meta {
+.evaluation-meta,
+.connector-meta {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
@@ -11873,7 +11901,8 @@ svg {
 }
 
 .review-meta div,
-.evaluation-meta div {
+.evaluation-meta div,
+.connector-meta div {
   display: grid;
   gap: 3px;
   min-width: 0;
@@ -11884,13 +11913,16 @@ svg {
 .review-meta dt,
 .review-meta dd,
 .evaluation-meta dt,
-.evaluation-meta dd {
+.evaluation-meta dd,
+.connector-meta dt,
+.connector-meta dd {
   margin: 0;
   min-width: 0;
 }
 
 .review-meta dt,
-.evaluation-meta dt {
+.evaluation-meta dt,
+.connector-meta dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
@@ -11898,7 +11930,8 @@ svg {
 }
 
 .review-meta dd,
-.evaluation-meta dd {
+.evaluation-meta dd,
+.connector-meta dd {
   color: var(--ink);
   font-size: 0.84rem;
   font-weight: 850;
@@ -11906,7 +11939,8 @@ svg {
 }
 
 .diff-block,
-.evaluation-finding {
+.evaluation-finding,
+.connector-finding {
   display: grid;
   gap: 8px;
   padding: 14px;
@@ -11918,7 +11952,8 @@ svg {
 }
 
 .diff-block span,
-.evaluation-finding span {
+.evaluation-finding span,
+.connector-finding span {
   color: var(--muted);
   font-size: 0.74rem;
   font-weight: 950;
@@ -11926,7 +11961,8 @@ svg {
 }
 
 .review-card a,
-.evaluation-card a {
+.evaluation-card a,
+.connector-card a {
   align-self: end;
   color: var(--accent-dark);
   font-weight: 950;
@@ -11936,7 +11972,9 @@ svg {
 .review-flow,
 .receipt-section,
 .evaluation-method,
-.regression-section {
+.regression-section,
+.connector-method,
+.connector-policy-section {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: clamp(24px, 5vw, 72px);
@@ -11945,21 +11983,25 @@ svg {
 }
 
 .review-flow,
-.evaluation-method {
+.evaluation-method,
+.connector-method {
   background:
     linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
     #ffffff;
 }
 
 .receipt-section,
-.regression-section {
+.regression-section,
+.connector-policy-section {
   background: #ffffff;
 }
 
 .review-flow h2,
 .receipt-section h2,
 .evaluation-method h2,
-.regression-section h2 {
+.regression-section h2,
+.connector-method h2,
+.connector-policy-section h2 {
   max-width: 720px;
   margin: 14px 0 14px;
   color: #14201d;
@@ -11971,7 +12013,9 @@ svg {
 .review-flow-grid,
 .receipt-strip,
 .evaluation-method-grid,
-.regression-strip {
+.regression-strip,
+.connector-method-grid,
+.connector-policy-strip {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -12446,6 +12490,9 @@ svg {
   .evaluation-bench-grid,
   .evaluation-method,
   .regression-section,
+  .connector-lab-grid,
+  .connector-method,
+  .connector-policy-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -12496,6 +12543,7 @@ svg {
   .artifact-registry-grid,
   .review-loop-grid,
   .evaluation-bench-grid,
+  .connector-lab-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12563,6 +12611,10 @@ svg {
   .evaluation-method-grid,
   .regression-strip,
   .evaluation-meta,
+  .connector-lab-grid,
+  .connector-method-grid,
+  .connector-policy-strip,
+  .connector-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

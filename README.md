@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.62 Alpha
+**Current version:** v0.63 Alpha
 
-**Current phase:** Evaluation Bench
+**Current phase:** Model Connector Lab
 
-**Current release:** v0.62 Alpha - Evaluation Bench
+**Current release:** v0.63 Alpha - Model Connector Lab
 
 ## Brand
 
@@ -46,6 +46,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Evaluation Bench page for QA checks before AI work becomes reusable
 - Reusable test cases, model and prompt comparison, hallucination challenge, source freshness checks, and regression gates
 - Review and registry pages now route into the Evaluation Bench for pre-promotion testing
+- Model Connector Lab page for governed model paths, source routes, policy limits, bench gates, and reuse decisions
+- Connector cards for model, private endpoint, retrieval, agent, and saved-report source routes
+- Verification, reports, registry, reviews, and evaluation now route naturally into the Connector Lab
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -63,7 +66,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v58 export with Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v59 export with Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -325,7 +328,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v58 export with Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v59 export with Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -336,6 +339,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `registry.html` - AI Artifact Registry for governed answers, prompts, workflows, agent outputs, owners, versions, and templates
 - `reviews.html` - Versioned Review Loop for version notes, reviewer requests, diffs, and promotion receipts
 - `evaluation.html` - Evaluation Bench for test cases, model comparison, hallucination challenge, source freshness, and regression gates
+- `connectors.html` - Model Connector Lab for governed model paths, source routes, connector policy, bench gates, and reuse decisions
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -350,14 +354,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.63 Alpha - Model Connector Lab
+## Next Phase: v0.64 Alpha - Learning Signal Loop
 
-- Add a connector catalog for approved model providers, use cases, and environment readiness
-- Route answer, prompt, workflow, and agent tests to approved model paths
-- Capture output candidates with score, risk, cost, latency, and evaluation result before review
-- Block unsafe model use when evidence, privacy, or enterprise policy requirements are not met
-- Treat PromptLayer-style prompt libraries, prompt testing, model connectors, and approved prompt versions as future modules inside AnswerSeal
-- Keep the first MVP simple while opening the path toward Notion + GitHub + QA for AI work
+- Capture whether sealed answers helped sales, security, legal, or buyer review move forward
+- Suggest prompt, connector, or evidence improvements without changing production behavior automatically
+- Keep organization-private learning separate from shared benchmark learning unless policy allows it
+- Require owner approval, rationale, rollback note, and a new sealed version for every learning change
+- Keep the first MVP simple while opening the path toward safe closed-loop AI governance
 
 ## License
 
