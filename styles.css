@@ -12815,6 +12815,110 @@ svg {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.proof-network-page {
+  background:
+    linear-gradient(145deg, rgba(242, 255, 252, 0.98) 0%, rgba(255, 255, 255, 0.99) 54%, rgba(237, 247, 255, 0.94) 100%),
+    #f8fbfb;
+}
+
+.proof-network-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-network-card.is-review header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-network-card.is-blocked header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
+.proof-network-meta div {
+  min-height: 82px;
+}
+
+.proof-network-firewall,
+.proof-network-lift-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 72px);
+  align-items: start;
+  padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
+  border-top: 1px solid rgba(31, 41, 38, 0.1);
+}
+
+.proof-network-firewall {
+  background:
+    linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
+    #ffffff;
+}
+
+.proof-network-lift-section {
+  background: #ffffff;
+}
+
+.proof-network-firewall h2,
+.proof-network-lift-section h2 {
+  max-width: 720px;
+  margin: 14px 0 14px;
+  color: #14201d;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.proof-network-firewall p,
+.proof-network-lift-section p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.proof-network-firewall-grid,
+.proof-network-lift-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.proof-network-firewall-grid article,
+.proof-network-lift-strip article {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(31, 41, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 38px rgba(31, 41, 38, 0.06);
+}
+
+.proof-network-firewall-grid span,
+.proof-network-lift-strip span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.proof-network-firewall-grid strong,
+.proof-network-lift-strip strong {
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -13304,6 +13408,8 @@ svg {
   .proof-memory-grid,
   .proof-memory-method,
   .proof-memory-boundary-section,
+  .proof-network-firewall,
+  .proof-network-lift-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13360,6 +13466,9 @@ svg {
   .buyer-portal-grid,
   .proof-concierge-grid,
   .proof-memory-grid,
+  .proof-network-grid,
+  .proof-network-firewall-grid,
+  .proof-network-lift-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13451,6 +13560,10 @@ svg {
   .proof-memory-method-grid,
   .proof-memory-boundary-strip,
   .proof-memory-meta,
+  .proof-network-grid,
+  .proof-network-firewall-grid,
+  .proof-network-lift-strip,
+  .proof-network-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

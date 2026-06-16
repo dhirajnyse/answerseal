@@ -45,6 +45,9 @@ const proofConciergeStatus = document.querySelector("#proofConciergeStatus");
 const proofMemoryList = document.querySelector("#proofMemoryList");
 const proofMemoryScore = document.querySelector("#proofMemoryScore");
 const proofMemoryStatus = document.querySelector("#proofMemoryStatus");
+const proofNetworkList = document.querySelector("#proofNetworkList");
+const proofNetworkScore = document.querySelector("#proofNetworkScore");
+const proofNetworkStatus = document.querySelector("#proofNetworkStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -57,9 +60,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.68 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v68";
+const PUBLIC_BUILD_VERSION = "v0.69 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v69";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v68",
   "answerseal.public.reports.v67",
   "answerseal.public.reports.v66",
   "answerseal.public.reports.v65",
@@ -141,6 +145,7 @@ renderPolicyGateway();
 renderBuyerTrustPortal();
 renderProofConcierge();
 renderProofLearningMemory();
+renderTenantSafeProofNetwork();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -1530,6 +1535,162 @@ function buildProofLearningMemoryItems() {
   return [...reportPatterns, ...seededPatterns].slice(0, 8);
 }
 
+function renderTenantSafeProofNetwork() {
+  if (!proofNetworkList) return;
+  const signals = buildTenantSafeProofNetworkItems();
+  const readyCount = signals.filter((signal) => signal.status === "Network-ready").length;
+  const reviewCount = signals.filter((signal) => signal.status === "Review").length;
+  const blockedCount = signals.filter((signal) => signal.status === "Blocked").length;
+  const networkScore = Math.round((readyCount / Math.max(signals.length, 1)) * 100);
+
+  if (proofNetworkScore) proofNetworkScore.textContent = `${networkScore}% network-safe`;
+  if (proofNetworkStatus) {
+    proofNetworkStatus.textContent = `${readyCount} signal${readyCount === 1 ? "" : "s"} can help other workspaces; ${reviewCount + blockedCount} stay held behind privacy gates.`;
+  }
+
+  proofNetworkList.innerHTML = "";
+  signals.forEach((signal) => {
+    const card = document.createElement("article");
+    card.className = `proof-memory-card proof-network-card ${signal.status === "Network-ready" ? "is-ready" : signal.status === "Blocked" ? "is-blocked" : "is-review"}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(signal.type)}</span>
+        <strong>${escapePublicHtml(signal.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(signal.title)}</h3>
+      <p>${escapePublicHtml(signal.summary)}</p>
+      <dl class="proof-memory-meta proof-network-meta">
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(signal.signal)}</dd>
+        </div>
+        <div>
+          <dt>Privacy</dt>
+          <dd>${escapePublicHtml(signal.privacy)}</dd>
+        </div>
+        <div>
+          <dt>Approval</dt>
+          <dd>${escapePublicHtml(signal.approval)}</dd>
+        </div>
+        <div>
+          <dt>Benefit</dt>
+          <dd>${escapePublicHtml(signal.benefit)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Network rule</span>
+        <p>${escapePublicHtml(signal.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Network receipt</span>
+        <p>${escapePublicHtml(signal.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(signal.href)}">${escapePublicHtml(signal.action)}</a>
+    `;
+    proofNetworkList.append(card);
+  });
+}
+
+function buildTenantSafeProofNetworkItems() {
+  const reports = readPublicReports();
+  const reportSignals = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 92;
+    const review = score >= 82 && score < 92;
+    return {
+      type: "Report-derived signal",
+      status: ready ? "Network-ready" : review ? "Review" : "Local only",
+      title: report.prompt || "Verified answer pattern",
+      summary: "A saved sealed report can contribute only an abstract proof pattern after private context is removed.",
+      signal: ready ? "Proof class + outcome band" : "Tenant-local answer memory",
+      privacy: "No raw answer",
+      approval: ready ? "Policy approved" : "Owner review",
+      benefit: ready ? "Faster future matching" : "No shared lift yet",
+      rule: ready
+        ? "Share only the proof category, freshness band, risk class, and accepted outcome; keep the exact answer, files, buyer, and account notes private."
+        : "Keep this report inside the tenant until score, source coverage, and reviewer approval meet the network threshold.",
+      receipt: report.summary || "Network promotion waits for a safe abstraction receipt.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededSignals = [
+    {
+      type: "Approved aggregate",
+      status: "Network-ready",
+      title: "AI training data answer pattern",
+      summary: "Multiple teams can benefit from the pattern that customers ask whether their content trains AI models.",
+      signal: "Question class",
+      privacy: "No tenant text",
+      approval: "AI governance",
+      benefit: "Reuse lift",
+      rule: "The network may remember the question category, proof type, and accepted answer structure, but not the exact customer wording.",
+      receipt: "Approved because the signal contains no buyer names, no documents, no account notes, and no proprietary answer text.",
+      href: "memory.html",
+      action: "Open memory",
+    },
+    {
+      type: "Freshness signal",
+      status: "Network-ready",
+      title: "SOC 2 freshness reduces security review friction",
+      summary: "The network can learn that fresh SOC 2 evidence often improves buyer confidence without sharing reports.",
+      signal: "Freshness band",
+      privacy: "Report hidden",
+      approval: "Security",
+      benefit: "Lower objection rate",
+      rule: "Share only the evidence type and freshness band; never share the report, auditor text, control details, or customer-specific usage.",
+      receipt: "Safe signal approved from abstract source metadata and buyer outcome class.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+    {
+      type: "Policy gate",
+      status: "Review",
+      title: "Regional data-boundary proof pattern",
+      summary: "EU buyer answers may help similar regional reviews, but country rules need explicit policy approval first.",
+      signal: "Region class",
+      privacy: "Country gated",
+      approval: "Legal review",
+      benefit: "Risk control",
+      rule: "Do not make regional proof patterns network-visible until country scope, residency assumptions, and source access rules are approved.",
+      receipt: "Held because a regional pattern can become unsafe if generalized too broadly.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      type: "Firewall block",
+      status: "Blocked",
+      title: "Raw buyer objection text",
+      summary: "Buyer objections are valuable locally, but raw text can contain private strategy, names, and deal context.",
+      signal: "None",
+      privacy: "Blocked raw data",
+      approval: "Not allowed",
+      benefit: "Trust preserved",
+      rule: "Never share buyer names, raw portal comments, contract terms, uploaded files, prompts, or exact answers across tenants.",
+      receipt: "Blocked by default because network learning must earn trust before it earns scale.",
+      href: "buyer.html",
+      action: "Open buyer portal",
+    },
+    {
+      type: "Outcome band",
+      status: "Network-ready",
+      title: "Accepted proof packet outcome",
+      summary: "A positive buyer outcome can improve future recommendations when reduced to a safe outcome band.",
+      signal: "Accepted outcome",
+      privacy: "Abstract only",
+      approval: "Revenue security",
+      benefit: "Better recommendations",
+      rule: "Share the outcome label and proof category only after the response is accepted, approved, and stripped of tenant details.",
+      receipt: "Network receipt keeps the benefit auditable without exposing the original deal.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+  ];
+
+  return [...reportSignals, ...seededSignals].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -1746,7 +1907,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.68 Alpha - Proof Learning Memory",
+      "Pilot phase: AnswerSeal v0.69 Alpha - Tenant-Safe Proof Network",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

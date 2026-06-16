@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.69 Alpha - Tenant-Safe Proof Network
+
+Phase: Tenant-Safe Proof Network
+
+- Added a dedicated Tenant-Safe Proof Network page for safe signal eligibility, privacy firewall rules, network receipts, blocked raw buyer data, and shared-lift tracking.
+- Added network cards for approved question-class signals, SOC 2 freshness bands, regional policy gates, blocked raw buyer objection text, accepted outcome bands, and saved sealed report signals.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Model Connector Lab, Learning Signal Loop, Trust Policy Gateway, Buyer Trust Portal, Buyer Proof Concierge, Proof Learning Memory, Pricing, and the landing product spine to the new Network path.
+- Upgraded public storage to v0.69 while preserving v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v65 and moved the next build toward v0.70 Network Benefit Ledger.
+
 ## v0.68 Alpha - Proof Learning Memory
 
 Phase: Proof Learning Memory
