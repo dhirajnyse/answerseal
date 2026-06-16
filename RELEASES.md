@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.67 Alpha - Buyer Proof Concierge
+
+Phase: Buyer Proof Concierge
+
+- Added a dedicated Buyer Proof Concierge page for buyer follow-up concerns, owner routing, evidence paths, policy boundaries, safe reply drafts, and closed-loop learning.
+- Added concierge cards for model-training proof, SOC 2 excerpt requests, regional evidence boundaries, procurement portal copy, accepted proof patterns, and saved sealed report concerns.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Model Connector Lab, Learning Signal Loop, Trust Policy Gateway, Buyer Trust Portal, Pricing, and the landing product spine to the new Concierge path.
+- Upgraded public storage to v0.67 while preserving v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v63 and moved the next build toward v0.68 Proof Learning Memory.
+
 ## v0.66 Alpha - Buyer Trust Portal
 
 Phase: Buyer Trust Portal

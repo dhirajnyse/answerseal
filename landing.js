@@ -39,6 +39,9 @@ const policyDecisionStatus = document.querySelector("#policyDecisionStatus");
 const buyerPortalList = document.querySelector("#buyerPortalList");
 const buyerPortalScore = document.querySelector("#buyerPortalScore");
 const buyerActivityStatus = document.querySelector("#buyerActivityStatus");
+const proofConciergeList = document.querySelector("#proofConciergeList");
+const proofConciergeScore = document.querySelector("#proofConciergeScore");
+const proofConciergeStatus = document.querySelector("#proofConciergeStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -51,9 +54,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.66 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v66";
+const PUBLIC_BUILD_VERSION = "v0.67 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v67";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v66",
   "answerseal.public.reports.v65",
   "answerseal.public.reports.v64",
   "answerseal.public.reports.v63",
@@ -131,6 +135,7 @@ renderConnectorLab();
 renderLearningSignalLoop();
 renderPolicyGateway();
 renderBuyerTrustPortal();
+renderProofConcierge();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -729,6 +734,62 @@ function renderBuyerTrustPortal() {
   });
 }
 
+function renderProofConcierge() {
+  if (!proofConciergeList) return;
+  const concerns = buildProofConciergeItems();
+  const closedCount = concerns.filter((concern) => concern.status === "Closed").length;
+  const replyReadyCount = concerns.filter((concern) => concern.status === "Reply ready").length;
+  const conciergeScore = Math.round(((closedCount + replyReadyCount) / Math.max(concerns.length, 1)) * 100);
+  const openCount = concerns.length - closedCount;
+
+  if (proofConciergeScore) proofConciergeScore.textContent = `${conciergeScore}% reply-ready`;
+  if (proofConciergeStatus) {
+    proofConciergeStatus.textContent = `${openCount} buyer concern${openCount === 1 ? "" : "s"} still need owner routing, safer reply copy, or proof closure.`;
+  }
+
+  proofConciergeList.innerHTML = "";
+  concerns.forEach((concern) => {
+    const card = document.createElement("article");
+    card.className = "proof-concierge-card";
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(concern.type)}</span>
+        <strong>${escapePublicHtml(concern.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(concern.title)}</h3>
+      <p>${escapePublicHtml(concern.summary)}</p>
+      <dl class="proof-concierge-meta">
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(concern.owner)}</dd>
+        </div>
+        <div>
+          <dt>Proof</dt>
+          <dd>${escapePublicHtml(concern.evidence)}</dd>
+        </div>
+        <div>
+          <dt>Policy</dt>
+          <dd>${escapePublicHtml(concern.policy)}</dd>
+        </div>
+        <div>
+          <dt>Next</dt>
+          <dd>${escapePublicHtml(concern.nextAction)}</dd>
+        </div>
+      </dl>
+      <div class="proof-concierge-reply">
+        <span>Safe reply draft</span>
+        <p>${escapePublicHtml(concern.replyDraft)}</p>
+      </div>
+      <div class="proof-concierge-learning">
+        <span>Closed-loop learning</span>
+        <p>${escapePublicHtml(concern.learning)}</p>
+      </div>
+      <a href="${escapePublicHtml(concern.href)}">${escapePublicHtml(concern.action)}</a>
+    `;
+    proofConciergeList.append(card);
+  });
+}
+
 function buildArtifactRegistry() {
   const reports = readPublicReports();
   const reportArtifacts = reports.slice(0, 4).map((report, index) => ({
@@ -1204,6 +1265,112 @@ function buildBuyerTrustPortalItems() {
   return [...reportPackets, ...seededPackets].slice(0, 8);
 }
 
+function buildProofConciergeItems() {
+  const reports = readPublicReports();
+  const reportConcerns = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 86;
+    return {
+      type: "Saved report concern",
+      status: ready ? "Reply ready" : "Owner review",
+      title: report.prompt || "Buyer asked for proof behind a verified answer",
+      summary: "Saved answer can become a buyer follow-up only after the source, owner, and safe reply are attached.",
+      owner: index % 2 === 0 ? "Revenue security" : "AI governance",
+      evidence: report.sources || "Attached sources",
+      policy: ready ? "Share sealed report" : "Hold for reviewer note",
+      nextAction: ready ? "Send reply" : "Route owner",
+      replyDraft: ready
+        ? report.improvedAnswer || report.summary || "Share the sealed answer with source names and a short reviewer note."
+        : "Thanks for the follow-up. We are confirming the evidence owner and will respond with a source-backed answer.",
+      learning: ready
+        ? "Promote this concern as a reusable buyer proof pattern after the reply is accepted."
+        : "Do not promote the pattern until the owner confirms the missing proof.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededConcerns = [
+    {
+      type: "Buyer follow-up",
+      status: "Reply ready",
+      title: "Can you prove customer data is not used for model training?",
+      summary: "Buyer needs a concise answer that cites the AI Usage Standard without exposing internal review notes.",
+      owner: "AI governance",
+      evidence: "AI Usage Standard",
+      policy: "Summary allowed",
+      nextAction: "Send reply",
+      replyDraft:
+        "No. Customer content is not used to train foundation models or shared model providers. This response is supported by the AI Usage Standard and can be shared with the sealed report summary.",
+      learning: "If accepted, add this as the default proof pattern for model-training questions.",
+      href: "buyer.html",
+      action: "Open buyer packet",
+    },
+    {
+      type: "Evidence request",
+      status: "Owner routed",
+      title: "Buyer requested the latest SOC 2 control evidence.",
+      summary: "The request is legitimate, but the full report requires NDA status and security-owner approval.",
+      owner: "Security",
+      evidence: "SOC 2 Type II",
+      policy: "Excerpt only",
+      nextAction: "Approve excerpt",
+      replyDraft:
+        "We can share a buyer-safe SOC 2 summary now and route the full report through the approved NDA and security review path.",
+      learning: "Track whether excerpt-first replies reduce full-report requests before broader promotion.",
+      href: "policy.html",
+      action: "Open policy gateway",
+    },
+    {
+      type: "Regional concern",
+      status: "Owner review",
+      title: "EU buyer asked where AI answer evidence is processed.",
+      summary: "The buyer needs a region-safe explanation before source excerpts are released outside the workspace.",
+      owner: "Operations",
+      evidence: "Region policy map",
+      policy: "Region gated",
+      nextAction: "Confirm boundary",
+      replyDraft:
+        "We are confirming the approved regional processing boundary and will respond with the source names, evidence level, and access conditions.",
+      learning: "Do not reuse the reply globally until regional policy approves the wording.",
+      href: "versions.html",
+      action: "Open build phases",
+    },
+    {
+      type: "Procurement comment",
+      status: "Reply ready",
+      title: "Buyer wants portal-ready copy for a questionnaire field.",
+      summary: "The answer is already sealed; the concierge converts it into concise copy for procurement portals.",
+      owner: "Sales engineer",
+      evidence: "Sealed report",
+      policy: "Portal copy allowed",
+      nextAction: "Copy reply",
+      replyDraft:
+        "Customer data is not used for model training. The answer is supported by our AI Usage Standard and SOC 2 evidence summary, with human approval before release.",
+      learning: "Store the shorter copy as a reusable portal variant once the buyer accepts it.",
+      href: "verify.html",
+      action: "Verify answer",
+    },
+    {
+      type: "Closed proof",
+      status: "Closed",
+      title: "Buyer accepted the AI usage proof packet.",
+      summary: "The concern moved from request to owner-approved reply to reusable proof pattern.",
+      owner: "Revenue security",
+      evidence: "AI Usage Standard",
+      policy: "Approved pattern",
+      nextAction: "Promote pattern",
+      replyDraft:
+        "The buyer accepted the sealed packet. The approved wording can become the default answer for similar model-training questions.",
+      learning: "Promote only the generalized pattern; keep buyer-specific notes private.",
+      href: "learning.html",
+      action: "Open learning loop",
+    },
+  ];
+
+  return [...reportConcerns, ...seededConcerns].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -1420,7 +1587,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.66 Alpha - Buyer Trust Portal",
+      "Pilot phase: AnswerSeal v0.67 Alpha - Buyer Proof Concierge",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

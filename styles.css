@@ -12427,6 +12427,200 @@ svg {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.proof-concierge-shell,
+.proof-concierge-method,
+.proof-concierge-loop-section {
+  padding: clamp(30px, 5vw, 58px) clamp(18px, 5vw, 78px);
+}
+
+.proof-concierge-grid,
+.proof-concierge-method-grid,
+.proof-concierge-loop-strip {
+  display: grid;
+  gap: 12px;
+}
+
+.proof-concierge-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.proof-concierge-card,
+.proof-concierge-method-grid article,
+.proof-concierge-loop-strip article {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(31, 41, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 38px rgba(31, 41, 38, 0.06);
+}
+
+.proof-concierge-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.proof-concierge-card header span,
+.proof-concierge-card header strong,
+.proof-concierge-method-grid span,
+.proof-concierge-loop-strip span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.proof-concierge-card header span,
+.proof-concierge-method-grid span,
+.proof-concierge-loop-strip span {
+  color: var(--accent-dark);
+  background: #dcfbf4;
+}
+
+.proof-concierge-card header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-concierge-card h3,
+.proof-concierge-method-grid strong,
+.proof-concierge-loop-strip strong {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.22;
+}
+
+.proof-concierge-card p,
+.proof-concierge-method p,
+.proof-concierge-method-grid p,
+.proof-concierge-loop-section p,
+.proof-concierge-loop-strip p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.proof-concierge-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 168, 137, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 168, 137, 0.14);
+}
+
+.proof-concierge-meta div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px;
+  background: #fbfffd;
+}
+
+.proof-concierge-meta dt,
+.proof-concierge-meta dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.proof-concierge-meta dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.proof-concierge-meta dd {
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.proof-concierge-reply,
+.proof-concierge-learning {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 8px;
+}
+
+.proof-concierge-reply {
+  border: 1px solid rgba(25, 132, 235, 0.14);
+  background:
+    linear-gradient(180deg, rgba(237, 247, 255, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.proof-concierge-learning {
+  border: 1px solid rgba(0, 168, 137, 0.16);
+  background:
+    linear-gradient(180deg, rgba(220, 251, 244, 0.72) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.proof-concierge-reply span,
+.proof-concierge-learning span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.proof-concierge-card a {
+  align-self: end;
+  color: var(--accent-dark);
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.proof-concierge-method,
+.proof-concierge-loop-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 72px);
+  align-items: start;
+  border-top: 1px solid rgba(31, 41, 38, 0.1);
+}
+
+.proof-concierge-method {
+  background:
+    linear-gradient(145deg, rgba(242, 255, 252, 0.96) 0%, rgba(255, 255, 255, 0.98) 58%, rgba(237, 247, 255, 0.9) 100%),
+    #ffffff;
+}
+
+.proof-concierge-loop-section {
+  background: #ffffff;
+}
+
+.proof-concierge-method h2,
+.proof-concierge-loop-section h2 {
+  max-width: 720px;
+  margin: 14px 0 14px;
+  color: #14201d;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.proof-concierge-method-grid,
+.proof-concierge-loop-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12910,6 +13104,9 @@ svg {
   .buyer-portal-grid,
   .buyer-portal-method,
   .buyer-portal-access-section,
+  .proof-concierge-grid,
+  .proof-concierge-method,
+  .proof-concierge-loop-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -12964,6 +13161,7 @@ svg {
   .learning-signal-grid,
   .gateway-policy-grid,
   .buyer-portal-grid,
+  .proof-concierge-grid,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13047,6 +13245,10 @@ svg {
   .buyer-portal-method-grid,
   .buyer-portal-access-strip,
   .buyer-portal-meta,
+  .proof-concierge-grid,
+  .proof-concierge-method-grid,
+  .proof-concierge-loop-strip,
+  .proof-concierge-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
@@ -13376,6 +13578,7 @@ svg {
     .learning-card header,
     .gateway-card header,
     .buyer-portal-card header,
+    .proof-concierge-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,
@@ -13697,6 +13900,7 @@ svg {
     .learning-card header,
     .gateway-card header,
     .buyer-portal-card header,
+    .proof-concierge-card header,
     .connector-freshness-row,
     .connector-owner-card,
     .import-actions,
