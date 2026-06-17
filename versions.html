@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.74 Alpha</strong>
+        <strong>v0.75 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -49,6 +49,7 @@
         <a href="simulator.html">Simulator</a>
         <a href="rollout.html">Rollout</a>
         <a href="monitor.html">Monitor</a>
+        <a href="rollback.html">Rollback</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -58,15 +59,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.74 Alpha</h1>
+          <h1>AnswerSeal v0.75 Alpha</h1>
           <p>
-            This release watches approved learning changes after they ship: live signals decide whether trust keeps learning, pauses for review, or reverses safely with a receipt.
+            This release turns live monitor warnings into governed recovery workflows: trigger review, rollback plan, human approval, restore path, and rollback receipt.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Live Rollout Monitor</h2>
+          <h2>Rollback Automation Agent</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -74,11 +75,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Live Rollout Monitor page, drift alerts, rollback triggers, outcome receipts, v0.73 rollout memory, and Review Pack v70</dd>
+              <dd>Rollback Automation Agent page, trigger review, recovery plan, human approval, restore path, rollback receipts, v0.74 monitor memory, and Review Pack v71</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.75 Alpha - Rollback Automation Agent</dd>
+              <dd>v0.76 Alpha - Trust Incident Timeline</dd>
             </div>
           </dl>
         </aside>
@@ -94,6 +95,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.75 Alpha</strong>
+            </header>
+            <h3>Rollback Automation Agent</h3>
+            <p>Added a public Rollback Automation Agent page with trigger reviews, recovery plans, human approval routing, safe restore paths, blocked automation rules, rollback receipts, v0.74 monitor memory, and Review Pack v71.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.74 Alpha</strong>
             </header>
             <h3>Live Rollout Monitor</h3>
@@ -762,39 +772,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.75 Alpha - Rollback Automation Agent</h2>
+          <h2>v0.76 Alpha - Trust Incident Timeline</h2>
           <p>
-            The next release should turn monitor warnings into a calm recovery workflow: detect the trigger, draft a rollback plan, route human approval, and record the reversal.
+            The next release should turn every trust recovery into a clear timeline: what happened, who approved it, what was restored, and which future guardrail changed.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Trigger review</h3>
-            <p>Convert monitor warnings into a clear incident-style review with signal, threshold, owner, and affected answer class.</p>
+            <h3>Incident timeline</h3>
+            <p>Show the monitor signal, trigger threshold, owner action, approval route, and recovery decision in order.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Recovery plan</h3>
-            <p>Draft the rollback, replacement source path, tenant-local memory boundary, and buyer-safe communication note.</p>
+            <h3>Evidence snapshot</h3>
+            <p>Capture the source bundle, answer class, policy rule, and trust score state before and after recovery.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Human approval</h3>
-            <p>Route the recovery plan to Security, Legal, Privacy, or AI governance before influence changes.</p>
+            <h3>Stakeholder note</h3>
+            <p>Draft internal, buyer-safe, and executive summaries without exposing private context or raw buyer text.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Rollback receipt</h3>
-            <p>Record what changed, why it reversed, what stayed useful, and how future learning should avoid the same failure.</p>
+            <h3>Recurrence guard</h3>
+            <p>Turn the lesson into a future warning rule, evaluation case, source requirement, or policy hold.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.74 Alpha</span>
+      <span>AnswerSeal v0.75 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -813,6 +823,7 @@
         <a href="simulator.html">Simulator</a>
         <a href="rollout.html">Rollout</a>
         <a href="monitor.html">Monitor</a>
+        <a href="rollback.html">Rollback</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.75 Alpha - Rollback Automation Agent
+
+Phase: Rollback Automation Agent
+
+- Added a dedicated Rollback Automation Agent page for trigger reviews, recovery plans, human approval routing, safe restore paths, blocked automation rules, and rollback receipts.
+- Added recovery cards for freshness drift rollback, private-context block, regional policy approval, buyer objection draft, low-cost restoration, and saved sealed report recovery candidates.
+- Connected landing product spine, Live Rollout Monitor, Rollout Approval Console, Policy, Network, Benefit Ledger, Pricing, and demo build labels to the new Rollback path.
+- Upgraded public storage to v0.75 while preserving v0.74, v0.73, v0.72, v0.71, v0.70, v0.69, v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded workspace storage to v0.75 while preserving v0.74 and earlier workspace memory, and upgraded export language to Review Pack v71.
+- Moved the next build toward v0.76 Trust Incident Timeline.
+
 ## v0.74 Alpha - Live Rollout Monitor
 
 Phase: Live Rollout Monitor

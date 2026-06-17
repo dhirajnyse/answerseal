@@ -10495,10 +10495,10 @@ svg {
   position: sticky;
   top: 0;
   z-index: 20;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(172px, 220px) 138px minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
+  gap: 8px 18px;
   min-height: 74px;
   padding: 12px clamp(18px, 4vw, 64px);
   border-bottom: 1px solid rgba(31, 41, 38, 0.1);
@@ -10510,8 +10510,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 0 0 184px;
-  min-width: 184px;
+  min-width: 0;
   color: var(--ink);
 }
 
@@ -10542,9 +10541,9 @@ svg {
 
 .version-badge {
   display: grid;
-  flex: 0 0 138px;
   gap: 2px;
-  min-width: 138px;
+  width: 138px;
+  min-width: 0;
   min-height: 44px;
   padding: 7px 12px;
   border: 1px solid rgba(0, 168, 137, 0.22);
@@ -13045,6 +13044,27 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-rollback-card.is-ready header strong,
+.proof-rollback-card.is-restored header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-rollback-card.is-draft header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-rollback-card.is-approval header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-rollback-card.is-blocked header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13052,7 +13072,8 @@ svg {
 .proof-weight-meta div,
 .proof-simulator-meta div,
 .proof-rollout-meta div,
-.proof-monitor-meta div {
+.proof-monitor-meta div,
+.proof-rollback-meta div {
   min-height: 82px;
 }
 
@@ -13065,7 +13086,9 @@ svg {
 .proof-rollout-scope-section,
 .proof-rollout-monitor-section,
 .proof-monitor-signal-section,
-.proof-monitor-response-section {
+.proof-monitor-response-section,
+.proof-rollback-flow-section,
+.proof-rollback-receipt-section {
   position: relative;
 }
 
@@ -13078,7 +13101,9 @@ svg {
 .proof-rollout-scope-grid article,
 .proof-rollout-monitor-strip article,
 .proof-monitor-signal-grid article,
-.proof-monitor-response-strip article {
+.proof-monitor-response-strip article,
+.proof-rollback-flow-grid article,
+.proof-rollback-receipt-strip article {
   min-height: 168px;
 }
 
@@ -13484,17 +13509,17 @@ svg {
 
   .landing-nav {
     position: relative;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
     padding: 12px 14px;
   }
 
   .landing-brand {
-    flex-basis: 184px;
-    min-width: 184px;
+    min-width: 0;
   }
 
   .landing-nav nav {
+    grid-column: 1 / -1;
     width: 100%;
     overflow-x: auto;
     padding-bottom: 2px;
@@ -13588,6 +13613,8 @@ svg {
   .proof-rollout-monitor-section,
   .proof-monitor-signal-section,
   .proof-monitor-response-section,
+  .proof-rollback-flow-section,
+  .proof-rollback-receipt-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13662,6 +13689,9 @@ svg {
   .proof-monitor-grid,
   .proof-monitor-signal-grid,
   .proof-monitor-response-strip,
+  .proof-rollback-grid,
+  .proof-rollback-flow-grid,
+  .proof-rollback-receipt-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13777,6 +13807,10 @@ svg {
   .proof-monitor-signal-grid,
   .proof-monitor-response-strip,
   .proof-monitor-meta,
+  .proof-rollback-grid,
+  .proof-rollback-flow-grid,
+  .proof-rollback-receipt-strip,
+  .proof-rollback-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

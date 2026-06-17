@@ -63,6 +63,9 @@ const rolloutApprovalStatus = document.querySelector("#rolloutApprovalStatus");
 const liveRolloutList = document.querySelector("#liveRolloutList");
 const liveRolloutScore = document.querySelector("#liveRolloutScore");
 const liveRolloutStatus = document.querySelector("#liveRolloutStatus");
+const rollbackAutomationList = document.querySelector("#rollbackAutomationList");
+const rollbackAutomationScore = document.querySelector("#rollbackAutomationScore");
+const rollbackAutomationStatus = document.querySelector("#rollbackAutomationStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -75,9 +78,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.74 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v74";
+const PUBLIC_BUILD_VERSION = "v0.75 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v75";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v74",
   "answerseal.public.reports.v73",
   "answerseal.public.reports.v72",
   "answerseal.public.reports.v71",
@@ -171,6 +175,7 @@ renderTrustWeightController();
 renderTrustImpactSimulator();
 renderRolloutApprovalConsole();
 renderLiveRolloutMonitor();
+renderRollbackAutomationAgent();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -2541,6 +2546,179 @@ function buildLiveRolloutMonitorItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderRollbackAutomationAgent() {
+  if (!rollbackAutomationList) return;
+  const entries = buildRollbackAutomationItems();
+  const readyCount = entries.filter((entry) => entry.status === "Ready" || entry.status === "Restored").length;
+  const approvalCount = entries.filter((entry) => entry.status === "Approval").length;
+  const draftCount = entries.filter((entry) => entry.status === "Draft").length;
+  const blockedCount = entries.filter((entry) => entry.status === "Blocked").length;
+  const readinessScore = Math.round(entries.reduce((total, entry) => total + entry.readiness, 0) / Math.max(entries.length, 1));
+
+  if (rollbackAutomationScore) rollbackAutomationScore.textContent = `${readinessScore}% recovery-ready`;
+  if (rollbackAutomationStatus) {
+    rollbackAutomationStatus.textContent = `${readyCount} safe recoveries, ${approvalCount} awaiting approval, ${draftCount} drafted, ${blockedCount} blocked from automation.`;
+  }
+
+  rollbackAutomationList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Ready"
+        ? "is-ready"
+        : entry.status === "Restored"
+          ? "is-restored"
+          : entry.status === "Approval"
+            ? "is-approval"
+            : entry.status === "Draft"
+              ? "is-draft"
+              : "is-blocked";
+    card.className = `proof-memory-card proof-rollback-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.trigger)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-rollback-meta">
+        <div>
+          <dt>Plan</dt>
+          <dd>${escapePublicHtml(entry.plan)}</dd>
+        </div>
+        <div>
+          <dt>Approver</dt>
+          <dd>${escapePublicHtml(entry.approver)}</dd>
+        </div>
+        <div>
+          <dt>Restore</dt>
+          <dd>${escapePublicHtml(entry.restore)}</dd>
+        </div>
+        <div>
+          <dt>Notice</dt>
+          <dd>${escapePublicHtml(entry.notice)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Automation rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Rollback receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    rollbackAutomationList.append(card);
+  });
+}
+
+function buildRollbackAutomationItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 88;
+    const approval = score >= 74 && score < 88;
+    return {
+      trigger: "Saved report recovery",
+      status: ready ? "Ready" : approval ? "Approval" : "Draft",
+      title: report.prompt || "Verified answer recovery plan",
+      summary: "A saved report can be rolled back or restored only when the trigger, owner, replacement source, and buyer-safe note are visible.",
+      readiness: ready ? 91 : approval ? 76 : 58,
+      plan: ready ? "Restore prior answer" : approval ? "Owner review" : "Draft recovery",
+      approver: ready ? "Security" : approval ? "Reviewer" : "AI governance",
+      restore: ready ? "Previous source order" : "Tenant-local memory",
+      notice: ready ? "Internal note" : "Hold buyer note",
+      rule: ready
+        ? "Automate only the reversible steps; keep buyer-facing communication behind human approval."
+        : "Do not change influence until the report has a confirmed trigger, source replacement, and owner approval.",
+      receipt: report.summary || "Recovery receipt keeps the original trust report, rollback reason, and next safe source path together.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      trigger: "Freshness drift",
+      status: "Ready",
+      title: "SOC 2 freshness rollback is ready to execute.",
+      summary: "The monitor detected a stale-source warning and the agent prepared a safe return to the previous approved source order.",
+      readiness: 92,
+      plan: "Revert source bundle",
+      approver: "Compliance",
+      restore: "Prior SOC 2 source",
+      notice: "Reviewer note",
+      rule: "Run the rollback when stale-source warnings rise and the latest source bundle is not approved.",
+      receipt: "Ready receipt: source influence reverts, the new bundle stays as a draft, and Compliance owns the refresh.",
+      href: "monitor.html",
+      action: "Open monitor",
+    },
+    {
+      trigger: "Private context",
+      status: "Blocked",
+      title: "Raw buyer objection cannot be automated into shared recovery.",
+      summary: "The rollback is required, but the exact buyer wording must remain tenant-local and cannot train a shared recovery recipe.",
+      readiness: 24,
+      plan: "Manual privacy review",
+      approver: "Privacy",
+      restore: "Tenant-local only",
+      notice: "No buyer copy",
+      rule: "Block automation whenever recovery depends on raw buyer text, account notes, exact prompts, contracts, or private files.",
+      receipt: "Blocked receipt: shared influence is removed and the useful lesson remains local until Privacy approves abstraction.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      trigger: "Regional policy",
+      status: "Approval",
+      title: "Country-specific proof pattern waits for legal recovery approval.",
+      summary: "The monitor paused a regional rollout and the agent drafted a replacement boundary for legal sign-off.",
+      readiness: 71,
+      plan: "Limit to EU buyers",
+      approver: "Legal",
+      restore: "Global default",
+      notice: "Scope note",
+      rule: "Require legal approval before a regional rollback changes source eligibility or buyer-facing language.",
+      receipt: "Approval receipt: recovery stays drafted until Legal approves the country boundary and replacement proof path.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      trigger: "Buyer objection",
+      status: "Draft",
+      title: "Repeated objection creates a safer answer replacement draft.",
+      summary: "The agent drafts a lower-risk answer, keeps the approved source path attached, and routes the buyer note to the owner.",
+      readiness: 64,
+      plan: "Draft safer answer",
+      approver: "Sales engineering",
+      restore: "Approved template",
+      notice: "Buyer-safe reply",
+      rule: "Draft recovery copy when objections repeat, but keep final buyer communication under human approval.",
+      receipt: "Draft receipt: proposed replacement copy is ready, source path is attached, and the prior answer remains live until approval.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      trigger: "Low-cost reversal",
+      status: "Restored",
+      title: "Source bundle rollout was reversed and the useful lesson was preserved.",
+      summary: "A reversible source-order change was rolled back cleanly while the accepted evidence pattern stayed available for review.",
+      readiness: 95,
+      plan: "Rollback complete",
+      approver: "AI governance",
+      restore: "Previous influence",
+      notice: "Receipt only",
+      rule: "Keep successful rollback lessons as reviewable patterns, not automatic future behavior.",
+      receipt: "Restored receipt: influence returned to the previous weight, benefit credit paused, and the lesson remains in governance review.",
+      href: "benefit.html",
+      action: "Open benefit ledger",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -2757,7 +2935,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.74 Alpha - Live Rollout Monitor",
+      "Pilot phase: AnswerSeal v0.75 Alpha - Rollback Automation Agent",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
