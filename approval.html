@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Guard Tuning Queue</title>
+    <title>AnswerSeal | Guard Approval Lab</title>
     <meta
       name="description"
-      content="AnswerSeal Guard Tuning Queue turns outcome drift into owner-approved threshold edits, approval routes, test plans, and tuning receipts."
+      content="AnswerSeal Guard Approval Lab turns guard tuning changes into owner approval packets with confidence checks, rationale capture, and approval receipts."
     />
     <meta name="theme-color" content="#00a889" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="landing-page product-page proof-network-page proof-tuning-page">
+  <body class="landing-page product-page proof-network-page proof-approval-page">
     <header class="landing-nav" aria-label="Site header">
       <a class="landing-brand" href="./" aria-label="AnswerSeal home">
         <img src="assets/answerseal-logo.svg" alt="" />
@@ -50,107 +50,107 @@
         <a href="incident.html">Incident</a>
         <a href="guard.html">Guard</a>
         <a href="outcome.html">Outcome</a>
-        <a href="tuning.html" aria-current="page">Tuning</a>
-                <a href="approval.html">Approval</a>
+        <a href="tuning.html">Tuning</a>
+        <a href="approval.html" aria-current="page">Approval</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
     </header>
 
     <main>
-      <section class="product-hero proof-tuning-hero">
+      <section class="product-hero proof-approval-hero">
         <div>
-          <span class="hero-kicker">Guard tuning queue</span>
-          <h1>Tune the guard before teams work around it.</h1>
+          <span class="hero-kicker">Guard approval lab</span>
+          <h1>Approve the change only when the proof is calm.</h1>
           <p>
-            AnswerSeal converts outcome drift into small, owner-approved tuning tasks. Each task shows the old threshold, proposed
-            change, expected lift, approval route, test plan, and reversal receipt before behavior changes.
+            v0.80 packages each guard tune into an owner approval packet. Teams see the proposed change, confidence,
+            evidence state, policy fit, rationale, and rollback path before the tune reaches buyer-facing work.
           </p>
         </div>
         <aside class="product-status-card">
-          <span>Tuning readiness</span>
-          <strong id="guardTuningScore">0% ready</strong>
-          <p id="guardTuningStatus">Guard tuning work is waiting for outcome signals.</p>
+          <span>Approval readiness</span>
+          <strong id="guardApprovalScore">0% ready</strong>
+          <p id="guardApprovalStatus">Approval packets are waiting for tuning signals.</p>
         </aside>
       </section>
 
-      <section class="proof-memory-shell proof-tuning-shell" aria-label="Guard tuning queue">
+      <section class="proof-memory-shell proof-approval-shell" aria-label="Guard approval lab">
         <div class="dashboard-toolbar">
-          <span class="hero-kicker">Tuning work</span>
+          <span class="hero-kicker">Approval packets</span>
           <div class="dashboard-actions">
+            <a class="hero-secondary" href="tuning.html">Open Tuning Queue</a>
             <a class="hero-secondary" href="outcome.html">Open Outcome Monitor</a>
-            <a class="hero-secondary" href="guard.html">Open Guard Engine</a>
-            <a class="hero-secondary" href="reviews.html">Open Reviews</a>
+            <a class="hero-secondary" href="policy.html">Open Policy</a>
             <a class="hero-primary" href="verify.html">Verify New Answer</a>
           </div>
         </div>
 
-        <div class="proof-memory-grid proof-tuning-grid" id="guardTuningList"></div>
+        <div class="proof-memory-grid proof-approval-grid" id="guardApprovalList"></div>
       </section>
 
-      <section class="proof-network-firewall proof-tuning-flow-section" aria-label="Guard tuning anatomy">
+      <section class="proof-network-firewall proof-approval-flow-section" aria-label="Guard approval anatomy">
         <div>
-          <span class="hero-kicker">Tuning anatomy</span>
-          <h2>A tuning task is not a suggestion. It is a governed change.</h2>
+          <span class="hero-kicker">Approval anatomy</span>
+          <h2>Approval is a packet, not a button.</h2>
           <p>
-            The queue keeps closed-loop AI calm: outcome drift becomes a small edit, a named owner reviews it, a test proves
-            the change is safe, and the receipt keeps rollback one decision away.
+            A tune can ship only when the approver sees why it exists, what evidence passed, where policy still applies,
+            and how to reverse it. That keeps closed-loop learning strong without making it reckless.
           </p>
         </div>
 
-        <div class="proof-network-firewall-grid proof-tuning-flow-grid">
+        <div class="proof-network-firewall-grid proof-approval-flow-grid">
           <article>
-            <span>Drift</span>
-            <strong>Why tune</strong>
-            <p>False blocks, reviewer load, stale warnings, or weak lift must explain why the guard needs a change.</p>
+            <span>Change</span>
+            <strong>What will move</strong>
+            <p>Show the threshold, rule, route, or warning level that will change if the owner approves.</p>
           </article>
           <article>
-            <span>Edit</span>
-            <strong>Small threshold move</strong>
-            <p>Owners change one clear rule: source age, warning sensitivity, replay scope, or approval route.</p>
+            <span>Confidence</span>
+            <strong>Why it is safe</strong>
+            <p>Pair reviewer confidence with evidence coverage, policy alignment, and test status.</p>
           </article>
           <article>
-            <span>Test</span>
-            <strong>Bench before rollout</strong>
-            <p>The proposed tune must pass scenarios before it can influence buyer-facing answers.</p>
+            <span>Rationale</span>
+            <strong>Owner explains</strong>
+            <p>Capture the human reason for approval so future reviewers understand the decision.</p>
           </article>
           <article>
-            <span>Tuning receipt</span>
-            <strong>Old to new</strong>
-            <p>The receipt records old value, new value, expected lift, approver, and reversal path.</p>
+            <span>Approval receipt</span>
+            <strong>Ship or reverse</strong>
+            <p>Record approver, scope, evidence, test result, changed threshold, and rollback path.</p>
           </article>
         </div>
       </section>
 
-      <section class="proof-network-lift-section proof-tuning-summary-section" aria-label="Guard tuning operating rules">
+      <section class="proof-network-lift-section proof-approval-summary-section" aria-label="Guard approval operating rules">
         <div>
-          <span class="hero-kicker">Calm control</span>
-          <h2>Learning loops should improve quietly, with humans still in charge.</h2>
+          <span class="hero-kicker">Human control</span>
+          <h2>World-class AI governance should feel boring in the best way.</h2>
           <p>
-            Shared learning can help every organization only when each tenant can hold, tune, or reverse the change locally.
-            The tuning queue turns reinforcement into controlled product operations.
+            Approval Lab keeps the product simple: every improvement has an owner, every owner sees the risk, and every
+            shipped tune keeps a receipt that protects local policy, regional rollout, and future audits.
           </p>
         </div>
-        <div class="proof-network-lift-strip proof-tuning-summary-strip">
+        <div class="proof-network-lift-strip proof-approval-summary-strip">
           <article>
             <span>Approve</span>
-            <strong>Ready tune</strong>
-            <p>Low risk, clean test plan, named owner, and clear reversal path.</p>
+            <strong>Ship narrowly</strong>
+            <p>Evidence, policy, confidence, and rollback are aligned for a scoped tune.</p>
+          </article>
+          <article>
+            <span>Ask</span>
+            <strong>Need rationale</strong>
+            <p>The owner must explain the safe reason before behavior changes.</p>
           </article>
           <article>
             <span>Revise</span>
-            <strong>Too broad</strong>
-            <p>Split the tune into a smaller threshold change before it reaches the workflow.</p>
-          </article>
-          <article>
-            <span>Hold</span>
-            <strong>Not enough signal</strong>
-            <p>Keep the existing guard until more accepted outcomes or reviewer evidence arrives.</p>
+            <strong>Reduce scope</strong>
+            <p>The tune is promising, but it should become smaller or better tested first.</p>
           </article>
           <article>
             <span>Reject</span>
-            <strong>Trust would drop</strong>
-            <p>If the tune weakens proof or policy, it becomes a lesson instead of a release.</p>
+            <strong>Protect trust</strong>
+            <p>If proof, policy, or rollback are weak, the tune becomes a lesson instead of a release.</p>
           </article>
         </div>
       </section>
@@ -180,8 +180,8 @@
       <a href="guard.html">Guard</a>
       <a href="outcome.html">Outcome</a>
       <a href="tuning.html">Tuning</a>
-              <a href="approval.html">Approval</a>
-        <a href="pricing.html">Pricing</a>
+      <a href="approval.html">Approval</a>
+      <a href="pricing.html">Pricing</a>
       <a href="versions.html">Build Phases</a>
     </footer>
     <script src="landing.js"></script>

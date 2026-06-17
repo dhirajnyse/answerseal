@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.80 Alpha - Guard Approval Lab
+
+Phase: Guard Approval Lab
+
+- Added a dedicated Guard Approval Lab page for owner approval packets, confidence checks, policy fit, evidence review, owner rationale, and rollback-ready approval receipts.
+- Added public approval cards for proposed guard changes, readiness, owner, rationale, evidence checks, receipt state, and next action.
+- Connected landing product spine, Guard Tuning Queue, Pricing, Build Phases, demo build labels, and public navigation to the new Approval path.
+- Upgraded public storage to v0.80 while preserving v0.79 and earlier report memory.
+- Upgraded workspace storage to v0.80 while preserving v0.79 and earlier workspace memory, and upgraded export language to Review Pack v76.
+- Moved the next build toward v0.81 Approval Release Ledger.
+
 ## v0.79 Alpha - Guard Tuning Queue
 
 Phase: Guard Tuning Queue

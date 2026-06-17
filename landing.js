@@ -78,6 +78,9 @@ const outcomeMonitorStatus = document.querySelector("#outcomeMonitorStatus");
 const guardTuningList = document.querySelector("#guardTuningList");
 const guardTuningScore = document.querySelector("#guardTuningScore");
 const guardTuningStatus = document.querySelector("#guardTuningStatus");
+const guardApprovalList = document.querySelector("#guardApprovalList");
+const guardApprovalScore = document.querySelector("#guardApprovalScore");
+const guardApprovalStatus = document.querySelector("#guardApprovalStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -90,9 +93,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.79 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v79";
+const PUBLIC_BUILD_VERSION = "v0.80 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v80";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v79",
   "answerseal.public.reports.v78",
   "answerseal.public.reports.v77",
   "answerseal.public.reports.v76",
@@ -196,6 +200,7 @@ renderTrustIncidentTimeline();
 renderRecurrenceGuardEngine();
 renderGuardOutcomeMonitor();
 renderGuardTuningQueue();
+renderGuardApprovalLab();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -3440,6 +3445,190 @@ function buildGuardTuningItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderGuardApprovalLab() {
+  if (!guardApprovalList) return;
+  const entries = buildGuardApprovalItems();
+  const readyCount = entries.filter((entry) => entry.status === "Approve").length;
+  const askCount = entries.filter((entry) => entry.status === "Ask" || entry.status === "Revise").length;
+  const ownerCount = new Set(entries.map((entry) => entry.owner)).size;
+  const readinessScore = Math.round(entries.reduce((total, entry) => total + entry.readiness, 0) / Math.max(entries.length, 1));
+
+  if (guardApprovalScore) guardApprovalScore.textContent = `${readinessScore}% approval-ready`;
+  if (guardApprovalStatus) {
+    guardApprovalStatus.textContent = `${readyCount} packets can approve, ${askCount} need owner detail, ${ownerCount} owner groups accountable.`;
+  }
+
+  guardApprovalList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Approve"
+        ? "is-approve"
+        : entry.status === "Ask"
+          ? "is-ask"
+          : entry.status === "Revise"
+            ? "is-revise"
+            : "is-reject";
+    card.className = `proof-memory-card proof-approval-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.packet)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-approval-meta">
+        <div>
+          <dt>Change</dt>
+          <dd>${escapePublicHtml(entry.change)}</dd>
+        </div>
+        <div>
+          <dt>Confidence</dt>
+          <dd>${escapePublicHtml(entry.confidence)}</dd>
+        </div>
+        <div>
+          <dt>Policy fit</dt>
+          <dd>${escapePublicHtml(entry.policy)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Approval rationale</span>
+        <p>${escapePublicHtml(entry.rationale)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Evidence check</span>
+        <p>${escapePublicHtml(entry.evidence)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Approval receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    guardApprovalList.append(card);
+  });
+}
+
+function buildGuardApprovalItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const approve = score >= 90;
+    const revise = score >= 76 && score < 90;
+    return {
+      packet: "Saved report approval",
+      status: approve ? "Approve" : revise ? "Ask" : "Revise",
+      title: report.prompt || "Saved report approval packet",
+      summary: "Saved report signals can approve a future tune only when the owner sees proof, confidence, and rollback.",
+      readiness: approve ? 92 : revise ? 76 : 64,
+      change: approve ? "Promote proof class" : revise ? "Request rationale" : "Narrow scope",
+      confidence: approve ? "High" : revise ? "Medium" : "Low",
+      policy: approve ? "Aligned" : revise ? "Needs note" : "Hold",
+      owner: approve ? "AI governance" : revise ? "Compliance" : "Reviewer",
+      rationale: approve
+        ? "The answer has strong source support and can tune a reusable proof class after owner approval."
+        : revise
+          ? "Owner should explain why the tune is safe before the report can influence future answers."
+          : "Keep the report as local learning until proof and confidence improve.",
+      evidence: approve
+        ? "Trust score, source coverage, and sealed report summary are present."
+        : "Run another verification and attach the missing owner note before approval.",
+      receipt: report.summary || "Approval receipt waits for approver, evidence, confidence, rationale, and rollback path.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      packet: "Freshness gate tune",
+      status: "Approve",
+      title: "Approve 90-day to 120-day SOC 2 freshness gate change.",
+      summary: "The tuning packet has clean evidence, low rollback cost, and a narrow source-age threshold change.",
+      readiness: 95,
+      change: "90 days -> 120 days",
+      confidence: "High",
+      policy: "Aligned",
+      owner: "Compliance",
+      rationale: "Stale-source warnings fell and no good answers were blocked, so the wider threshold reduces owner load without weakening proof.",
+      evidence: "Five SOC 2 replay scenarios passed source freshness, citation, and reviewer-load checks.",
+      receipt: "Approval receipt: Compliance approved the 120-day gate with rollback to 90 days if stale warnings rise.",
+      href: "tuning.html",
+      action: "Open tuning",
+    },
+    {
+      packet: "Regional hold tune",
+      status: "Revise",
+      title: "Revise EU proof pass before Legal approves rollout.",
+      summary: "The change is useful, but the approval packet still needs a narrower country fallback and privacy confirmation.",
+      readiness: 72,
+      change: "All held -> EU pass",
+      confidence: "Medium",
+      policy: "Partial",
+      owner: "Legal",
+      rationale: "Legal should narrow the tune to approved EU evidence and keep non-EU proof on the existing hold path.",
+      evidence: "EU scenario passed, but global fallback needs one more policy replay.",
+      receipt: "Revise receipt: no rollout until Legal adds country fallback and Privacy confirms no buyer-specific context moves.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      packet: "Privacy boundary wording",
+      status: "Approve",
+      title: "Approve clearer local-hold wording without changing the privacy boundary.",
+      summary: "The packet improves reviewer comprehension while preserving tenant-safe learning controls.",
+      readiness: 91,
+      change: "Blocked -> blocked with reason",
+      confidence: "High",
+      policy: "Aligned",
+      owner: "Privacy",
+      rationale: "The tune changes explanation text only; raw buyer context still never reaches shared memory.",
+      evidence: "Private-note replay passed network firewall and sealed-report export checks.",
+      receipt: "Approval receipt: Privacy approved clearer wording with no expansion of shared-memory scope.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      packet: "Objection replay tune",
+      status: "Ask",
+      title: "Ask Sales engineering for accepted-reply rationale before replay influence changes.",
+      summary: "The tune may reduce repeated buyer objections, but the owner must attach outcome rationale first.",
+      readiness: 69,
+      change: "One reply -> three replies",
+      confidence: "Medium",
+      policy: "Aligned",
+      owner: "Sales engineering",
+      rationale: "Owner needs to explain why three accepted replies are enough to tune future objection handling.",
+      evidence: "Two accepted replies are present; one more buyer outcome is needed before approval.",
+      receipt: "Ask receipt: packet stays pending until Sales engineering captures the missing rationale and outcome.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      packet: "Simulation ceiling tune",
+      status: "Approve",
+      title: "Approve lower rollback-cost ceiling before source weights increase.",
+      summary: "The simulator shows positive lift only when rollback cost remains low, so the tighter ceiling is safe.",
+      readiness: 93,
+      change: "Medium cost -> low cost",
+      confidence: "High",
+      policy: "Aligned",
+      owner: "AI governance",
+      rationale: "The tune prevents overreach by forcing future source-weight changes to stay reversible.",
+      evidence: "Simulator, monitor, and rollback replays passed with low owner load and clear reversal path.",
+      receipt: "Approval receipt: AI governance approved the tighter ceiling with rollback to prior weight rules if lift drops.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -3656,7 +3845,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.79 Alpha - Guard Tuning Queue",
+      "Pilot phase: AnswerSeal v0.80 Alpha - Guard Approval Lab",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

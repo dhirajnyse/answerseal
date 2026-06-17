@@ -10526,17 +10526,23 @@ svg {
 }
 
 .landing-brand strong {
+  overflow: hidden;
   font-size: 1.02rem;
   line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .landing-brand small {
+  overflow: hidden;
   color: var(--muted);
   font-size: 0.76rem;
   font-weight: 850;
   letter-spacing: 0;
   line-height: 1.12;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .version-badge {
@@ -10578,9 +10584,11 @@ svg {
   flex: 1 1 auto;
   gap: 8px;
   min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-inline: contain;
+  padding-inline: 2px;
   scrollbar-width: none;
   white-space: nowrap;
 }
@@ -13149,6 +13157,26 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-approval-card.is-approve header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-approval-card.is-ask header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-approval-card.is-revise header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-approval-card.is-reject header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13161,7 +13189,8 @@ svg {
 .proof-incident-meta div,
 .proof-guard-meta div,
 .proof-outcome-meta div,
-.proof-tuning-meta div {
+.proof-tuning-meta div,
+.proof-approval-meta div {
   min-height: 82px;
 }
 
@@ -13184,7 +13213,9 @@ svg {
 .proof-outcome-flow-section,
 .proof-outcome-summary-section,
 .proof-tuning-flow-section,
-.proof-tuning-summary-section {
+.proof-tuning-summary-section,
+.proof-approval-flow-section,
+.proof-approval-summary-section {
   position: relative;
 }
 
@@ -13207,7 +13238,9 @@ svg {
 .proof-outcome-flow-grid article,
 .proof-outcome-summary-strip article,
 .proof-tuning-flow-grid article,
-.proof-tuning-summary-strip article {
+.proof-tuning-summary-strip article,
+.proof-approval-flow-grid article,
+.proof-approval-summary-strip article {
   min-height: 168px;
 }
 
@@ -13810,6 +13843,9 @@ svg {
   .proof-tuning-grid,
   .proof-tuning-flow-grid,
   .proof-tuning-summary-strip,
+  .proof-approval-grid,
+  .proof-approval-flow-grid,
+  .proof-approval-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13946,6 +13982,10 @@ svg {
   .proof-tuning-flow-grid,
   .proof-tuning-summary-strip,
   .proof-tuning-meta,
+  .proof-approval-grid,
+  .proof-approval-flow-grid,
+  .proof-approval-summary-strip,
+  .proof-approval-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
