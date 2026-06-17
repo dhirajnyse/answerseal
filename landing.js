@@ -51,6 +51,9 @@ const proofNetworkStatus = document.querySelector("#proofNetworkStatus");
 const proofBenefitList = document.querySelector("#proofBenefitList");
 const proofBenefitScore = document.querySelector("#proofBenefitScore");
 const proofBenefitStatus = document.querySelector("#proofBenefitStatus");
+const trustWeightList = document.querySelector("#trustWeightList");
+const trustWeightScore = document.querySelector("#trustWeightScore");
+const trustWeightStatus = document.querySelector("#trustWeightStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -63,9 +66,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.70 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v70";
+const PUBLIC_BUILD_VERSION = "v0.71 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v71";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v70",
   "answerseal.public.reports.v69",
   "answerseal.public.reports.v68",
   "answerseal.public.reports.v67",
@@ -151,6 +155,7 @@ renderProofConcierge();
 renderProofLearningMemory();
 renderTenantSafeProofNetwork();
 renderNetworkBenefitLedger();
+renderTrustWeightController();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -1852,6 +1857,173 @@ function buildNetworkBenefitLedgerItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderTrustWeightController() {
+  if (!trustWeightList) return;
+  const entries = buildTrustWeightControllerItems();
+  const governedEntries = entries.filter((entry) => entry.status !== "Hold");
+  const averageWeight = Math.round(entries.reduce((total, entry) => total + entry.weight, 0) / Math.max(entries.length, 1));
+  const rollbackCount = entries.filter((entry) => entry.status === "Rollback").length;
+  const overrideCount = entries.filter((entry) => entry.status === "Override").length;
+
+  if (trustWeightScore) trustWeightScore.textContent = `${averageWeight}% governed`;
+  if (trustWeightStatus) {
+    trustWeightStatus.textContent = `${governedEntries.length} signal${governedEntries.length === 1 ? "" : "s"} under weight control; ${rollbackCount + overrideCount} have override or rollback protection.`;
+  }
+
+  trustWeightList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Raise"
+        ? "is-raise"
+        : entry.status === "Decay"
+          ? "is-decay"
+          : entry.status === "Rollback"
+            ? "is-rollback"
+            : entry.status === "Override"
+              ? "is-override"
+              : "is-hold";
+
+    card.className = `proof-memory-card proof-weight-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.type)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-weight-meta">
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(entry.signal)}</dd>
+        </div>
+        <div>
+          <dt>Weight</dt>
+          <dd>${entry.weight}%</dd>
+        </div>
+        <div>
+          <dt>Decay</dt>
+          <dd>${escapePublicHtml(entry.decay)}</dd>
+        </div>
+        <div>
+          <dt>Control</dt>
+          <dd>${escapePublicHtml(entry.control)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Weight rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Rollback receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    trustWeightList.append(card);
+  });
+}
+
+function buildTrustWeightControllerItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const raise = score >= 92;
+    const decay = score >= 84 && score < 92;
+    return {
+      type: "Saved report signal",
+      status: raise ? "Raise" : decay ? "Decay" : "Hold",
+      title: report.prompt || "Verified answer weight candidate",
+      summary: "A saved sealed report can influence future answers only after score, source coverage, and reviewer outcome agree.",
+      signal: raise ? "Approved answer class" : "Local answer pattern",
+      weight: raise ? 82 : decay ? 54 : 28,
+      decay: raise ? "30-day freshness watch" : decay ? "Immediate reviewer watch" : "No network influence",
+      control: raise ? "Tenant opt-in" : "Tenant-local",
+      rule: raise
+        ? "Increase influence only while future answers keep independent sources attached and avoid new risk flags."
+        : "Do not raise this signal until reviewer feedback and source coverage prove repeatable quality.",
+      receipt: report.summary || "Weight controller keeps the signal reversible until a future review proves benefit.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      type: "Weight increase",
+      status: "Raise",
+      title: "AI training answer class earns controlled lift.",
+      summary: "The pattern improved a second review, kept tenant evidence attached, and avoided new risk flags.",
+      signal: "Question class + proof type",
+      weight: 86,
+      decay: "45 days",
+      control: "Approved class",
+      rule: "Raise only the abstract class signal, never exact prompts, answer text, buyer names, files, or tenant notes.",
+      receipt: "Raised from 72% to 86% after two approved reviews and one credited benefit receipt.",
+      href: "benefit.html",
+      action: "Open benefit ledger",
+    },
+    {
+      type: "Decay pressure",
+      status: "Decay",
+      title: "SOC 2 freshness signal loses influence after repeated edits.",
+      summary: "The signal still helps locate sources, but reviewers changed the final wording twice.",
+      signal: "Freshness band",
+      weight: 48,
+      decay: "Active",
+      control: "Security owner",
+      rule: "Lower automation weight when reviewers repeatedly edit the recommendation, even if search time improved.",
+      receipt: "Decayed from 67% to 48% until the source template is refreshed and passes the bench.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+    {
+      type: "Tenant override",
+      status: "Override",
+      title: "Workspace blocks regional signal from default recommendations.",
+      summary: "The network pattern may help similar buyers, but this tenant requires local country approval first.",
+      signal: "Regional proof pattern",
+      weight: 0,
+      decay: "Override lock",
+      control: "Tenant policy",
+      rule: "Tenant policy wins over shared weight whenever country, buyer-rights, or data-residency assumptions are stricter.",
+      receipt: "Override holds network influence at 0% until legal approves the regional evidence class.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      type: "Rollback",
+      status: "Rollback",
+      title: "Raw objection signal removed from the controller.",
+      summary: "The signal was useful locally, but it depended on exact buyer context and cannot influence shared recommendations.",
+      signal: "Raw buyer text",
+      weight: 0,
+      decay: "Immediate",
+      control: "Privacy firewall",
+      rule: "Rollback any weight change that depends on raw customer text, files, contracts, prompts, or private account context.",
+      receipt: "Rolled back from 31% to 0% and marked local-only after privacy review.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      type: "Safe baseline",
+      status: "Raise",
+      title: "Approved source bundle becomes the default starting point.",
+      summary: "SOC 2, AI Usage Standard, and security policy sources are stable enough to shape future verified drafts.",
+      signal: "Approved source bundle",
+      weight: 78,
+      decay: "Source review date",
+      control: "Owner approved",
+      rule: "Use a stronger default only while the receiving answer cites its own attached evidence and passes policy gates.",
+      receipt: "Raised because source bundle reuse improved clarity without weakening governance or tenant boundaries.",
+      href: "registry.html",
+      action: "Open registry",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -2068,7 +2240,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.70 Alpha - Network Benefit Ledger",
+      "Pilot phase: AnswerSeal v0.71 Alpha - Trust Weight Controller",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

@@ -12939,17 +12939,50 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-weight-card.is-raise header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-weight-card.is-decay header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-weight-card.is-override header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-weight-card.is-rollback header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
+.proof-weight-card.is-hold header strong {
+  color: #56645f;
+  background: rgba(220, 251, 244, 0.7);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
 
+.proof-weight-meta div {
+  min-height: 82px;
+}
+
 .proof-benefit-measure-section,
-.proof-benefit-roi-section {
+.proof-benefit-roi-section,
+.proof-weight-control-section,
+.proof-weight-safety-section {
   position: relative;
 }
 
 .proof-benefit-measure-grid article,
-.proof-benefit-roi-strip article {
+.proof-benefit-roi-strip article,
+.proof-weight-control-grid article,
+.proof-weight-safety-strip article {
   min-height: 168px;
 }
 

@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.71 Alpha - Trust Weight Controller
+
+Phase: Trust Weight Controller
+
+- Added a dedicated Trust Weight Controller page for controlled signal influence, decay pressure, tenant overrides, rollback receipts, and safe reinforcement rules.
+- Added weight cards for approved answer-class lift, SOC 2 freshness decay, regional tenant override, raw buyer text rollback, approved source bundle weight, and saved sealed report candidates.
+- Connected the landing product spine, Benefit Ledger, Network, Policy, Evaluation Bench, Registry, Verification, Reports, Pricing, and demo build labels to the new Weight path.
+- Upgraded public storage to v0.71 while preserving v0.70, v0.69, v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded workspace storage to v0.71 while preserving v0.70 and earlier workspace memory, and upgraded export language to Review Pack v67.
+- Moved the next build toward v0.72 Trust Impact Simulator.
+
 ## v0.70 Alpha - Network Benefit Ledger
 
 Phase: Network Benefit Ledger
