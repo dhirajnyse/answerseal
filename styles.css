@@ -10510,7 +10510,8 @@ svg {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0;
+  flex: 0 0 184px;
+  min-width: 184px;
   color: var(--ink);
 }
 
@@ -10522,6 +10523,7 @@ svg {
 .landing-brand span {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .landing-brand strong {
@@ -10534,11 +10536,13 @@ svg {
   font-size: 0.76rem;
   font-weight: 850;
   letter-spacing: 0;
+  line-height: 1.12;
   text-transform: uppercase;
 }
 
 .version-badge {
   display: grid;
+  flex: 0 0 138px;
   gap: 2px;
   min-width: 138px;
   min-height: 44px;
@@ -10572,12 +10576,23 @@ svg {
 .landing-nav nav {
   display: flex;
   align-items: center;
+  flex: 1 1 auto;
   gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.landing-nav nav::-webkit-scrollbar {
+  display: none;
 }
 
 .landing-nav nav a {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   min-height: 38px;
   padding: 0 12px;
   border-radius: 8px;
@@ -13444,6 +13459,11 @@ svg {
     padding: 12px 14px;
   }
 
+  .landing-brand {
+    flex-basis: 184px;
+    min-width: 184px;
+  }
+
   .landing-nav nav {
     width: 100%;
     overflow-x: auto;
@@ -14260,6 +14280,10 @@ svg {
 
   .landing-nav {
     display: grid;
+  }
+
+  .landing-brand {
+    min-width: 0;
   }
 
   .version-badge {
