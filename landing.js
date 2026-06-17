@@ -66,6 +66,9 @@ const liveRolloutStatus = document.querySelector("#liveRolloutStatus");
 const rollbackAutomationList = document.querySelector("#rollbackAutomationList");
 const rollbackAutomationScore = document.querySelector("#rollbackAutomationScore");
 const rollbackAutomationStatus = document.querySelector("#rollbackAutomationStatus");
+const trustIncidentList = document.querySelector("#trustIncidentList");
+const trustIncidentScore = document.querySelector("#trustIncidentScore");
+const trustIncidentStatus = document.querySelector("#trustIncidentStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -78,9 +81,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.75 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v75";
+const PUBLIC_BUILD_VERSION = "v0.76 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v76";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v75",
   "answerseal.public.reports.v74",
   "answerseal.public.reports.v73",
   "answerseal.public.reports.v72",
@@ -176,6 +180,7 @@ renderTrustImpactSimulator();
 renderRolloutApprovalConsole();
 renderLiveRolloutMonitor();
 renderRollbackAutomationAgent();
+renderTrustIncidentTimeline();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -2719,6 +2724,177 @@ function buildRollbackAutomationItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderTrustIncidentTimeline() {
+  if (!trustIncidentList) return;
+  const entries = buildTrustIncidentItems();
+  const closedCount = entries.filter((entry) => entry.status === "Recovered" || entry.status === "Guarded").length;
+  const openCount = entries.filter((entry) => entry.status === "Open" || entry.status === "Watch").length;
+  const ownerCount = new Set(entries.map((entry) => entry.owner)).size;
+  const readinessScore = Math.round(entries.reduce((total, entry) => total + entry.readiness, 0) / Math.max(entries.length, 1));
+
+  if (trustIncidentScore) trustIncidentScore.textContent = `${readinessScore}% timeline-ready`;
+  if (trustIncidentStatus) {
+    trustIncidentStatus.textContent = `${closedCount} recovered incidents, ${openCount} still watched, ${ownerCount} owner groups visible.`;
+  }
+
+  trustIncidentList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Recovered"
+        ? "is-recovered"
+        : entry.status === "Guarded"
+          ? "is-guarded"
+          : entry.status === "Contained"
+            ? "is-contained"
+            : entry.status === "Watch"
+              ? "is-watch"
+              : "is-open";
+    card.className = `proof-memory-card proof-incident-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.incident)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-incident-meta">
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(entry.signal)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Snapshot</dt>
+          <dd>${escapePublicHtml(entry.snapshot)}</dd>
+        </div>
+        <div>
+          <dt>Decision</dt>
+          <dd>${escapePublicHtml(entry.decision)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Timeline</span>
+        <p>${escapePublicHtml(entry.timeline)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Recurrence guard</span>
+        <p>${escapePublicHtml(entry.guard)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    trustIncidentList.append(card);
+  });
+}
+
+function buildTrustIncidentItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const recovered = score >= 88;
+    return {
+      incident: "Saved report timeline",
+      status: recovered ? "Guarded" : score >= 74 ? "Contained" : "Open",
+      title: report.prompt || "Verified answer incident timeline",
+      summary: "A saved report can become an incident record when the signal, evidence snapshot, owner action, and recurrence guard travel together.",
+      readiness: recovered ? 91 : score >= 74 ? 78 : 59,
+      signal: recovered ? "Low risk report" : "Review needed",
+      owner: recovered ? "AI governance" : "Reviewer",
+      snapshot: `${score || 0}% trust score`,
+      decision: recovered ? "Promote guard" : "Hold timeline",
+      timeline: report.summary || "Prompt, answer, trust score, risk flags, source state, and improved answer are preserved in order.",
+      guard: recovered
+        ? "Reusable lesson can become a future evaluation case after owner approval."
+        : "Do not promote this report until missing proof, unsupported claims, and owner review are resolved.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      incident: "Freshness drift",
+      status: "Recovered",
+      title: "SOC 2 freshness drift was reversed before buyer copy shipped.",
+      summary: "The monitor raised stale-source warnings, rollback restored the previous source order, and the incident record keeps the before and after evidence snapshot.",
+      readiness: 94,
+      signal: "Stale source spike",
+      owner: "Compliance",
+      snapshot: "83% to 91%",
+      decision: "Restore prior source",
+      timeline: "Monitor signal -> stale threshold crossed -> Compliance approved source-order restore -> buyer-safe note drafted -> recurrence rule created.",
+      guard: "Future SOC 2 answers require a fresh report or approved bridge note before source influence can rise.",
+      href: "rollback.html",
+      action: "Open rollback",
+    },
+    {
+      incident: "Private context",
+      status: "Contained",
+      title: "Raw buyer objection stayed tenant-local after recovery review.",
+      summary: "The incident timeline records that raw buyer wording influenced a draft, then the recovery path blocked network learning and preserved only an abstract lesson.",
+      readiness: 86,
+      signal: "Private text warning",
+      owner: "Privacy",
+      snapshot: "Network hold",
+      decision: "Block sharing",
+      timeline: "Buyer objection detected -> private wording flagged -> Privacy blocked shared influence -> local-only lesson retained.",
+      guard: "Exact buyer wording, account notes, private prompts, contracts, and customer names cannot become shared recurrence signals.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      incident: "Regional policy",
+      status: "Watch",
+      title: "Country-specific recovery remains watched until legal closes the exception.",
+      summary: "The timeline shows the regional policy hold, affected answer class, legal owner, and default global source path while approval is pending.",
+      readiness: 72,
+      signal: "Country rule hold",
+      owner: "Legal",
+      snapshot: "EU-only boundary",
+      decision: "Await approval",
+      timeline: "Regional monitor pause -> legal route opened -> global default restored -> scoped EU evidence path drafted.",
+      guard: "Regional proof patterns cannot override global defaults until residency, buyer export, and AI learning rules are approved.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      incident: "Buyer challenge",
+      status: "Open",
+      title: "Repeated buyer challenge needs an internal and buyer-safe incident note.",
+      summary: "The event has a safe reply draft, but the owner still needs to attach the final source snapshot and recovery decision.",
+      readiness: 63,
+      signal: "Objection repeated",
+      owner: "Sales engineering",
+      snapshot: "Draft answer",
+      decision: "Needs owner",
+      timeline: "Challenge repeated -> safer answer drafted -> proof owner routed -> buyer-safe note waiting for source approval.",
+      guard: "Repeated objections create evaluation cases only after the final approved answer and source path are attached.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      incident: "Weight reversal",
+      status: "Guarded",
+      title: "Trust-weight rollback now has a recurrence guard for future simulations.",
+      summary: "The weight change was reversed, the useful lesson stayed reviewable, and future simulations inherit a risk ceiling.",
+      readiness: 96,
+      signal: "Lift below forecast",
+      owner: "AI governance",
+      snapshot: "81% lift held",
+      decision: "Add risk ceiling",
+      timeline: "Simulator forecast -> rollout approval -> monitor underperformed -> rollback completed -> recurrence guard added to future simulations.",
+      guard: "Source-bundle weight can rise only when simulated lift, owner load, policy posture, and rollback cost remain inside thresholds.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -2935,7 +3111,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.75 Alpha - Rollback Automation Agent",
+      "Pilot phase: AnswerSeal v0.76 Alpha - Trust Incident Timeline",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

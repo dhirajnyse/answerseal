@@ -10580,6 +10580,7 @@ svg {
   min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-inline: contain;
   scrollbar-width: none;
   white-space: nowrap;
 }
@@ -13065,6 +13066,27 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-incident-card.is-recovered header strong,
+.proof-incident-card.is-guarded header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-incident-card.is-contained header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-incident-card.is-watch header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-incident-card.is-open header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13073,7 +13095,8 @@ svg {
 .proof-simulator-meta div,
 .proof-rollout-meta div,
 .proof-monitor-meta div,
-.proof-rollback-meta div {
+.proof-rollback-meta div,
+.proof-incident-meta div {
   min-height: 82px;
 }
 
@@ -13088,7 +13111,9 @@ svg {
 .proof-monitor-signal-section,
 .proof-monitor-response-section,
 .proof-rollback-flow-section,
-.proof-rollback-receipt-section {
+.proof-rollback-receipt-section,
+.proof-incident-flow-section,
+.proof-incident-summary-section {
   position: relative;
 }
 
@@ -13103,7 +13128,9 @@ svg {
 .proof-monitor-signal-grid article,
 .proof-monitor-response-strip article,
 .proof-rollback-flow-grid article,
-.proof-rollback-receipt-strip article {
+.proof-rollback-receipt-strip article,
+.proof-incident-flow-grid article,
+.proof-incident-summary-strip article {
   min-height: 168px;
 }
 
@@ -13615,6 +13642,8 @@ svg {
   .proof-monitor-response-section,
   .proof-rollback-flow-section,
   .proof-rollback-receipt-section,
+  .proof-incident-flow-section,
+  .proof-incident-summary-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13692,6 +13721,9 @@ svg {
   .proof-rollback-grid,
   .proof-rollback-flow-grid,
   .proof-rollback-receipt-strip,
+  .proof-incident-grid,
+  .proof-incident-flow-grid,
+  .proof-incident-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13709,10 +13741,11 @@ svg {
 
   .landing-nav nav {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 5px;
     justify-content: start;
-    overflow: visible;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .landing-nav nav a {
@@ -13811,6 +13844,10 @@ svg {
   .proof-rollback-flow-grid,
   .proof-rollback-receipt-strip,
   .proof-rollback-meta,
+  .proof-incident-grid,
+  .proof-incident-flow-grid,
+  .proof-incident-summary-strip,
+  .proof-incident-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.75 Alpha
+**Current version:** v0.76 Alpha
 
-**Current phase:** Rollback Automation Agent
+**Current phase:** Trust Incident Timeline
 
-**Current release:** v0.75 Alpha - Rollback Automation Agent
+**Current release:** v0.76 Alpha - Trust Incident Timeline
 
 ## Brand
 
@@ -84,6 +84,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Rollback Automation Agent page for trigger reviews, recovery plans, human approval routing, safe restore paths, blocked automation rules, and rollback receipts
 - Rollback cards show trigger, plan, approver, restore path, buyer-safe notice, automation rule, and receipt before influence changes
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, and monitor now route naturally into the Rollback Automation Agent
+- Trust Incident Timeline page for ordered recovery events, evidence snapshots, owner decisions, stakeholder notes, and recurrence guards
+- Incident cards show signal, owner, evidence snapshot, decision, timeline, and recurrence guard before a lesson changes future behavior
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, and rollback now route naturally into the Trust Incident Timeline
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -101,7 +104,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v71 export with Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v72 export with Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -363,7 +366,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v71 export with Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v72 export with Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -387,6 +390,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `rollout.html` - Rollout Approval Console for scoped approvals, monitor plans, rollback triggers, and rollout receipts
 - `monitor.html` - Live Rollout Monitor for drift alerts, owner response rules, rollback triggers, and outcome receipts
 - `rollback.html` - Rollback Automation Agent for trigger reviews, recovery plans, approval routing, restore paths, and rollback receipts
+- `incident.html` - Trust Incident Timeline for recovery signals, evidence snapshots, decisions, stakeholder notes, and recurrence guards
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -401,13 +405,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.76 Alpha - Trust Incident Timeline
+## Next Phase: v0.77 Alpha - Recurrence Guard Engine
 
-- Build incident timelines for monitor signal, threshold, owner action, approval route, and recovery decision
-- Capture evidence snapshots before and after recovery so every reversal remains explainable
-- Draft internal, buyer-safe, and executive summaries without exposing private context
-- Convert lessons into recurrence guards, evaluation cases, and source rules
-- Keep recovery explainable, auditable, and calm
+- Convert closed incidents into source rules, policy holds, evaluation cases, and monitor thresholds
+- Replay past buyer questions and sealed reports through new guards before production use
+- Route guard changes to the right owner with expected benefit, blocked risk, and rollback path
+- Record guard receipts that explain what rule changed, why it changed, and how to reverse it
+- Keep prevention explainable, auditable, and calm
 
 ## License
 
