@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.73 Alpha - Rollout Approval Console
+
+Phase: Rollout Approval Console
+
+- Added a dedicated Rollout Approval Console page for scoped approval queues, named owners, monitor plans, rollback triggers, and rollout receipts before learning changes behavior.
+- Added approval cards for ready rollouts, pending legal gates, monitor-mode pilots, privacy rollbacks, approved source bundles, and saved sealed report candidates.
+- Connected the landing product spine, Simulator, Weight Controller, Policy, Evaluation Bench, Registry, Pricing, and demo build labels to the new Rollout path.
+- Upgraded public storage to v0.73 while preserving v0.72, v0.71, v0.70, v0.69, v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded workspace storage to v0.73 while preserving v0.72 and earlier workspace memory, and upgraded export language to Review Pack v69.
+- Moved the next build toward v0.74 Live Rollout Monitor.
+
 ## v0.72 Alpha - Trust Impact Simulator
 
 Phase: Trust Impact Simulator

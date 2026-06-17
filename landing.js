@@ -57,6 +57,9 @@ const trustWeightStatus = document.querySelector("#trustWeightStatus");
 const trustImpactList = document.querySelector("#trustImpactList");
 const trustImpactScore = document.querySelector("#trustImpactScore");
 const trustImpactStatus = document.querySelector("#trustImpactStatus");
+const rolloutApprovalList = document.querySelector("#rolloutApprovalList");
+const rolloutApprovalScore = document.querySelector("#rolloutApprovalScore");
+const rolloutApprovalStatus = document.querySelector("#rolloutApprovalStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -69,9 +72,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.72 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v72";
+const PUBLIC_BUILD_VERSION = "v0.73 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v73";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v72",
   "answerseal.public.reports.v71",
   "answerseal.public.reports.v70",
   "answerseal.public.reports.v69",
@@ -161,6 +165,7 @@ renderTenantSafeProofNetwork();
 renderNetworkBenefitLedger();
 renderTrustWeightController();
 renderTrustImpactSimulator();
+renderRolloutApprovalConsole();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -2185,6 +2190,178 @@ function buildTrustImpactSimulatorItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderRolloutApprovalConsole() {
+  if (!rolloutApprovalList) return;
+  const entries = buildRolloutApprovalItems();
+  const approvedCount = entries.filter((entry) => entry.status === "Approved").length;
+  const monitorCount = entries.filter((entry) => entry.status === "Monitor").length;
+  const blockedCount = entries.filter((entry) => entry.status === "Blocked" || entry.status === "Rollback").length;
+  const approvalScore = Math.round(entries.reduce((total, entry) => total + entry.readiness, 0) / Math.max(entries.length, 1));
+
+  if (rolloutApprovalScore) rolloutApprovalScore.textContent = `${approvalScore}% governed`;
+  if (rolloutApprovalStatus) {
+    rolloutApprovalStatus.textContent = `${approvedCount} approval${approvedCount === 1 ? "" : "s"} ready, ${monitorCount} in monitor mode, ${blockedCount} protected by rollback or block rules.`;
+  }
+
+  rolloutApprovalList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Approved"
+        ? "is-approved"
+        : entry.status === "Pending"
+          ? "is-pending"
+          : entry.status === "Monitor"
+            ? "is-monitor"
+            : entry.status === "Rollback"
+              ? "is-rollback"
+              : "is-blocked";
+    card.className = `proof-memory-card proof-rollout-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.type)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-rollout-meta">
+        <div>
+          <dt>Scope</dt>
+          <dd>${escapePublicHtml(entry.scope)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Monitor</dt>
+          <dd>${escapePublicHtml(entry.monitor)}</dd>
+        </div>
+        <div>
+          <dt>Trigger</dt>
+          <dd>${escapePublicHtml(entry.trigger)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Approval rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Rollout receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    rolloutApprovalList.append(card);
+  });
+}
+
+function buildRolloutApprovalItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const approved = score >= 92;
+    const monitor = score >= 84 && score < 92;
+    return {
+      type: "Saved report rollout",
+      status: approved ? "Approved" : monitor ? "Monitor" : "Pending",
+      title: report.prompt || "Verified answer rollout candidate",
+      summary: "A sealed report can become reusable guidance only after scope, owner, monitor, and rollback rules are explicit.",
+      readiness: approved ? 92 : monitor ? 76 : 58,
+      scope: approved ? "Similar buyer questions" : "Tenant-local",
+      owner: approved ? "Security owner" : "Reviewer queue",
+      monitor: approved ? "Edit rate" : "Source warnings",
+      trigger: approved ? ">2 edits" : "Missing proof",
+      rule: approved
+        ? "Approve reuse when the future answer carries its own sources and stays inside the same question class."
+        : "Hold broad rollout until the report has stronger evidence, lower reviewer friction, or a named owner.",
+      receipt: report.summary || "Rollout approval keeps the pattern reversible until live use proves benefit.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      type: "Approved rollout",
+      status: "Approved",
+      title: "AI training answer class can ship to SaaS questionnaires.",
+      summary: "The simulation is ready, the source bundle is stable, and reviewer load stays inside the policy ceiling.",
+      readiness: 94,
+      scope: "SaaS security reviews",
+      owner: "Security",
+      monitor: "Reviewer edit rate",
+      trigger: "More than 2 edits",
+      rule: "Ship only to the same answer class and require AI Usage Standard plus SOC 2 sources on every generated draft.",
+      receipt: "Approved for controlled rollout with automatic return to review if edit rate or missing-source warnings rise.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+    {
+      type: "Owner gate",
+      status: "Pending",
+      title: "Regional proof pattern waits for legal scope approval.",
+      summary: "Forecasted lift is helpful, but the rollout scope touches country-specific evidence rights.",
+      readiness: 61,
+      scope: "EU buyers only",
+      owner: "Legal",
+      monitor: "Policy exceptions",
+      trigger: "Country mismatch",
+      rule: "Do not approve regional influence until legal confirms buyer rights, retention assumptions, and local source eligibility.",
+      receipt: "Pending owner approval; pattern remains tenant-local and cannot affect shared recommendations.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      type: "Monitor mode",
+      status: "Monitor",
+      title: "SOC 2 freshness boost enters a narrow pilot.",
+      summary: "The change can run for a limited scope while source-warning and owner-load signals are watched closely.",
+      readiness: 78,
+      scope: "Two buyer rooms",
+      owner: "Compliance",
+      monitor: "Stale-source warnings",
+      trigger: "+1 warning",
+      rule: "Allow a small rollout only when the fresh source template is attached and the bench stays green.",
+      receipt: "Monitor mode records every accepted draft and routes the first warning back to the bench.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+    {
+      type: "Rollback",
+      status: "Rollback",
+      title: "Raw buyer objection signal is reverted before reuse.",
+      summary: "The pattern looked useful, but it depended on private buyer wording and cannot become reusable guidance.",
+      readiness: 22,
+      scope: "No rollout",
+      owner: "Privacy",
+      monitor: "Private text leak",
+      trigger: "Raw buyer context",
+      rule: "Rollback any rollout candidate that uses raw buyer text, exact prompts, account notes, contracts, or private files.",
+      receipt: "Change reverted to tenant-local memory and removed from shared learning consideration.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      type: "Approved bundle",
+      status: "Approved",
+      title: "Approved source bundle becomes a private-pilot default.",
+      summary: "The reusable source bundle improves clarity while keeping exact tenant memory and buyer context private.",
+      readiness: 88,
+      scope: "Private pilot",
+      owner: "AI governance",
+      monitor: "Source coverage",
+      trigger: "<2 sources",
+      rule: "Use the bundle only as a recommended starting point; every shipped answer must attach its own evidence.",
+      receipt: "Approved with tenant opt-in, source coverage watch, and a visible rollback note in the Review Pack.",
+      href: "registry.html",
+      action: "Open registry",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -2401,7 +2578,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.72 Alpha - Trust Impact Simulator",
+      "Pilot phase: AnswerSeal v0.73 Alpha - Rollout Approval Console",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

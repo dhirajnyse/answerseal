@@ -12984,12 +12984,34 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-rollout-card.is-approved header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-rollout-card.is-pending header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-rollout-card.is-monitor header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-rollout-card.is-rollback header strong,
+.proof-rollout-card.is-blocked header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
 
 .proof-weight-meta div,
-.proof-simulator-meta div {
+.proof-simulator-meta div,
+.proof-rollout-meta div {
   min-height: 82px;
 }
 
@@ -12998,7 +13020,9 @@ svg {
 .proof-weight-control-section,
 .proof-weight-safety-section,
 .proof-simulator-model-section,
-.proof-simulator-safety-section {
+.proof-simulator-safety-section,
+.proof-rollout-scope-section,
+.proof-rollout-monitor-section {
   position: relative;
 }
 
@@ -13007,7 +13031,9 @@ svg {
 .proof-weight-control-grid article,
 .proof-weight-safety-strip article,
 .proof-simulator-model-grid article,
-.proof-simulator-safety-strip article {
+.proof-simulator-safety-strip article,
+.proof-rollout-scope-grid article,
+.proof-rollout-monitor-strip article {
   min-height: 168px;
 }
 
@@ -13508,6 +13534,8 @@ svg {
   .proof-weight-safety-section,
   .proof-simulator-model-section,
   .proof-simulator-safety-section,
+  .proof-rollout-scope-section,
+  .proof-rollout-monitor-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13576,6 +13604,9 @@ svg {
   .proof-simulator-grid,
   .proof-simulator-model-grid,
   .proof-simulator-safety-strip,
+  .proof-rollout-grid,
+  .proof-rollout-scope-grid,
+  .proof-rollout-monitor-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13683,6 +13714,10 @@ svg {
   .proof-simulator-model-grid,
   .proof-simulator-safety-strip,
   .proof-simulator-meta,
+  .proof-rollout-grid,
+  .proof-rollout-scope-grid,
+  .proof-rollout-monitor-strip,
+  .proof-rollout-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

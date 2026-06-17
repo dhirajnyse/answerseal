@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.72 Alpha</strong>
+        <strong>v0.73 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -47,6 +47,7 @@
         <a href="benefit.html">Benefit</a>
         <a href="weight.html">Weight</a>
         <a href="simulator.html">Simulator</a>
+        <a href="rollout.html">Rollout</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -56,15 +57,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.72 Alpha</h1>
+          <h1>AnswerSeal v0.73 Alpha</h1>
           <p>
-            This release simulates trust-weight changes before rollout: expected lift, source coverage, reviewer load, policy risk, tenant overrides, and rollback cost become visible before recommendations change.
+            This release turns trust simulations into controlled rollout approvals: every learning change gets a scope, owner, monitor plan, rollback trigger, and rollout receipt before recommendations change.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Trust Impact Simulator</h2>
+          <h2>Rollout Approval Console</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -72,11 +73,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Trust Impact Simulator page, scenario forecasts, risk ceilings, reviewer load, rollout gates, rollback cost, and Review Pack v68</dd>
+              <dd>Rollout Approval Console page, scoped approval queue, monitor plan, rollback trigger, rollout receipt, v0.72 simulator memory, and Review Pack v69</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.73 Alpha - Rollout Approval Console</dd>
+              <dd>v0.74 Alpha - Live Rollout Monitor</dd>
             </div>
           </dl>
         </aside>
@@ -92,6 +93,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.73 Alpha</strong>
+            </header>
+            <h3>Rollout Approval Console</h3>
+            <p>Added a public Rollout Approval Console page with scoped approvals, owner gates, monitor plans, rollback triggers, rollout receipts, and preserved v0.72 simulator memory.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.72 Alpha</strong>
             </header>
             <h3>Trust Impact Simulator</h3>
@@ -742,39 +752,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.73 Alpha - Rollout Approval Console</h2>
+          <h2>v0.74 Alpha - Live Rollout Monitor</h2>
           <p>
-            The next release should turn simulations into controlled rollout approvals: owners decide what ships, where it ships, what is monitored, and when rollback triggers.
+            The next release should watch approved rollouts after they ship: live signals decide whether a rollout keeps learning, pauses for review, or reverses safely.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Approval queue</h3>
-            <p>Collect ready simulations with owner, scope, risk ceiling, and recommended rollout window.</p>
+            <h3>Live monitors</h3>
+            <p>Track approved rollouts by edit rate, source warnings, buyer objections, policy exceptions, and owner load.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Rollout scope</h3>
-            <p>Choose tenant, region, buyer type, evidence class, and model path before behavior changes.</p>
+            <h3>Drift alerts</h3>
+            <p>Surface source freshness, claim conflict, compliance, and reviewer-friction drift before trust weakens.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Monitor plan</h3>
-            <p>Track edits, objections, source warnings, latency, and owner load after approval.</p>
+            <h3>Rollback automation</h3>
+            <p>Apply the pre-approved stop condition and route the rollout back to human review with a receipt.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Rollback trigger</h3>
-            <p>Define the exact conditions that reverse the rollout automatically or route it back to human review.</p>
+            <h3>Outcome receipt</h3>
+            <p>Record whether the rollout improved accepted answers, reduced review time, or should stop learning.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.72 Alpha</span>
+      <span>AnswerSeal v0.73 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -791,6 +801,7 @@
         <a href="benefit.html">Benefit</a>
         <a href="weight.html">Weight</a>
         <a href="simulator.html">Simulator</a>
+        <a href="rollout.html">Rollout</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>
