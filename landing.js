@@ -48,6 +48,9 @@ const proofMemoryStatus = document.querySelector("#proofMemoryStatus");
 const proofNetworkList = document.querySelector("#proofNetworkList");
 const proofNetworkScore = document.querySelector("#proofNetworkScore");
 const proofNetworkStatus = document.querySelector("#proofNetworkStatus");
+const proofBenefitList = document.querySelector("#proofBenefitList");
+const proofBenefitScore = document.querySelector("#proofBenefitScore");
+const proofBenefitStatus = document.querySelector("#proofBenefitStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -60,9 +63,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.69 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v69";
+const PUBLIC_BUILD_VERSION = "v0.70 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v70";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v69",
   "answerseal.public.reports.v68",
   "answerseal.public.reports.v67",
   "answerseal.public.reports.v66",
@@ -146,6 +150,7 @@ renderBuyerTrustPortal();
 renderProofConcierge();
 renderProofLearningMemory();
 renderTenantSafeProofNetwork();
+renderNetworkBenefitLedger();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -1691,6 +1696,162 @@ function buildTenantSafeProofNetworkItems() {
   return [...reportSignals, ...seededSignals].slice(0, 8);
 }
 
+function renderNetworkBenefitLedger() {
+  if (!proofBenefitList) return;
+  const entries = buildNetworkBenefitLedgerItems();
+  const creditedCount = entries.filter((entry) => entry.status === "Credited").length;
+  const watchCount = entries.filter((entry) => entry.status === "Watch").length;
+  const heldCount = entries.filter((entry) => entry.status === "Held" || entry.status === "Blocked").length;
+  const score = Math.round(((creditedCount * 100) + (watchCount * 54)) / Math.max(entries.length, 1));
+
+  if (proofBenefitScore) proofBenefitScore.textContent = `${score}% accountable lift`;
+  if (proofBenefitStatus) {
+    proofBenefitStatus.textContent = `${creditedCount} benefit receipt${creditedCount === 1 ? "" : "s"} credited; ${heldCount} signal${heldCount === 1 ? "" : "s"} stayed gated or blocked.`;
+  }
+
+  proofBenefitList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    card.className = `proof-memory-card proof-benefit-card ${entry.status === "Credited" ? "is-credited" : entry.status === "Blocked" ? "is-blocked" : entry.status === "Held" ? "is-held" : "is-watch"}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.type)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-benefit-meta">
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(entry.signal)}</dd>
+        </div>
+        <div>
+          <dt>Outcome</dt>
+          <dd>${escapePublicHtml(entry.outcome)}</dd>
+        </div>
+        <div>
+          <dt>Control</dt>
+          <dd>${escapePublicHtml(entry.control)}</dd>
+        </div>
+        <div>
+          <dt>Value</dt>
+          <dd>${escapePublicHtml(entry.value)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Ledger rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Benefit receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    proofBenefitList.append(card);
+  });
+}
+
+function buildNetworkBenefitLedgerItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const credited = score >= 92;
+    const watch = score >= 84 && score < 92;
+    return {
+      type: "Saved report receipt",
+      status: credited ? "Credited" : watch ? "Watch" : "Held",
+      title: report.prompt || "Verified answer benefit candidate",
+      summary: "Saved sealed reports can become benefit evidence only when the network signal improves a future review without exposing tenant context.",
+      signal: credited ? "Proof class reused" : "Local evidence",
+      outcome: credited ? "Reduced review time" : "Needs more data",
+      control: credited ? "Tenant opt-in" : "Tenant-local",
+      value: credited ? "Reusable lift" : "Uncredited",
+      rule: credited
+        ? "Credit the abstract signal only after a future answer improves without adding risk flags or leaking source text."
+        : "Keep this receipt uncredited until the signal has enough approved proof, review outcome, and tenant control.",
+      receipt: report.summary || "Benefit ledger waits for measurable reuse, not just a high trust score.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      type: "Benefit receipt",
+      status: "Credited",
+      title: "AI training answer pattern shortened second review.",
+      summary: "A safe question-class signal helped a later workspace draft a source-backed answer faster without seeing the original buyer text.",
+      signal: "Question class",
+      outcome: "42 min saved",
+      control: "Opt-in",
+      value: "High",
+      rule: "Credit network benefit only when the receiving workspace keeps its own evidence attached and no new risk flags appear.",
+      receipt: "Credited because the signal reused only category, proof type, freshness band, and accepted outcome.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      type: "Negative feedback",
+      status: "Watch",
+      title: "SOC 2 freshness signal helped, but wording still needed review.",
+      summary: "The signal reduced source search time, yet the suggested answer needed security wording review before reuse.",
+      signal: "Freshness band",
+      outcome: "Review required",
+      control: "Owner gate",
+      value: "Medium",
+      rule: "A signal can earn partial benefit while still lowering its automation weight when a reviewer changes the answer.",
+      receipt: "Kept on watch because speed improved, but human edits were required before release.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+    {
+      type: "Tenant control",
+      status: "Credited",
+      title: "Workspace limited network influence to approved proof classes.",
+      summary: "The tenant allowed AI usage and SOC 2 proof patterns, while blocking regional and contract-sensitive signals.",
+      signal: "Allowed classes",
+      outcome: "Clean recommendations",
+      control: "Tenant policy",
+      value: "Governance",
+      rule: "Each tenant must decide which approved signal classes can influence recommendations, defaults, and draft ordering.",
+      receipt: "Credited because the workspace kept control over network influence instead of accepting every shared pattern.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      type: "Blocked benefit",
+      status: "Blocked",
+      title: "Raw buyer objection would have improved matching but failed privacy.",
+      summary: "The exact text contained private deal context, so it produced no network credit even though it was useful locally.",
+      signal: "Raw text",
+      outcome: "No credit",
+      control: "Firewall",
+      value: "Risk avoided",
+      rule: "Never credit a benefit that depends on raw buyer text, exact answer wording, documents, prompts, contracts, or account context.",
+      receipt: "Blocked because preserving trust matters more than maximizing short-term model lift.",
+      href: "buyer.html",
+      action: "Open buyer portal",
+    },
+    {
+      type: "Held receipt",
+      status: "Held",
+      title: "Regional proof pattern needs country-level validation.",
+      summary: "The pattern might help EU reviews, but the ledger holds credit until residency and export assumptions are approved.",
+      signal: "Region class",
+      outcome: "Pending",
+      control: "Legal gate",
+      value: "Deferred",
+      rule: "Do not credit regional benefit until the safe signal is validated for the receiving country and evidence policy.",
+      receipt: "Held so shared learning does not outrun local regulation or buyer-specific evidence rights.",
+      href: "versions.html",
+      action: "Open build phases",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -1907,7 +2068,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.69 Alpha - Tenant-Safe Proof Network",
+      "Pilot phase: AnswerSeal v0.70 Alpha - Network Benefit Ledger",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

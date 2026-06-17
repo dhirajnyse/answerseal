@@ -12919,6 +12919,40 @@ svg {
   line-height: 1.2;
 }
 
+.proof-benefit-card.is-credited header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-benefit-card.is-watch header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-benefit-card.is-held header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-benefit-card.is-blocked header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
+.proof-benefit-meta div {
+  min-height: 82px;
+}
+
+.proof-benefit-measure-section,
+.proof-benefit-roi-section {
+  position: relative;
+}
+
+.proof-benefit-measure-grid article,
+.proof-benefit-roi-strip article {
+  min-height: 168px;
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -13410,6 +13444,8 @@ svg {
   .proof-memory-boundary-section,
   .proof-network-firewall,
   .proof-network-lift-section,
+  .proof-benefit-measure-section,
+  .proof-benefit-roi-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13469,6 +13505,9 @@ svg {
   .proof-network-grid,
   .proof-network-firewall-grid,
   .proof-network-lift-strip,
+  .proof-benefit-grid,
+  .proof-benefit-measure-grid,
+  .proof-benefit-roi-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13564,6 +13603,10 @@ svg {
   .proof-network-firewall-grid,
   .proof-network-lift-strip,
   .proof-network-meta,
+  .proof-benefit-grid,
+  .proof-benefit-measure-grid,
+  .proof-benefit-roi-strip,
+  .proof-benefit-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

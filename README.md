@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.69 Alpha
+**Current version:** v0.70 Alpha
 
-**Current phase:** Tenant-Safe Proof Network
+**Current phase:** Network Benefit Ledger
 
-**Current release:** v0.69 Alpha - Tenant-Safe Proof Network
+**Current release:** v0.70 Alpha - Network Benefit Ledger
 
 ## Brand
 
@@ -67,6 +67,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Tenant-Safe Proof Network page for safe signal eligibility, privacy firewall rules, network receipts, blocked raw buyer data, and shared lift
 - Network cards show signal type, privacy status, approval owner, benefit target, network rule, and receipt before any pattern can help other workspaces
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, and memory now route naturally into the Tenant-Safe Proof Network
+- Network Benefit Ledger page for accountable lift receipts, negative feedback, tenant controls, held signals, blocked privacy wins, and ROI rules
+- Benefit cards show signal, outcome, tenant control, value, ledger rule, and benefit receipt before any network signal earns more trust weight
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, and network now route naturally into the Network Benefit Ledger
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -84,7 +87,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v65 export with Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v66 export with Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -346,7 +349,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v65 export with Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v66 export with Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -364,6 +367,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `concierge.html` - Buyer Proof Concierge for routed buyer concerns, safe reply drafts, proof closure, and reusable learning signals
 - `memory.html` - Proof Learning Memory for governed proof patterns, tenant-safe boundaries, approvals, and reuse lift
 - `network.html` - Tenant-Safe Proof Network for approved abstract proof signals, privacy firewall rules, network receipts, and shared lift
+- `benefit.html` - Network Benefit Ledger for accountable lift receipts, negative feedback, tenant controls, and ROI rules
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -378,13 +382,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.70 Alpha - Network Benefit Ledger
+## Next Phase: v0.71 Alpha - Trust Weight Controller
 
-- Show which safe signal improved a review, reduced an objection, or shortened a response cycle
-- Record negative feedback when a shared pattern causes confusion, risk, or reviewer disagreement
-- Let each workspace decide which approved signal classes can influence its recommendations
-- Connect network benefit to time saved, fewer repeated objections, cleaner review paths, and preserved privacy
-- Keep network learning measurable, reversible, policy-gated, and calm
+- Raise or lower a signal only when benefit receipts, reviewer feedback, and policy gates agree
+- Reduce influence when sources age, regions change, or reviewers repeatedly edit the recommendation
+- Give each workspace a clear allow, hold, or block control before shared weights affect recommendations
+- Show when a weight changed, who approved it, why it changed, and how to reverse it
+- Keep trust weights measurable, reversible, tenant-controlled, and calm
 
 ## License
 

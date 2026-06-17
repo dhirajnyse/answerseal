@@ -1,5 +1,15 @@
 # AnswerSeal Releases
 
+## v0.70 Alpha - Network Benefit Ledger
+
+Phase: Network Benefit Ledger
+
+- Added a dedicated Network Benefit Ledger page for accountable lift receipts, negative feedback, tenant controls, held signals, blocked privacy wins, and ROI rules.
+- Added benefit cards for AI training answer lift, SOC 2 freshness watch feedback, tenant policy controls, raw buyer text privacy blocks, regional proof holds, and saved sealed report benefit candidates.
+- Connected Verify, Reports, Registry, Reviews, Evaluation Bench, Model Connector Lab, Learning Signal Loop, Trust Policy Gateway, Buyer Trust Portal, Buyer Proof Concierge, Proof Learning Memory, Tenant-Safe Proof Network, Pricing, and the landing product spine to the new Benefit path.
+- Upgraded public storage to v0.70 while preserving v0.69, v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded export language to Review Pack v66 and moved the next build toward v0.71 Trust Weight Controller.
+
 ## v0.69 Alpha - Tenant-Safe Proof Network
 
 Phase: Tenant-Safe Proof Network
