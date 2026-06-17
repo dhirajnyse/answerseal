@@ -72,6 +72,9 @@ const trustIncidentStatus = document.querySelector("#trustIncidentStatus");
 const guardEngineList = document.querySelector("#guardEngineList");
 const guardEngineScore = document.querySelector("#guardEngineScore");
 const guardEngineStatus = document.querySelector("#guardEngineStatus");
+const outcomeMonitorList = document.querySelector("#outcomeMonitorList");
+const outcomeMonitorScore = document.querySelector("#outcomeMonitorScore");
+const outcomeMonitorStatus = document.querySelector("#outcomeMonitorStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -84,9 +87,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.77 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v77";
+const PUBLIC_BUILD_VERSION = "v0.78 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v78";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v77",
   "answerseal.public.reports.v76",
   "answerseal.public.reports.v75",
   "answerseal.public.reports.v74",
@@ -186,6 +190,7 @@ renderLiveRolloutMonitor();
 renderRollbackAutomationAgent();
 renderTrustIncidentTimeline();
 renderRecurrenceGuardEngine();
+renderGuardOutcomeMonitor();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -3073,6 +3078,179 @@ function buildRecurrenceGuardItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderGuardOutcomeMonitor() {
+  if (!outcomeMonitorList) return;
+  const entries = buildGuardOutcomeItems();
+  const healthyCount = entries.filter((entry) => entry.status === "Healthy" || entry.status === "Improving").length;
+  const tuneCount = entries.filter((entry) => entry.status === "Tune" || entry.status === "Watch" || entry.status === "Reverse").length;
+  const ownerCount = new Set(entries.map((entry) => entry.owner)).size;
+  const readinessScore = Math.round(entries.reduce((total, entry) => total + entry.health, 0) / Math.max(entries.length, 1));
+
+  if (outcomeMonitorScore) outcomeMonitorScore.textContent = `${readinessScore}% outcome-ready`;
+  if (outcomeMonitorStatus) {
+    outcomeMonitorStatus.textContent = `${healthyCount} guards improving, ${tuneCount} need attention, ${ownerCount} owner groups accountable.`;
+  }
+
+  outcomeMonitorList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Healthy"
+        ? "is-healthy"
+        : entry.status === "Improving"
+          ? "is-improving"
+          : entry.status === "Tune"
+            ? "is-tune"
+            : entry.status === "Watch"
+              ? "is-watch"
+              : "is-reverse";
+    card.className = `proof-memory-card proof-outcome-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.guard)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-outcome-meta">
+        <div>
+          <dt>Repeated risk</dt>
+          <dd>${escapePublicHtml(entry.risk)}</dd>
+        </div>
+        <div>
+          <dt>False blocks</dt>
+          <dd>${escapePublicHtml(entry.falseBlocks)}</dd>
+        </div>
+        <div>
+          <dt>Reviewer load</dt>
+          <dd>${escapePublicHtml(entry.load)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Outcome rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Outcome receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    outcomeMonitorList.append(card);
+  });
+}
+
+function buildGuardOutcomeItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const improving = score >= 86;
+    return {
+      guard: "Saved report guard",
+      status: improving ? "Improving" : score >= 72 ? "Watch" : "Tune",
+      title: report.prompt || "Saved report guard outcome",
+      summary: "Saved reports become stronger only when their guards reduce repeat risk and do not block good answers.",
+      health: improving ? 89 : score >= 72 ? 74 : 61,
+      risk: improving ? "Down" : "Unclear",
+      falseBlocks: improving ? "None seen" : "Needs review",
+      load: improving ? "Low" : "Owner check",
+      owner: improving ? "AI governance" : "Reviewer",
+      rule: improving
+        ? "Keep the guard in review mode and continue watching buyer objections before raising influence."
+        : "Hold guard influence until repeated-risk movement and false-block evidence are visible.",
+      receipt: improving
+        ? "Outcome improving: source quality rose without creating reviewer friction."
+        : "Outcome pending: do not promote this guard until the owner confirms the blocked-answer pattern.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      guard: "Freshness gate",
+      status: "Healthy",
+      title: "SOC 2 freshness gate reduced stale-source warnings without slowing approvals.",
+      summary: "The guard is working: fewer stale citations, no false blocks, and the compliance owner kept the threshold stable.",
+      health: 96,
+      risk: "-42%",
+      falseBlocks: "0",
+      load: "Low",
+      owner: "Compliance",
+      rule: "Keep the source-age gate active while stale warnings stay down and bridge notes remain reviewable.",
+      receipt: "Healthy receipt: stale-source risk dropped, no good answers were blocked, and Compliance keeps the current threshold.",
+      href: "guard.html",
+      action: "Open guard",
+    },
+    {
+      guard: "Privacy boundary",
+      status: "Improving",
+      title: "Private-context boundary protected shared learning with minor local friction.",
+      summary: "No raw buyer text entered shared memory, but two tenant-local drafts needed manual approval before reuse.",
+      health: 88,
+      risk: "-100% leaks",
+      falseBlocks: "2 local drafts",
+      load: "Medium",
+      owner: "Privacy",
+      rule: "Keep the boundary active and tune local draft messaging so reviewers understand why private text was held.",
+      receipt: "Improving receipt: privacy risk stayed contained; local friction is visible and routed to Privacy.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      guard: "Regional hold",
+      status: "Tune",
+      title: "Country-specific policy hold is safe but too strict for EU proof reuse.",
+      summary: "The guard prevented unsafe rollout, but it also held three approved EU answers that Legal can now tune.",
+      health: 71,
+      risk: "-18%",
+      falseBlocks: "3 EU answers",
+      load: "Legal queue",
+      owner: "Legal",
+      rule: "Tune the region rule so approved EU evidence can pass while global defaults remain protected.",
+      receipt: "Tune receipt: safety is working, but false blocks and legal load are high enough to adjust the threshold.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      guard: "Objection replay",
+      status: "Watch",
+      title: "Buyer objection replay needs more signal before promotion.",
+      summary: "Repeated objections are visible, but the guard has not yet proven that safer drafts reduce follow-up loops.",
+      health: 69,
+      risk: "Flat",
+      falseBlocks: "1 draft",
+      load: "Sales owner",
+      owner: "Sales engineering",
+      rule: "Keep objection replay in watch mode until accepted buyer replies outnumber held drafts.",
+      receipt: "Watch receipt: useful pattern found, but outcome quality is not strong enough for broader influence.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      guard: "Simulation ceiling",
+      status: "Healthy",
+      title: "Trust-weight ceiling prevented overreach and kept rollback cost low.",
+      summary: "The guard limited a tempting source-weight change, avoided extra reviewer load, and preserved expected lift.",
+      health: 92,
+      risk: "-31%",
+      falseBlocks: "0",
+      load: "Low",
+      owner: "AI governance",
+      rule: "Keep the simulation ceiling active while expected lift, owner load, policy posture, and rollback cost stay inside bounds.",
+      receipt: "Healthy receipt: outcome lift remained positive and no rollback was needed after the ceiling held.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -3289,7 +3467,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.77 Alpha - Recurrence Guard Engine",
+      "Pilot phase: AnswerSeal v0.78 Alpha - Guard Outcome Monitor",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

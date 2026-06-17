@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.78 Alpha - Guard Outcome Monitor
+
+Phase: Guard Outcome Monitor
+
+- Added a dedicated Guard Outcome Monitor page for repeated-risk reduction, false-block watch, reviewer load, tuning needs, and outcome receipts.
+- Added outcome cards for SOC 2 freshness gates, privacy boundaries, regional policy holds, buyer objection replay, simulation ceilings, and saved sealed report guard outcomes.
+- Connected landing product spine, Recurrence Guard Engine, Live Rollout Monitor, Reviews, Pricing, and demo build labels to the new Outcome path.
+- Upgraded public storage to v0.78 while preserving v0.77, v0.76, v0.75, v0.74, v0.73, v0.72, v0.71, v0.70, v0.69, v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded workspace storage to v0.78 while preserving v0.77 and earlier workspace memory, and upgraded export language to Review Pack v74.
+- Moved the next build toward v0.79 Guard Tuning Queue.
+
 ## v0.77 Alpha - Recurrence Guard Engine
 
 Phase: Recurrence Guard Engine

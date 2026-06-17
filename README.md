@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.77 Alpha
+**Current version:** v0.78 Alpha
 
-**Current phase:** Recurrence Guard Engine
+**Current phase:** Guard Outcome Monitor
 
-**Current release:** v0.77 Alpha - Recurrence Guard Engine
+**Current release:** v0.78 Alpha - Guard Outcome Monitor
 
 ## Brand
 
@@ -90,6 +90,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Recurrence Guard Engine page for source-age gates, privacy boundaries, policy holds, objection replay, simulation ceilings, and prevention receipts
 - Guard cards show incident, owner, replay state, expected effect, guard rule, and prevention receipt before a lesson affects future answers
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, and incident timelines now route naturally into the Recurrence Guard Engine
+- Guard Outcome Monitor page for repeated-risk reduction, false-block watch, reviewer load, tuning needs, and outcome receipts
+- Outcome cards show guard, repeated risk, false blocks, reviewer load, owner, outcome rule, and whether to keep, tune, hold, or reverse a guard
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, and recurrence guards now route naturally into the Guard Outcome Monitor
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -107,7 +110,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v73 export with Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v74 export with Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -369,7 +372,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v73 export with Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v74 export with Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -395,6 +398,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `rollback.html` - Rollback Automation Agent for trigger reviews, recovery plans, approval routing, restore paths, and rollback receipts
 - `incident.html` - Trust Incident Timeline for recovery signals, evidence snapshots, decisions, stakeholder notes, and recurrence guards
 - `guard.html` - Recurrence Guard Engine for source rules, replay checks, owner approvals, and prevention receipts
+- `outcome.html` - Guard Outcome Monitor for repeated-risk reduction, false blocks, reviewer load, tuning needs, and outcome receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -409,13 +413,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.78 Alpha - Guard Outcome Monitor
+## Next Phase: v0.79 Alpha - Guard Tuning Queue
 
-- Measure whether recurrence guards reduce repeated risk without blocking good answers
-- Watch false blocks and reviewer load before teams work around strict rules
-- Route guard threshold tuning back to the right owner when outcomes drift
-- Record outcome receipts that show what improved, what was blocked, and how to reverse the guard
-- Keep prevention measurable, reversible, and calm
+- Convert outcome drift into small owner-approved tuning tasks
+- Preview threshold edits for source age, policy holds, replay cases, and warning levels
+- Route each tune to the correct owner with expected lift, blocked risk, and rollback context
+- Record tuning receipts with old threshold, new threshold, owner approval, and reversal path
+- Keep guard tuning measurable, reversible, and calm
 
 ## License
 

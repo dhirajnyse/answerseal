@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v0.77 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v77";
+const BUILD_VERSION = "v0.78 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v78";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v77",
   "answerseal.workspace.v76",
   "answerseal.workspace.v75",
   "answerseal.workspace.v74",
@@ -6799,7 +6800,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v73 with Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
+      detail: `Create Review Pack v74 with Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25546,7 +25547,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v73</h1>
+        <h1>AnswerSeal Review Pack v74</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29691,7 +29692,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v73 created with Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v74 created with Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29736,7 +29737,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v73 exported.");
+  showToast("Review Pack v74 exported.");
 }
 
 function toCsv(rows) {
