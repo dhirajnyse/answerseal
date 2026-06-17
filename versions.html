@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.78 Alpha</strong>
+        <strong>v0.79 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -53,6 +53,7 @@
         <a href="incident.html">Incident</a>
         <a href="guard.html">Guard</a>
         <a href="outcome.html">Outcome</a>
+        <a href="tuning.html">Tuning</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -62,15 +63,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.78 Alpha</h1>
+          <h1>AnswerSeal v0.79 Alpha</h1>
           <p>
-            This release monitors recurrence guards after they ship: repeated-risk reduction, false blocks, reviewer load, tuning needs, and outcome receipts.
+            This release turns guard outcome drift into owner-approved tuning work: threshold edits, approval routes, test plans, and tuning receipts before behavior changes.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Guard Outcome Monitor</h2>
+          <h2>Guard Tuning Queue</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -78,11 +79,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Guard Outcome Monitor page, false-block watch, reviewer load signals, tuning queues, outcome receipts, v0.77 guard memory, and Review Pack v74</dd>
+              <dd>Guard Tuning Queue page, old and new thresholds, expected lift, approval routes, test plans, tuning receipts, v0.78 outcome memory, and Review Pack v75</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.79 Alpha - Guard Tuning Queue</dd>
+              <dd>v0.80 Alpha - Guard Approval Lab</dd>
             </div>
           </dl>
         </aside>
@@ -98,6 +99,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.79 Alpha</strong>
+            </header>
+            <h3>Guard Tuning Queue</h3>
+            <p>Added a public Guard Tuning Queue page with owner-approved threshold edits, approval routes, test plans, tuning receipts, v0.78 outcome memory, and Review Pack v75.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.78 Alpha</strong>
             </header>
             <h3>Guard Outcome Monitor</h3>
@@ -802,39 +812,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.79 Alpha - Guard Tuning Queue</h2>
+          <h2>v0.80 Alpha - Guard Approval Lab</h2>
           <p>
-            The next release should turn outcome signals into owner-approved tuning work: adjust thresholds, loosen false blocks, reduce reviewer load, and preserve rollback receipts.
+            The next release should make tuning approvals even more deliberate: compare requested changes, check reviewer confidence, capture approver rationale, and ship only when evidence, policy, and rollback agree.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Tuning candidate</h3>
-            <p>Convert outcome drift into a small owner task with impact, risk, and rollback context.</p>
+            <h3>Approval packet</h3>
+            <p>Bundle the threshold edit, outcome signal, evidence trail, test result, and rollback path for owner review.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Threshold edit</h3>
-            <p>Let owners adjust source-age, policy, replay, and warning thresholds with previewed impact.</p>
+            <h3>Confidence check</h3>
+            <p>Show reviewer confidence, policy alignment, and risk deltas before an owner approves a tune.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Approval route</h3>
-            <p>Send each guard tune to Compliance, Privacy, Legal, Sales engineering, or AI governance.</p>
+            <h3>Rationale capture</h3>
+            <p>Require the owner to record why the tune is safe, narrow, reversible, and worth shipping.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Tuning receipt</h3>
-            <p>Record the old threshold, new threshold, expected lift, owner approval, and reversal path.</p>
+            <h3>Approval receipt</h3>
+            <p>Record who approved, what changed, what evidence passed, and how to reverse the tune.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.78 Alpha</span>
+      <span>AnswerSeal v0.79 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -857,6 +867,7 @@
         <a href="incident.html">Incident</a>
         <a href="guard.html">Guard</a>
         <a href="outcome.html">Outcome</a>
+        <a href="tuning.html">Tuning</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

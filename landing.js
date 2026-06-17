@@ -75,6 +75,9 @@ const guardEngineStatus = document.querySelector("#guardEngineStatus");
 const outcomeMonitorList = document.querySelector("#outcomeMonitorList");
 const outcomeMonitorScore = document.querySelector("#outcomeMonitorScore");
 const outcomeMonitorStatus = document.querySelector("#outcomeMonitorStatus");
+const guardTuningList = document.querySelector("#guardTuningList");
+const guardTuningScore = document.querySelector("#guardTuningScore");
+const guardTuningStatus = document.querySelector("#guardTuningStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -87,9 +90,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.78 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v78";
+const PUBLIC_BUILD_VERSION = "v0.79 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v79";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v78",
   "answerseal.public.reports.v77",
   "answerseal.public.reports.v76",
   "answerseal.public.reports.v75",
@@ -191,6 +195,7 @@ renderRollbackAutomationAgent();
 renderTrustIncidentTimeline();
 renderRecurrenceGuardEngine();
 renderGuardOutcomeMonitor();
+renderGuardTuningQueue();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -3251,6 +3256,190 @@ function buildGuardOutcomeItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderGuardTuningQueue() {
+  if (!guardTuningList) return;
+  const entries = buildGuardTuningItems();
+  const readyCount = entries.filter((entry) => entry.status === "Ready").length;
+  const reviseCount = entries.filter((entry) => entry.status === "Revise" || entry.status === "Hold").length;
+  const ownerCount = new Set(entries.map((entry) => entry.owner)).size;
+  const readinessScore = Math.round(entries.reduce((total, entry) => total + entry.readiness, 0) / Math.max(entries.length, 1));
+
+  if (guardTuningScore) guardTuningScore.textContent = `${readinessScore}% ready`;
+  if (guardTuningStatus) {
+    guardTuningStatus.textContent = `${readyCount} tunes ready, ${reviseCount} need owner work, ${ownerCount} owner groups accountable.`;
+  }
+
+  guardTuningList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Ready"
+        ? "is-ready"
+        : entry.status === "Revise"
+          ? "is-revise"
+          : entry.status === "Hold"
+            ? "is-hold"
+            : "is-reject";
+    card.className = `proof-memory-card proof-tuning-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.guard)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-tuning-meta">
+        <div>
+          <dt>Old threshold</dt>
+          <dd>${escapePublicHtml(entry.oldThreshold)}</dd>
+        </div>
+        <div>
+          <dt>Proposed tune</dt>
+          <dd>${escapePublicHtml(entry.newThreshold)}</dd>
+        </div>
+        <div>
+          <dt>Expected lift</dt>
+          <dd>${escapePublicHtml(entry.expectedLift)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Approval route</span>
+        <p>${escapePublicHtml(entry.route)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Test plan</span>
+        <p>${escapePublicHtml(entry.testPlan)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Tuning receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    guardTuningList.append(card);
+  });
+}
+
+function buildGuardTuningItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 88;
+    const hold = score < 72;
+    return {
+      guard: "Saved report tune",
+      status: ready ? "Ready" : hold ? "Hold" : "Revise",
+      title: report.prompt || "Saved report tuning candidate",
+      summary: "Saved reports can tune future guard thresholds only when the owner can see the score, proof trail, and rollback path.",
+      readiness: ready ? 91 : hold ? 58 : 74,
+      oldThreshold: "Manual review",
+      newThreshold: ready ? "Promote with source receipt" : hold ? "Keep local" : "Owner review first",
+      expectedLift: ready ? "Faster reuse" : hold ? "No lift yet" : "Cleaner routing",
+      owner: ready ? "AI governance" : hold ? "Reviewer" : "Compliance",
+      route: ready
+        ? "AI governance approves reusable answer influence after checking source coverage and buyer-safe wording."
+        : hold
+          ? "Reviewer keeps the signal local until trust score and source support improve."
+          : "Compliance reviews whether the answer class needs a narrower threshold before reuse.",
+      testPlan: ready
+        ? "Replay the answer against missing-source, unsupported-claim, and compliance-risk checks before promotion."
+        : "Run one more verification and require owner notes before the tune can change future recommendations.",
+      receipt: report.summary || "Tuning receipt waits for old value, new value, expected lift, approval, and reversal path.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      guard: "Freshness gate",
+      status: "Ready",
+      title: "Loosen the SOC 2 source-age gate from 90 days to 120 days for approved Type II reports.",
+      summary: "Outcome data shows stale warnings dropped without false blocks, and the current threshold is creating avoidable owner checks.",
+      readiness: 94,
+      oldThreshold: "90 days",
+      newThreshold: "120 days",
+      expectedLift: "18% fewer owner checks",
+      owner: "Compliance",
+      route: "Compliance owner approves the threshold edit; Security gets a visibility receipt but no blocker role.",
+      testPlan: "Replay five SOC 2 answers with stale-warning and citation checks before rollout.",
+      receipt: "Tuning receipt: old 90-day gate, new 120-day gate, expected owner-load reduction, Compliance approval, rollback to 90 days.",
+      href: "outcome.html",
+      action: "Open outcome",
+    },
+    {
+      guard: "Regional hold",
+      status: "Revise",
+      title: "Split EU-approved evidence from global evidence instead of holding the whole answer class.",
+      summary: "The guard is safe but too broad; approved EU proof should move while non-EU evidence stays held.",
+      readiness: 78,
+      oldThreshold: "All regional proof held",
+      newThreshold: "EU proof can pass",
+      expectedLift: "3 false blocks removed",
+      owner: "Legal",
+      route: "Legal revises the country rule, then Privacy checks that no buyer-specific context leaves the tenant.",
+      testPlan: "Run EU, US, and global scenarios through the policy gateway and verify only EU-approved evidence passes.",
+      receipt: "Tuning receipt: broad hold becomes EU-approved pass with country fallback and Legal-owned rollback.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      guard: "Privacy boundary",
+      status: "Ready",
+      title: "Add clearer local-hold wording so reviewers understand private-context blocks.",
+      summary: "Privacy protection is working; the tune reduces confusion without weakening the tenant boundary.",
+      readiness: 89,
+      oldThreshold: "Private context blocked",
+      newThreshold: "Blocked with reason",
+      expectedLift: "Lower reviewer friction",
+      owner: "Privacy",
+      route: "Privacy approves the wording tune; AI governance confirms shared memory still receives only abstract signals.",
+      testPlan: "Replay private buyer notes and confirm no raw text enters network memory or sealed report exports.",
+      receipt: "Tuning receipt: same privacy boundary, clearer reviewer reason, no shared-memory expansion, rollback to prior label.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      guard: "Objection replay",
+      status: "Hold",
+      title: "Hold broader objection replay until accepted replies outnumber manual rewrites.",
+      summary: "The signal is useful, but the guard has not yet proven it improves buyer response quality.",
+      readiness: 63,
+      oldThreshold: "One accepted reply",
+      newThreshold: "Three accepted replies",
+      expectedLift: "Unknown",
+      owner: "Sales engineering",
+      route: "Sales engineering must attach accepted buyer outcomes before AI governance can approve influence.",
+      testPlan: "Collect three buyer replies and replay the objection class against the trust score engine.",
+      receipt: "Hold receipt: useful pattern remains visible but cannot tune future answers until accepted outcomes improve.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      guard: "Simulation ceiling",
+      status: "Ready",
+      title: "Lower rollback-cost ceiling before source-weight increases can reach live recommendations.",
+      summary: "The simulator proved lift stays positive when rollback cost is capped earlier.",
+      readiness: 92,
+      oldThreshold: "Rollback cost <= medium",
+      newThreshold: "Rollback cost <= low",
+      expectedLift: "Safer rollout",
+      owner: "AI governance",
+      route: "AI governance approves the tighter ceiling; Rollout owner receives the reversal receipt.",
+      testPlan: "Run the source-weight scenario through simulator, monitor, and rollback checks before rollout.",
+      receipt: "Tuning receipt: tighter ceiling keeps lift positive, owner load low, and reversal one click away.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -3467,7 +3656,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.78 Alpha - Guard Outcome Monitor",
+      "Pilot phase: AnswerSeal v0.79 Alpha - Guard Tuning Queue",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

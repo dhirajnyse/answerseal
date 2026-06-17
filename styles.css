@@ -13129,6 +13129,26 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-tuning-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-tuning-card.is-revise header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-tuning-card.is-hold header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-tuning-card.is-reject header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13140,7 +13160,8 @@ svg {
 .proof-rollback-meta div,
 .proof-incident-meta div,
 .proof-guard-meta div,
-.proof-outcome-meta div {
+.proof-outcome-meta div,
+.proof-tuning-meta div {
   min-height: 82px;
 }
 
@@ -13161,7 +13182,9 @@ svg {
 .proof-guard-flow-section,
 .proof-guard-summary-section,
 .proof-outcome-flow-section,
-.proof-outcome-summary-section {
+.proof-outcome-summary-section,
+.proof-tuning-flow-section,
+.proof-tuning-summary-section {
   position: relative;
 }
 
@@ -13182,7 +13205,9 @@ svg {
 .proof-guard-flow-grid article,
 .proof-guard-summary-strip article,
 .proof-outcome-flow-grid article,
-.proof-outcome-summary-strip article {
+.proof-outcome-summary-strip article,
+.proof-tuning-flow-grid article,
+.proof-tuning-summary-strip article {
   min-height: 168px;
 }
 
@@ -13782,6 +13807,9 @@ svg {
   .proof-outcome-grid,
   .proof-outcome-flow-grid,
   .proof-outcome-summary-strip,
+  .proof-tuning-grid,
+  .proof-tuning-flow-grid,
+  .proof-tuning-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13914,6 +13942,10 @@ svg {
   .proof-outcome-flow-grid,
   .proof-outcome-summary-strip,
   .proof-outcome-meta,
+  .proof-tuning-grid,
+  .proof-tuning-flow-grid,
+  .proof-tuning-summary-strip,
+  .proof-tuning-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

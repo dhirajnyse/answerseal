@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.79 Alpha - Guard Tuning Queue
+
+Phase: Guard Tuning Queue
+
+- Added a dedicated Guard Tuning Queue page for owner-approved threshold edits, approval routes, test plans, and tuning receipts.
+- Added public tuning cards with old threshold, proposed tune, expected lift, owner, approval route, test plan, and reversible tuning receipt.
+- Connected landing product spine, Guard Outcome Monitor, Pricing, Build Phases, demo build labels, and public navigation to the new Tuning path.
+- Upgraded public storage to v0.79 while preserving v0.78 and earlier report memory.
+- Upgraded workspace storage to v0.79 while preserving v0.78 and earlier workspace memory, and upgraded export language to Review Pack v75.
+- Moved the next build toward v0.80 Guard Approval Lab.
+
 ## v0.78 Alpha - Guard Outcome Monitor
 
 Phase: Guard Outcome Monitor
