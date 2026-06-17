@@ -12964,25 +12964,50 @@ svg {
   background: rgba(220, 251, 244, 0.7);
 }
 
+.proof-simulator-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-simulator-card.is-watch header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-simulator-card.is-hold header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-simulator-card.is-blocked header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
 
-.proof-weight-meta div {
+.proof-weight-meta div,
+.proof-simulator-meta div {
   min-height: 82px;
 }
 
 .proof-benefit-measure-section,
 .proof-benefit-roi-section,
 .proof-weight-control-section,
-.proof-weight-safety-section {
+.proof-weight-safety-section,
+.proof-simulator-model-section,
+.proof-simulator-safety-section {
   position: relative;
 }
 
 .proof-benefit-measure-grid article,
 .proof-benefit-roi-strip article,
 .proof-weight-control-grid article,
-.proof-weight-safety-strip article {
+.proof-weight-safety-strip article,
+.proof-simulator-model-grid article,
+.proof-simulator-safety-strip article {
   min-height: 168px;
 }
 
@@ -13479,6 +13504,10 @@ svg {
   .proof-network-lift-section,
   .proof-benefit-measure-section,
   .proof-benefit-roi-section,
+  .proof-weight-control-section,
+  .proof-weight-safety-section,
+  .proof-simulator-model-section,
+  .proof-simulator-safety-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13541,6 +13570,12 @@ svg {
   .proof-benefit-grid,
   .proof-benefit-measure-grid,
   .proof-benefit-roi-strip,
+  .proof-weight-grid,
+  .proof-weight-control-grid,
+  .proof-weight-safety-strip,
+  .proof-simulator-grid,
+  .proof-simulator-model-grid,
+  .proof-simulator-safety-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13640,6 +13675,14 @@ svg {
   .proof-benefit-measure-grid,
   .proof-benefit-roi-strip,
   .proof-benefit-meta,
+  .proof-weight-grid,
+  .proof-weight-control-grid,
+  .proof-weight-safety-strip,
+  .proof-weight-meta,
+  .proof-simulator-grid,
+  .proof-simulator-model-grid,
+  .proof-simulator-safety-strip,
+  .proof-simulator-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

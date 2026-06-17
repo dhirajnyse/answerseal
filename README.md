@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.71 Alpha
+**Current version:** v0.72 Alpha
 
-**Current phase:** Trust Weight Controller
+**Current phase:** Trust Impact Simulator
 
-**Current release:** v0.71 Alpha - Trust Weight Controller
+**Current release:** v0.72 Alpha - Trust Impact Simulator
 
 ## Brand
 
@@ -73,6 +73,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust Weight Controller page for controlled signal influence, decay pressure, tenant overrides, rollback receipts, and safe reinforcement rules
 - Weight cards show signal class, current influence, decay rule, tenant control, weight rule, and rollback receipt before learning changes behavior
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, and benefit now route naturally into the Trust Weight Controller
+- Trust Impact Simulator page for scenario forecasts, expected lift, risk ceilings, reviewer load, rollout gates, and rollback cost before learning changes behavior
+- Simulator cards show lift, risk, load, gate, simulation rule, and rollout receipt before any trust-weight change ships
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, and weight now route naturally into the Trust Impact Simulator
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -90,7 +93,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v67 export with Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v68 export with Trust Impact Simulator, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -352,7 +355,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v67 export with Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v68 export with Trust Impact Simulator, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -372,6 +375,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `network.html` - Tenant-Safe Proof Network for approved abstract proof signals, privacy firewall rules, network receipts, and shared lift
 - `benefit.html` - Network Benefit Ledger for accountable lift receipts, negative feedback, tenant controls, and ROI rules
 - `weight.html` - Trust Weight Controller for signal weights, decay rules, tenant overrides, rollback receipts, and safe reinforcement
+- `simulator.html` - Trust Impact Simulator for scenario forecasts, risk ceilings, reviewer load, rollout gates, and rollback cost
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -386,13 +390,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.72 Alpha - Trust Impact Simulator
+## Next Phase: v0.73 Alpha - Rollout Approval Console
 
-- Simulate how a trust-weight change affects answers, evidence routing, owner workload, and buyer readiness before rollout
-- Forecast time saved, repeated objections reduced, source coverage gained, and likely reviewer edits
-- Block rollout when privacy, compliance, regional, or stale-source risk rises above tenant policy
-- Ship only with owner approval, bench pass, tenant override state, and rollback plan
-- Keep trust learning measurable, reversible, tenant-controlled, and calm
+- Collect ready simulations into an owner approval queue
+- Define rollout scope by tenant, region, buyer type, evidence class, and model path
+- Monitor edits, objections, source warnings, latency, and owner load after approval
+- Trigger rollback automatically or route back to human review when guardrails fail
+- Keep closed-loop AI rollout governed, observable, reversible, and calm
 
 ## License
 

@@ -54,6 +54,9 @@ const proofBenefitStatus = document.querySelector("#proofBenefitStatus");
 const trustWeightList = document.querySelector("#trustWeightList");
 const trustWeightScore = document.querySelector("#trustWeightScore");
 const trustWeightStatus = document.querySelector("#trustWeightStatus");
+const trustImpactList = document.querySelector("#trustImpactList");
+const trustImpactScore = document.querySelector("#trustImpactScore");
+const trustImpactStatus = document.querySelector("#trustImpactStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -66,9 +69,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.71 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v71";
+const PUBLIC_BUILD_VERSION = "v0.72 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v72";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v71",
   "answerseal.public.reports.v70",
   "answerseal.public.reports.v69",
   "answerseal.public.reports.v68",
@@ -156,6 +160,7 @@ renderProofLearningMemory();
 renderTenantSafeProofNetwork();
 renderNetworkBenefitLedger();
 renderTrustWeightController();
+renderTrustImpactSimulator();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -2024,6 +2029,162 @@ function buildTrustWeightControllerItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderTrustImpactSimulator() {
+  if (!trustImpactList) return;
+  const entries = buildTrustImpactSimulatorItems();
+  const readyCount = entries.filter((entry) => entry.status === "Ready").length;
+  const holdCount = entries.filter((entry) => entry.status === "Hold" || entry.status === "Blocked").length;
+  const averageLift = Math.round(entries.reduce((total, entry) => total + entry.lift, 0) / Math.max(entries.length, 1));
+
+  if (trustImpactScore) trustImpactScore.textContent = `${averageLift}% forecast`;
+  if (trustImpactStatus) {
+    trustImpactStatus.textContent = `${readyCount} scenario${readyCount === 1 ? "" : "s"} ready for owner approval; ${holdCount} stay held by risk ceilings.`;
+  }
+
+  trustImpactList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.status === "Ready" ? "is-ready" : entry.status === "Watch" ? "is-watch" : entry.status === "Blocked" ? "is-blocked" : "is-hold";
+    card.className = `proof-memory-card proof-simulator-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.type)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-simulator-meta">
+        <div>
+          <dt>Lift</dt>
+          <dd>${entry.lift}%</dd>
+        </div>
+        <div>
+          <dt>Risk</dt>
+          <dd>${escapePublicHtml(entry.risk)}</dd>
+        </div>
+        <div>
+          <dt>Load</dt>
+          <dd>${escapePublicHtml(entry.load)}</dd>
+        </div>
+        <div>
+          <dt>Gate</dt>
+          <dd>${escapePublicHtml(entry.gate)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Simulation rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Rollout receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    trustImpactList.append(card);
+  });
+}
+
+function buildTrustImpactSimulatorItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 92;
+    const watch = score >= 84 && score < 92;
+    return {
+      type: "Saved report simulation",
+      status: ready ? "Ready" : watch ? "Watch" : "Hold",
+      title: report.prompt || "Verified answer rollout scenario",
+      summary: "A saved sealed report can simulate future reuse before its pattern changes recommendations.",
+      lift: ready ? 78 : watch ? 52 : 24,
+      risk: ready ? "Low" : watch ? "Reviewer edits" : "Insufficient proof",
+      load: ready ? "1 owner" : "2 reviewers",
+      gate: ready ? "Approve" : "Hold",
+      rule: ready
+        ? "Run the pattern against current source, risk, and policy checks before increasing default recommendation weight."
+        : "Keep the scenario in rehearsal until missing proof, reviewer edits, or policy concerns are resolved.",
+      receipt: report.summary || "Simulation keeps the learning change reversible until impact is proven.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      type: "Lift forecast",
+      status: "Ready",
+      title: "Increase AI training answer class by 8 points.",
+      summary: "Simulation predicts faster first drafts without increasing missing-source warnings or compliance flags.",
+      lift: 81,
+      risk: "Low",
+      load: "1 owner",
+      gate: "Security approve",
+      rule: "Ship only if the receiving answer keeps its own AI Usage Standard and SOC 2 evidence attached.",
+      receipt: "Forecast: 38 minutes saved across the next three similar questionnaires; rollback to 78% if reviewer edits rise.",
+      href: "weight.html",
+      action: "Open weights",
+    },
+    {
+      type: "Risk ceiling",
+      status: "Hold",
+      title: "Regional proof pattern cannot roll out yet.",
+      summary: "Expected lift is useful, but country-specific evidence rights are not approved for shared influence.",
+      lift: 43,
+      risk: "Regional policy",
+      load: "Legal owner",
+      gate: "Country hold",
+      rule: "Do not roll out a regional signal until the tenant policy, buyer rights, and residency assumptions pass.",
+      receipt: "Held even with moderate lift because local regulation outranks network learning benefit.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      type: "Reviewer load",
+      status: "Watch",
+      title: "SOC 2 freshness boost may create owner bottleneck.",
+      summary: "The signal improves retrieval, but reviewer edits are forecast to increase until the source template is refreshed.",
+      lift: 58,
+      risk: "Medium",
+      load: "3 edits",
+      gate: "Bench pass",
+      rule: "Do not increase weight if expected reviewer edits erase the time saved by faster source matching.",
+      receipt: "Watch state requires a refreshed source template and one clean bench run before rollout.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+    {
+      type: "Rollback cost",
+      status: "Ready",
+      title: "Approved source bundle has a low-cost rollback path.",
+      summary: "The simulation can ship because reverting to the previous source ordering is simple and auditable.",
+      lift: 74,
+      risk: "Low",
+      load: "No new owner",
+      gate: "Approved",
+      rule: "Prefer learning changes whose rollback path is simple, visible, and does not strand buyer-facing work.",
+      receipt: "Rollback cost is low: restore prior source order and leave the new bundle as a recommendation only.",
+      href: "registry.html",
+      action: "Open registry",
+    },
+    {
+      type: "Privacy block",
+      status: "Blocked",
+      title: "Raw buyer objection simulation is rejected.",
+      summary: "The predicted lift is high, but the scenario depends on private buyer wording and cannot influence shared behavior.",
+      lift: 0,
+      risk: "Privacy",
+      load: "Blocked",
+      gate: "No rollout",
+      rule: "Block any simulation that requires raw buyer text, exact prompts, private files, account notes, or contracts.",
+      receipt: "Blocked before rollout; the useful pattern remains tenant-local only.",
+      href: "network.html",
+      action: "Open network",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -2240,7 +2401,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.71 Alpha - Trust Weight Controller",
+      "Pilot phase: AnswerSeal v0.72 Alpha - Trust Impact Simulator",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

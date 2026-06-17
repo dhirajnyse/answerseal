@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.72 Alpha - Trust Impact Simulator
+
+Phase: Trust Impact Simulator
+
+- Added a dedicated Trust Impact Simulator page for scenario forecasts, expected lift, risk ceilings, reviewer load, rollout gates, and rollback cost before learning changes behavior.
+- Added simulation cards for answer-class lift, regional policy holds, SOC 2 reviewer load, low-cost source-bundle rollback, privacy-blocked raw buyer text, and saved sealed report scenarios.
+- Connected the landing product spine, Weight Controller, Benefit Ledger, Network, Policy, Evaluation Bench, Registry, Pricing, and demo build labels to the new Simulator path.
+- Upgraded public storage to v0.72 while preserving v0.71, v0.70, v0.69, v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded workspace storage to v0.72 while preserving v0.71 and earlier workspace memory, and upgraded export language to Review Pack v68.
+- Moved the next build toward v0.73 Rollout Approval Console.
+
 ## v0.71 Alpha - Trust Weight Controller
 
 Phase: Trust Weight Controller
