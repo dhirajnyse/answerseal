@@ -69,6 +69,9 @@ const rollbackAutomationStatus = document.querySelector("#rollbackAutomationStat
 const trustIncidentList = document.querySelector("#trustIncidentList");
 const trustIncidentScore = document.querySelector("#trustIncidentScore");
 const trustIncidentStatus = document.querySelector("#trustIncidentStatus");
+const guardEngineList = document.querySelector("#guardEngineList");
+const guardEngineScore = document.querySelector("#guardEngineScore");
+const guardEngineStatus = document.querySelector("#guardEngineStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -81,9 +84,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.76 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v76";
+const PUBLIC_BUILD_VERSION = "v0.77 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v77";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v76",
   "answerseal.public.reports.v75",
   "answerseal.public.reports.v74",
   "answerseal.public.reports.v73",
@@ -181,6 +185,7 @@ renderRolloutApprovalConsole();
 renderLiveRolloutMonitor();
 renderRollbackAutomationAgent();
 renderTrustIncidentTimeline();
+renderRecurrenceGuardEngine();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -2895,6 +2900,179 @@ function buildTrustIncidentItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderRecurrenceGuardEngine() {
+  if (!guardEngineList) return;
+  const entries = buildRecurrenceGuardItems();
+  const activeCount = entries.filter((entry) => entry.status === "Active" || entry.status === "Ready").length;
+  const heldCount = entries.filter((entry) => entry.status === "Hold" || entry.status === "Blocked").length;
+  const ownerCount = new Set(entries.map((entry) => entry.owner)).size;
+  const readinessScore = Math.round(entries.reduce((total, entry) => total + entry.readiness, 0) / Math.max(entries.length, 1));
+
+  if (guardEngineScore) guardEngineScore.textContent = `${readinessScore}% guarded`;
+  if (guardEngineStatus) {
+    guardEngineStatus.textContent = `${activeCount} guards ready, ${heldCount} held by policy, ${ownerCount} owner groups accountable.`;
+  }
+
+  guardEngineList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Active"
+        ? "is-active"
+        : entry.status === "Ready"
+          ? "is-ready"
+          : entry.status === "Draft"
+            ? "is-draft"
+            : entry.status === "Hold"
+              ? "is-hold"
+              : "is-blocked";
+    card.className = `proof-memory-card proof-guard-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.guardType)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-guard-meta">
+        <div>
+          <dt>Incident</dt>
+          <dd>${escapePublicHtml(entry.incident)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Replay</dt>
+          <dd>${escapePublicHtml(entry.replay)}</dd>
+        </div>
+        <div>
+          <dt>Effect</dt>
+          <dd>${escapePublicHtml(entry.effect)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Guard rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Prevention receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    guardEngineList.append(card);
+  });
+}
+
+function buildRecurrenceGuardItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 86;
+    return {
+      guardType: "Saved report guard",
+      status: ready ? "Ready" : score >= 72 ? "Draft" : "Hold",
+      title: report.prompt || "Verified answer recurrence guard",
+      summary: "Saved reports can create narrow prevention rules only after replay confirms they reduce risk without blocking good answers.",
+      readiness: ready ? 90 : score >= 72 ? 76 : 58,
+      incident: `${score || 0}% trust report`,
+      owner: ready ? "AI governance" : "Reviewer",
+      replay: ready ? "Past prompts pass" : "Needs replay",
+      effect: ready ? "Source rule" : "Review hold",
+      rule: ready
+        ? "Promote the verified source pattern into a replay case before it influences future answer drafts."
+        : "Keep this answer as local report memory until unsupported claims, missing proof, and owner review are resolved.",
+      receipt: ready
+        ? "Ready receipt: owner can approve the guard, replay scope, expected lift, and rollback path."
+        : "Hold receipt: the report can be studied, but it cannot change future behavior yet.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      guardType: "Freshness rule",
+      status: "Active",
+      title: "Freshness drift now creates a source-age gate before approval.",
+      summary: "The SOC 2 incident became a guard that checks whether the cited report is fresh enough before the answer can be sealed.",
+      readiness: 95,
+      incident: "Freshness drift",
+      owner: "Compliance",
+      replay: "14 old answers pass",
+      effect: "Blocks stale proof",
+      rule: "SOC 2 answers require a fresh report or approved bridge note before source confidence can exceed 86%.",
+      receipt: "Guard active: stale evidence is blocked, accepted bridge notes are logged, and Compliance can lower the age threshold.",
+      href: "incident.html",
+      action: "Open incident",
+    },
+    {
+      guardType: "Privacy boundary",
+      status: "Active",
+      title: "Private buyer wording cannot become shared learning influence.",
+      summary: "The private-context incident is now a recurrence guard that strips account-specific text before any network benefit is calculated.",
+      readiness: 93,
+      incident: "Private context",
+      owner: "Privacy",
+      replay: "Network safe",
+      effect: "Tenant-local only",
+      rule: "Exact buyer wording, prompts, contracts, account notes, customer names, and private files stay tenant-local unless Privacy approves abstraction.",
+      receipt: "Guard active: useful lesson can be abstracted, but raw context never enters shared memory or shared benchmarks.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      guardType: "Policy hold",
+      status: "Hold",
+      title: "Regional proof patterns wait for country and residency approval.",
+      summary: "The regional incident produced a narrow hold that prevents local proof patterns from overriding global defaults too early.",
+      readiness: 73,
+      incident: "Regional policy",
+      owner: "Legal",
+      replay: "EU cases partial",
+      effect: "Scope hold",
+      rule: "Regional evidence patterns cannot raise answer influence until residency, buyer export, and AI learning rules are approved.",
+      receipt: "Hold receipt: legal can approve the region, reject the guard, or keep the default source path for global answers.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      guardType: "Objection replay",
+      status: "Draft",
+      title: "Repeated buyer objections become review cases, not silent training.",
+      summary: "The guard drafts a safer evaluation case when the same objection repeats, then waits for owner approval before reuse.",
+      readiness: 78,
+      incident: "Buyer challenge",
+      owner: "Sales engineering",
+      replay: "5 cases queued",
+      effect: "Review case",
+      rule: "Repeated objections can create evaluation cases only after the final approved answer, source path, and buyer-safe note are attached.",
+      receipt: "Draft receipt: owner sees the repeated pattern, proposed answer class, and proof requirement before the guard ships.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      guardType: "Simulation ceiling",
+      status: "Ready",
+      title: "Trust-weight changes must pass a rollback-cost replay before rollout.",
+      summary: "The weight reversal created a guard that checks expected lift, owner load, policy posture, and reversal cost before future rollouts.",
+      readiness: 91,
+      incident: "Weight reversal",
+      owner: "AI governance",
+      replay: "Simulator ready",
+      effect: "Risk ceiling",
+      rule: "Source-bundle weight can rise only when simulated lift, owner load, policy posture, and rollback cost remain inside thresholds.",
+      receipt: "Ready receipt: governance can approve the ceiling and every future rollout will carry a reversal path.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -3111,7 +3289,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.76 Alpha - Trust Incident Timeline",
+      "Pilot phase: AnswerSeal v0.77 Alpha - Recurrence Guard Engine",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

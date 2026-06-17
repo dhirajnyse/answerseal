@@ -13087,6 +13087,27 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-guard-card.is-active header strong,
+.proof-guard-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-guard-card.is-draft header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-guard-card.is-hold header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-guard-card.is-blocked header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13096,7 +13117,8 @@ svg {
 .proof-rollout-meta div,
 .proof-monitor-meta div,
 .proof-rollback-meta div,
-.proof-incident-meta div {
+.proof-incident-meta div,
+.proof-guard-meta div {
   min-height: 82px;
 }
 
@@ -13113,7 +13135,9 @@ svg {
 .proof-rollback-flow-section,
 .proof-rollback-receipt-section,
 .proof-incident-flow-section,
-.proof-incident-summary-section {
+.proof-incident-summary-section,
+.proof-guard-flow-section,
+.proof-guard-summary-section {
   position: relative;
 }
 
@@ -13130,7 +13154,9 @@ svg {
 .proof-rollback-flow-grid article,
 .proof-rollback-receipt-strip article,
 .proof-incident-flow-grid article,
-.proof-incident-summary-strip article {
+.proof-incident-summary-strip article,
+.proof-guard-flow-grid article,
+.proof-guard-summary-strip article {
   min-height: 168px;
 }
 
@@ -13724,6 +13750,9 @@ svg {
   .proof-incident-grid,
   .proof-incident-flow-grid,
   .proof-incident-summary-strip,
+  .proof-guard-grid,
+  .proof-guard-flow-grid,
+  .proof-guard-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13848,6 +13877,10 @@ svg {
   .proof-incident-flow-grid,
   .proof-incident-summary-strip,
   .proof-incident-meta,
+  .proof-guard-grid,
+  .proof-guard-flow-grid,
+  .proof-guard-summary-strip,
+  .proof-guard-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
