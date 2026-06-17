@@ -60,6 +60,9 @@ const trustImpactStatus = document.querySelector("#trustImpactStatus");
 const rolloutApprovalList = document.querySelector("#rolloutApprovalList");
 const rolloutApprovalScore = document.querySelector("#rolloutApprovalScore");
 const rolloutApprovalStatus = document.querySelector("#rolloutApprovalStatus");
+const liveRolloutList = document.querySelector("#liveRolloutList");
+const liveRolloutScore = document.querySelector("#liveRolloutScore");
+const liveRolloutStatus = document.querySelector("#liveRolloutStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -72,9 +75,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.73 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v73";
+const PUBLIC_BUILD_VERSION = "v0.74 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v74";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v73",
   "answerseal.public.reports.v72",
   "answerseal.public.reports.v71",
   "answerseal.public.reports.v70",
@@ -166,6 +170,7 @@ renderNetworkBenefitLedger();
 renderTrustWeightController();
 renderTrustImpactSimulator();
 renderRolloutApprovalConsole();
+renderLiveRolloutMonitor();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -2362,6 +2367,180 @@ function buildRolloutApprovalItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderLiveRolloutMonitor() {
+  if (!liveRolloutList) return;
+  const entries = buildLiveRolloutMonitorItems();
+  const healthyCount = entries.filter((entry) => entry.status === "Healthy" || entry.status === "Learning").length;
+  const watchCount = entries.filter((entry) => entry.status === "Watch").length;
+  const pauseCount = entries.filter((entry) => entry.status === "Pause").length;
+  const rollbackCount = entries.filter((entry) => entry.status === "Rollback").length;
+  const liveScore = Math.round(entries.reduce((total, entry) => total + entry.health, 0) / Math.max(entries.length, 1));
+
+  if (liveRolloutScore) liveRolloutScore.textContent = `${liveScore}% live trust`;
+  if (liveRolloutStatus) {
+    liveRolloutStatus.textContent = `${healthyCount} learning safely, ${watchCount} watched closely, ${pauseCount} paused, ${rollbackCount} rollback-ready.`;
+  }
+
+  liveRolloutList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.status === "Healthy"
+        ? "is-healthy"
+        : entry.status === "Learning"
+          ? "is-learning"
+          : entry.status === "Watch"
+            ? "is-watch"
+            : entry.status === "Pause"
+              ? "is-pause"
+              : "is-rollback";
+    card.className = `proof-memory-card proof-monitor-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.signal)}</span>
+        <strong>${escapePublicHtml(entry.status)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-monitor-meta">
+        <div>
+          <dt>Edit rate</dt>
+          <dd>${escapePublicHtml(entry.editRate)}</dd>
+        </div>
+        <div>
+          <dt>Warnings</dt>
+          <dd>${escapePublicHtml(entry.warnings)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Response</dt>
+          <dd>${escapePublicHtml(entry.response)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Monitor rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Outcome receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    liveRolloutList.append(card);
+  });
+}
+
+function buildLiveRolloutMonitorItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report) => {
+    const score = Number(report.score || 0);
+    const healthy = score >= 90;
+    const watch = score >= 80 && score < 90;
+    const status = healthy ? "Healthy" : watch ? "Watch" : "Pause";
+    return {
+      signal: "Saved report telemetry",
+      status,
+      title: report.prompt || "Verified answer rollout",
+      summary: "Live monitoring keeps the saved report reusable only while edits, warnings, and objections remain inside the approved guardrail.",
+      health: healthy ? 93 : watch ? 78 : 59,
+      editRate: healthy ? "Stable" : watch ? "+1 reviewer edit" : "Too many edits",
+      warnings: healthy ? "0 source gaps" : watch ? "1 freshness warning" : "Missing proof",
+      owner: healthy ? "Security" : "Reviewer",
+      response: healthy ? "Keep learning" : watch ? "Watch" : "Pause",
+      rule: healthy
+        ? "Keep the rollout live while the answer stays source-backed and buyer edits remain low."
+        : "Do not broaden reuse until the saved report clears the warning and a reviewer confirms the evidence.",
+      receipt: report.summary || "Live monitor receipt links the trust score, source trail, reviewer load, and next action.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      signal: "Approved answer class",
+      status: "Healthy",
+      title: "AI training answer rollout is behaving inside guardrails.",
+      summary: "The approved answer class is producing fast drafts without increasing missing-source warnings or buyer edits.",
+      health: 94,
+      editRate: "0.7 edits",
+      warnings: "0 source gaps",
+      owner: "Security",
+      response: "Keep learning",
+      rule: "Continue learning while edit rate stays below 2 edits and every answer carries the AI Usage Standard plus SOC 2 source path.",
+      receipt: "Healthy monitor receipt: rollout remains live and benefit is credited to the governed answer class.",
+      href: "rollout.html",
+      action: "Open rollout",
+    },
+    {
+      signal: "Freshness drift",
+      status: "Watch",
+      title: "SOC 2 freshness boost needs one source refresh.",
+      summary: "The rollout is still useful, but stale-source warnings rose after a buyer asked for the newest report date.",
+      health: 77,
+      editRate: "1.4 edits",
+      warnings: "+1 stale source",
+      owner: "Compliance",
+      response: "Refresh source",
+      rule: "Stay live only for existing buyer rooms until the latest SOC 2 source bundle is approved.",
+      receipt: "Watch receipt routes the source refresh to Compliance and keeps the rollout narrow.",
+      href: "evaluation.html",
+      action: "Open bench",
+    },
+    {
+      signal: "Policy exception",
+      status: "Pause",
+      title: "Regional proof pattern pauses before cross-country reuse.",
+      summary: "The answer pattern is helpful, but a country-specific evidence-rights question crossed the policy ceiling.",
+      health: 58,
+      editRate: "2.2 edits",
+      warnings: "Policy hold",
+      owner: "Legal",
+      response: "Pause",
+      rule: "Pause the rollout whenever country scope, retention assumptions, or evidence rights are unclear.",
+      receipt: "Pause receipt keeps exact memory tenant-local until Legal approves the regional boundary.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      signal: "Buyer objection",
+      status: "Rollback",
+      title: "Private objection wording is removed from shared influence.",
+      summary: "A buyer-specific objection improved one draft but introduced private context that cannot train shared recommendations.",
+      health: 31,
+      editRate: "3.6 edits",
+      warnings: "Private text risk",
+      owner: "Privacy",
+      response: "Rollback",
+      rule: "Rollback immediately when raw buyer wording, account notes, private files, or exact prompts influence shared learning.",
+      receipt: "Rollback receipt restores tenant-local memory and blocks the pattern from network benefit credit.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      signal: "Outcome lift",
+      status: "Learning",
+      title: "Source bundle rollout earns a governed benefit receipt.",
+      summary: "Accepted answers improved without extra compliance risk, so the benefit can be credited and reused with limits.",
+      health: 88,
+      editRate: "1.1 edits",
+      warnings: "0 new flags",
+      owner: "AI governance",
+      response: "Credit benefit",
+      rule: "Credit only accepted, source-backed outcomes and keep the exact customer context out of the shared signal.",
+      receipt: "Benefit receipt strengthens the approved source bundle while preserving tenant override and rollback controls.",
+      href: "benefit.html",
+      action: "Open benefit ledger",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -2578,7 +2757,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.73 Alpha - Rollout Approval Console",
+      "Pilot phase: AnswerSeal v0.74 Alpha - Live Rollout Monitor",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

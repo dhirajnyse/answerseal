@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.73 Alpha</strong>
+        <strong>v0.74 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -48,6 +48,7 @@
         <a href="weight.html">Weight</a>
         <a href="simulator.html">Simulator</a>
         <a href="rollout.html">Rollout</a>
+        <a href="monitor.html">Monitor</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -57,15 +58,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.73 Alpha</h1>
+          <h1>AnswerSeal v0.74 Alpha</h1>
           <p>
-            This release turns trust simulations into controlled rollout approvals: every learning change gets a scope, owner, monitor plan, rollback trigger, and rollout receipt before recommendations change.
+            This release watches approved learning changes after they ship: live signals decide whether trust keeps learning, pauses for review, or reverses safely with a receipt.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Rollout Approval Console</h2>
+          <h2>Live Rollout Monitor</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -73,11 +74,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Rollout Approval Console page, scoped approval queue, monitor plan, rollback trigger, rollout receipt, v0.72 simulator memory, and Review Pack v69</dd>
+              <dd>Live Rollout Monitor page, drift alerts, rollback triggers, outcome receipts, v0.73 rollout memory, and Review Pack v70</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.74 Alpha - Live Rollout Monitor</dd>
+              <dd>v0.75 Alpha - Rollback Automation Agent</dd>
             </div>
           </dl>
         </aside>
@@ -93,6 +94,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.74 Alpha</strong>
+            </header>
+            <h3>Live Rollout Monitor</h3>
+            <p>Added a public Live Rollout Monitor page with live telemetry, drift alerts, pause and rollback states, owner response rules, outcome receipts, v0.73 rollout memory, and Review Pack v70.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.73 Alpha</strong>
             </header>
             <h3>Rollout Approval Console</h3>
@@ -752,39 +762,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.74 Alpha - Live Rollout Monitor</h2>
+          <h2>v0.75 Alpha - Rollback Automation Agent</h2>
           <p>
-            The next release should watch approved rollouts after they ship: live signals decide whether a rollout keeps learning, pauses for review, or reverses safely.
+            The next release should turn monitor warnings into a calm recovery workflow: detect the trigger, draft a rollback plan, route human approval, and record the reversal.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Live monitors</h3>
-            <p>Track approved rollouts by edit rate, source warnings, buyer objections, policy exceptions, and owner load.</p>
+            <h3>Trigger review</h3>
+            <p>Convert monitor warnings into a clear incident-style review with signal, threshold, owner, and affected answer class.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Drift alerts</h3>
-            <p>Surface source freshness, claim conflict, compliance, and reviewer-friction drift before trust weakens.</p>
+            <h3>Recovery plan</h3>
+            <p>Draft the rollback, replacement source path, tenant-local memory boundary, and buyer-safe communication note.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Rollback automation</h3>
-            <p>Apply the pre-approved stop condition and route the rollout back to human review with a receipt.</p>
+            <h3>Human approval</h3>
+            <p>Route the recovery plan to Security, Legal, Privacy, or AI governance before influence changes.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Outcome receipt</h3>
-            <p>Record whether the rollout improved accepted answers, reduced review time, or should stop learning.</p>
+            <h3>Rollback receipt</h3>
+            <p>Record what changed, why it reversed, what stayed useful, and how future learning should avoid the same failure.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.73 Alpha</span>
+      <span>AnswerSeal v0.74 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -802,6 +812,7 @@
         <a href="weight.html">Weight</a>
         <a href="simulator.html">Simulator</a>
         <a href="rollout.html">Rollout</a>
+        <a href="monitor.html">Monitor</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

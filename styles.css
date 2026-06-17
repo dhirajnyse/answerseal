@@ -13020,13 +13020,39 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-monitor-card.is-healthy header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-monitor-card.is-learning header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-monitor-card.is-watch header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-monitor-card.is-pause header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-monitor-card.is-rollback header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
 
 .proof-weight-meta div,
 .proof-simulator-meta div,
-.proof-rollout-meta div {
+.proof-rollout-meta div,
+.proof-monitor-meta div {
   min-height: 82px;
 }
 
@@ -13037,7 +13063,9 @@ svg {
 .proof-simulator-model-section,
 .proof-simulator-safety-section,
 .proof-rollout-scope-section,
-.proof-rollout-monitor-section {
+.proof-rollout-monitor-section,
+.proof-monitor-signal-section,
+.proof-monitor-response-section {
   position: relative;
 }
 
@@ -13048,7 +13076,9 @@ svg {
 .proof-simulator-model-grid article,
 .proof-simulator-safety-strip article,
 .proof-rollout-scope-grid article,
-.proof-rollout-monitor-strip article {
+.proof-rollout-monitor-strip article,
+.proof-monitor-signal-grid article,
+.proof-monitor-response-strip article {
   min-height: 168px;
 }
 
@@ -13556,6 +13586,8 @@ svg {
   .proof-simulator-safety-section,
   .proof-rollout-scope-section,
   .proof-rollout-monitor-section,
+  .proof-monitor-signal-section,
+  .proof-monitor-response-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -13627,6 +13659,9 @@ svg {
   .proof-rollout-grid,
   .proof-rollout-scope-grid,
   .proof-rollout-monitor-strip,
+  .proof-monitor-grid,
+  .proof-monitor-signal-grid,
+  .proof-monitor-response-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13738,6 +13773,10 @@ svg {
   .proof-rollout-scope-grid,
   .proof-rollout-monitor-strip,
   .proof-rollout-meta,
+  .proof-monitor-grid,
+  .proof-monitor-signal-grid,
+  .proof-monitor-response-strip,
+  .proof-monitor-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,

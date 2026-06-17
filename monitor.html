@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnswerSeal | Live Rollout Monitor</title>
+    <meta
+      name="description"
+      content="AnswerSeal Live Rollout Monitor watches approved AI trust rollouts for drift, warnings, owner load, buyer objections, pause conditions, and rollback triggers."
+    />
+    <meta name="theme-color" content="#00a889" />
+    <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="landing-page product-page proof-network-page proof-monitor-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Certified AI answer trust</small>
+        </span>
+      </a>
+
+      <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
+        <span>Current build</span>
+        <strong>v0.74 Alpha</strong>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="verify.html">Verify</a>
+        <a href="reports.html">Reports</a>
+        <a href="registry.html">Registry</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="evaluation.html">Bench</a>
+        <a href="connectors.html">Connectors</a>
+        <a href="learning.html">Learning</a>
+        <a href="policy.html">Policy</a>
+        <a href="buyer.html">Buyer</a>
+        <a href="concierge.html">Concierge</a>
+        <a href="memory.html">Memory</a>
+        <a href="network.html">Network</a>
+        <a href="benefit.html">Benefit</a>
+        <a href="weight.html">Weight</a>
+        <a href="simulator.html">Simulator</a>
+        <a href="rollout.html">Rollout</a>
+        <a href="monitor.html" aria-current="page">Monitor</a>
+        <a href="pricing.html">Pricing</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-hero proof-monitor-hero">
+        <div>
+          <span class="hero-kicker">Live rollout monitor</span>
+          <h1>Watch approved rollouts before trust drifts.</h1>
+          <p>
+            v0.74 watches approved learning changes after they ship. Edit rate, source warnings, buyer objections,
+            policy exceptions, owner load, and rollback conditions decide whether trust keeps learning or pauses.
+          </p>
+        </div>
+        <aside class="product-status-card">
+          <span>Live trust posture</span>
+          <strong id="liveRolloutScore">0% live trust</strong>
+          <p id="liveRolloutStatus">Approved rollouts are waiting for live telemetry.</p>
+        </aside>
+      </section>
+
+      <section class="proof-memory-shell proof-monitor-shell" aria-label="Live rollout monitor">
+        <div class="dashboard-toolbar">
+          <span class="hero-kicker">Monitor queue</span>
+          <div class="dashboard-actions">
+            <a class="hero-secondary" href="rollout.html">Open Rollout</a>
+            <a class="hero-secondary" href="policy.html">Open Policy</a>
+            <a class="hero-secondary" href="evaluation.html">Open Bench</a>
+            <a class="hero-primary" href="verify.html">Verify New Answer</a>
+          </div>
+        </div>
+
+        <div class="proof-memory-grid proof-monitor-grid" id="liveRolloutList"></div>
+      </section>
+
+      <section class="proof-network-firewall proof-monitor-signal-section" aria-label="Live rollout signals">
+        <div>
+          <span class="hero-kicker">Signals after approval</span>
+          <h2>Closed-loop learning is only safe when live behavior can slow itself down.</h2>
+          <p>
+            A rollout should not quietly become policy just because the forecast looked good. AnswerSeal turns every
+            approved change into a live watch with named signals, owners, and stop conditions.
+          </p>
+        </div>
+
+        <div class="proof-network-firewall-grid proof-monitor-signal-grid">
+          <article>
+            <span>Edit rate</span>
+            <strong>Reviewer friction</strong>
+            <p>Too many edits means the answer class is not ready to become stronger recommendation memory.</p>
+          </article>
+          <article>
+            <span>Source warnings</span>
+            <strong>Freshness drift</strong>
+            <p>Stale, missing, or conflicting sources route the rollout back to source refresh before broader reuse.</p>
+          </article>
+          <article>
+            <span>Buyer objections</span>
+            <strong>Real-world pushback</strong>
+            <p>Repeated buyer friction can pause a pattern even when the internal score still looks strong.</p>
+          </article>
+          <article>
+            <span>Owner load</span>
+            <strong>Human capacity</strong>
+            <p>Automation should not increase review bottlenecks faster than the team can safely absorb them.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="proof-network-lift-section proof-monitor-response-section" aria-label="Live rollout response rules">
+        <div>
+          <span class="hero-kicker">Response rules</span>
+          <h2>The product becomes powerful when learning has a calm brake.</h2>
+          <p>
+            v0.74 makes the future closed loop visible: learn from good outcomes, pause weak signals, roll back unsafe
+            influence, and leave a receipt that explains why the system changed.
+          </p>
+        </div>
+        <div class="proof-network-lift-strip proof-monitor-response-strip">
+          <article>
+            <span>Keep learning</span>
+            <strong>Healthy rollout</strong>
+            <p>Accepted, source-backed outcomes keep strengthening the approved answer class.</p>
+          </article>
+          <article>
+            <span>Pause</span>
+            <strong>Human review</strong>
+            <p>Policy exceptions, stale proof, or rising edits stop the rollout from broadening.</p>
+          </article>
+          <article>
+            <span>Rollback</span>
+            <strong>Safe reversal</strong>
+            <p>Private context, buyer-specific wording, or blocked source paths return to tenant-local memory.</p>
+          </article>
+          <article>
+            <span>Rollback receipt</span>
+            <strong>Auditable learning</strong>
+            <p>Every continue, pause, rollback, or benefit decision records the signal, owner, rule, and outcome.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <span>AnswerSeal v0.74 Alpha</span>
+      <a href="verify.html">Verify</a>
+      <a href="reports.html">Reports</a>
+      <a href="registry.html">Registry</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="evaluation.html">Bench</a>
+      <a href="connectors.html">Connectors</a>
+      <a href="learning.html">Learning</a>
+      <a href="policy.html">Policy</a>
+      <a href="buyer.html">Buyer</a>
+      <a href="concierge.html">Concierge</a>
+      <a href="memory.html">Memory</a>
+      <a href="network.html">Network</a>
+      <a href="benefit.html">Benefit</a>
+      <a href="weight.html">Weight</a>
+      <a href="simulator.html">Simulator</a>
+      <a href="rollout.html">Rollout</a>
+      <a href="monitor.html">Monitor</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="versions.html">Build Phases</a>
+    </footer>
+    <script src="landing.js"></script>
+  </body>
+</html>

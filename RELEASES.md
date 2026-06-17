@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.74 Alpha - Live Rollout Monitor
+
+Phase: Live Rollout Monitor
+
+- Added a dedicated Live Rollout Monitor page for approved rollout telemetry, drift alerts, pause states, rollback triggers, owner response rules, and outcome receipts after learning changes ship.
+- Added monitor cards for healthy answer-class learning, SOC 2 freshness drift, regional policy pauses, privacy rollback, source-bundle benefit credit, and saved sealed report telemetry.
+- Connected the landing product spine, Rollout Approval Console, Simulator, Weight Controller, Benefit Ledger, Policy, Evaluation Bench, Pricing, and demo build labels to the new Monitor path.
+- Upgraded public storage to v0.74 while preserving v0.73, v0.72, v0.71, v0.70, v0.69, v0.68, v0.67, v0.66, v0.65, v0.64, v0.63, v0.62, v0.61, v0.60, and v0.59 report memory.
+- Upgraded workspace storage to v0.74 while preserving v0.73 and earlier workspace memory, and upgraded export language to Review Pack v70.
+- Moved the next build toward v0.75 Rollback Automation Agent.
+
 ## v0.73 Alpha - Rollout Approval Console
 
 Phase: Rollout Approval Console
