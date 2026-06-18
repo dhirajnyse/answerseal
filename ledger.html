@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Guard Approval Lab</title>
+    <title>AnswerSeal | Approval Release Ledger</title>
     <meta
       name="description"
-      content="AnswerSeal Guard Approval Lab turns guard tuning changes into owner approval packets with confidence checks, rationale capture, and approval receipts."
+      content="AnswerSeal Approval Release Ledger records approved AI guard changes with release scope, rollout state, rollback watch, and audit exports."
     />
     <meta name="theme-color" content="#00a889" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="landing-page product-page proof-network-page proof-approval-page">
+  <body class="landing-page product-page proof-network-page proof-ledger-page">
     <header class="landing-nav" aria-label="Site header">
       <a class="landing-brand" href="./" aria-label="AnswerSeal home">
         <img src="assets/answerseal-logo.svg" alt="" />
@@ -51,107 +51,107 @@
         <a href="guard.html">Guard</a>
         <a href="outcome.html">Outcome</a>
         <a href="tuning.html">Tuning</a>
-        <a href="approval.html" aria-current="page">Approval</a>
-        <a href="ledger.html">Ledger</a>
+        <a href="approval.html">Approval</a>
+        <a href="ledger.html" aria-current="page">Ledger</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
     </header>
 
     <main>
-      <section class="product-hero proof-approval-hero">
+      <section class="product-hero proof-ledger-hero">
         <div>
-          <span class="hero-kicker">Guard approval lab</span>
-          <h1>Approve the change only when the proof is calm.</h1>
+          <span class="hero-kicker">Approval release ledger</span>
+          <h1>Every approved learning change needs a memory.</h1>
           <p>
-            Approval Lab packages each guard tune into an owner approval packet. Teams see the proposed change, confidence,
-            evidence state, policy fit, rationale, and rollback path before the tune reaches buyer-facing work.
+            v0.81 records approved guard changes after they ship. Teams see release scope, owner approval, rollout
+            state, rollback watch, and audit export so closed-loop learning stays accountable after the button is pressed.
           </p>
         </div>
         <aside class="product-status-card">
-          <span>Approval readiness</span>
-          <strong id="guardApprovalScore">0% ready</strong>
-          <p id="guardApprovalStatus">Approval packets are waiting for tuning signals.</p>
+          <span>Release ledger</span>
+          <strong id="approvalReleaseLedgerScore">0 entries</strong>
+          <p id="approvalReleaseLedgerStatus">Approved changes are waiting for release records.</p>
         </aside>
       </section>
 
-      <section class="proof-memory-shell proof-approval-shell" aria-label="Guard approval lab">
+      <section class="proof-memory-shell proof-ledger-shell" aria-label="Approval release ledger">
         <div class="dashboard-toolbar">
-          <span class="hero-kicker">Approval packets</span>
+          <span class="hero-kicker">Released changes</span>
           <div class="dashboard-actions">
-            <a class="hero-secondary" href="tuning.html">Open Tuning Queue</a>
-            <a class="hero-secondary" href="outcome.html">Open Outcome Monitor</a>
-            <a class="hero-secondary" href="policy.html">Open Policy</a>
+            <a class="hero-secondary" href="approval.html">Open Approval Lab</a>
+            <a class="hero-secondary" href="monitor.html">Open Monitor</a>
+            <a class="hero-secondary" href="rollback.html">Open Rollback</a>
             <a class="hero-primary" href="verify.html">Verify New Answer</a>
           </div>
         </div>
 
-        <div class="proof-memory-grid proof-approval-grid" id="guardApprovalList"></div>
+        <div class="proof-memory-grid proof-ledger-grid" id="approvalReleaseLedgerList"></div>
       </section>
 
-      <section class="proof-network-firewall proof-approval-flow-section" aria-label="Guard approval anatomy">
+      <section class="proof-network-firewall proof-ledger-flow-section" aria-label="Release ledger anatomy">
         <div>
-          <span class="hero-kicker">Approval anatomy</span>
-          <h2>Approval is a packet, not a button.</h2>
+          <span class="hero-kicker">Ledger anatomy</span>
+          <h2>Release history is a control, not an archive.</h2>
           <p>
-            A tune can ship only when the approver sees why it exists, what evidence passed, where policy still applies,
-            and how to reverse it. That keeps closed-loop learning strong without making it reckless.
+            The ledger keeps each approved learning change explainable after rollout. It shows where the change applies,
+            who owns it, what monitor is watching it, and how the team reverses it if trust drops.
           </p>
         </div>
 
-        <div class="proof-network-firewall-grid proof-approval-flow-grid">
+        <div class="proof-network-firewall-grid proof-ledger-flow-grid">
           <article>
-            <span>Change</span>
-            <strong>What will move</strong>
-            <p>Show the threshold, rule, route, or warning level that will change if the owner approves.</p>
+            <span>Release entry</span>
+            <strong>What shipped</strong>
+            <p>Record the approved tune, changed rule, release window, owner, and expected trust lift.</p>
           </article>
           <article>
-            <span>Confidence</span>
-            <strong>Why it is safe</strong>
-            <p>Pair reviewer confidence with evidence coverage, policy alignment, and test status.</p>
+            <span>Scope receipt</span>
+            <strong>Where it applies</strong>
+            <p>Show tenant, region, workflow, evidence class, and answer category boundaries.</p>
           </article>
           <article>
-            <span>Rationale</span>
-            <strong>Owner explains</strong>
-            <p>Capture the human reason for approval so future reviewers understand the decision.</p>
+            <span>Rollback watch</span>
+            <strong>What can stop it</strong>
+            <p>Keep first-run drift, false-block, stale-source, and reviewer-load signals visible.</p>
           </article>
           <article>
-            <span>Approval receipt</span>
-            <strong>Ship or reverse</strong>
-            <p>Record approver, scope, evidence, test result, changed threshold, and rollback path.</p>
+            <span>Audit export</span>
+            <strong>How to prove it</strong>
+            <p>Export approval rationale, evidence checks, rollout state, monitor rules, and reversal path.</p>
           </article>
         </div>
       </section>
 
-      <section class="proof-network-lift-section proof-approval-summary-section" aria-label="Guard approval operating rules">
+      <section class="proof-network-lift-section proof-ledger-summary-section" aria-label="Release ledger operating rules">
         <div>
-          <span class="hero-kicker">Human control</span>
-          <h2>World-class AI governance should feel boring in the best way.</h2>
+          <span class="hero-kicker">After approval</span>
+          <h2>Closed-loop AI should leave quiet receipts everywhere it learns.</h2>
           <p>
-            Approval Lab keeps the product simple: every improvement has an owner, every owner sees the risk, and every
-            shipped tune keeps a receipt that protects local policy, regional rollout, and future audits.
+            The Approval Release Ledger turns learning into governed memory: what changed, who allowed it, who benefits,
+            what remains local, and what evidence proves the change is still safe.
           </p>
         </div>
-        <div class="proof-network-lift-strip proof-approval-summary-strip">
+        <div class="proof-network-lift-strip proof-ledger-summary-strip">
           <article>
-            <span>Approve</span>
-            <strong>Ship narrowly</strong>
-            <p>Evidence, policy, confidence, and rollback are aligned for a scoped tune.</p>
+            <span>Shipped</span>
+            <strong>Ledger entry is live</strong>
+            <p>The approved change is active only inside its recorded scope.</p>
           </article>
           <article>
-            <span>Ask</span>
-            <strong>Need rationale</strong>
-            <p>The owner must explain the safe reason before behavior changes.</p>
+            <span>Watching</span>
+            <strong>Rollback stays visible</strong>
+            <p>Early signals keep the reversal path close until the change proves calm.</p>
           </article>
           <article>
-            <span>Revise</span>
-            <strong>Reduce scope</strong>
-            <p>The tune is promising, but it should become smaller or better tested first.</p>
+            <span>Held</span>
+            <strong>Scope is protected</strong>
+            <p>If policy or regional rules are incomplete, the release stays out of live influence.</p>
           </article>
           <article>
-            <span>Reject</span>
-            <strong>Protect trust</strong>
-            <p>If proof, policy, or rollback are weak, the tune becomes a lesson instead of a release.</p>
+            <span>Audited</span>
+            <strong>Proof is exportable</strong>
+            <p>Every shipped learning change can be explained to security, legal, and customers.</p>
           </article>
         </div>
       </section>
@@ -182,7 +182,7 @@
       <a href="outcome.html">Outcome</a>
       <a href="tuning.html">Tuning</a>
       <a href="approval.html">Approval</a>
-        <a href="ledger.html">Ledger</a>
+      <a href="ledger.html">Ledger</a>
       <a href="pricing.html">Pricing</a>
       <a href="versions.html">Build Phases</a>
     </footer>

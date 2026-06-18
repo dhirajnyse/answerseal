@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.80 Alpha</strong>
+        <strong>v0.81 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -55,6 +55,7 @@
         <a href="outcome.html">Outcome</a>
         <a href="tuning.html">Tuning</a>
         <a href="approval.html">Approval</a>
+        <a href="ledger.html">Ledger</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -64,15 +65,15 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.80 Alpha</h1>
+          <h1>AnswerSeal v0.81 Alpha</h1>
           <p>
-            This release turns guard tuning tasks into owner approval packets: confidence checks, evidence review, rationale capture, approval receipts, and rollback-ready release decisions before behavior changes.
+            This release records approved guard changes after they ship: release scope, owner approval, rollout state, rollback watch, and audit exports for every governed learning change.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Guard Approval Lab</h2>
+          <h2>Approval Release Ledger</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -80,11 +81,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Guard Approval Lab page, approval packets, reviewer confidence, policy fit, evidence review, owner rationale, rollback-ready receipts, v0.79 tuning memory, and Review Pack v76</dd>
+              <dd>Approval Release Ledger page, shipped change records, tenant and regional scope, owner approval, rollout state, rollback watch, audit exports, v0.80 approval memory, and Review Pack v77</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.81 Alpha - Approval Release Ledger</dd>
+              <dd>v0.82 Alpha - Ledger Health Monitor</dd>
             </div>
           </dl>
         </aside>
@@ -100,6 +101,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.81 Alpha</strong>
+            </header>
+            <h3>Approval Release Ledger</h3>
+            <p>Added a public Approval Release Ledger page with shipped change records, release scope, owner approval, rollout state, rollback watch, audit exports, v0.80 approval memory, and Review Pack v77.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.80 Alpha</strong>
             </header>
             <h3>Guard Approval Lab</h3>
@@ -822,39 +832,39 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.81 Alpha - Approval Release Ledger</h2>
+          <h2>v0.82 Alpha - Ledger Health Monitor</h2>
           <p>
-            The next release should make approved guard changes visible after shipment: record release scope, owner approval, rollout state, rollback watch, and audit export so every learning change has a durable ledger entry.
+            The next release should watch ledger entries after rollout: compare expected lift to actual signals, spot regressions, alert owners, and recommend rollback before buyer-facing trust weakens.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Release entry</h3>
-            <p>Record the approved guard tune, scope, owner, evidence state, and release window in one durable ledger item.</p>
+            <h3>Health pulse</h3>
+            <p>Compare expected lift, stale-source drift, false-blocks, and reviewer load for each shipped ledger entry.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Scope receipt</h3>
-            <p>Show which tenants, regions, workflows, and answer classes the approved change may influence.</p>
+            <h3>Owner alert</h3>
+            <p>Notify the named owner when a release entry moves outside its approved confidence or policy range.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Rollback watch</h3>
-            <p>Track the first post-release signals and keep the rollback path visible until the change proves calm.</p>
+            <h3>Rollback recommendation</h3>
+            <p>Recommend pause, narrow, or reverse when the ledger watch shows trust loss or unexpected scope expansion.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Audit export</h3>
-            <p>Export the released change with approval rationale, evidence checks, monitor rules, and reversal instructions.</p>
+            <h3>Health export</h3>
+            <p>Export shipped result, expected impact, actual impact, owner action, and rollback decision for audits.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.80 Alpha</span>
+      <span>AnswerSeal v0.81 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -879,6 +889,7 @@
         <a href="outcome.html">Outcome</a>
         <a href="tuning.html">Tuning</a>
         <a href="approval.html">Approval</a>
+        <a href="ledger.html">Ledger</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

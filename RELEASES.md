@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.81 Alpha - Approval Release Ledger
+
+Phase: Approval Release Ledger
+
+- Added a dedicated Approval Release Ledger page for shipped learning changes, release scope, owner approval, rollout state, rollback watch, and audit exports.
+- Added public ledger cards with shipped change, owner, scope, rollout status, rollback watch, approval rationale, ledger receipt, and audit export.
+- Connected landing product spine, Guard Approval Lab, Pricing, Build Phases, demo build labels, and public navigation to the new Ledger path.
+- Upgraded public storage to v0.81 while preserving v0.80 and earlier report memory.
+- Upgraded workspace storage to v0.81 while preserving v0.80 and earlier workspace memory, and upgraded export language to Review Pack v77.
+- Moved the next build toward v0.82 Ledger Health Monitor.
+
 ## v0.80 Alpha - Guard Approval Lab
 
 Phase: Guard Approval Lab

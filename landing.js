@@ -81,6 +81,9 @@ const guardTuningStatus = document.querySelector("#guardTuningStatus");
 const guardApprovalList = document.querySelector("#guardApprovalList");
 const guardApprovalScore = document.querySelector("#guardApprovalScore");
 const guardApprovalStatus = document.querySelector("#guardApprovalStatus");
+const approvalReleaseLedgerList = document.querySelector("#approvalReleaseLedgerList");
+const approvalReleaseLedgerScore = document.querySelector("#approvalReleaseLedgerScore");
+const approvalReleaseLedgerStatus = document.querySelector("#approvalReleaseLedgerStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -93,9 +96,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.80 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v80";
+const PUBLIC_BUILD_VERSION = "v0.81 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v81";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v80",
   "answerseal.public.reports.v79",
   "answerseal.public.reports.v78",
   "answerseal.public.reports.v77",
@@ -201,6 +205,7 @@ renderRecurrenceGuardEngine();
 renderGuardOutcomeMonitor();
 renderGuardTuningQueue();
 renderGuardApprovalLab();
+renderApprovalReleaseLedger();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -3629,6 +3634,182 @@ function buildGuardApprovalItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderApprovalReleaseLedger() {
+  if (!approvalReleaseLedgerList) return;
+  const entries = buildApprovalReleaseLedgerItems();
+  const shippedCount = entries.filter((entry) => entry.state === "Shipped").length;
+  const watchCount = entries.filter((entry) => entry.state === "Watching").length;
+  const heldCount = entries.filter((entry) => entry.state === "Held").length;
+  const scopeCount = new Set(entries.map((entry) => entry.scope)).size;
+
+  if (approvalReleaseLedgerScore) approvalReleaseLedgerScore.textContent = `${shippedCount}/${entries.length} shipped`;
+  if (approvalReleaseLedgerStatus) {
+    approvalReleaseLedgerStatus.textContent = `${watchCount} under rollback watch, ${heldCount} held by scope, ${scopeCount} release scopes recorded.`;
+  }
+
+  approvalReleaseLedgerList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.state === "Shipped"
+        ? "is-shipped"
+        : entry.state === "Watching"
+          ? "is-watching"
+          : entry.state === "Held"
+            ? "is-held"
+            : "is-audited";
+    card.className = `proof-memory-card proof-ledger-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.release)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-ledger-meta">
+        <div>
+          <dt>Scope</dt>
+          <dd>${escapePublicHtml(entry.scope)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Rollout</dt>
+          <dd>${escapePublicHtml(entry.rollout)}</dd>
+        </div>
+        <div>
+          <dt>Rollback watch</dt>
+          <dd>${escapePublicHtml(entry.watch)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Approval rationale</span>
+        <p>${escapePublicHtml(entry.rationale)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Ledger receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Audit export</span>
+        <p>${escapePublicHtml(entry.audit)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    approvalReleaseLedgerList.append(card);
+  });
+}
+
+function buildApprovalReleaseLedgerItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const shipped = score >= 90;
+    const watching = score >= 78 && score < 90;
+    return {
+      release: `Local report release ${index + 1}`,
+      state: shipped ? "Shipped" : watching ? "Watching" : "Held",
+      title: report.prompt || "Saved sealed answer release entry",
+      summary: "A saved sealed report can influence reusable proof only when its release scope and rollback watch are explicit.",
+      scope: shipped ? "Team proof memory" : watching ? "Reviewer-only memory" : "Local workspace",
+      owner: shipped ? "AI governance" : watching ? "Security reviewer" : "Compliance",
+      rollout: shipped ? "Live in approved answers" : watching ? "Pilot watch" : "Blocked",
+      watch: shipped ? "30-day trust drift" : watching ? "Owner review" : "No influence",
+      rationale: shipped
+        ? "The score, citations, and report summary are strong enough to become scoped reusable memory."
+        : watching
+          ? "The report needs first-run monitoring before it influences future answers."
+          : "The answer stays local until score, source coverage, and owner rationale improve.",
+      receipt: report.summary || "Ledger receipt waits for scope, owner approval, rollout state, and rollback watch.",
+      audit: shipped ? "Export includes score, prompt, answer, sources, and approval receipt." : "Audit export marks the item as limited until owner review passes.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      release: "RL-081-001",
+      state: "Shipped",
+      title: "SOC 2 freshness gate moved to the approved 120-day window.",
+      summary: "The approved tune is active for SOC 2-style security answers with a rollback watch on stale-source warnings.",
+      scope: "SOC 2 answers",
+      owner: "Compliance",
+      rollout: "Live",
+      watch: "Stale-source drift",
+      rationale: "Approval Lab confirmed high confidence, clean policy fit, and a reversible threshold before shipment.",
+      receipt: "Release receipt: 90-day gate changed to 120 days for approved SOC 2 evidence only.",
+      audit: "Export includes approver, five replay scenarios, source-age check, monitor rule, and 90-day rollback path.",
+      href: "approval.html",
+      action: "Open approval",
+    },
+    {
+      release: "RL-081-002",
+      state: "Watching",
+      title: "Privacy boundary wording shipped with local-only influence.",
+      summary: "The wording improvement is live, while shared-memory expansion remains blocked by tenant-safe network rules.",
+      scope: "Privacy explanations",
+      owner: "Privacy",
+      rollout: "Limited",
+      watch: "Network boundary",
+      rationale: "The tune changes explanation text only and keeps raw buyer context out of shared learning.",
+      receipt: "Release receipt: approved wording ships to local tenant views with shared-memory influence disabled.",
+      audit: "Export includes privacy approval, network firewall result, local-only scope, and blocked influence rule.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      release: "RL-081-003",
+      state: "Held",
+      title: "Regional proof pass stays held until country scope is explicit.",
+      summary: "The approval packet showed useful lift, but the ledger blocks release until Legal records country boundaries.",
+      scope: "EU proof only",
+      owner: "Legal",
+      rollout: "Held",
+      watch: "Country policy",
+      rationale: "Regional evidence rights must be explicit before any shared proof pattern can influence buyer-facing answers.",
+      receipt: "Held receipt: no live influence until Legal adds country fallback and Privacy confirms transfer boundaries.",
+      audit: "Export marks the release as held with policy gap, owner, and no-op rollback state.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      release: "RL-081-004",
+      state: "Shipped",
+      title: "Rollback-cost ceiling tightened before source weights increase.",
+      summary: "The simulator-approved tune is live with rollback instructions if early lift does not appear.",
+      scope: "Source weighting",
+      owner: "AI governance",
+      rollout: "Live",
+      watch: "Lift and rollback",
+      rationale: "The tighter ceiling prevents broad source-weight changes unless they remain low-cost and reversible.",
+      receipt: "Release receipt: low-cost ceiling active with revert to prior weight rules if lift drops.",
+      audit: "Export includes simulation result, monitor rule, rollback path, and owner approval rationale.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+    {
+      release: "RL-081-005",
+      state: "Audited",
+      title: "Buyer-safe trust packet export recorded for pilot review.",
+      summary: "The shipped trust packet path is ready for buyer review with evidence, approval, and release receipts attached.",
+      scope: "Pilot trust packets",
+      owner: "Customer success",
+      rollout: "Exported",
+      watch: "Buyer response",
+      rationale: "Pilot buyers need a simple proof trail that shows what changed and why it remains reversible.",
+      receipt: "Audit receipt: release scope, owner, evidence checks, and buyer-safe summary are bundled for handoff.",
+      audit: "Export includes sealed report, approval packet, ledger entry, and buyer-safe release summary.",
+      href: "buyer.html",
+      action: "Open buyer",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -3845,7 +4026,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.80 Alpha - Guard Approval Lab",
+      "Pilot phase: AnswerSeal v0.81 Alpha - Approval Release Ledger",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

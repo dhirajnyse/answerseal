@@ -13177,6 +13177,26 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-ledger-card.is-shipped header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-ledger-card.is-watching header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-ledger-card.is-held header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-ledger-card.is-audited header strong {
+  color: #5b21b6;
+  background: rgba(237, 233, 254, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13190,7 +13210,8 @@ svg {
 .proof-guard-meta div,
 .proof-outcome-meta div,
 .proof-tuning-meta div,
-.proof-approval-meta div {
+.proof-approval-meta div,
+.proof-ledger-meta div {
   min-height: 82px;
 }
 
@@ -13215,7 +13236,9 @@ svg {
 .proof-tuning-flow-section,
 .proof-tuning-summary-section,
 .proof-approval-flow-section,
-.proof-approval-summary-section {
+.proof-approval-summary-section,
+.proof-ledger-flow-section,
+.proof-ledger-summary-section {
   position: relative;
 }
 
@@ -13240,7 +13263,9 @@ svg {
 .proof-tuning-flow-grid article,
 .proof-tuning-summary-strip article,
 .proof-approval-flow-grid article,
-.proof-approval-summary-strip article {
+.proof-approval-summary-strip article,
+.proof-ledger-flow-grid article,
+.proof-ledger-summary-strip article {
   min-height: 168px;
 }
 
@@ -13846,6 +13871,9 @@ svg {
   .proof-approval-grid,
   .proof-approval-flow-grid,
   .proof-approval-summary-strip,
+  .proof-ledger-grid,
+  .proof-ledger-flow-grid,
+  .proof-ledger-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -13986,6 +14014,10 @@ svg {
   .proof-approval-flow-grid,
   .proof-approval-summary-strip,
   .proof-approval-meta,
+  .proof-ledger-grid,
+  .proof-ledger-flow-grid,
+  .proof-ledger-summary-strip,
+  .proof-ledger-meta,
   .pricing-grid,
   .dashboard-metrics,
   .pilot-terms,
