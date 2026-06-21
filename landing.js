@@ -105,6 +105,9 @@ const d1BlueprintStatus = document.querySelector("#d1BlueprintStatus");
 const authTenantList = document.querySelector("#authTenantList");
 const authTenantScore = document.querySelector("#authTenantScore");
 const authTenantStatus = document.querySelector("#authTenantStatus");
+const workspaceAccessList = document.querySelector("#workspaceAccessList");
+const workspaceAccessScore = document.querySelector("#workspaceAccessScore");
+const workspaceAccessStatus = document.querySelector("#workspaceAccessStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -117,9 +120,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.88 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v88";
+const PUBLIC_BUILD_VERSION = "v0.89 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v89";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v88",
   "answerseal.public.reports.v87",
   "answerseal.public.reports.v86",
   "answerseal.public.reports.v85",
@@ -241,6 +245,7 @@ renderPersistentTrustRecords();
 renderWorkspaceDataLayer();
 renderD1PersistenceBlueprint();
 renderAuthTenantBoundary();
+renderWorkspaceAccessConsole();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -5267,6 +5272,232 @@ function buildAuthTenantBoundaryItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderWorkspaceAccessConsole() {
+  if (!workspaceAccessList) return;
+  const entries = buildWorkspaceAccessItems();
+  const readyCount = entries.filter((entry) => entry.state.includes("Ready")).length;
+  const inviteCount = entries.filter((entry) => entry.surface.toLowerCase().includes("invite")).length;
+  const buyerLinkCount = entries.filter((entry) => entry.surface.toLowerCase().includes("buyer")).length;
+  const receiptCount = entries.filter((entry) => entry.receipt !== "Pending").length;
+
+  if (workspaceAccessScore) workspaceAccessScore.textContent = `${readyCount}/${entries.length} launch-ready`;
+  if (workspaceAccessStatus) {
+    workspaceAccessStatus.textContent = `${inviteCount} invite paths, ${buyerLinkCount} buyer-link controls, and ${receiptCount} receipt trails are visible before workspace launch.`;
+  }
+
+  workspaceAccessList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Ready")
+      ? "is-ready"
+      : entry.state.includes("Hold")
+        ? "is-held"
+        : entry.state.includes("Review") || entry.state.includes("Queue")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-access-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-access-meta">
+        <div>
+          <dt>Surface</dt>
+          <dd>${escapePublicHtml(entry.surface)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Visible control</dt>
+          <dd>${escapePublicHtml(entry.control)}</dd>
+        </div>
+        <div>
+          <dt>Receipt</dt>
+          <dd>${escapePublicHtml(entry.receipt)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Primary action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Safety rule</span>
+        <p>${escapePublicHtml(entry.safetyRule)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    workspaceAccessList.append(card);
+  });
+}
+
+function buildWorkspaceAccessItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => ({
+    contract: `ACCESS-089-L${index + 1}`,
+    state: Number(report.score || 0) >= 86 ? "Ready" : "Review queue",
+    title: report.prompt || "Saved report access review",
+    summary: "Saved report memory can enter a private workspace only when the owner, link scope, and reuse decision are visible.",
+    surface: "Report access",
+    owner: "Reviewer",
+    control: Number(report.score || 0) >= 86 ? "Seal and share" : "Owner review",
+    receipt: report.summary ? "Imported report receipt" : "Pending",
+    actionPath: "Open the sealed report, confirm source scope, then choose workspace-only or buyer-safe share.",
+    safetyRule: "No saved local report becomes tenant memory until an owner can see its access path.",
+    href: getReportShareUrl(report, true),
+    action: "Open report",
+  }));
+
+  const seededEntries = [
+    {
+      contract: "ACCESS-089-001",
+      state: "Ready",
+      title: "Owner sees the workspace state before inviting anyone.",
+      summary: "The console starts with one calm state panel: owner, plan, region, session health, recovery contact, and launch readiness.",
+      surface: "Account state",
+      owner: "Founder owner",
+      control: "Workspace profile",
+      receipt: "workspace_state_viewed",
+      actionPath: "Confirm owner, plan, region, and recovery contact before creating invite links.",
+      safetyRule: "No invite can be sent until the workspace has a named owner and recovery route.",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      contract: "ACCESS-089-002",
+      state: "Queue",
+      title: "Invites are reviewed like trust artifacts.",
+      summary: "Pending invites show email, role, expiry, inviter, acceptance status, and the safest next action.",
+      surface: "Invite queue",
+      owner: "Owner",
+      control: "Role-bound invite",
+      receipt: "invite_sent",
+      actionPath: "Send reviewer, contributor, or viewer invites with expiry and acceptance receipt.",
+      safetyRule: "Forwarded, expired, or cross-workspace invites stay blocked until the owner renews them.",
+      href: "auth.html",
+      action: "Open auth",
+    },
+    {
+      contract: "ACCESS-089-003",
+      state: "Ready",
+      title: "Role views make permissions understandable.",
+      summary: "Owner, reviewer, contributor, viewer, and buyer-link access are visible without forcing users into admin jargon.",
+      surface: "Role views",
+      owner: "Trust owner",
+      control: "Permission matrix",
+      receipt: "role_matrix_reviewed",
+      actionPath: "Compare what each role can verify, approve, export, share, revoke, and recover.",
+      safetyRule: "A role can only gain power through an owner-approved role change receipt.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      contract: "ACCESS-089-004",
+      state: "Ready",
+      title: "Buyer links get their own control surface.",
+      summary: "External links show report scope, expiry, revocation state, last viewed time, and buyer-safe content boundaries.",
+      surface: "Buyer links",
+      owner: "Reviewer",
+      control: "Expire or revoke",
+      receipt: "buyer_link_opened",
+      actionPath: "Create, copy, expire, revoke, or inspect a buyer-safe report link from one quiet row.",
+      safetyRule: "Buyer tokens never become workspace sessions and never reveal raw source files.",
+      href: "buyer.html",
+      action: "Open buyer portal",
+    },
+    {
+      contract: "ACCESS-089-005",
+      state: "Ready",
+      title: "Access receipts become part of the audit trail.",
+      summary: "Invites, role changes, exports, buyer links, revocations, and recovery actions show the latest receipt.",
+      surface: "Receipt trail",
+      owner: "Security reviewer",
+      control: "Audit timeline",
+      receipt: "access_receipt_logged",
+      actionPath: "Open the receipt trail before exporting, approving, or changing a member role.",
+      safetyRule: "Sensitive actions without a receipt stay held until an owner can explain them.",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      contract: "ACCESS-089-006",
+      state: "Review queue",
+      title: "Recovery access is visible before something breaks.",
+      summary: "The console shows who can pause links, restore reports, reverse roles, and notify buyers when trust changes.",
+      surface: "Recovery",
+      owner: "Trust owner",
+      control: "Recovery route",
+      receipt: "recovery_owner_assigned",
+      actionPath: "Assign recovery owner, restore window, buyer notice path, and rollback receipt.",
+      safetyRule: "No one should discover recovery authority during an incident.",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      contract: "ACCESS-089-007",
+      state: "Design ready",
+      title: "Plan gates explain commercial boundaries.",
+      summary: "Starter, Team, and Enterprise limits become visible access controls instead of hidden pricing copy.",
+      surface: "Plan gates",
+      owner: "Billing owner",
+      control: "Members and links",
+      receipt: "plan_gate_previewed",
+      actionPath: "Preview member count, buyer links, exports, audit depth, and private deployment options by tier.",
+      safetyRule: "Enterprise-only controls stay unavailable unless plan and owner authority allow them.",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      contract: "ACCESS-089-008",
+      state: "Ready",
+      title: "Session health stays simple.",
+      summary: "A small session panel shows actor, workspace, role, region, and feature gates without distracting the verifier.",
+      surface: "Session health",
+      owner: "Signed-in member",
+      control: "Active workspace",
+      receipt: "session_checked",
+      actionPath: "Confirm active workspace and role before saving reports or opening buyer rooms.",
+      safetyRule: "If workspace, actor, or role is missing, the durable action stays blocked.",
+      href: "auth.html",
+      action: "Open auth",
+    },
+    {
+      contract: "ACCESS-089-009",
+      state: "Review queue",
+      title: "Data requests show scope before export.",
+      summary: "Export and deletion requests show requester, reason, workspace scope, included records, and approval route.",
+      surface: "Data request",
+      owner: "Owner",
+      control: "Export scope",
+      receipt: "data_request_created",
+      actionPath: "Review export/delete scope before a report, audit trail, or recovery receipt leaves the workspace.",
+      safetyRule: "Cross-workspace data requests and buyer-token exports are blocked.",
+      href: "data.html",
+      action: "Open data layer",
+    },
+    {
+      contract: "ACCESS-089-010",
+      state: "Ready",
+      title: "Launch checklist keeps access calm.",
+      summary: "Before private beta, the console proves owner, invites, roles, buyer links, receipts, recovery, and plan gates are coherent.",
+      surface: "Launch checklist",
+      owner: "Founder owner",
+      control: "Private beta gate",
+      receipt: "access_launch_ready",
+      actionPath: "Run the access readiness list before sending the first real workspace invite.",
+      safetyRule: "Private beta does not open until every access path has a visible owner and receipt.",
+      href: "versions.html",
+      action: "Open roadmap",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -5483,7 +5714,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.88 Alpha - Auth Tenant Boundary",
+      "Pilot phase: AnswerSeal v0.89 Alpha - Workspace Access Console",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

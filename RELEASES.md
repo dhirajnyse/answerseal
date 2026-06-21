@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.89 Alpha - Workspace Access Console
+
+Phase: Workspace Access Console
+
+- Added a dedicated Workspace Access Console page for account state, invite queues, role views, buyer-link controls, data request scope, recovery routes, and access receipts.
+- Added dynamic access cards for saved reports, owner state, role-bound invites, role matrices, buyer links, audit receipts, recovery authority, plan gates, session health, data requests, and private beta readiness.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Access console.
+- Upgraded public storage to v0.89 while preserving v0.88 and earlier report memory.
+- Upgraded workspace storage to v0.89 while preserving v0.88 and earlier workspace memory, and upgraded export language to Review Pack v85.
+- Moved the next build toward v0.90 Invite Flow Prototype.
+
 ## v0.88 Alpha - Auth Tenant Boundary
 
 Phase: Auth Tenant Boundary

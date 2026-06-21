@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnswerSeal | Workspace Access Console</title>
+    <meta
+      name="description"
+      content="AnswerSeal Workspace Access Console shows account state, invite queues, role views, buyer-link controls, and access receipts."
+    />
+    <meta name="theme-color" content="#00a889" />
+    <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="landing-page product-page proof-network-page proof-workspace-page proof-records-page proof-data-page proof-persistence-page proof-auth-page proof-access-page">
+    <header class="landing-nav" aria-label="Site header">
+      <a class="landing-brand" href="./" aria-label="AnswerSeal home">
+        <img src="assets/answerseal-logo.svg" alt="" />
+        <span>
+          <strong>AnswerSeal</strong>
+          <small>Certified AI answer trust</small>
+        </span>
+      </a>
+
+      <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
+        <span>Current build</span>
+        <strong>v0.89 Alpha</strong>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="verify.html">Verify</a>
+        <a href="reports.html">Reports</a>
+        <a href="registry.html">Registry</a>
+        <a href="versions.html">Build</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="./#pilot">Pilot</a>
+        <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-hero proof-access-hero">
+        <div>
+          <span class="hero-kicker">Workspace access console</span>
+          <h1>Make access visible before the workspace goes live.</h1>
+          <p>
+            v0.89 turns the auth boundary into an operating surface: account state, invite queues, role views,
+            buyer-link controls, data request scope, recovery routes, and audit receipts in one calm launch console.
+          </p>
+        </div>
+        <aside class="product-status-card">
+          <span>Access readiness</span>
+          <strong id="workspaceAccessScore">0/0 launch-ready</strong>
+          <p id="workspaceAccessStatus">Access controls are waiting for workspace signals.</p>
+        </aside>
+      </section>
+
+      <section class="proof-memory-shell proof-access-shell" aria-label="Workspace access console">
+        <div class="dashboard-toolbar">
+          <span class="hero-kicker">Launch controls</span>
+          <div class="dashboard-actions">
+            <a class="hero-secondary" href="auth.html">Open Auth</a>
+            <a class="hero-secondary" href="workspace.html">Open Workspace</a>
+            <a class="hero-secondary" href="pricing.html">Open Pricing</a>
+            <a class="hero-primary" href="verify.html">Verify New Answer</a>
+          </div>
+        </div>
+
+        <div class="proof-memory-grid proof-access-grid" id="workspaceAccessList"></div>
+      </section>
+
+      <section class="proof-network-firewall proof-access-flow-section" aria-label="Access console model">
+        <div>
+          <span class="hero-kicker">Console model</span>
+          <h2>Private beta should begin with one owner view, not five admin screens.</h2>
+          <p>
+            The console keeps access simple: who is in the workspace, what they can do, what buyers can open, and which
+            receipt proves the action. The verifier remains first; the access layer quietly protects every durable step.
+          </p>
+        </div>
+
+        <div class="proof-network-firewall-grid proof-access-flow-grid">
+          <article>
+            <span>Account</span>
+            <strong>State before setup</strong>
+            <p>Owner, plan, region, session health, and recovery contact are visible before invites begin.</p>
+          </article>
+          <article>
+            <span>Invites</span>
+            <strong>Queue before chaos</strong>
+            <p>Each invite carries role, expiry, acceptance status, inviter, and the safest next action.</p>
+          </article>
+          <article>
+            <span>Roles</span>
+            <strong>Readable permissions</strong>
+            <p>Owners, reviewers, contributors, viewers, and buyer links are compared without admin jargon.</p>
+          </article>
+          <article>
+            <span>Buyer</span>
+            <strong>External access controls</strong>
+            <p>Buyer-safe links show scope, expiry, revocation state, last view, and share boundaries.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="proof-network-lift-section proof-access-summary-section" aria-label="Launch checklist">
+        <div>
+          <span class="hero-kicker">Launch checklist</span>
+          <h2>The workspace can grow only when access stays understandable.</h2>
+          <p>
+            v0.89 is a product-simplicity release: it turns hidden governance into visible controls so founders can
+            invite the first team without guessing how trust, roles, buyer rooms, and recovery will behave.
+          </p>
+        </div>
+        <div class="proof-network-lift-strip proof-access-summary-strip">
+          <article>
+            <span>Owner</span>
+            <strong>First workspace authority</strong>
+            <p>The owner can see session state, plan gates, recovery contact, and launch readiness.</p>
+          </article>
+          <article>
+            <span>Team</span>
+            <strong>Invite and role review</strong>
+            <p>Reviewer, contributor, and viewer roles stay explicit before anyone touches trusted work.</p>
+          </article>
+          <article>
+            <span>Buyer</span>
+            <strong>Revocable share room</strong>
+            <p>External links never act like internal sessions and can be expired from the console.</p>
+          </article>
+          <article>
+            <span>Audit</span>
+            <strong>Receipt-first access</strong>
+            <p>Role changes, exports, revocations, and recovery actions leave a visible access receipt.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <span>AnswerSeal v0.89 Alpha</span>
+      <a href="verify.html">Verify</a>
+      <a href="reports.html">Reports</a>
+      <a href="registry.html">Registry</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="evaluation.html">Bench</a>
+      <a href="connectors.html">Connectors</a>
+      <a href="learning.html">Learning</a>
+      <a href="policy.html">Policy</a>
+      <a href="buyer.html">Buyer</a>
+      <a href="concierge.html">Concierge</a>
+      <a href="memory.html">Memory</a>
+      <a href="network.html">Network</a>
+      <a href="benefit.html">Benefit</a>
+      <a href="weight.html">Weight</a>
+      <a href="simulator.html">Simulator</a>
+      <a href="rollout.html">Rollout</a>
+      <a href="monitor.html">Monitor</a>
+      <a href="rollback.html">Rollback</a>
+      <a href="incident.html">Incident</a>
+      <a href="guard.html">Guard</a>
+      <a href="outcome.html">Outcome</a>
+      <a href="tuning.html">Tuning</a>
+      <a href="approval.html">Approval</a>
+      <a href="ledger.html">Ledger</a>
+      <a href="health.html">Health</a>
+      <a href="recovery.html">Recovery</a>
+      <a href="workspace.html">Workspace</a>
+      <a href="records.html">Records</a>
+      <a href="data.html">Data</a>
+      <a href="persistence.html">Persist</a>
+      <a href="auth.html">Auth</a>
+      <a href="access.html">Access</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="versions.html">Build Phases</a>
+    </footer>
+    <script src="landing.js"></script>
+  </body>
+</html>

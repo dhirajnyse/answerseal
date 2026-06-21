@@ -13262,6 +13262,11 @@ svg {
   background: rgba(0, 168, 137, 0.12);
 }
 
+.proof-access-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
 .proof-workspace-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
@@ -13283,6 +13288,11 @@ svg {
 }
 
 .proof-auth-card.is-design header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-access-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -13312,6 +13322,11 @@ svg {
   background: rgba(255, 194, 89, 0.18);
 }
 
+.proof-access-card.is-gate header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
 .proof-workspace-card.is-held header strong {
   color: #b42318;
   background: rgba(255, 228, 226, 0.72);
@@ -13337,6 +13352,11 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-access-card.is-held header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13358,7 +13378,8 @@ svg {
 .proof-records-meta div,
 .proof-data-meta div,
 .proof-persistence-meta div,
-.proof-auth-meta div {
+.proof-auth-meta div,
+.proof-access-meta div {
   min-height: 82px;
 }
 
@@ -13400,6 +13421,8 @@ svg {
 .proof-persistence-summary-section,
 .proof-auth-flow-section,
 .proof-auth-summary-section,
+.proof-access-flow-section,
+.proof-access-summary-section,
 .proof-workspace-flow-section,
 .proof-workspace-summary-section {
   position: relative;
@@ -13442,7 +13465,9 @@ svg {
 .proof-persistence-flow-grid article,
 .proof-persistence-summary-strip article,
 .proof-auth-flow-grid article,
-.proof-auth-summary-strip article {
+.proof-auth-summary-strip article,
+.proof-access-flow-grid article,
+.proof-access-summary-strip article {
   min-height: 168px;
 }
 
@@ -14199,6 +14224,9 @@ svg {
     .proof-auth-grid,
     .proof-auth-flow-grid,
     .proof-auth-summary-strip,
+    .proof-access-grid,
+    .proof-access-flow-grid,
+    .proof-access-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14371,6 +14399,10 @@ svg {
     .proof-auth-flow-grid,
     .proof-auth-summary-strip,
     .proof-auth-meta,
+    .proof-access-grid,
+    .proof-access-flow-grid,
+    .proof-access-summary-strip,
+    .proof-access-meta,
   .pricing-grid,
   .dashboard-metrics,
   .launch-roadmap-track,

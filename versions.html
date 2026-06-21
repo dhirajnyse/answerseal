@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.88 Alpha</strong>
+        <strong>v0.89 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -46,16 +46,16 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.88 Alpha</h1>
+          <h1>AnswerSeal v0.89 Alpha</h1>
           <p>
-            This release wraps the persistence plan in a launch-safe identity boundary: account gates, session claims,
-            workspace role checks, invite paths, buyer-safe links, and access receipts before private workspaces go live.
+            This release turns the auth boundary into a workspace access console: account state, invite queues, role
+            views, buyer-link controls, data request scope, recovery routes, and access receipts in one calm launch surface.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Auth Tenant Boundary</h2>
+          <h2>Workspace Access Console</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -63,11 +63,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Auth Tenant Boundary page, account gates, session claims, workspace role checks, invite paths, buyer-safe links, access receipts, v0.87 persistence memory, and Review Pack v84</dd>
+              <dd>Workspace Access Console page, account state, invite queue, role views, buyer-link controls, receipt trails, v0.88 auth memory, and Review Pack v85</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.89 Alpha - Workspace Access Console</dd>
+              <dd>v0.90 Alpha - Invite Flow Prototype</dd>
             </div>
           </dl>
         </aside>
@@ -79,21 +79,21 @@
           <h2>We are building the trust operating system for AI work.</h2>
           <p>
             AnswerSeal is in Alpha: the core trust loop is visible, the governance spine is taking shape, and the next
-            milestone is turning the auth boundary into a workspace access console so teams can invite users, review
-            roles, control buyer links, and keep access changes audit-ready.
+            milestone is turning the access console into a guided invite flow so teams can create, accept, review, and
+            revoke workspace access with receipts before private beta.
           </p>
         </div>
 
         <div class="launch-roadmap-status" aria-label="Overall progress">
           <article class="is-current">
             <span>Now</span>
-            <strong>v0.88 Alpha</strong>
-            <p>Auth Tenant Boundary maps accounts, sessions, roles, tenant checks, buyer links, and access receipts.</p>
+            <strong>v0.89 Alpha</strong>
+            <p>Workspace Access Console makes account state, invites, roles, buyer links, and receipts visible.</p>
           </article>
           <article>
             <span>Next</span>
-            <strong>v0.89</strong>
-            <p>Workspace Access Console will turn boundary rules into invite queues, role reviews, and buyer-link controls.</p>
+            <strong>v0.90</strong>
+            <p>Invite Flow Prototype will guide owner invites, acceptance, role receipts, and revocation paths.</p>
           </article>
           <article>
             <span>Launch target</span>
@@ -148,10 +148,15 @@
             <h3>D1 Persistence Blueprint</h3>
             <p>Tables, indexes, migrations, seed fixtures, and storage boundaries prepare the first real backend.</p>
           </article>
-          <article class="is-current">
+          <article class="is-done">
             <span>10</span>
             <h3>Auth Tenant Boundary</h3>
             <p>Account gates, session claims, role checks, tenant scope, buyer links, and access receipts make private workspaces launch-safe.</p>
+          </article>
+          <article class="is-current">
+            <span>11</span>
+            <h3>Workspace Access Console</h3>
+            <p>Account state, invite queues, role views, buyer-link controls, data scope, recovery, and receipts become one launch console.</p>
           </article>
         </div>
       </section>
@@ -166,6 +171,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.89 Alpha</strong>
+            </header>
+            <h3>Workspace Access Console</h3>
+            <p>Added a public Workspace Access Console page with account state, invite queues, role views, buyer-link controls, data request scope, recovery routes, receipt trails, v0.88 auth memory, and Review Pack v85.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.88 Alpha</strong>
             </header>
             <h3>Auth Tenant Boundary</h3>
@@ -960,40 +974,40 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.89 Alpha - Workspace Access Console</h2>
+          <h2>v0.90 Alpha - Invite Flow Prototype</h2>
           <p>
-            The next release should turn the auth boundary into an operating surface for launch: account state,
-            invite queues, role views, buyer-link controls, and access receipts that stay simple enough for founders.
+            The next release should make access feel real: an owner creates an invite, a teammate accepts it, the role
+            receipt appears, and the owner can revoke or recover the invite path without leaving the calm workspace.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Account state</h3>
-            <p>Show workspace owner, pending setup, session health, and recovery readiness in one quiet access panel.</p>
+            <h3>Owner invite composer</h3>
+            <p>Create a role-bound invite with email, expiry, workspace, and reason from the access console.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Invite queue</h3>
-            <p>Review role-bound invites, expiry, acceptance state, and first-workspace onboarding without a noisy admin page.</p>
+            <h3>Acceptance preview</h3>
+            <p>Show what a reviewer or contributor sees before accepting access to trusted work.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Role views</h3>
-            <p>Make owner, reviewer, contributor, viewer, and buyer-safe access limits visible before launch.</p>
+            <h3>Role receipt</h3>
+            <p>Record who granted access, which role was accepted, and what actions are now allowed.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Buyer link controls</h3>
-            <p>Preview expiring share links, revocations, viewed receipts, and external access scope from one place.</p>
+            <h3>Revoke and recover</h3>
+            <p>Let the owner expire invites, revoke access, and keep a recovery note for audit review.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.88 Alpha</span>
+      <span>AnswerSeal v0.89 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -1026,6 +1040,7 @@
         <a href="data.html">Data</a>
       <a href="persistence.html">Persist</a>
       <a href="auth.html">Auth</a>
+      <a href="access.html">Access</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>
