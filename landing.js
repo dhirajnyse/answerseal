@@ -102,6 +102,9 @@ const workspaceDataLayerStatus = document.querySelector("#workspaceDataLayerStat
 const d1BlueprintList = document.querySelector("#d1BlueprintList");
 const d1BlueprintScore = document.querySelector("#d1BlueprintScore");
 const d1BlueprintStatus = document.querySelector("#d1BlueprintStatus");
+const authTenantList = document.querySelector("#authTenantList");
+const authTenantScore = document.querySelector("#authTenantScore");
+const authTenantStatus = document.querySelector("#authTenantStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -114,9 +117,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.87 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v87";
+const PUBLIC_BUILD_VERSION = "v0.88 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v88";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v87",
   "answerseal.public.reports.v86",
   "answerseal.public.reports.v85",
   "answerseal.public.reports.v84",
@@ -236,6 +240,7 @@ renderProductionWorkspaceFoundation();
 renderPersistentTrustRecords();
 renderWorkspaceDataLayer();
 renderD1PersistenceBlueprint();
+renderAuthTenantBoundary();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -5023,6 +5028,245 @@ function buildD1PersistenceBlueprintItems() {
   return [...reportFixtures, ...seededEntries].slice(0, 12);
 }
 
+function renderAuthTenantBoundary() {
+  if (!authTenantList) return;
+  const entries = buildAuthTenantBoundaryItems();
+  const readyCount = entries.filter((entry) => entry.state.includes("ready")).length;
+  const gatedCount = entries.filter((entry) => entry.state.includes("gate")).length;
+  const scopedCount = entries.filter((entry) => entry.tenant !== "Not scoped").length;
+
+  if (authTenantScore) authTenantScore.textContent = `${readyCount}/${entries.length} access-ready`;
+  if (authTenantStatus) {
+    authTenantStatus.textContent = `${scopedCount} tenant checks mapped, ${gatedCount} auth gates remain before private workspace launch.`;
+  }
+
+  authTenantList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.state === "Access ready" || entry.state === "Session ready"
+        ? "is-ready"
+        : entry.state.includes("gate")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-auth-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-auth-meta">
+        <div>
+          <dt>Actor</dt>
+          <dd>${escapePublicHtml(entry.actor)}</dd>
+        </div>
+        <div>
+          <dt>Session claim</dt>
+          <dd>${escapePublicHtml(entry.claim)}</dd>
+        </div>
+        <div>
+          <dt>Tenant check</dt>
+          <dd>${escapePublicHtml(entry.tenant)}</dd>
+        </div>
+        <div>
+          <dt>Role gate</dt>
+          <dd>${escapePublicHtml(entry.role)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Allowed action</span>
+        <p>${escapePublicHtml(entry.allowed)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Blocked action</span>
+        <p>${escapePublicHtml(entry.blocked)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Access receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    authTenantList.append(card);
+  });
+}
+
+function buildAuthTenantBoundaryItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => ({
+    contract: `AUTH-088-L${index + 1}`,
+    state: Number(report.score || 0) >= 86 ? "Access ready" : "Review gate",
+    title: report.prompt || "Saved report access contract",
+    summary: "Saved reports can move into private workspaces only when owner, role, workspace, and share scope are explicit.",
+    actor: "Reviewer",
+    claim: "workspace_id, role, report_scope",
+    tenant: "sealed_report.workspace_id equals session.workspace_id",
+    role: Number(report.score || 0) >= 86 ? "Reviewer or owner" : "Owner review",
+    allowed: "Open, review, seal, and share only inside the report workspace.",
+    blocked: "Cross-workspace reuse, anonymous export, or buyer access without a token.",
+    receipt: report.summary || "Access import keeps local origin, owner route, share state, and rollback note.",
+    href: getReportShareUrl(report, true),
+    action: "Open report",
+  }));
+
+  const seededEntries = [
+    {
+      contract: "AUTH-088-001",
+      state: "Access ready",
+      title: "First owner creates the private workspace.",
+      summary: "A private workspace needs one accountable owner before members, reports, policies, or buyer links exist.",
+      actor: "Founder owner",
+      claim: "email, owner_id, workspace_id",
+      tenant: "new workspace scope",
+      role: "Owner",
+      allowed: "Create workspace, set default region, accept pilot terms, and create first audit actor.",
+      blocked: "Anonymous workspace creation or duplicate first-owner claim.",
+      receipt: "workspace_created audit event with owner, region, build, and recovery contact.",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      contract: "AUTH-088-002",
+      state: "Session ready",
+      title: "Session claims stay small enough to trust.",
+      summary: "Launch sessions should carry only the claims every route needs: actor, workspace, role, region, and feature gates.",
+      actor: "Signed-in member",
+      claim: "actor_id, workspace_id, role, region, gates",
+      tenant: "workspace_id required",
+      role: "Any member",
+      allowed: "Read permitted workspace state and create audit-attributed actions.",
+      blocked: "Reading records without a workspace claim or acting without an actor id.",
+      receipt: "session_started audit event with hashed email and active workspace.",
+      href: "persistence.html",
+      action: "Open persist",
+    },
+    {
+      contract: "AUTH-088-003",
+      state: "Access ready",
+      title: "Reviewer invites are role-bound from the start.",
+      summary: "Invites should not be generic links. They should carry workspace, role, expiry, inviter, and acceptance receipt.",
+      actor: "Owner",
+      claim: "invite_id, workspace_id, invited_role",
+      tenant: "invite.workspace_id equals accepter workspace",
+      role: "Owner grants reviewer",
+      allowed: "Invite reviewer, expire invite, revoke pending invite, and record acceptance.",
+      blocked: "Role escalation, forwarding invite across workspaces, or accepting expired invites.",
+      receipt: "invite_accepted audit event with granted role and expiry state.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      contract: "AUTH-088-004",
+      state: "Access ready",
+      title: "Verifier writes are scoped before persistence.",
+      summary: "The first screen remains simple, but every saved run must belong to the active workspace and actor.",
+      actor: "Contributor",
+      claim: "actor_id, workspace_id, role",
+      tenant: "verification_run.workspace_id equals session.workspace_id",
+      role: "Contributor or reviewer",
+      allowed: "Create verification run, save draft report, and attach evidence text.",
+      blocked: "Saving into another workspace, bypassing score checks, or writing without actor id.",
+      receipt: "verification_run_created event with score, flags, and actor.",
+      href: "verify.html",
+      action: "Open verifier",
+    },
+    {
+      contract: "AUTH-088-005",
+      state: "Review gate",
+      title: "Sealed report approval requires reviewer authority.",
+      summary: "A report can be drafted by contributors, but sealing, sharing, and promotion require review authority.",
+      actor: "Reviewer",
+      claim: "role, workspace_id, report_id",
+      tenant: "sealed_report.workspace_id equals session.workspace_id",
+      role: "Reviewer or owner",
+      allowed: "Approve report, change status, create share link, and promote reusable answer.",
+      blocked: "Contributor approval, stale source promotion, or buyer share without sealed status.",
+      receipt: "sealed_report_approved event with source refs and reviewer decision.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "AUTH-088-006",
+      state: "Session ready",
+      title: "Buyer links are not internal sessions.",
+      summary: "External buyers get tokenized report access, not workspace membership or hidden internal source paths.",
+      actor: "Buyer viewer",
+      claim: "token_hash, report_scope, expires_at",
+      tenant: "share_link.workspace_id resolves server-side",
+      role: "Buyer link",
+      allowed: "View buyer-safe sealed report, source summary, and approved answer.",
+      blocked: "Workspace navigation, raw source files, internal notes, or other reports.",
+      receipt: "buyer_link_opened event with token scope and expiry state.",
+      href: "buyer.html",
+      action: "Open buyer portal",
+    },
+    {
+      contract: "AUTH-088-007",
+      state: "Access ready",
+      title: "Export requires owner or delegated admin.",
+      summary: "Trust exports are sensitive. They should be scoped, reasoned, and visible in the audit trail before download.",
+      actor: "Owner",
+      claim: "actor_id, workspace_id, export_scope",
+      tenant: "export scope constrained to workspace_id",
+      role: "Owner or admin delegate",
+      allowed: "Export sealed reports, audit events, and data request receipts.",
+      blocked: "Buyer token export, contributor export, or cross-workspace export bundle.",
+      receipt: "data_export_requested event with scope, reason, and restore window.",
+      href: "data.html",
+      action: "Open data layer",
+    },
+    {
+      contract: "AUTH-088-008",
+      state: "Review gate",
+      title: "Role changes must be reversible.",
+      summary: "Membership changes can affect every answer. The product needs reason, previous role, new role, and recovery path.",
+      actor: "Owner",
+      claim: "actor_id, target_member_id, role_change",
+      tenant: "member.workspace_id equals owner workspace_id",
+      role: "Owner only",
+      allowed: "Grant, downgrade, revoke, or expire member access with reason.",
+      blocked: "Self-escalation, last-owner removal, or silent privilege changes.",
+      receipt: "member_role_changed event with previous role and rollback instruction.",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      contract: "AUTH-088-009",
+      state: "Access ready",
+      title: "Recovery actions require trust-owner context.",
+      summary: "Rollbacks, restores, and buyer notices should be attached to the owner who approved the action.",
+      actor: "Trust owner",
+      claim: "actor_id, workspace_id, recovery_scope",
+      tenant: "recovery_receipt.workspace_id equals session.workspace_id",
+      role: "Owner or trust owner",
+      allowed: "Pause share links, restore previous report state, and issue buyer-safe notice.",
+      blocked: "Unowned rollback, hidden buyer notice, or recovery outside approved scope.",
+      receipt: "recovery_receipt_created event with owner decision and restore reference.",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      contract: "AUTH-088-010",
+      state: "Design ready",
+      title: "Pricing tiers map to access limits.",
+      summary: "Commercial packaging should reflect governance: member count, buyer links, export depth, and private deployment options.",
+      actor: "Billing owner",
+      claim: "workspace_id, plan, feature_gates",
+      tenant: "plan attached to workspace",
+      role: "Owner",
+      allowed: "Set plan gates for reports, members, buyer links, exports, and admin controls.",
+      blocked: "Enterprise controls on starter workspaces or unmetered external buyer rooms.",
+      receipt: "plan_gate_changed event with previous plan and enabled controls.",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -5239,7 +5483,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.87 Alpha - D1 Persistence Blueprint",
+      "Pilot phase: AnswerSeal v0.88 Alpha - Auth Tenant Boundary",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

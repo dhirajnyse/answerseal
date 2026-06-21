@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.88 Alpha - Auth Tenant Boundary
+
+Phase: Auth Tenant Boundary
+
+- Added a dedicated Auth Tenant Boundary page for account gates, session claims, workspace role checks, invite paths, buyer-safe links, and access receipts.
+- Added dynamic auth boundary cards for first-owner creation, role-bound invites, session claims, tenant-scoped routes, buyer tokens, exports, recovery actions, and pricing access limits.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Auth boundary.
+- Upgraded public storage to v0.88 while preserving v0.87 and earlier report memory.
+- Upgraded workspace storage to v0.88 while preserving v0.87 and earlier workspace memory, and upgraded export language to Review Pack v84.
+- Moved the next build toward v0.89 Workspace Access Console.
+
 ## v0.87 Alpha - D1 Persistence Blueprint
 
 Phase: D1 Persistence Blueprint

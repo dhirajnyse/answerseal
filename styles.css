@@ -13257,6 +13257,11 @@ svg {
   background: rgba(0, 168, 137, 0.12);
 }
 
+.proof-auth-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
 .proof-workspace-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
@@ -13273,6 +13278,11 @@ svg {
 }
 
 .proof-persistence-card.is-design header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-auth-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -13297,6 +13307,11 @@ svg {
   background: rgba(255, 194, 89, 0.18);
 }
 
+.proof-auth-card.is-gate header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
 .proof-workspace-card.is-held header strong {
   color: #b42318;
   background: rgba(255, 228, 226, 0.72);
@@ -13313,6 +13328,11 @@ svg {
 }
 
 .proof-persistence-card.is-held header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
+.proof-auth-card.is-held header strong {
   color: #b42318;
   background: rgba(255, 228, 226, 0.72);
 }
@@ -13337,7 +13357,8 @@ svg {
 .proof-workspace-meta div,
 .proof-records-meta div,
 .proof-data-meta div,
-.proof-persistence-meta div {
+.proof-persistence-meta div,
+.proof-auth-meta div {
   min-height: 82px;
 }
 
@@ -13377,6 +13398,8 @@ svg {
 .proof-data-summary-section,
 .proof-persistence-flow-section,
 .proof-persistence-summary-section,
+.proof-auth-flow-section,
+.proof-auth-summary-section,
 .proof-workspace-flow-section,
 .proof-workspace-summary-section {
   position: relative;
@@ -13417,7 +13440,9 @@ svg {
 .proof-data-flow-grid article,
 .proof-data-summary-strip article,
 .proof-persistence-flow-grid article,
-.proof-persistence-summary-strip article {
+.proof-persistence-summary-strip article,
+.proof-auth-flow-grid article,
+.proof-auth-summary-strip article {
   min-height: 168px;
 }
 
@@ -14171,6 +14196,9 @@ svg {
     .proof-persistence-grid,
     .proof-persistence-flow-grid,
     .proof-persistence-summary-strip,
+    .proof-auth-grid,
+    .proof-auth-flow-grid,
+    .proof-auth-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14339,6 +14367,10 @@ svg {
     .proof-persistence-flow-grid,
     .proof-persistence-summary-strip,
     .proof-persistence-meta,
+    .proof-auth-grid,
+    .proof-auth-flow-grid,
+    .proof-auth-summary-strip,
+    .proof-auth-meta,
   .pricing-grid,
   .dashboard-metrics,
   .launch-roadmap-track,
