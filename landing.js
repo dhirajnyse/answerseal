@@ -99,6 +99,9 @@ const persistentRecordsStatus = document.querySelector("#persistentRecordsStatus
 const workspaceDataLayerList = document.querySelector("#workspaceDataLayerList");
 const workspaceDataLayerScore = document.querySelector("#workspaceDataLayerScore");
 const workspaceDataLayerStatus = document.querySelector("#workspaceDataLayerStatus");
+const d1BlueprintList = document.querySelector("#d1BlueprintList");
+const d1BlueprintScore = document.querySelector("#d1BlueprintScore");
+const d1BlueprintStatus = document.querySelector("#d1BlueprintStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -111,9 +114,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.86 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v86";
+const PUBLIC_BUILD_VERSION = "v0.87 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v87";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v86",
   "answerseal.public.reports.v85",
   "answerseal.public.reports.v84",
   "answerseal.public.reports.v83",
@@ -231,6 +235,7 @@ renderReleaseRecoveryDesk();
 renderProductionWorkspaceFoundation();
 renderPersistentTrustRecords();
 renderWorkspaceDataLayer();
+renderD1PersistenceBlueprint();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -4779,6 +4784,245 @@ function buildWorkspaceDataLayerItems() {
   return [...reportEntries, ...seededEntries].slice(0, 11);
 }
 
+function renderD1PersistenceBlueprint() {
+  if (!d1BlueprintList) return;
+  const entries = buildD1PersistenceBlueprintItems();
+  const readyCount = entries.filter((entry) => entry.state.includes("ready")).length;
+  const gatedCount = entries.filter((entry) => entry.state.includes("gate")).length;
+  const indexedCount = entries.filter((entry) => entry.index !== "Not indexed").length;
+
+  if (d1BlueprintScore) d1BlueprintScore.textContent = `${readyCount}/${entries.length} table-ready`;
+  if (d1BlueprintStatus) {
+    d1BlueprintStatus.textContent = `${indexedCount} index plans mapped, ${gatedCount} storage or migration gates remain before backend launch.`;
+  }
+
+  d1BlueprintList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.state === "Table ready" || entry.state === "Index ready"
+        ? "is-ready"
+        : entry.state.includes("gate")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-persistence-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-persistence-meta">
+        <div>
+          <dt>Table</dt>
+          <dd>${escapePublicHtml(entry.table)}</dd>
+        </div>
+        <div>
+          <dt>Primary key</dt>
+          <dd>${escapePublicHtml(entry.primaryKey)}</dd>
+        </div>
+        <div>
+          <dt>Index</dt>
+          <dd>${escapePublicHtml(entry.index)}</dd>
+        </div>
+        <div>
+          <dt>Storage</dt>
+          <dd>${escapePublicHtml(entry.storage)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Migration file</span>
+        <p>${escapePublicHtml(entry.migration)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Seed fixture</span>
+        <p>${escapePublicHtml(entry.seed)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Boundary rule</span>
+        <p>${escapePublicHtml(entry.boundary)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    d1BlueprintList.append(card);
+  });
+}
+
+function buildD1PersistenceBlueprintItems() {
+  const reports = readPublicReports();
+  const reportFixtures = reports.slice(0, 2).map((report, index) => ({
+    contract: `DB-087-L${index + 1}`,
+    state: Number(report.score || 0) >= 86 ? "Table ready" : "Migration gate",
+    title: report.prompt || "Saved report seed fixture",
+    summary: "A browser-saved sealed report can become a seed row only after source text, score, flags, and owner state are explicit.",
+    table: "sealed_reports",
+    primaryKey: "sealed_report_id",
+    index: "workspace_id, status, created_at",
+    storage: "D1 row, no file body",
+    migration: "0004_seed_local_sealed_reports.sql",
+    seed: `score=${Number(report.score || 0)}; status=${report.status || "sealed"}; source=answerseal.public.reports.v86`,
+    boundary: report.summary || "Seed fixtures preserve local origin and never become production authority without import approval.",
+    href: getReportShareUrl(report, true),
+    action: "Open report",
+  }));
+
+  const seededEntries = [
+    {
+      contract: "DB-087-001",
+      state: "Table ready",
+      title: "Workspaces define every tenant boundary.",
+      summary: "All durable state starts with a workspace so teams, regions, pilots, policies, and billing never blur together.",
+      table: "workspaces",
+      primaryKey: "workspace_id",
+      index: "organization_slug, region, status",
+      storage: "D1",
+      migration: "0001_create_workspaces.sql",
+      seed: "Aster Health demo workspace, region, pilot status, owner, and current build.",
+      boundary: "Every query scopes by workspace_id before reading reports, members, policies, or audit events.",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      contract: "DB-087-002",
+      state: "Table ready",
+      title: "Members keep permissions small and auditable.",
+      summary: "The launch role model stays intentionally narrow: owner, reviewer, contributor, viewer, and buyer link.",
+      table: "workspace_members",
+      primaryKey: "member_id",
+      index: "workspace_id, role, email_hash",
+      storage: "D1",
+      migration: "0001_create_workspace_members.sql",
+      seed: "Owner, reviewer, and contributor demo roles with no sensitive personal data in fixtures.",
+      boundary: "Role changes require owner action and create an audit event.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      contract: "DB-087-003",
+      state: "Table ready",
+      title: "Verification runs preserve the first trust check.",
+      summary: "Each pasted answer needs a durable run record before it becomes a shareable sealed report.",
+      table: "verification_runs",
+      primaryKey: "run_id",
+      index: "workspace_id, score, status, created_at",
+      storage: "D1",
+      migration: "0002_create_verification_runs.sql",
+      seed: "AI training answer sample with prompt, score, checks, flags, and improved answer.",
+      boundary: "Raw evidence text can seed the demo, but future large files move through governed file storage.",
+      href: "verify.html",
+      action: "Open verifier",
+    },
+    {
+      contract: "DB-087-004",
+      state: "Index ready",
+      title: "Sealed reports become durable AI artifacts.",
+      summary: "Reports need status, owner, score, source references, share state, and retention rules before reuse.",
+      table: "sealed_reports",
+      primaryKey: "sealed_report_id",
+      index: "workspace_id, owner_id, status, share_token",
+      storage: "D1",
+      migration: "0002_create_sealed_reports.sql",
+      seed: "SOC 2 customer-data answer with source refs and sealed summary.",
+      boundary: "A report is reusable only when its source refs and approval state are present.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "DB-087-005",
+      state: "Design ready",
+      title: "Source references stay separate from report text.",
+      summary: "A report can cite many sources, and one source can support many reports, without duplicating evidence details.",
+      table: "sealed_report_sources",
+      primaryKey: "source_ref_id",
+      index: "sealed_report_id, source_type, freshness",
+      storage: "D1 now, R2 later for files",
+      migration: "0003_create_report_sources.sql",
+      seed: "AI Usage Standard and SOC 2 Type II Report source refs.",
+      boundary: "Source refs store metadata and excerpts only; future source files stay in governed file storage.",
+      href: "records.html",
+      action: "Open records",
+    },
+    {
+      contract: "DB-087-006",
+      state: "Table ready",
+      title: "Audit events make every trust change explainable.",
+      summary: "Every approval, export, import, role change, rollback, and recovery needs an immutable receipt trail.",
+      table: "audit_events",
+      primaryKey: "audit_event_id",
+      index: "workspace_id, object_type, object_id, created_at",
+      storage: "D1",
+      migration: "0003_create_audit_events.sql",
+      seed: "Verifier run, report save, review pack export, and recovery receipt sample events.",
+      boundary: "Audit events are append-only and never silently overwritten.",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      contract: "DB-087-007",
+      state: "Migration gate",
+      title: "Migration jobs rehearse local memory imports.",
+      summary: "Browser memory should enter production only through a dry-run import with skipped rows and rollback references.",
+      table: "migration_jobs",
+      primaryKey: "migration_job_id",
+      index: "workspace_id, source_version, status",
+      storage: "D1",
+      migration: "0004_create_migration_jobs.sql",
+      seed: "answerseal.public.reports.v86 and answerseal.workspace.v86 dry-run import job.",
+      boundary: "Import jobs require owner approval before draft rows become active production rows.",
+      href: "data.html",
+      action: "Open data layer",
+    },
+    {
+      contract: "DB-087-008",
+      state: "Table ready",
+      title: "Recovery receipts keep trust reversible.",
+      summary: "When a report, policy, source, or learning signal changes, the recovery path needs a durable record.",
+      table: "recovery_receipts",
+      primaryKey: "recovery_receipt_id",
+      index: "workspace_id, object_id, recovery_state",
+      storage: "D1",
+      migration: "0005_create_recovery_receipts.sql",
+      seed: "Scoped rollback, buyer-safe notice, restore path, and owner decision fixture.",
+      boundary: "Recovery receipts connect to the original object and audit event before a rollback is considered complete.",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      contract: "DB-087-009",
+      state: "Storage gate",
+      title: "Data requests protect export and delete control.",
+      summary: "Launch trust requires clear export, delete, retention, legal hold, and restore behavior before paid customers arrive.",
+      table: "data_requests",
+      primaryKey: "data_request_id",
+      index: "workspace_id, request_type, status",
+      storage: "D1 plus future export object",
+      migration: "0006_create_data_requests.sql",
+      seed: "Export workspace trust records and delete draft report request samples.",
+      boundary: "Deletion and export stay owner-gated until evidence file storage and legal hold rules are approved.",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      contract: "DB-087-010",
+      state: "Index ready",
+      title: "Share links separate buyer access from internal state.",
+      summary: "A buyer-safe report link should expose only sealed report output, not workspace internals or source files.",
+      table: "share_links",
+      primaryKey: "share_link_id",
+      index: "token_hash, workspace_id, expires_at",
+      storage: "D1",
+      migration: "0006_create_share_links.sql",
+      seed: "Public sealed report token with expiry, scope, and revoked state.",
+      boundary: "Share links resolve through token hashes and never reveal raw workspace IDs to buyers.",
+      href: "buyer.html",
+      action: "Open buyer portal",
+    },
+  ];
+
+  return [...reportFixtures, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -4995,7 +5239,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.86 Alpha - Workspace Data Layer",
+      "Pilot phase: AnswerSeal v0.87 Alpha - D1 Persistence Blueprint",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

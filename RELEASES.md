@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.87 Alpha - D1 Persistence Blueprint
+
+Phase: D1 Persistence Blueprint
+
+- Added a dedicated D1 Persistence Blueprint page for tables, primary keys, indexes, migration files, seed fixtures, storage boundaries, and launch-ready backend state.
+- Added dynamic persistence cards for workspaces, members, verification runs, sealed reports, source refs, audit events, migration jobs, recovery receipts, data requests, share links, and saved local reports.
+- Simplified the top navigation globally so the product stays calm while the deeper platform remains available through the footer and build roadmap.
+- Upgraded public storage to v0.87 while preserving v0.86 and earlier report memory.
+- Upgraded workspace storage to v0.87 while preserving v0.86 and earlier workspace memory, and upgraded export language to Review Pack v83.
+- Moved the next build toward v0.88 Auth Tenant Boundary.
+
 ## v0.86 Alpha - Workspace Data Layer
 
 Phase: Workspace Data Layer
