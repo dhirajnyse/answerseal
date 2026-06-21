@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.90 Alpha - Invite Flow Prototype
+
+Phase: Invite Flow Prototype
+
+- Added a dedicated Invite Flow Prototype page for owner invite composer, acceptance preview, role receipts, revoke/recover paths, buyer-safe separation, and private beta readiness.
+- Added dynamic invite cards for saved report invitations, reviewer access, contributor access, viewer access, buyer-safe invitations, last-owner safety, queue operations, plan gates, and private beta readiness.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Invite flow.
+- Upgraded public storage to v0.90 while preserving v0.89 and earlier report memory.
+- Upgraded workspace storage to v0.90 while preserving v0.89 and earlier workspace memory, and upgraded export language to Review Pack v86.
+- Moved the next build toward v0.91 Member Role Console.
+
 ## v0.89 Alpha - Workspace Access Console
 
 Phase: Workspace Access Console

@@ -108,6 +108,9 @@ const authTenantStatus = document.querySelector("#authTenantStatus");
 const workspaceAccessList = document.querySelector("#workspaceAccessList");
 const workspaceAccessScore = document.querySelector("#workspaceAccessScore");
 const workspaceAccessStatus = document.querySelector("#workspaceAccessStatus");
+const inviteFlowList = document.querySelector("#inviteFlowList");
+const inviteFlowScore = document.querySelector("#inviteFlowScore");
+const inviteFlowStatus = document.querySelector("#inviteFlowStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -120,9 +123,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.89 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v89";
+const PUBLIC_BUILD_VERSION = "v0.90 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v90";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v89",
   "answerseal.public.reports.v88",
   "answerseal.public.reports.v87",
   "answerseal.public.reports.v86",
@@ -246,6 +250,7 @@ renderWorkspaceDataLayer();
 renderD1PersistenceBlueprint();
 renderAuthTenantBoundary();
 renderWorkspaceAccessConsole();
+renderInviteFlowPrototype();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -5498,6 +5503,231 @@ function buildWorkspaceAccessItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderInviteFlowPrototype() {
+  if (!inviteFlowList) return;
+  const entries = buildInviteFlowItems();
+  const readyCount = entries.filter((entry) => entry.state.includes("Ready")).length;
+  const receiptCount = entries.filter((entry) => entry.receipt !== "Pending").length;
+  const revokeCount = entries.filter((entry) => entry.recovery.toLowerCase().includes("revoke")).length;
+
+  if (inviteFlowScore) inviteFlowScore.textContent = `${readyCount}/${entries.length} invite-ready`;
+  if (inviteFlowStatus) {
+    inviteFlowStatus.textContent = `${receiptCount} receipt paths, ${revokeCount} revoke/recover paths, and one guided owner flow are ready for prototype testing.`;
+  }
+
+  inviteFlowList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Ready")
+      ? "is-ready"
+      : entry.state.includes("Hold")
+        ? "is-held"
+        : entry.state.includes("Gate") || entry.state.includes("Preview")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-invite-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-invite-meta">
+        <div>
+          <dt>Step</dt>
+          <dd>${escapePublicHtml(entry.step)}</dd>
+        </div>
+        <div>
+          <dt>Actor</dt>
+          <dd>${escapePublicHtml(entry.actor)}</dd>
+        </div>
+        <div>
+          <dt>Role</dt>
+          <dd>${escapePublicHtml(entry.role)}</dd>
+        </div>
+        <div>
+          <dt>Receipt</dt>
+          <dd>${escapePublicHtml(entry.receipt)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Prototype action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Revoke or recover</span>
+        <p>${escapePublicHtml(entry.recovery)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    inviteFlowList.append(card);
+  });
+}
+
+function buildInviteFlowItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => ({
+    contract: `INVITE-090-L${index + 1}`,
+    state: Number(report.score || 0) >= 86 ? "Ready" : "Preview gate",
+    title: report.prompt || "Invite reviewer to saved report",
+    summary: "Saved report memory can become a test invite target when the invited role and report scope are clear.",
+    step: "Review invite",
+    actor: "Owner",
+    role: Number(report.score || 0) >= 86 ? "Reviewer" : "Owner review",
+    receipt: report.summary ? "report_invite_previewed" : "Pending",
+    actionPath: "Select report scope, choose reviewer role, preview allowed actions, and record invite reason.",
+    recovery: "Owner can revoke the invite before acceptance or remove report scope after acceptance.",
+    href: getReportShareUrl(report, true),
+    action: "Open report",
+  }));
+
+  const seededEntries = [
+    {
+      contract: "INVITE-090-001",
+      state: "Ready",
+      title: "Owner composes a role-bound invite.",
+      summary: "The first invite flow starts with one focused composer: email, role, expiry, workspace, reason, and allowed actions.",
+      step: "Compose",
+      actor: "Founder owner",
+      role: "Reviewer",
+      receipt: "invite_drafted",
+      actionPath: "Enter teammate email, choose reviewer role, set 7-day expiry, add reason, and preview access.",
+      recovery: "Draft can be cancelled before send; sent invite can be revoked from the queue.",
+      href: "access.html",
+      action: "Open access",
+    },
+    {
+      contract: "INVITE-090-002",
+      state: "Ready",
+      title: "Acceptance preview explains the workspace calmly.",
+      summary: "Before accepting, the invited user sees workspace name, inviter, role, expiry, allowed actions, and data boundaries.",
+      step: "Accept",
+      actor: "Invited reviewer",
+      role: "Reviewer",
+      receipt: "invite_preview_seen",
+      actionPath: "Review allowed actions before acceptance: verify, approve, comment, and share only buyer-safe reports.",
+      recovery: "Expired or revoked invites show a safe message and ask the owner for a fresh invite.",
+      href: "auth.html",
+      action: "Open auth",
+    },
+    {
+      contract: "INVITE-090-003",
+      state: "Ready",
+      title: "Role receipt records who granted access.",
+      summary: "A clean receipt captures inviter, invitee, role, workspace, expiry, accepted time, and initial permissions.",
+      step: "Receipt",
+      actor: "System",
+      role: "Reviewer",
+      receipt: "role_granted",
+      actionPath: "Write the role receipt to the audit trail and show the owner a readable confirmation.",
+      recovery: "Owner can downgrade or revoke the role while preserving the original grant receipt.",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      contract: "INVITE-090-004",
+      state: "Preview gate",
+      title: "Contributor invite is narrower than reviewer invite.",
+      summary: "The prototype makes role difference obvious: contributors can draft and attach sources, but cannot approve or share.",
+      step: "Role preview",
+      actor: "Owner",
+      role: "Contributor",
+      receipt: "role_previewed",
+      actionPath: "Compare contributor permissions against reviewer and owner before sending the invite.",
+      recovery: "If role is wrong, owner edits the draft before send or changes role after acceptance with a receipt.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      contract: "INVITE-090-005",
+      state: "Ready",
+      title: "Viewer invite protects sensitive source material.",
+      summary: "Viewer access can read sealed reports and safe summaries but cannot open internal notes, drafts, or raw evidence.",
+      step: "Viewer scope",
+      actor: "Owner",
+      role: "Viewer",
+      receipt: "viewer_scope_set",
+      actionPath: "Create a read-only workspace invite for internal stakeholders who need visibility, not editing power.",
+      recovery: "Viewer access can be expired without changing report ownership or reviewer history.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "INVITE-090-006",
+      state: "Ready",
+      title: "Buyer-safe invitation is not a workspace invite.",
+      summary: "The flow separates external buyer links from internal member invites so buyers never become workspace users.",
+      step: "Buyer access",
+      actor: "Reviewer",
+      role: "Buyer link",
+      receipt: "buyer_link_invited",
+      actionPath: "Create a buyer-safe link with report scope, expiry, approved source summary, and revocation control.",
+      recovery: "Reviewer or owner can revoke the buyer link while preserving viewed receipt history.",
+      href: "buyer.html",
+      action: "Open buyer portal",
+    },
+    {
+      contract: "INVITE-090-007",
+      state: "Gate",
+      title: "Last-owner safety prevents lockout.",
+      summary: "The prototype blocks removing the final owner and asks for a replacement owner before downgrade or revocation.",
+      step: "Owner safety",
+      actor: "Owner",
+      role: "Owner",
+      receipt: "owner_change_checked",
+      actionPath: "Preview owner removal, require another owner, and show the lockout warning before confirmation.",
+      recovery: "If an owner change fails, restore previous role and record the blocked attempt.",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      contract: "INVITE-090-008",
+      state: "Ready",
+      title: "Invite queue becomes the owner daily surface.",
+      summary: "The owner sees pending, accepted, expired, revoked, and needs-review invites in a compact queue.",
+      step: "Queue",
+      actor: "Owner",
+      role: "All roles",
+      receipt: "invite_queue_reviewed",
+      actionPath: "Filter by state, resend pending invites, revoke stale invites, and open role receipts.",
+      recovery: "Expired invites can be renewed with a new receipt; revoked invites stay visible for audit.",
+      href: "access.html",
+      action: "Open access",
+    },
+    {
+      contract: "INVITE-090-009",
+      state: "Preview gate",
+      title: "Plan limits appear before invite send.",
+      summary: "Starter, Team, and Enterprise member limits should be visible at invite time, not after a failed action.",
+      step: "Plan gate",
+      actor: "Billing owner",
+      role: "Member limit",
+      receipt: "plan_gate_checked",
+      actionPath: "Check member count, buyer-link limits, export access, and private deployment options before sending.",
+      recovery: "If plan blocks the invite, owner can choose a lower role, remove an inactive member, or discuss pilot.",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      contract: "INVITE-090-010",
+      state: "Ready",
+      title: "Private beta opens when the invite loop is reversible.",
+      summary: "Launch readiness requires compose, accept, receipt, revoke, recover, and buyer-safe share paths to be visible.",
+      step: "Beta gate",
+      actor: "Founder owner",
+      role: "Launch owner",
+      receipt: "invite_flow_ready",
+      actionPath: "Run the invite-flow checklist before sending the first real private beta workspace invite.",
+      recovery: "Private beta stays held if any invite, role, buyer-link, or recovery path lacks a receipt.",
+      href: "versions.html",
+      action: "Open roadmap",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -5714,7 +5944,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.89 Alpha - Workspace Access Console",
+      "Pilot phase: AnswerSeal v0.90 Alpha - Invite Flow Prototype",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
