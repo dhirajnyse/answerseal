@@ -111,6 +111,9 @@ const workspaceAccessStatus = document.querySelector("#workspaceAccessStatus");
 const inviteFlowList = document.querySelector("#inviteFlowList");
 const inviteFlowScore = document.querySelector("#inviteFlowScore");
 const inviteFlowStatus = document.querySelector("#inviteFlowStatus");
+const memberRoleList = document.querySelector("#memberRoleList");
+const memberRoleScore = document.querySelector("#memberRoleScore");
+const memberRoleStatus = document.querySelector("#memberRoleStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -123,9 +126,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.90 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v90";
+const PUBLIC_BUILD_VERSION = "v0.91 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v91";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v90",
   "answerseal.public.reports.v89",
   "answerseal.public.reports.v88",
   "answerseal.public.reports.v87",
@@ -251,6 +255,7 @@ renderD1PersistenceBlueprint();
 renderAuthTenantBoundary();
 renderWorkspaceAccessConsole();
 renderInviteFlowPrototype();
+renderMemberRoleConsole();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -5728,6 +5733,235 @@ function buildInviteFlowItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderMemberRoleConsole() {
+  if (!memberRoleList) return;
+  const entries = buildMemberRoleItems();
+  const activeCount = entries.filter((entry) => entry.state.includes("Active") || entry.state.includes("Ready")).length;
+  const taskCount = entries.filter((entry) => entry.task !== "Monitor").length;
+  const healthCount = entries.filter((entry) => entry.health !== "Clear").length;
+
+  if (memberRoleScore) memberRoleScore.textContent = `${activeCount}/${entries.length} active-ready`;
+  if (memberRoleStatus) {
+    memberRoleStatus.textContent = `${taskCount} owner tasks and ${healthCount} access-health signals are visible before private beta.`;
+  }
+
+  memberRoleList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Active") || entry.state.includes("Ready")
+      ? "is-ready"
+      : entry.state.includes("Hold")
+        ? "is-held"
+        : entry.state.includes("Review") || entry.state.includes("Task") || entry.state.includes("Watch")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-member-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-member-meta">
+        <div>
+          <dt>Member</dt>
+          <dd>${escapePublicHtml(entry.member)}</dd>
+        </div>
+        <div>
+          <dt>Role</dt>
+          <dd>${escapePublicHtml(entry.role)}</dd>
+        </div>
+        <div>
+          <dt>Health</dt>
+          <dd>${escapePublicHtml(entry.health)}</dd>
+        </div>
+        <div>
+          <dt>Owner task</dt>
+          <dd>${escapePublicHtml(entry.task)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Owner action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Access receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    memberRoleList.append(card);
+  });
+}
+
+function buildMemberRoleItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 86;
+    return {
+      contract: `MEMBER-091-L${index + 1}`,
+      state: ready ? "Active" : "Review task",
+      title: report.prompt || "Saved report reviewer access",
+      summary: "Saved report memory can seed a reviewer assignment when the member, role, scope, and receipt are visible.",
+      member: index === 0 ? "Maya Shah" : "Omar Khan",
+      role: ready ? "Reviewer" : "Contributor",
+      health: ready ? "Clear" : "Needs source review",
+      task: ready ? "Monitor" : "Review scope",
+      actionPath: "Open the sealed report, confirm member scope, and decide whether the role should stay active.",
+      receipt: ready ? "member_report_scope_active" : "member_report_scope_review",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      contract: "MEMBER-091-001",
+      state: "Active",
+      title: "Founder owner stays clearly accountable.",
+      summary: "The owner record shows workspace scope, last action, recovery authority, and the last-owner protection state.",
+      member: "Dhiraj Owner",
+      role: "Owner",
+      health: "Clear",
+      task: "Monitor",
+      actionPath: "Keep owner visible, show recovery authority, and block any action that would remove the final owner.",
+      receipt: "owner_member_active",
+      href: "access.html",
+      action: "Open access",
+    },
+    {
+      contract: "MEMBER-091-002",
+      state: "Active",
+      title: "Reviewer access is accepted and bounded.",
+      summary: "The reviewer can approve sealed answers, add notes, and route issues without gaining owner-level controls.",
+      member: "Maya Shah",
+      role: "Reviewer",
+      health: "Clear",
+      task: "Monitor",
+      actionPath: "Show accepted invite, allowed actions, last review, and next owner-visible approval task.",
+      receipt: "reviewer_member_active",
+      href: "invite.html",
+      action: "Open invite flow",
+    },
+    {
+      contract: "MEMBER-091-003",
+      state: "Task",
+      title: "Contributor scope needs owner confirmation.",
+      summary: "Contributors can draft and attach proof, but approval and external share controls stay outside their role.",
+      member: "Omar Khan",
+      role: "Contributor",
+      health: "Scope review",
+      task: "Confirm role",
+      actionPath: "Confirm the contributor can draft only, then record the role receipt or downgrade to viewer.",
+      receipt: "contributor_scope_pending",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      contract: "MEMBER-091-004",
+      state: "Active",
+      title: "Viewer access stays read-only.",
+      summary: "Viewers can inspect safe report summaries without reaching drafts, private notes, raw evidence, or buyer controls.",
+      member: "Leena Patel",
+      role: "Viewer",
+      health: "Clear",
+      task: "Monitor",
+      actionPath: "Show read-only access, visible reports, hidden surfaces, and receipt of the viewer boundary.",
+      receipt: "viewer_member_active",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "MEMBER-091-005",
+      state: "Review task",
+      title: "Role change queue catches permission drift.",
+      summary: "A requested reviewer-to-owner promotion cannot happen quietly; it needs owner approval and a reason.",
+      member: "Maya Shah",
+      role: "Reviewer -> Owner",
+      health: "Role drift",
+      task: "Approve or hold",
+      actionPath: "Compare current role, requested role, allowed actions, reason, and last activity before approval.",
+      receipt: "role_change_review",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      contract: "MEMBER-091-006",
+      state: "Watch",
+      title: "Access health flags inactivity before renewal.",
+      summary: "Inactive members create review tasks before renewal so dormant access does not survive by accident.",
+      member: "Nora Lewis",
+      role: "Viewer",
+      health: "Inactive 21 days",
+      task: "Renew or revoke",
+      actionPath: "Ask the owner to renew, revoke, or downgrade the member based on recent workspace value.",
+      receipt: "inactive_member_watch",
+      href: "health.html",
+      action: "Open health",
+    },
+    {
+      contract: "MEMBER-091-007",
+      state: "Task",
+      title: "Renewal task prevents silent expiry.",
+      summary: "Expiring access becomes a short owner decision instead of a hidden calendar problem.",
+      member: "Samir Ali",
+      role: "Reviewer",
+      health: "Expires in 3 days",
+      task: "Renew access",
+      actionPath: "Renew for 30 days, downgrade to viewer, or let access expire with a receipt.",
+      receipt: "member_renewal_due",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      contract: "MEMBER-091-008",
+      state: "Ready",
+      title: "Revocation keeps the audit trail intact.",
+      summary: "Removing a member should close access, preserve decisions, and keep previous approvals understandable.",
+      member: "Former reviewer",
+      role: "Revoked reviewer",
+      health: "Closed",
+      task: "Archive receipt",
+      actionPath: "Revoke access, lock future actions, preserve historic approvals, and write the revocation receipt.",
+      receipt: "member_revoked",
+      href: "rollback.html",
+      action: "Open rollback",
+    },
+    {
+      contract: "MEMBER-091-009",
+      state: "Hold",
+      title: "Buyer-link overlap needs owner review.",
+      summary: "If a member also owns a buyer link, the console holds revocation until buyer-safe access is handled.",
+      member: "Sales owner",
+      role: "Reviewer + buyer link",
+      health: "Buyer-link overlap",
+      task: "Resolve link",
+      actionPath: "Reassign or revoke buyer link before changing the internal role.",
+      receipt: "buyer_overlap_hold",
+      href: "buyer.html",
+      action: "Open buyer portal",
+    },
+    {
+      contract: "MEMBER-091-010",
+      state: "Active",
+      title: "Private beta readiness requires member clarity.",
+      summary: "The workspace is closer to launch when members, roles, health, tasks, and receipts are visible together.",
+      member: "Pilot workspace",
+      role: "All roles",
+      health: "Beta-ready path",
+      task: "Run checklist",
+      actionPath: "Check owners, reviewers, contributors, viewers, renewals, revocations, buyer links, and receipts.",
+      receipt: "member_console_ready",
+      href: "versions.html",
+      action: "Open roadmap",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -5944,7 +6178,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.90 Alpha - Invite Flow Prototype",
+      "Pilot phase: AnswerSeal v0.91 Alpha - Member Role Console",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

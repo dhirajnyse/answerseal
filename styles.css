@@ -13272,6 +13272,11 @@ svg {
   background: rgba(0, 168, 137, 0.12);
 }
 
+.proof-member-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
 .proof-workspace-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
@@ -13303,6 +13308,11 @@ svg {
 }
 
 .proof-invite-card.is-design header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-member-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -13342,6 +13352,11 @@ svg {
   background: rgba(255, 194, 89, 0.18);
 }
 
+.proof-member-card.is-gate header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
 .proof-workspace-card.is-held header strong {
   color: #b42318;
   background: rgba(255, 228, 226, 0.72);
@@ -13377,6 +13392,11 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-member-card.is-held header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13400,7 +13420,8 @@ svg {
 .proof-persistence-meta div,
 .proof-auth-meta div,
 .proof-access-meta div,
-.proof-invite-meta div {
+.proof-invite-meta div,
+.proof-member-meta div {
   min-height: 82px;
 }
 
@@ -13446,6 +13467,8 @@ svg {
 .proof-access-summary-section,
 .proof-invite-flow-section,
 .proof-invite-summary-section,
+.proof-member-flow-section,
+.proof-member-summary-section,
 .proof-workspace-flow-section,
 .proof-workspace-summary-section {
   position: relative;
@@ -13492,7 +13515,9 @@ svg {
 .proof-access-flow-grid article,
 .proof-access-summary-strip article,
 .proof-invite-flow-grid article,
-.proof-invite-summary-strip article {
+.proof-invite-summary-strip article,
+.proof-member-flow-grid article,
+.proof-member-summary-strip article {
   min-height: 168px;
 }
 
@@ -14126,6 +14151,8 @@ svg {
   .proof-recovery-summary-section,
   .proof-invite-flow-section,
   .proof-invite-summary-section,
+  .proof-member-flow-section,
+  .proof-member-summary-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -14257,6 +14284,9 @@ svg {
     .proof-invite-grid,
     .proof-invite-flow-grid,
     .proof-invite-summary-strip,
+    .proof-member-grid,
+    .proof-member-flow-grid,
+    .proof-member-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14437,6 +14467,10 @@ svg {
     .proof-invite-flow-grid,
     .proof-invite-summary-strip,
     .proof-invite-meta,
+    .proof-member-grid,
+    .proof-member-flow-grid,
+    .proof-member-summary-strip,
+    .proof-member-meta,
   .pricing-grid,
   .dashboard-metrics,
   .launch-roadmap-track,

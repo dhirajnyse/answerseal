@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.91 Alpha - Member Role Console
+
+Phase: Member Role Console
+
+- Added a dedicated Member Role Console page for active members, role changes, access health, renewal tasks, revocations, buyer-link overlap, and member receipts.
+- Added dynamic member cards for saved report assignments, owner safety, reviewer access, contributor scope, viewer access, role drift, inactive members, renewal tasks, revocations, buyer-link overlap, and private beta readiness.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Members console.
+- Upgraded public storage to v0.91 while preserving v0.90 and earlier report memory.
+- Upgraded workspace storage to v0.91 while preserving v0.90 and earlier workspace memory, and upgraded export language to Review Pack v87.
+- Moved the next build toward v0.92 Private Beta Onboarding Room.
+
 ## v0.90 Alpha - Invite Flow Prototype
 
 Phase: Invite Flow Prototype
