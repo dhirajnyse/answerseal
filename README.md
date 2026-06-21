@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.83 Alpha
+**Current version:** v0.84 Alpha
 
-**Current phase:** Release Recovery Desk
+**Current phase:** Production Workspace Foundation
 
-**Current release:** v0.83 Alpha - Release Recovery Desk
+**Current release:** v0.84 Alpha - Production Workspace Foundation
 
 ## Brand
 
@@ -107,6 +107,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Release Recovery Desk page for unhealthy release signals, owner decisions, scoped recovery actions, buyer-safe notices, rollback paths, and recovery receipts
 - Recovery cards show health signal, owner, affected scope, owner decision, buyer-safe notice, and recovery receipt before a weak signal changes customer-facing behavior
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, release ledger entries, and health signals now route naturally into the Release Recovery Desk
+- Production Workspace Foundation page for durable records, organization boundaries, simple roles, permissions, audit timelines, and pilot onboarding
+- Workspace foundation cards show owner, durable record type, access boundary, launch gate, production rule, audit timeline, and launch receipt
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, release ledger entries, health signals, and recovery decisions now route naturally into the Production Workspace Foundation
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -124,7 +127,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v79 export with Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v80 export with Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -386,7 +389,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v79 export with Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v80 export with Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -418,6 +421,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `ledger.html` - Approval Release Ledger for shipped learning changes, release scope, rollback watch, and audit exports
 - `health.html` - Ledger Health Monitor for expected lift, live trust signals, source drift, owner alerts, rollback recommendations, and health exports
 - `recovery.html` - Release Recovery Desk for unhealthy signals, owner decisions, scoped actions, buyer-safe notices, rollback paths, and recovery receipts
+- `workspace.html` - Production Workspace Foundation for durable records, organization boundaries, roles, audit timelines, and pilot onboarding
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -432,13 +436,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.84 Alpha - Production Workspace Foundation
+## Next Phase: v0.85 Alpha - Persistent Trust Records
 
-- Move sealed reports, recovery receipts, and audit events toward durable backend-ready records
-- Prepare organization workspaces with teams, roles, owners, permissions, and invite paths
-- Unify sealed reports, release health, recovery actions, and exports into a launch-grade audit timeline
-- Give first pilot customers a guided path from one messy questionnaire to a verified trust workspace
-- Keep the first screen calm while the platform becomes ready for real customer operation
+- Turn sealed reports, recovery receipts, workspace settings, owners, and audit events into a backend-ready data model
+- Define the first production schema for organizations, members, reports, artifacts, reviews, recovery receipts, and audit events
+- Prepare migration path from browser-local report memory into durable workspace records
+- Add launch-grade data ownership, retention, export, and restore rules
+- Keep the first screen simple while persistence becomes real behind the scenes
 
 ## License
 

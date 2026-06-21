@@ -13237,6 +13237,26 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-workspace-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-workspace-card.is-design header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-workspace-card.is-gate header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-workspace-card.is-held header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13253,7 +13273,8 @@ svg {
 .proof-approval-meta div,
 .proof-ledger-meta div,
 .proof-health-meta div,
-.proof-recovery-meta div {
+.proof-recovery-meta div,
+.proof-workspace-meta div {
   min-height: 82px;
 }
 
@@ -13281,10 +13302,14 @@ svg {
 .proof-approval-summary-section,
 .proof-ledger-flow-section,
 .proof-ledger-summary-section,
-.proof-health-flow-section,
-.proof-health-summary-section,
-.proof-recovery-flow-section,
-.proof-recovery-summary-section {
+    .proof-health-flow-section,
+    .proof-health-summary-section,
+    .proof-recovery-flow-section,
+    .proof-recovery-summary-section,
+    .proof-workspace-flow-section,
+    .proof-workspace-summary-section,
+.proof-workspace-flow-section,
+.proof-workspace-summary-section {
   position: relative;
 }
 
@@ -13315,7 +13340,9 @@ svg {
 .proof-health-flow-grid article,
 .proof-health-summary-strip article,
 .proof-recovery-flow-grid article,
-.proof-recovery-summary-strip article {
+.proof-recovery-summary-strip article,
+.proof-workspace-flow-grid article,
+.proof-workspace-summary-strip article {
   min-height: 168px;
 }
 
@@ -13674,6 +13701,21 @@ svg {
 @media (max-width: 1220px) {
   .app-shell {
     grid-template-columns: 216px minmax(0, 1fr);
+  }
+
+  .landing-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 14px;
+  }
+
+  .landing-nav nav {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding-bottom: 2px;
+  }
+
+  .version-badge {
+    justify-self: end;
   }
 
   .work-grid {
@@ -14039,9 +14081,12 @@ svg {
   .proof-health-grid,
   .proof-health-flow-grid,
   .proof-health-summary-strip,
-  .proof-recovery-grid,
-  .proof-recovery-flow-grid,
-  .proof-recovery-summary-strip,
+    .proof-recovery-grid,
+    .proof-recovery-flow-grid,
+    .proof-recovery-summary-strip,
+    .proof-workspace-grid,
+    .proof-workspace-flow-grid,
+    .proof-workspace-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14190,10 +14235,14 @@ svg {
   .proof-health-flow-grid,
   .proof-health-summary-strip,
   .proof-health-meta,
-  .proof-recovery-grid,
-  .proof-recovery-flow-grid,
-  .proof-recovery-summary-strip,
-  .proof-recovery-meta,
+    .proof-recovery-grid,
+    .proof-recovery-flow-grid,
+    .proof-recovery-summary-strip,
+    .proof-recovery-meta,
+    .proof-workspace-grid,
+    .proof-workspace-flow-grid,
+    .proof-workspace-summary-strip,
+    .proof-workspace-meta,
   .pricing-grid,
   .dashboard-metrics,
   .launch-roadmap-track,

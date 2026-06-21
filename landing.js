@@ -90,6 +90,9 @@ const ledgerHealthStatus = document.querySelector("#ledgerHealthStatus");
 const releaseRecoveryList = document.querySelector("#releaseRecoveryList");
 const releaseRecoveryScore = document.querySelector("#releaseRecoveryScore");
 const releaseRecoveryStatus = document.querySelector("#releaseRecoveryStatus");
+const productionWorkspaceList = document.querySelector("#productionWorkspaceList");
+const productionWorkspaceScore = document.querySelector("#productionWorkspaceScore");
+const productionWorkspaceStatus = document.querySelector("#productionWorkspaceStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -102,9 +105,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.83 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v83";
+const PUBLIC_BUILD_VERSION = "v0.84 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v84";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v83",
   "answerseal.public.reports.v82",
   "answerseal.public.reports.v81",
   "answerseal.public.reports.v80",
@@ -216,6 +220,7 @@ renderGuardApprovalLab();
 renderApprovalReleaseLedger();
 renderLedgerHealthMonitor();
 renderReleaseRecoveryDesk();
+renderProductionWorkspaceFoundation();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -4182,6 +4187,175 @@ function buildReleaseRecoveryItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderProductionWorkspaceFoundation() {
+  if (!productionWorkspaceList) return;
+  const entries = buildProductionWorkspaceItems();
+  const readyCount = entries.filter((entry) => entry.state === "Ready").length;
+  const gatedCount = entries.filter((entry) => entry.gate !== "Ready").length;
+  const auditCount = entries.filter((entry) => entry.audit !== "Not started").length;
+
+  if (productionWorkspaceScore) productionWorkspaceScore.textContent = `${readyCount}/${entries.length} ready`;
+  if (productionWorkspaceStatus) {
+    productionWorkspaceStatus.textContent = `${auditCount} audit streams mapped, ${gatedCount} launch gates still owner-held.`;
+  }
+
+  productionWorkspaceList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.state === "Ready"
+        ? "is-ready"
+        : entry.state === "Design"
+          ? "is-design"
+          : entry.state === "Owner gate"
+            ? "is-gate"
+            : "is-held";
+    card.className = `proof-memory-card proof-workspace-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.record)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-workspace-meta">
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Record</dt>
+          <dd>${escapePublicHtml(entry.recordType)}</dd>
+        </div>
+        <div>
+          <dt>Access</dt>
+          <dd>${escapePublicHtml(entry.access)}</dd>
+        </div>
+        <div>
+          <dt>Gate</dt>
+          <dd>${escapePublicHtml(entry.gate)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Production rule</span>
+        <p>${escapePublicHtml(entry.rule)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Audit timeline</span>
+        <p>${escapePublicHtml(entry.audit)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Launch receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    productionWorkspaceList.append(card);
+  });
+}
+
+function buildProductionWorkspaceItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    return {
+      record: `PW-084-L${index + 1}`,
+      state: score >= 86 ? "Ready" : "Owner gate",
+      title: report.prompt || "Saved sealed report becomes a durable record",
+      summary: "A sealed answer can move from browser memory into the future production workspace only with owner, access, and audit context attached.",
+      owner: score >= 86 ? "Trust lead" : "Reviewer",
+      recordType: "Sealed report",
+      access: score >= 90 ? "Team visible" : "Reviewer-only",
+      gate: score >= 86 ? "Ready" : "Review",
+      rule: "Persist only the report summary, source trail, score, risk flags, owner, and share state as a governed artifact.",
+      audit: "Create, verify, save, share, and recovery events map to one timeline entry.",
+      receipt: report.summary || "Launch receipt keeps prompt, answer, trust score, source trail, owner, access policy, and audit event together.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      record: "PW-084-001",
+      state: "Ready",
+      title: "Durable sealed report record is backend-ready.",
+      summary: "The first production table is not generic notes. It is the sealed report: prompt, answer, sources, score, flags, improved answer, and share state.",
+      owner: "Product",
+      recordType: "Report",
+      access: "Workspace members",
+      gate: "Ready",
+      rule: "Every trusted answer becomes a durable record before it can be shared, reused, recovered, or audited.",
+      audit: "Created, verified, saved, copied, shared, and opened events become the first audit stream.",
+      receipt: "Launch receipt names the report schema, owner, access boundary, audit event list, and migration source from local memory.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      record: "PW-084-002",
+      state: "Ready",
+      title: "Organization workspace boundary is mapped.",
+      summary: "AnswerSeal needs one simple tenant container before production: organization, workspace, members, roles, regions, and pilot state.",
+      owner: "Admin",
+      recordType: "Workspace",
+      access: "Invite only",
+      gate: "Ready",
+      rule: "Exact prompts, answers, evidence files, buyer context, and recovery receipts stay inside the organization workspace.",
+      audit: "Member invite, role change, workspace setting, export, and access events are tracked as workspace-level history.",
+      receipt: "Launch receipt records workspace id, tenant boundary, default roles, region posture, and pilot onboarding state.",
+      href: "versions.html",
+      action: "Open roadmap",
+    },
+    {
+      record: "PW-084-003",
+      state: "Design",
+      title: "Role and permission model stays small on purpose.",
+      summary: "Launch does not need twenty permissions. It needs a calm role ladder: Owner, Reviewer, Contributor, Viewer, and Buyer link.",
+      owner: "Security",
+      recordType: "Permission",
+      access: "Role scoped",
+      gate: "Role review",
+      rule: "Owners approve policy and recovery, reviewers approve answers, contributors draft, viewers read, buyer links see only scoped packets.",
+      audit: "Permission grants, revocations, buyer-link opens, and export access become visible before production.",
+      receipt: "Launch receipt names each role, what it can change, what it can only view, and where human approval is required.",
+      href: "buyer.html",
+      action: "Open buyer",
+    },
+    {
+      record: "PW-084-004",
+      state: "Ready",
+      title: "Audit timeline connects trust work end to end.",
+      summary: "Verification, report save, registry promotion, review approval, recovery decision, export, and buyer share should read as one quiet timeline.",
+      owner: "Compliance",
+      recordType: "Audit event",
+      access: "Owner + reviewer",
+      gate: "Ready",
+      rule: "Every AI answer lifecycle action records who did it, what changed, why it changed, and what object it touched.",
+      audit: "Report, artifact, review, rollout, health, recovery, export, and buyer room events share one timestamped timeline.",
+      receipt: "Launch receipt maps existing demo receipts to the production audit event model without adding visual clutter.",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      record: "PW-084-005",
+      state: "Owner gate",
+      title: "Pilot onboarding is one guided path, not a setup maze.",
+      summary: "The first customer should move from one messy questionnaire to a workspace with sources, roles, one saved report, and a review pack.",
+      owner: "Customer success",
+      recordType: "Onboarding",
+      access: "Pilot team",
+      gate: "Pilot script",
+      rule: "Onboarding should ask for the fewest things needed: company, team owner, one questionnaire, three proof assets, and export goal.",
+      audit: "Workspace created, first source added, first answer verified, first report saved, and first review pack exported are launch milestones.",
+      receipt: "Launch receipt becomes the customer kickoff record: scope, owner, assets, deadline, first report, and success condition.",
+      href: "./#pilot",
+      action: "Open pilot",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -4398,7 +4572,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.83 Alpha - Release Recovery Desk",
+      "Pilot phase: AnswerSeal v0.84 Alpha - Production Workspace Foundation",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

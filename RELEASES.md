@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.84 Alpha - Production Workspace Foundation
+
+Phase: Production Workspace Foundation
+
+- Added a dedicated Production Workspace Foundation page for durable records, organization boundaries, simple roles, permissions, audit timelines, and pilot onboarding.
+- Added public workspace foundation cards with owner, durable record type, access boundary, launch gate, production rule, audit timeline, and launch receipt.
+- Connected landing product spine, Release Recovery Desk, Pricing, Build Phases, demo build labels, and public navigation to the new Workspace path.
+- Upgraded public storage to v0.84 while preserving v0.83 and earlier report memory.
+- Upgraded workspace storage to v0.84 while preserving v0.83 and earlier workspace memory, and upgraded export language to Review Pack v80.
+- Moved the next build toward v0.85 Persistent Trust Records.
+
 ## v0.83 Alpha - Release Recovery Desk
 
 Phase: Release Recovery Desk
