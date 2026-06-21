@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.86 Alpha - Workspace Data Layer
+
+Phase: Workspace Data Layer
+
+- Added a dedicated Workspace Data Layer page for route contracts, API-ready request and response shapes, permission checks, migration rehearsal, recovery receipts, and production state boundaries.
+- Added public data-layer cards with route, method, record, permission, request shape, response shape, and migration rehearsal for each backend-ready action.
+- Connected landing product spine, Persistent Trust Records, Production Workspace Foundation, Pricing, Build Phases, demo build labels, and public navigation to the new Data path.
+- Upgraded public storage to v0.86 while preserving v0.85 and earlier report memory.
+- Upgraded workspace storage to v0.86 while preserving v0.85 and earlier workspace memory, and upgraded export language to Review Pack v82.
+- Moved the next build toward v0.87 D1 Persistence Blueprint.
+
 ## v0.85 Alpha - Persistent Trust Records
 
 Phase: Persistent Trust Records

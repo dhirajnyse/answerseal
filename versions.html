@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.85 Alpha</strong>
+        <strong>v0.86 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -60,6 +60,7 @@
         <a href="recovery.html">Recovery</a>
         <a href="workspace.html">Workspace</a>
         <a href="records.html">Records</a>
+        <a href="data.html">Data</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -69,16 +70,16 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.85 Alpha</h1>
+          <h1>AnswerSeal v0.86 Alpha</h1>
           <p>
-            This release turns the workspace plan into persistent trust records: sealed report schemas, organization
-            ownership, audit events, recovery receipts, migration jobs, retention rules, and restore paths.
+            This release turns persistent trust records into a workspace data layer: route contracts, API-ready
+            request shapes, permission checks, migration rehearsal, and recovery receipts for production state.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Persistent Trust Records</h2>
+          <h2>Workspace Data Layer</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -86,11 +87,11 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Persistent Trust Records page, sealed report schema, organization/member records, audit event model, recovery receipts, retention policy, migration jobs, v0.84 workspace memory, and Review Pack v81</dd>
+              <dd>Workspace Data Layer page, route contracts, API-ready request and response shapes, permission checks, migration rehearsal, v0.85 trust record memory, and Review Pack v82</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.86 Alpha - Workspace Data Layer</dd>
+              <dd>v0.87 Alpha - D1 Persistence Blueprint</dd>
             </div>
           </dl>
         </aside>
@@ -102,21 +103,21 @@
           <h2>We are building the trust operating system for AI work.</h2>
           <p>
             AnswerSeal is in Alpha: the core trust loop is visible, the governance spine is taking shape, and the next
-            milestone is turning the persistent record map into a workspace data layer with route contracts, API-ready
-            state, migration rehearsal, and launch-safe permissions.
+            milestone is turning the workspace data layer into a D1 persistence blueprint with tables, indexes,
+            migrations, seeds, and deployment-safe state boundaries.
           </p>
         </div>
 
         <div class="launch-roadmap-status" aria-label="Overall progress">
           <article class="is-current">
             <span>Now</span>
-            <strong>v0.85 Alpha</strong>
-            <p>Persistent Trust Records defines sealed report schemas, audit events, recovery receipts, retention rules, and migration jobs.</p>
+            <strong>v0.86 Alpha</strong>
+            <p>Workspace Data Layer maps routes, request shapes, permissions, migration rehearsal, and recovery receipts.</p>
           </article>
           <article>
             <span>Next</span>
-            <strong>v0.86</strong>
-            <p>Workspace Data Layer turns record schemas into route contracts, API-ready state, migration rehearsal, and permission checks.</p>
+            <strong>v0.87</strong>
+            <p>D1 Persistence Blueprint turns contracts into database tables, indexes, migration files, and seed fixtures.</p>
           </article>
           <article>
             <span>Launch target</span>
@@ -156,10 +157,15 @@
             <h3>Production Platform</h3>
             <p>Durable records, organization boundaries, roles, audit timelines, and launch onboarding are mapped for production.</p>
           </article>
-          <article class="is-current">
+          <article class="is-done">
             <span>07</span>
             <h3>Persistent Records</h3>
             <p>Sealed reports, organizations, members, audit events, recovery receipts, retention rules, and migration jobs become backend-ready.</p>
+          </article>
+          <article class="is-current">
+            <span>08</span>
+            <h3>Workspace Data Layer</h3>
+            <p>Route contracts, API payloads, permissions, migrations, and recovery receipts define production state boundaries.</p>
           </article>
         </div>
       </section>
@@ -174,6 +180,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.86 Alpha</strong>
+            </header>
+            <h3>Workspace Data Layer</h3>
+            <p>Added a public Workspace Data Layer page with route contracts, request and response shapes, permission checks, migration rehearsal, recovery receipts, v0.85 trust record memory, and Review Pack v82.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.85 Alpha</strong>
             </header>
             <h3>Persistent Trust Records</h3>
@@ -941,40 +956,40 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.86 Alpha - Workspace Data Layer</h2>
+          <h2>v0.87 Alpha - D1 Persistence Blueprint</h2>
           <p>
-            The next release should turn the persistent record model into an application data layer: route contracts,
-            API-ready state, permission checks, migration rehearsal, and a clean path from static demo to real workspace.
+            The next release should turn the workspace data contracts into a database blueprint: tables, indexes,
+            migration files, seed records, and platform storage boundaries for the first real backend.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Route contracts</h3>
-            <p>Map verify, report, workspace, record, audit, recovery, export, and restore actions into clear product routes.</p>
+            <h3>D1 table map</h3>
+            <p>Translate workspaces, members, sealed reports, verification runs, audit events, and migration jobs into tables.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Workspace API shape</h3>
-            <p>Define the first request and response contracts for organizations, members, sealed reports, artifacts, and audit events.</p>
+            <h3>Indexes and ids</h3>
+            <p>Choose durable IDs, workspace scopes, audit lookups, owner filters, share links, and report history indexes.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Permission checks</h3>
-            <p>Keep Owner, Reviewer, Contributor, Viewer, and Buyer link permissions small enough for launch and clear enough for audits.</p>
+            <h3>Migration files</h3>
+            <p>Prepare schema SQL as one-statement migrations with dry-run seed fixtures and rollback references.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Migration rehearsal</h3>
-            <p>Rehearse importing local report memory into workspace records with skipped records, rollback references, and audit receipts.</p>
+            <h3>Storage boundary</h3>
+            <p>Keep structured state in D1, future evidence files in R2, and browser memory as demo-only seed input.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.85 Alpha</span>
+      <span>AnswerSeal v0.86 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -1004,6 +1019,7 @@
         <a href="recovery.html">Recovery</a>
         <a href="workspace.html">Workspace</a>
         <a href="records.html">Records</a>
+        <a href="data.html">Data</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

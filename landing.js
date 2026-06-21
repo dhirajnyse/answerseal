@@ -96,6 +96,9 @@ const productionWorkspaceStatus = document.querySelector("#productionWorkspaceSt
 const persistentRecordsList = document.querySelector("#persistentRecordsList");
 const persistentRecordsScore = document.querySelector("#persistentRecordsScore");
 const persistentRecordsStatus = document.querySelector("#persistentRecordsStatus");
+const workspaceDataLayerList = document.querySelector("#workspaceDataLayerList");
+const workspaceDataLayerScore = document.querySelector("#workspaceDataLayerScore");
+const workspaceDataLayerStatus = document.querySelector("#workspaceDataLayerStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -108,9 +111,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.85 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v85";
+const PUBLIC_BUILD_VERSION = "v0.86 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v86";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v85",
   "answerseal.public.reports.v84",
   "answerseal.public.reports.v83",
   "answerseal.public.reports.v82",
@@ -226,6 +230,7 @@ renderLedgerHealthMonitor();
 renderReleaseRecoveryDesk();
 renderProductionWorkspaceFoundation();
 renderPersistentTrustRecords();
+renderWorkspaceDataLayer();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -4560,6 +4565,220 @@ function buildPersistentTrustRecordItems() {
   return [...reportEntries, ...seededEntries].slice(0, 10);
 }
 
+function renderWorkspaceDataLayer() {
+  if (!workspaceDataLayerList) return;
+  const entries = buildWorkspaceDataLayerItems();
+  const readyCount = entries.filter((entry) => entry.state === "Launch ready" || entry.state === "API ready").length;
+  const gatedCount = entries.filter((entry) => entry.state.includes("gate") || entry.state.includes("test")).length;
+  const routeCount = entries.filter((entry) => entry.route !== "Not mapped").length;
+
+  if (workspaceDataLayerScore) workspaceDataLayerScore.textContent = `${readyCount}/${entries.length} launch-ready`;
+  if (workspaceDataLayerStatus) {
+    workspaceDataLayerStatus.textContent = `${routeCount} route contracts mapped, ${gatedCount} still need rehearsal or owner approval.`;
+  }
+
+  workspaceDataLayerList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.state === "Launch ready"
+        ? "is-ready"
+        : entry.state === "API ready"
+          ? "is-design"
+          : entry.state.includes("gate")
+            ? "is-gate"
+            : "is-held";
+    card.className = `proof-memory-card proof-data-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-data-meta">
+        <div>
+          <dt>Route</dt>
+          <dd>${escapePublicHtml(entry.route)}</dd>
+        </div>
+        <div>
+          <dt>Method</dt>
+          <dd>${escapePublicHtml(entry.method)}</dd>
+        </div>
+        <div>
+          <dt>Record</dt>
+          <dd>${escapePublicHtml(entry.record)}</dd>
+        </div>
+        <div>
+          <dt>Permission</dt>
+          <dd>${escapePublicHtml(entry.permission)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Request shape</span>
+        <p>${escapePublicHtml(entry.request)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Response shape</span>
+        <p>${escapePublicHtml(entry.response)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Migration rehearsal</span>
+        <p>${escapePublicHtml(entry.migration)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    workspaceDataLayerList.append(card);
+  });
+}
+
+function buildWorkspaceDataLayerItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    return {
+      contract: `DL-086-L${index + 1}`,
+      state: score >= 86 ? "Launch ready" : "Permission gate",
+      title: report.prompt || "Saved report import contract",
+      summary: "Local sealed reports can rehearse the exact payload shape before they become workspace records.",
+      route: "POST /api/workspaces/:workspaceId/sealed-reports",
+      method: "POST",
+      record: "sealed_report",
+      permission: score >= 86 ? "Owner or reviewer" : "Reviewer approval",
+      request: "prompt, answer, sources, score, status, flags, improved_answer, source_refs, local_report_id.",
+      response: "sealed_report_id, audit_event_id, migration_job_id, owner_id, share_state, recovery_state.",
+      migration: report.summary || "Import rehearsal keeps source storage key, score, skipped fields, owner, and rollback reference visible.",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      contract: "DL-086-001",
+      state: "Launch ready",
+      title: "Verification route accepts one calm input.",
+      summary: "The first API should mirror the first screen: prompt, answer, evidence, and the trust result. No extra setup maze.",
+      route: "POST /api/verifications",
+      method: "POST",
+      record: "verification_run",
+      permission: "Contributor",
+      request: "workspace_id, prompt_text, answer_text, evidence_text, source_refs, run_context.",
+      response: "run_id, score, status, flags, checks, improved_answer, report_summary, created_at.",
+      migration: "Current browser verifier output maps directly into verification_runs before sealed report creation.",
+      href: "verify.html",
+      action: "Open verifier",
+    },
+    {
+      contract: "DL-086-002",
+      state: "Launch ready",
+      title: "Sealed report route creates durable trust memory.",
+      summary: "A report becomes product truth only after it has a workspace, owner, source trail, share state, and audit event.",
+      route: "POST /api/sealed-reports",
+      method: "POST",
+      record: "sealed_report",
+      permission: "Reviewer",
+      request: "workspace_id, verification_run_id, owner_id, source_refs, share_state, retention_policy_id.",
+      response: "sealed_report_id, status, audit_event_id, report_url, recovery_state, created_at.",
+      migration: "answerseal.public.reports.v86 becomes an import source, not the production authority.",
+      href: "records.html",
+      action: "Open records",
+    },
+    {
+      contract: "DL-086-003",
+      state: "API ready",
+      title: "Workspace route keeps tenant boundaries visible.",
+      summary: "Every object should resolve through one workspace boundary before role, region, billing, or pilot state gets complex.",
+      route: "GET /api/workspaces/:workspaceId",
+      method: "GET",
+      record: "workspace",
+      permission: "Member",
+      request: "workspace_id, include_members, include_policy, include_recent_audit.",
+      response: "workspace, organization, members, roles, region, pilot_state, policy_summary, latest_audit_events.",
+      migration: "Production Workspace Foundation records seed the first workspace response shape.",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      contract: "DL-086-004",
+      state: "Permission gate",
+      title: "Permission route stays small enough to audit.",
+      summary: "Launch roles should be understandable: owner, reviewer, contributor, viewer, and buyer link. Anything else can wait.",
+      route: "PATCH /api/workspaces/:workspaceId/members/:memberId",
+      method: "PATCH",
+      record: "member_permission",
+      permission: "Owner",
+      request: "member_id, new_role, reason, scope, expires_at, approval_note.",
+      response: "member_id, role, audit_event_id, effective_permissions, changed_at.",
+      migration: "Existing demo owner and reviewer labels become role seeds after owner approval.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      contract: "DL-086-005",
+      state: "Migration test",
+      title: "Migration jobs rehearse imports before persistence.",
+      summary: "Saved demo reports, workspace memory, and review receipts should pass through an explainable import job.",
+      route: "POST /api/migration-jobs",
+      method: "POST",
+      record: "migration_job",
+      permission: "Owner",
+      request: "workspace_id, source_key, source_version, target_table, dry_run, retention_policy_id.",
+      response: "job_id, imported_count, skipped_count, failure_count, rollback_ref, audit_event_id.",
+      migration: "Dry-run mode imports v0.86 local memory into draft rows and proves skipped records before commit.",
+      href: "records.html",
+      action: "Open records",
+    },
+    {
+      contract: "DL-086-006",
+      state: "Launch ready",
+      title: "Audit event route gives every change a receipt.",
+      summary: "The product should not need noisy logs. It needs simple audit events tied to actor, object, action, reason, and previous state.",
+      route: "POST /api/audit-events",
+      method: "POST",
+      record: "audit_event",
+      permission: "System",
+      request: "actor_id, workspace_id, object_type, object_id, action, reason, previous_state, metadata.",
+      response: "audit_event_id, created_at, receipt_url, immutable_ref.",
+      migration: "Existing export, review, rollback, and recovery receipts become audit event fixtures.",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      contract: "DL-086-007",
+      state: "API ready",
+      title: "Recovery route keeps trust reversible.",
+      summary: "Every rollback, correction, restore, buyer notice, or policy hold should attach to the original object and owner decision.",
+      route: "POST /api/recovery-receipts",
+      method: "POST",
+      record: "recovery_receipt",
+      permission: "Trust owner",
+      request: "object_type, object_id, trigger, owner_decision, scope, buyer_notice, restore_path.",
+      response: "receipt_id, recovery_state, audit_event_id, rollback_ref, completed_at.",
+      migration: "Release Recovery Desk content becomes a typed recovery receipt connected to audit_events.",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      contract: "DL-086-008",
+      state: "Permission gate",
+      title: "Export and delete route protects customer control.",
+      summary: "Data durability becomes trustworthy only when export, delete, retention, legal hold, and restore rules are clear.",
+      route: "POST /api/data-requests",
+      method: "POST",
+      record: "data_request",
+      permission: "Owner",
+      request: "workspace_id, request_type, object_scope, reason, legal_hold_check, requested_by.",
+      response: "request_id, status, affected_records, audit_event_id, export_url, restore_until.",
+      migration: "Retention policy approval blocks production persistence until export and delete behavior is accepted.",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 11);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -4776,7 +4995,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.85 Alpha - Persistent Trust Records",
+      "Pilot phase: AnswerSeal v0.86 Alpha - Workspace Data Layer",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

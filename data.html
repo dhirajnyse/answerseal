@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Approval Release Ledger</title>
+    <title>AnswerSeal | Workspace Data Layer</title>
     <meta
       name="description"
-      content="AnswerSeal Approval Release Ledger records approved AI guard changes with release scope, rollout state, rollback watch, and audit exports."
+      content="AnswerSeal Workspace Data Layer maps route contracts, API-ready records, permissions, migrations, and launch-safe workspace state."
     />
     <meta name="theme-color" content="#00a889" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="landing-page product-page proof-network-page proof-ledger-page">
+  <body class="landing-page product-page proof-network-page proof-workspace-page proof-records-page proof-data-page">
     <header class="landing-nav" aria-label="Site header">
       <a class="landing-brand" href="./" aria-label="AnswerSeal home">
         <img src="assets/answerseal-logo.svg" alt="" />
@@ -52,111 +52,111 @@
         <a href="outcome.html">Outcome</a>
         <a href="tuning.html">Tuning</a>
         <a href="approval.html">Approval</a>
-        <a href="ledger.html" aria-current="page">Ledger</a>
+        <a href="ledger.html">Ledger</a>
         <a href="health.html">Health</a>
         <a href="recovery.html">Recovery</a>
         <a href="workspace.html">Workspace</a>
         <a href="records.html">Records</a>
-        <a href="data.html">Data</a>
+        <a href="data.html" aria-current="page">Data</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
     </header>
 
     <main>
-      <section class="product-hero proof-ledger-hero">
+      <section class="product-hero proof-data-hero">
         <div>
-          <span class="hero-kicker">Approval release ledger</span>
-          <h1>Every approved learning change needs a memory.</h1>
+          <span class="hero-kicker">Workspace data layer</span>
+          <h1>The backend should feel calm before it exists.</h1>
           <p>
-            Approval Release Ledger records approved guard changes after they ship. Teams see release scope, owner
-            approval, rollout state, rollback watch, audit export, and the handoff into v0.82 release health monitoring.
+            v0.86 turns persistent trust records into a launch-ready application data layer: route contracts, request
+            shapes, permission checks, migration rehearsal, and recovery paths that can move cleanly into production.
           </p>
         </div>
         <aside class="product-status-card">
-          <span>Release ledger</span>
-          <strong id="approvalReleaseLedgerScore">0 entries</strong>
-          <p id="approvalReleaseLedgerStatus">Approved changes are waiting for release records.</p>
+          <span>Data readiness</span>
+          <strong id="workspaceDataLayerScore">0/0 launch-ready</strong>
+          <p id="workspaceDataLayerStatus">Workspace data contracts are waiting for route signals.</p>
         </aside>
       </section>
 
-      <section class="proof-memory-shell proof-ledger-shell" aria-label="Approval release ledger">
+      <section class="proof-memory-shell proof-data-shell" aria-label="Workspace data layer map">
         <div class="dashboard-toolbar">
-          <span class="hero-kicker">Released changes</span>
+          <span class="hero-kicker">Route contracts</span>
           <div class="dashboard-actions">
-            <a class="hero-secondary" href="approval.html">Open Approval Lab</a>
-            <a class="hero-secondary" href="monitor.html">Open Monitor</a>
-            <a class="hero-secondary" href="rollback.html">Open Rollback</a>
+            <a class="hero-secondary" href="records.html">Open Records</a>
+            <a class="hero-secondary" href="workspace.html">Open Workspace</a>
+            <a class="hero-secondary" href="versions.html">Open Roadmap</a>
             <a class="hero-primary" href="verify.html">Verify New Answer</a>
           </div>
         </div>
 
-        <div class="proof-memory-grid proof-ledger-grid" id="approvalReleaseLedgerList"></div>
+        <div class="proof-memory-grid proof-data-grid" id="workspaceDataLayerList"></div>
       </section>
 
-      <section class="proof-network-firewall proof-ledger-flow-section" aria-label="Release ledger anatomy">
+      <section class="proof-network-firewall proof-data-flow-section" aria-label="Data layer rules">
         <div>
-          <span class="hero-kicker">Ledger anatomy</span>
-          <h2>Release history is a control, not an archive.</h2>
+          <span class="hero-kicker">Launch-safe rules</span>
+          <h2>Every route needs one owner, one object, and one audit event.</h2>
           <p>
-            The ledger keeps each approved learning change explainable after rollout. It shows where the change applies,
-            who owns it, what monitor is watching it, and how the team reverses it if trust drops.
+            The product can scale globally only if the core data rules are small. AnswerSeal should know who acted,
+            what object changed, why it changed, what permission allowed it, and how to reverse it.
           </p>
         </div>
 
-        <div class="proof-network-firewall-grid proof-ledger-flow-grid">
+        <div class="proof-network-firewall-grid proof-data-flow-grid">
           <article>
-            <span>Release entry</span>
-            <strong>What shipped</strong>
-            <p>Record the approved tune, changed rule, release window, owner, and expected trust lift.</p>
+            <span>Route</span>
+            <strong>Clear action path</strong>
+            <p>Verify, save, share, approve, export, migrate, restore, and delete are first-class routes.</p>
           </article>
           <article>
-            <span>Scope receipt</span>
-            <strong>Where it applies</strong>
-            <p>Show tenant, region, workflow, evidence class, and answer category boundaries.</p>
+            <span>Record</span>
+            <strong>Stable object shape</strong>
+            <p>Reports, artifacts, members, audit events, receipts, policies, and jobs carry durable IDs.</p>
           </article>
           <article>
-            <span>Rollback watch</span>
-            <strong>What can stop it</strong>
-            <p>Keep first-run drift, false-block, stale-source, and reviewer-load signals visible.</p>
+            <span>Permission</span>
+            <strong>Small role model</strong>
+            <p>Owner, reviewer, contributor, viewer, and buyer link permissions stay explainable.</p>
           </article>
           <article>
-            <span>Audit export</span>
-            <strong>How to prove it</strong>
-            <p>Export approval rationale, evidence checks, rollout state, monitor rules, and reversal path.</p>
+            <span>Receipt</span>
+            <strong>Reversible history</strong>
+            <p>Every persistent change records enough context to explain, export, restore, or roll back.</p>
           </article>
         </div>
       </section>
 
-      <section class="proof-network-lift-section proof-ledger-summary-section" aria-label="Release ledger operating rules">
+      <section class="proof-network-lift-section proof-data-summary-section" aria-label="Production handoff">
         <div>
-          <span class="hero-kicker">After approval</span>
-          <h2>Closed-loop AI should leave quiet receipts everywhere it learns.</h2>
+          <span class="hero-kicker">Production handoff</span>
+          <h2>The static demo now has a clean road into real state.</h2>
           <p>
-            The Approval Release Ledger turns learning into governed memory: what changed, who allowed it, who benefits,
-            what remains local, and what evidence proves the change is still safe.
+            v0.86 does not add complexity to the first screen. It gives the future backend a disciplined contract so
+            the same simple verifier can grow into a private multi-tenant workspace.
           </p>
         </div>
-        <div class="proof-network-lift-strip proof-ledger-summary-strip">
+        <div class="proof-network-lift-strip proof-data-summary-strip">
           <article>
-            <span>Shipped</span>
-            <strong>Ledger entry is live</strong>
-            <p>The approved change is active only inside its recorded scope.</p>
+            <span>Input</span>
+            <strong>Verifier payload</strong>
+            <p>Prompt, answer, evidence, score, flags, and improved answer become one request body.</p>
           </article>
           <article>
-            <span>Watching</span>
-            <strong>Rollback stays visible</strong>
-            <p>Early signals keep the reversal path close until the change proves calm.</p>
+            <span>Workspace</span>
+            <strong>Tenant boundary</strong>
+            <p>Organization, member, role, region, and pilot state are attached before persistence.</p>
           </article>
           <article>
-            <span>Held</span>
-            <strong>Scope is protected</strong>
-            <p>If policy or regional rules are incomplete, the release stays out of live influence.</p>
+            <span>Migration</span>
+            <strong>Import rehearsal</strong>
+            <p>Browser reports can be tested as imports with skipped rows, rollback refs, and receipts.</p>
           </article>
           <article>
-            <span>Audited</span>
-            <strong>Proof is exportable</strong>
-            <p>Every shipped learning change can be explained to security, legal, and customers.</p>
+            <span>Launch</span>
+            <strong>API shape</strong>
+            <p>Backend routes can start from documented objects instead of guessing from the interface.</p>
           </article>
         </div>
       </section>
@@ -188,12 +188,12 @@
       <a href="tuning.html">Tuning</a>
       <a href="approval.html">Approval</a>
       <a href="ledger.html">Ledger</a>
-        <a href="health.html">Health</a>
-        <a href="recovery.html">Recovery</a>
-        <a href="workspace.html">Workspace</a>
-              <a href="records.html">Records</a>
-        <a href="data.html">Data</a>
-        <a href="pricing.html">Pricing</a>
+      <a href="health.html">Health</a>
+      <a href="recovery.html">Recovery</a>
+      <a href="workspace.html">Workspace</a>
+      <a href="records.html">Records</a>
+      <a href="data.html">Data</a>
+      <a href="pricing.html">Pricing</a>
       <a href="versions.html">Build Phases</a>
     </footer>
     <script src="landing.js"></script>
