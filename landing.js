@@ -93,6 +93,9 @@ const releaseRecoveryStatus = document.querySelector("#releaseRecoveryStatus");
 const productionWorkspaceList = document.querySelector("#productionWorkspaceList");
 const productionWorkspaceScore = document.querySelector("#productionWorkspaceScore");
 const productionWorkspaceStatus = document.querySelector("#productionWorkspaceStatus");
+const persistentRecordsList = document.querySelector("#persistentRecordsList");
+const persistentRecordsScore = document.querySelector("#persistentRecordsScore");
+const persistentRecordsStatus = document.querySelector("#persistentRecordsStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -105,9 +108,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.84 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v84";
+const PUBLIC_BUILD_VERSION = "v0.85 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v85";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v84",
   "answerseal.public.reports.v83",
   "answerseal.public.reports.v82",
   "answerseal.public.reports.v81",
@@ -221,6 +225,7 @@ renderApprovalReleaseLedger();
 renderLedgerHealthMonitor();
 renderReleaseRecoveryDesk();
 renderProductionWorkspaceFoundation();
+renderPersistentTrustRecords();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -4356,6 +4361,205 @@ function buildProductionWorkspaceItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderPersistentTrustRecords() {
+  if (!persistentRecordsList) return;
+  const entries = buildPersistentTrustRecordItems();
+  const readyCount = entries.filter((entry) => entry.state === "Schema ready").length;
+  const migrationCount = entries.filter((entry) => entry.migration !== "Not mapped").length;
+  const gatedCount = entries.length - readyCount;
+
+  if (persistentRecordsScore) persistentRecordsScore.textContent = `${readyCount}/${entries.length} schema-ready`;
+  if (persistentRecordsStatus) {
+    persistentRecordsStatus.textContent = `${migrationCount} migration paths mapped, ${gatedCount} records still owner-held.`;
+  }
+
+  persistentRecordsList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.state === "Schema ready"
+        ? "is-ready"
+        : entry.state === "Modeling"
+          ? "is-design"
+          : entry.state === "Policy gate"
+            ? "is-gate"
+            : "is-held";
+    card.className = `proof-memory-card proof-records-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.record)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-records-meta">
+        <div>
+          <dt>Table</dt>
+          <dd>${escapePublicHtml(entry.table)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Retention</dt>
+          <dd>${escapePublicHtml(entry.retention)}</dd>
+        </div>
+        <div>
+          <dt>Restore</dt>
+          <dd>${escapePublicHtml(entry.restore)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Minimum fields</span>
+        <p>${escapePublicHtml(entry.fields)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Migration path</span>
+        <p>${escapePublicHtml(entry.migration)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Audit event</span>
+        <p>${escapePublicHtml(entry.audit)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    persistentRecordsList.append(card);
+  });
+}
+
+function buildPersistentTrustRecordItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    return {
+      record: `TR-085-L${index + 1}`,
+      state: score >= 86 ? "Schema ready" : "Policy gate",
+      title: report.prompt || "Local sealed report becomes a persistent record",
+      summary: "A saved browser report can become production state only when source references, owner, share state, and recovery status travel with it.",
+      table: "sealed_reports",
+      owner: score >= 86 ? "Trust lead" : "Reviewer",
+      retention: score >= 90 ? "Pilot default" : "Reviewer hold",
+      restore: "Previous report snapshot",
+      fields: "id, workspace_id, prompt, answer, score, flags, source_refs, improved_answer, owner_id, share_state, recovery_state.",
+      migration: "Browser-local sealed report memory maps into sealed_reports with source references and audit history preserved.",
+      audit: report.summary || "record.migrated captures source storage key, trust score, owner, migration timestamp, and review state.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      record: "TR-085-001",
+      state: "Schema ready",
+      title: "Sealed report becomes the first durable product object.",
+      summary: "The core record is the verified answer itself: prompt, answer, proof, score, risk flags, improved wording, owner, and share state.",
+      table: "sealed_reports",
+      owner: "Product",
+      retention: "Pilot default",
+      restore: "Version snapshot",
+      fields: "id, workspace_id, prompt_hash, prompt_text, answer_text, score, status, source_refs, flags_json, improved_answer, owner_id, created_at.",
+      migration: "answerseal.public.reports.v84 and earlier report memory can migrate into sealed_reports without changing the first-screen verifier.",
+      audit: "report.created, report.verified, report.saved, report.shared, and report.restored become standard audit events.",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      record: "TR-085-002",
+      state: "Schema ready",
+      title: "Organizations and members give every answer a home.",
+      summary: "Production trust needs one clear tenant boundary before accounts get complicated: organization, workspace, member, role, and invitation state.",
+      table: "organizations + members",
+      owner: "Admin",
+      retention: "Account lifetime",
+      restore: "Owner recovery",
+      fields: "organization_id, workspace_id, member_id, role, invitation_state, region, billing_state, pilot_state, created_at.",
+      migration: "Pilot form, workspace foundation records, and demo workspace account map into organization and member seeds.",
+      audit: "member.invited, member.role_changed, workspace.created, and workspace.region_set keep tenant control visible.",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      record: "TR-085-003",
+      state: "Schema ready",
+      title: "Audit events become one quiet timeline.",
+      summary: "Every important trust action should be queryable without making users stare at technical logs.",
+      table: "audit_events",
+      owner: "Compliance",
+      retention: "Seven-year ready",
+      restore: "Immutable receipt",
+      fields: "event_id, workspace_id, actor_id, object_type, object_id, action, reason, metadata_json, created_at.",
+      migration: "Existing receipts from reports, reviews, releases, recovery, and exports map into one audit_events table.",
+      audit: "audit.event_created is append-only and links each object to actor, reason, timestamp, and previous state.",
+      href: "versions.html",
+      action: "Open roadmap",
+    },
+    {
+      record: "TR-085-004",
+      state: "Schema ready",
+      title: "Recovery receipts stay attached to trust records.",
+      summary: "A rollback or buyer-safe notice should not live as loose text. It should point to the exact record, owner, trigger, decision, and restore path.",
+      table: "recovery_receipts",
+      owner: "Trust owner",
+      retention: "Audit retained",
+      restore: "Rollback pointer",
+      fields: "receipt_id, workspace_id, object_id, trigger, owner_decision, scope, buyer_notice, restore_path, status, created_at.",
+      migration: "Release Recovery Desk and rollback receipt content become recovery_receipts connected to sealed_reports and audit_events.",
+      audit: "recovery.opened, recovery.approved, recovery.completed, and recovery.restored keep the product reversible.",
+      href: "recovery.html",
+      action: "Open recovery",
+    },
+    {
+      record: "TR-085-005",
+      state: "Modeling",
+      title: "Artifact versions prepare prompt and agent governance.",
+      summary: "The long-term Notion + GitHub + QA idea needs versioned artifacts, but the launch shape should stay narrow and understandable.",
+      table: "artifact_versions",
+      owner: "AI governance",
+      retention: "Version history",
+      restore: "Previous version",
+      fields: "artifact_id, version_id, artifact_type, content_hash, change_summary, reviewer_id, promotion_state, rollback_state.",
+      migration: "Registry artifacts, review loop promotions, and approved prompt patterns become artifact_versions after sealed_reports are stable.",
+      audit: "artifact.version_created and artifact.promoted capture reviewer, diff summary, and rollback pointer.",
+      href: "registry.html",
+      action: "Open registry",
+    },
+    {
+      record: "TR-085-006",
+      state: "Policy gate",
+      title: "Retention and restore rules need owner approval before persistence.",
+      summary: "Durability is a promise. Before data becomes real, customers need clear rules for retention, export, delete, legal hold, and restore.",
+      table: "retention_policies",
+      owner: "Legal",
+      retention: "Owner-defined",
+      restore: "Policy approved",
+      fields: "policy_id, workspace_id, object_type, retention_days, export_rule, delete_rule, legal_hold_rule, restore_rule, owner_id.",
+      migration: "Existing demo data stays local until a workspace owner accepts retention, export, delete, and restore rules.",
+      audit: "policy.retention_approved records owner, scope, retention window, export path, and restore commitment.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      record: "TR-085-007",
+      state: "Schema ready",
+      title: "Local memory migration has a small, safe bridge.",
+      summary: "We can preserve demo continuity while preparing real persistence by treating browser memory as importable seed data, never as production truth.",
+      table: "migration_jobs",
+      owner: "Engineering",
+      retention: "One-time job",
+      restore: "Import rollback",
+      fields: "job_id, workspace_id, source_key, target_table, imported_count, skipped_count, failure_count, status, rollback_ref.",
+      migration: "answerseal.public.reports.v85 and answerseal.workspace.v85 become source keys for future import jobs.",
+      audit: "migration.started, migration.completed, migration.skipped, and migration.rolled_back explain every imported record.",
+      href: "demo.html#trust-check",
+      action: "Open demo",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 10);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -4572,7 +4776,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.84 Alpha - Production Workspace Foundation",
+      "Pilot phase: AnswerSeal v0.85 Alpha - Persistent Trust Records",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

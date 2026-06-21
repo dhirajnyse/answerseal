@@ -13242,7 +13242,17 @@ svg {
   background: rgba(0, 168, 137, 0.12);
 }
 
+.proof-records-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
 .proof-workspace-card.is-design header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-records-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -13252,7 +13262,17 @@ svg {
   background: rgba(255, 194, 89, 0.18);
 }
 
+.proof-records-card.is-gate header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
 .proof-workspace-card.is-held header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
+.proof-records-card.is-held header strong {
   color: #b42318;
   background: rgba(255, 228, 226, 0.72);
 }
@@ -13274,7 +13294,8 @@ svg {
 .proof-ledger-meta div,
 .proof-health-meta div,
 .proof-recovery-meta div,
-.proof-workspace-meta div {
+.proof-workspace-meta div,
+.proof-records-meta div {
   min-height: 82px;
 }
 
@@ -13308,6 +13329,8 @@ svg {
     .proof-recovery-summary-section,
     .proof-workspace-flow-section,
     .proof-workspace-summary-section,
+.proof-records-flow-section,
+.proof-records-summary-section,
 .proof-workspace-flow-section,
 .proof-workspace-summary-section {
   position: relative;
@@ -13342,7 +13365,9 @@ svg {
 .proof-recovery-flow-grid article,
 .proof-recovery-summary-strip article,
 .proof-workspace-flow-grid article,
-.proof-workspace-summary-strip article {
+.proof-workspace-summary-strip article,
+.proof-records-flow-grid article,
+.proof-records-summary-strip article {
   min-height: 168px;
 }
 
@@ -14087,6 +14112,9 @@ svg {
     .proof-workspace-grid,
     .proof-workspace-flow-grid,
     .proof-workspace-summary-strip,
+    .proof-records-grid,
+    .proof-records-flow-grid,
+    .proof-records-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14243,6 +14271,10 @@ svg {
     .proof-workspace-flow-grid,
     .proof-workspace-summary-strip,
     .proof-workspace-meta,
+    .proof-records-grid,
+    .proof-records-flow-grid,
+    .proof-records-summary-strip,
+    .proof-records-meta,
   .pricing-grid,
   .dashboard-metrics,
   .launch-roadmap-track,

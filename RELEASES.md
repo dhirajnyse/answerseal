@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.85 Alpha - Persistent Trust Records
+
+Phase: Persistent Trust Records
+
+- Added a dedicated Persistent Trust Records page for sealed report schemas, organization/member records, audit events, recovery receipts, retention policies, migration jobs, and restore paths.
+- Added public record cards with table, owner, retention, restore path, minimum fields, migration path, and audit event for every backend-ready trust object.
+- Connected landing product spine, Production Workspace Foundation, Pricing, Build Phases, demo build labels, and public navigation to the new Records path.
+- Upgraded public storage to v0.85 while preserving v0.84 and earlier report memory.
+- Upgraded workspace storage to v0.85 while preserving v0.84 and earlier workspace memory, and upgraded export language to Review Pack v81.
+- Moved the next build toward v0.86 Workspace Data Layer.
+
 ## v0.84 Alpha - Production Workspace Foundation
 
 Phase: Production Workspace Foundation
