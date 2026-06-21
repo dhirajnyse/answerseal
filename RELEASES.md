@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.83 Alpha - Release Recovery Desk
+
+Phase: Release Recovery Desk
+
+- Added a dedicated Release Recovery Desk page for owner decisions, scoped recovery actions, buyer-safe notices, rollback paths, and recovery receipts.
+- Added public recovery cards with health signal, owner, affected scope, state, owner decision, buyer-safe notice, and recovery receipt.
+- Connected landing product spine, Ledger Health Monitor, Pricing, Build Phases, demo build labels, and public navigation to the new Recovery path.
+- Upgraded public storage to v0.83 while preserving v0.82 and earlier report memory.
+- Upgraded workspace storage to v0.83 while preserving v0.82 and earlier workspace memory, and upgraded export language to Review Pack v79.
+- Moved the next build toward v0.84 Production Workspace Foundation.
+
 ## v0.82 Alpha - Ledger Health Monitor
 
 Phase: Ledger Health Monitor

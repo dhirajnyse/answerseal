@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Approval Release Ledger</title>
+    <title>AnswerSeal | Release Recovery Desk</title>
     <meta
       name="description"
-      content="AnswerSeal Approval Release Ledger records approved AI guard changes with release scope, rollout state, rollback watch, and audit exports."
+      content="AnswerSeal Release Recovery Desk turns unhealthy AI release signals into owner decisions, scoped recovery actions, buyer-safe notices, rollback paths, and recovery receipts."
     />
     <meta name="theme-color" content="#00a889" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="landing-page product-page proof-network-page proof-ledger-page">
+  <body class="landing-page product-page proof-network-page proof-recovery-page">
     <header class="landing-nav" aria-label="Site header">
       <a class="landing-brand" href="./" aria-label="AnswerSeal home">
         <img src="assets/answerseal-logo.svg" alt="" />
@@ -52,108 +52,108 @@
         <a href="outcome.html">Outcome</a>
         <a href="tuning.html">Tuning</a>
         <a href="approval.html">Approval</a>
-        <a href="ledger.html" aria-current="page">Ledger</a>
+        <a href="ledger.html">Ledger</a>
         <a href="health.html">Health</a>
-        <a href="recovery.html">Recovery</a>
+        <a href="recovery.html" aria-current="page">Recovery</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
     </header>
 
     <main>
-      <section class="product-hero proof-ledger-hero">
+      <section class="product-hero proof-recovery-hero">
         <div>
-          <span class="hero-kicker">Approval release ledger</span>
-          <h1>Every approved learning change needs a memory.</h1>
+          <span class="hero-kicker">Release recovery desk</span>
+          <h1>When trust weakens, recovery becomes a governed workflow.</h1>
           <p>
-            Approval Release Ledger records approved guard changes after they ship. Teams see release scope, owner
-            approval, rollout state, rollback watch, audit export, and the handoff into v0.82 release health monitoring.
+            v0.83 turns unhealthy ledger health signals into owner decisions: pause, narrow, rollback, continue-watch,
+            notify buyers when needed, and record a recovery receipt so closed-loop AI stays reversible.
           </p>
         </div>
         <aside class="product-status-card">
-          <span>Release ledger</span>
-          <strong id="approvalReleaseLedgerScore">0 entries</strong>
-          <p id="approvalReleaseLedgerStatus">Approved changes are waiting for release records.</p>
+          <span>Recovery readiness</span>
+          <strong id="releaseRecoveryScore">0/0 ready</strong>
+          <p id="releaseRecoveryStatus">Recovery packets are waiting for health signals.</p>
         </aside>
       </section>
 
-      <section class="proof-memory-shell proof-ledger-shell" aria-label="Approval release ledger">
+      <section class="proof-memory-shell proof-recovery-shell" aria-label="Release recovery desk">
         <div class="dashboard-toolbar">
-          <span class="hero-kicker">Released changes</span>
+          <span class="hero-kicker">Recovery packets</span>
           <div class="dashboard-actions">
-            <a class="hero-secondary" href="approval.html">Open Approval Lab</a>
-            <a class="hero-secondary" href="monitor.html">Open Monitor</a>
+            <a class="hero-secondary" href="health.html">Open Health</a>
             <a class="hero-secondary" href="rollback.html">Open Rollback</a>
+            <a class="hero-secondary" href="incident.html">Open Incident Timeline</a>
             <a class="hero-primary" href="verify.html">Verify New Answer</a>
           </div>
         </div>
 
-        <div class="proof-memory-grid proof-ledger-grid" id="approvalReleaseLedgerList"></div>
+        <div class="proof-memory-grid proof-recovery-grid" id="releaseRecoveryList"></div>
       </section>
 
-      <section class="proof-network-firewall proof-ledger-flow-section" aria-label="Release ledger anatomy">
+      <section class="proof-network-firewall proof-recovery-flow-section" aria-label="Release recovery anatomy">
         <div>
-          <span class="hero-kicker">Ledger anatomy</span>
-          <h2>Release history is a control, not an archive.</h2>
+          <span class="hero-kicker">Recovery anatomy</span>
+          <h2>A rollback should feel boring because the path is already approved.</h2>
           <p>
-            The ledger keeps each approved learning change explainable after rollout. It shows where the change applies,
-            who owns it, what monitor is watching it, and how the team reverses it if trust drops.
+            Recovery is not failure. It is the proof that the organization can safely learn, watch, reverse, and explain
+            every change before buyer trust is damaged.
           </p>
         </div>
 
-        <div class="proof-network-firewall-grid proof-ledger-flow-grid">
+        <div class="proof-network-firewall-grid proof-recovery-flow-grid">
           <article>
-            <span>Release entry</span>
-            <strong>What shipped</strong>
-            <p>Record the approved tune, changed rule, release window, owner, and expected trust lift.</p>
+            <span>Health signal</span>
+            <strong>What changed</strong>
+            <p>Bring the weak live signal, affected ledger entry, expected lift, and actual impact into one packet.</p>
           </article>
           <article>
-            <span>Scope receipt</span>
-            <strong>Where it applies</strong>
-            <p>Show tenant, region, workflow, evidence class, and answer category boundaries.</p>
+            <span>Owner decision</span>
+            <strong>Who acts</strong>
+            <p>Route the decision to the accountable owner with pause, narrow, rollback, or continue-watch options.</p>
           </article>
           <article>
-            <span>Rollback watch</span>
-            <strong>What can stop it</strong>
-            <p>Keep first-run drift, false-block, stale-source, and reviewer-load signals visible.</p>
+            <span>Buyer-safe notice</span>
+            <strong>What can be said</strong>
+            <p>Prepare calm external wording only when customer-facing trust or proof packets are affected.</p>
           </article>
           <article>
-            <span>Audit export</span>
-            <strong>How to prove it</strong>
-            <p>Export approval rationale, evidence checks, rollout state, monitor rules, and reversal path.</p>
+            <span>Recovery receipt</span>
+            <strong>How it proves control</strong>
+            <p>Record signal, owner, decision, scope, restore path, buyer note, and next review condition.</p>
           </article>
         </div>
       </section>
 
-      <section class="proof-network-lift-section proof-ledger-summary-section" aria-label="Release ledger operating rules">
+      <section class="proof-network-lift-section proof-recovery-summary-section" aria-label="Release recovery operating rules">
         <div>
-          <span class="hero-kicker">After approval</span>
-          <h2>Closed-loop AI should leave quiet receipts everywhere it learns.</h2>
+          <span class="hero-kicker">Launch readiness</span>
+          <h2>World-class AI SaaS needs controlled recovery as much as controlled learning.</h2>
           <p>
-            The Approval Release Ledger turns learning into governed memory: what changed, who allowed it, who benefits,
-            what remains local, and what evidence proves the change is still safe.
+            This is how AnswerSeal becomes launch-grade: not by pretending every AI improvement is perfect, but by
+            making every recovery calm, scoped, owned, reversible, and audit-ready.
           </p>
         </div>
-        <div class="proof-network-lift-strip proof-ledger-summary-strip">
+        <div class="proof-network-lift-strip proof-recovery-summary-strip">
           <article>
-            <span>Shipped</span>
-            <strong>Ledger entry is live</strong>
-            <p>The approved change is active only inside its recorded scope.</p>
+            <span>Watch</span>
+            <strong>Keep live</strong>
+            <p>The signal is healthy enough to continue, with no scope expansion.</p>
           </article>
           <article>
-            <span>Watching</span>
-            <strong>Rollback stays visible</strong>
-            <p>Early signals keep the reversal path close until the change proves calm.</p>
+            <span>Narrow</span>
+            <strong>Limit influence</strong>
+            <p>The pattern still helps, but only inside a smaller approved scope.</p>
           </article>
           <article>
-            <span>Held</span>
-            <strong>Scope is protected</strong>
-            <p>If policy or regional rules are incomplete, the release stays out of live influence.</p>
+            <span>Pause</span>
+            <strong>Stop expansion</strong>
+            <p>The release waits for missing proof, owner rationale, or regional policy.</p>
           </article>
           <article>
-            <span>Audited</span>
-            <strong>Proof is exportable</strong>
-            <p>Every shipped learning change can be explained to security, legal, and customers.</p>
+            <span>Rollback</span>
+            <strong>Restore trust</strong>
+            <p>The prior approved rule returns and the recovery receipt explains why.</p>
           </article>
         </div>
       </section>
@@ -185,8 +185,8 @@
       <a href="tuning.html">Tuning</a>
       <a href="approval.html">Approval</a>
       <a href="ledger.html">Ledger</a>
-        <a href="health.html">Health</a>
-        <a href="recovery.html">Recovery</a>
+      <a href="health.html">Health</a>
+      <a href="recovery.html">Recovery</a>
       <a href="pricing.html">Pricing</a>
       <a href="versions.html">Build Phases</a>
     </footer>

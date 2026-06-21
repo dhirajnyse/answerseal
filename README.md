@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.82 Alpha
+**Current version:** v0.83 Alpha
 
-**Current phase:** Ledger Health Monitor
+**Current phase:** Release Recovery Desk
 
-**Current release:** v0.82 Alpha - Ledger Health Monitor
+**Current release:** v0.83 Alpha - Release Recovery Desk
 
 ## Brand
 
@@ -104,7 +104,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, and approval packets now route naturally into the Approval Release Ledger
 - Ledger Health Monitor page for shipped learning changes, expected lift, live trust signals, source drift, false-block watch, owner alerts, rollback recommendations, and health exports
 - Health cards show expected-vs-actual signal, drift, owner, next owner action, rollback recommendation, and audit-ready health receipt
-- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, and release ledger entries now route naturally into the Ledger Health Monitor
+- Release Recovery Desk page for unhealthy release signals, owner decisions, scoped recovery actions, buyer-safe notices, rollback paths, and recovery receipts
+- Recovery cards show health signal, owner, affected scope, owner decision, buyer-safe notice, and recovery receipt before a weak signal changes customer-facing behavior
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, release ledger entries, and health signals now route naturally into the Release Recovery Desk
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -122,7 +124,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v78 export with Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v79 export with Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -384,7 +386,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v78 export with Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v79 export with Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -415,6 +417,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `approval.html` - Guard Approval Lab for owner approval packets, confidence checks, rationale, evidence review, and approval receipts
 - `ledger.html` - Approval Release Ledger for shipped learning changes, release scope, rollback watch, and audit exports
 - `health.html` - Ledger Health Monitor for expected lift, live trust signals, source drift, owner alerts, rollback recommendations, and health exports
+- `recovery.html` - Release Recovery Desk for unhealthy signals, owner decisions, scoped actions, buyer-safe notices, rollback paths, and recovery receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `styles.css` - Product UI, layout, and responsive behavior
@@ -429,13 +432,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v0.83 Alpha - Release Recovery Desk
+## Next Phase: v0.84 Alpha - Production Workspace Foundation
 
-- Turn unhealthy ledger signals into a focused owner recovery queue
-- Let owners choose pause, narrow, rollback, or continue-watch with a reason
-- Prepare buyer-safe notices when a shipped pattern is paused or narrowed
-- Capture recovery receipts with decision, approver, scope, and restore path
-- Keep closed-loop AI calm by making recovery as governed as release
+- Move sealed reports, recovery receipts, and audit events toward durable backend-ready records
+- Prepare organization workspaces with teams, roles, owners, permissions, and invite paths
+- Unify sealed reports, release health, recovery actions, and exports into a launch-grade audit timeline
+- Give first pilot customers a guided path from one messy questionnaire to a verified trust workspace
+- Keep the first screen calm while the platform becomes ready for real customer operation
 
 ## License
 

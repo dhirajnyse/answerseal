@@ -87,6 +87,9 @@ const approvalReleaseLedgerStatus = document.querySelector("#approvalReleaseLedg
 const ledgerHealthList = document.querySelector("#ledgerHealthList");
 const ledgerHealthScore = document.querySelector("#ledgerHealthScore");
 const ledgerHealthStatus = document.querySelector("#ledgerHealthStatus");
+const releaseRecoveryList = document.querySelector("#releaseRecoveryList");
+const releaseRecoveryScore = document.querySelector("#releaseRecoveryScore");
+const releaseRecoveryStatus = document.querySelector("#releaseRecoveryStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -99,9 +102,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.82 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v82";
+const PUBLIC_BUILD_VERSION = "v0.83 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v83";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v82",
   "answerseal.public.reports.v81",
   "answerseal.public.reports.v80",
   "answerseal.public.reports.v79",
@@ -211,6 +215,7 @@ renderGuardTuningQueue();
 renderGuardApprovalLab();
 renderApprovalReleaseLedger();
 renderLedgerHealthMonitor();
+renderReleaseRecoveryDesk();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -4000,6 +4005,183 @@ function buildLedgerHealthItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderReleaseRecoveryDesk() {
+  if (!releaseRecoveryList) return;
+  const entries = buildReleaseRecoveryItems();
+  const readyCount = entries.filter((entry) => entry.state === "Ready").length;
+  const activeCount = entries.filter((entry) => ["Rollback", "Narrow", "Pause"].includes(entry.decision)).length;
+  const noticeCount = entries.filter((entry) => entry.notice !== "Internal only").length;
+
+  if (releaseRecoveryScore) releaseRecoveryScore.textContent = `${readyCount}/${entries.length} ready`;
+  if (releaseRecoveryStatus) {
+    releaseRecoveryStatus.textContent = `${activeCount} recovery decisions prepared, ${noticeCount} buyer-safe notices ready.`;
+  }
+
+  releaseRecoveryList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.decision === "Rollback"
+        ? "is-rollback"
+        : entry.decision === "Narrow"
+          ? "is-narrow"
+          : entry.decision === "Pause"
+            ? "is-pause"
+            : "is-watch";
+    card.className = `proof-memory-card proof-recovery-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.ticket)}</span>
+        <strong>${escapePublicHtml(entry.decision)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-recovery-meta">
+        <div>
+          <dt>Health signal</dt>
+          <dd>${escapePublicHtml(entry.signal)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Affected scope</dt>
+          <dd>${escapePublicHtml(entry.scope)}</dd>
+        </div>
+        <div>
+          <dt>State</dt>
+          <dd>${escapePublicHtml(entry.state)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Owner decision</span>
+        <p>${escapePublicHtml(entry.ownerDecision)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Buyer-safe notice</span>
+        <p>${escapePublicHtml(entry.notice)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Recovery receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    releaseRecoveryList.append(card);
+  });
+}
+
+function buildReleaseRecoveryItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const decision = score >= 90 ? "Watch" : score >= 80 ? "Narrow" : score >= 70 ? "Pause" : "Rollback";
+    return {
+      ticket: `RR-083-L${index + 1}`,
+      decision,
+      state: score >= 84 ? "Ready" : "Owner review",
+      title: report.prompt || "Saved sealed answer recovery packet",
+      summary: "A saved sealed answer can keep helping only when weak health signals become an explicit recovery decision.",
+      signal: score >= 90 ? "Healthy watch" : score >= 80 ? "Mixed source coverage" : score >= 70 ? "Policy gap" : "Trust loss",
+      owner: score >= 90 ? "AI governance" : score >= 80 ? "Security reviewer" : "Compliance",
+      scope: score >= 86 ? "Approved answer memory" : "Reviewer-only memory",
+      ownerDecision:
+        decision === "Watch"
+          ? "Continue watching for one more release window with no scope expansion."
+          : decision === "Narrow"
+            ? "Limit reuse to reviewer-approved answers until one stronger source is attached."
+            : decision === "Pause"
+              ? "Pause influence until owner rationale and source coverage are complete."
+              : "Rollback influence and restore the previous approved answer pattern.",
+      notice: decision === "Watch" ? "Internal only" : "We narrowed a reusable answer pattern while evidence is refreshed; current approved answers remain available.",
+      receipt: report.summary || "Recovery receipt includes prompt, trust score, weak signal, owner decision, affected scope, and restore path.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      ticket: "RR-083-001",
+      decision: "Narrow",
+      state: "Ready",
+      title: "Privacy wording remains live locally, but shared influence stays disabled.",
+      summary: "The Health Monitor shows local lift, while the recovery desk prevents broader influence until Privacy approves examples.",
+      signal: "Shared scope held",
+      owner: "Privacy",
+      scope: "Privacy explanations",
+      ownerDecision: "Narrow to local-only use and request two buyer-safe examples before any network proposal.",
+      notice: "Internal only",
+      receipt: "Recovery receipt links LH-082-002, local-only rule, Privacy owner, blocked shared influence, and next review date.",
+      href: "health.html",
+      action: "Open health",
+    },
+    {
+      ticket: "RR-083-002",
+      decision: "Pause",
+      state: "Owner review",
+      title: "Regional proof pass paused until Legal records country boundaries.",
+      summary: "A useful proof pattern is held back because country scope and evidence rights are not complete.",
+      signal: "High regional drift",
+      owner: "Legal",
+      scope: "EU proof reuse",
+      ownerDecision: "Pause live influence outside explicitly approved country rules and attach transfer-boundary language.",
+      notice: "A regional proof pattern is being reviewed before wider reuse; buyer-facing answers stay on approved local sources.",
+      receipt: "Recovery receipt records policy gap, affected region, no-live-influence state, Legal owner, and rerun condition.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      ticket: "RR-083-003",
+      decision: "Watch",
+      state: "Ready",
+      title: "SOC 2 freshness gate remains healthy and needs no rollback.",
+      summary: "The release is performing close to expected lift, so recovery stays as a watch-only receipt.",
+      signal: "+7 live lift",
+      owner: "Compliance",
+      scope: "SOC 2 answers",
+      ownerDecision: "Keep live, export the receipt, and continue 30-day stale-source drift monitoring.",
+      notice: "Internal only",
+      receipt: "Recovery receipt confirms no action required, current scope, owner, live signal, and rollback trigger.",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      ticket: "RR-083-004",
+      decision: "Narrow",
+      state: "Ready",
+      title: "Buyer packet export waits for response before network benefit credit.",
+      summary: "The packet is clean for pilot delivery, but the recovery desk blocks promotion until buyer response is recorded.",
+      signal: "Awaiting buyer response",
+      owner: "Customer success",
+      scope: "Pilot trust packets",
+      ownerDecision: "Keep pilot packet live, block network credit, and capture accepted, revised, or rejected buyer response.",
+      notice: "The pilot proof packet remains available while response signals are captured for future reuse.",
+      receipt: "Recovery receipt includes buyer packet status, promotion hold, Customer success owner, and response capture condition.",
+      href: "buyer.html",
+      action: "Open buyer",
+    },
+    {
+      ticket: "RR-083-005",
+      decision: "Rollback",
+      state: "Owner review",
+      title: "Experimental objection replay influence rolls back to prior answer memory.",
+      summary: "A simulated accepted-reply pattern did not meet outcome quality, so the recovery desk restores the previous rule.",
+      signal: "Outcome quality low",
+      owner: "Sales engineering",
+      scope: "Objection replies",
+      ownerDecision: "Rollback reply influence to the prior accepted-answer rule and require one additional outcome receipt.",
+      notice: "A pilot reply pattern was reversed before broad reuse; approved customer-facing language is unchanged.",
+      receipt: "Recovery receipt records rollback reason, previous rule, owner, affected workflow, buyer-safe notice, and restore path.",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -4216,7 +4398,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.82 Alpha - Ledger Health Monitor",
+      "Pilot phase: AnswerSeal v0.83 Alpha - Release Recovery Desk",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

@@ -13217,6 +13217,26 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-recovery-card.is-watch header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-recovery-card.is-narrow header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-recovery-card.is-pause header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-recovery-card.is-rollback header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13232,7 +13252,8 @@ svg {
 .proof-tuning-meta div,
 .proof-approval-meta div,
 .proof-ledger-meta div,
-.proof-health-meta div {
+.proof-health-meta div,
+.proof-recovery-meta div {
   min-height: 82px;
 }
 
@@ -13261,7 +13282,9 @@ svg {
 .proof-ledger-flow-section,
 .proof-ledger-summary-section,
 .proof-health-flow-section,
-.proof-health-summary-section {
+.proof-health-summary-section,
+.proof-recovery-flow-section,
+.proof-recovery-summary-section {
   position: relative;
 }
 
@@ -13290,7 +13313,9 @@ svg {
 .proof-ledger-flow-grid article,
 .proof-ledger-summary-strip article,
 .proof-health-flow-grid article,
-.proof-health-summary-strip article {
+.proof-health-summary-strip article,
+.proof-recovery-flow-grid article,
+.proof-recovery-summary-strip article {
   min-height: 168px;
 }
 
@@ -13905,6 +13930,8 @@ svg {
   .proof-incident-summary-section,
   .proof-health-flow-section,
   .proof-health-summary-section,
+  .proof-recovery-flow-section,
+  .proof-recovery-summary-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
@@ -14012,6 +14039,9 @@ svg {
   .proof-health-grid,
   .proof-health-flow-grid,
   .proof-health-summary-strip,
+  .proof-recovery-grid,
+  .proof-recovery-flow-grid,
+  .proof-recovery-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14160,6 +14190,10 @@ svg {
   .proof-health-flow-grid,
   .proof-health-summary-strip,
   .proof-health-meta,
+  .proof-recovery-grid,
+  .proof-recovery-flow-grid,
+  .proof-recovery-summary-strip,
+  .proof-recovery-meta,
   .pricing-grid,
   .dashboard-metrics,
   .launch-roadmap-track,
