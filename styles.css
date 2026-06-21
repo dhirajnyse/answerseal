@@ -13197,6 +13197,26 @@ svg {
   background: rgba(237, 233, 254, 0.72);
 }
 
+.proof-health-card.is-healthy header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
+.proof-health-card.is-watch header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-health-card.is-pause header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
+.proof-health-card.is-recover header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13211,7 +13231,8 @@ svg {
 .proof-outcome-meta div,
 .proof-tuning-meta div,
 .proof-approval-meta div,
-.proof-ledger-meta div {
+.proof-ledger-meta div,
+.proof-health-meta div {
   min-height: 82px;
 }
 
@@ -13238,7 +13259,9 @@ svg {
 .proof-approval-flow-section,
 .proof-approval-summary-section,
 .proof-ledger-flow-section,
-.proof-ledger-summary-section {
+.proof-ledger-summary-section,
+.proof-health-flow-section,
+.proof-health-summary-section {
   position: relative;
 }
 
@@ -13265,7 +13288,9 @@ svg {
 .proof-approval-flow-grid article,
 .proof-approval-summary-strip article,
 .proof-ledger-flow-grid article,
-.proof-ledger-summary-strip article {
+.proof-ledger-summary-strip article,
+.proof-health-flow-grid article,
+.proof-health-summary-strip article {
   min-height: 168px;
 }
 
@@ -13318,6 +13343,7 @@ svg {
 }
 
 .build-hero,
+.launch-roadmap-section,
 .build-section,
 .roadmap-section {
   padding: clamp(42px, 6vw, 78px) clamp(18px, 5vw, 78px);
@@ -13410,8 +13436,106 @@ svg {
 }
 
 .build-heading,
-.roadmap-copy {
+.roadmap-copy,
+.launch-roadmap-copy {
   max-width: 850px;
+}
+
+.launch-roadmap-section {
+  display: grid;
+  gap: 22px;
+  border-bottom: 1px solid rgba(31, 41, 38, 0.1);
+  background:
+    linear-gradient(145deg, rgba(234, 253, 248, 0.92) 0%, rgba(255, 255, 255, 0.98) 54%, rgba(237, 247, 255, 0.78) 100%),
+    #ffffff;
+}
+
+.launch-roadmap-copy h2 {
+  margin: 14px 0 0;
+  color: #14201d;
+  font-size: 2.8rem;
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+.launch-roadmap-copy p {
+  max-width: 760px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 1.04rem;
+  line-height: 1.55;
+}
+
+.launch-roadmap-status,
+.launch-roadmap-track {
+  display: grid;
+  gap: 12px;
+}
+
+.launch-roadmap-status {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.launch-roadmap-track {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.launch-roadmap-status article,
+.launch-roadmap-track article {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  min-height: 152px;
+  padding: 16px;
+  border: 1px solid rgba(31, 41, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 16px 36px rgba(31, 41, 38, 0.05);
+}
+
+.launch-roadmap-status article.is-current,
+.launch-roadmap-track article.is-current {
+  border-color: rgba(20, 121, 255, 0.24);
+  background:
+    linear-gradient(180deg, rgba(233, 244, 255, 0.78) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.launch-roadmap-track article.is-done {
+  border-color: rgba(0, 168, 137, 0.22);
+  background:
+    linear-gradient(180deg, rgba(220, 251, 244, 0.72) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.launch-roadmap-status span,
+.launch-roadmap-track span {
+  width: fit-content;
+  min-height: 24px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.launch-roadmap-status strong,
+.launch-roadmap-track h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.launch-roadmap-status p,
+.launch-roadmap-track p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.48;
 }
 
 .phase-list {
@@ -13779,10 +13903,20 @@ svg {
   .proof-rollback-receipt-section,
   .proof-incident-flow-section,
   .proof-incident-summary-section,
+  .proof-health-flow-section,
+  .proof-health-summary-section,
   .pricing-grid,
   .build-hero,
   .roadmap-section {
     grid-template-columns: 1fr;
+  }
+
+  .launch-roadmap-status {
+    grid-template-columns: 1fr;
+  }
+
+  .launch-roadmap-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .seal-path-track {
@@ -13811,6 +13945,7 @@ svg {
   .proof-copy h2,
   .product-hero h1,
   .build-hero-copy h1,
+  .launch-roadmap-copy h2,
   .build-heading h2,
   .roadmap-copy h2 {
     font-size: 2.2rem;
@@ -13874,6 +14009,9 @@ svg {
   .proof-ledger-grid,
   .proof-ledger-flow-grid,
   .proof-ledger-summary-strip,
+  .proof-health-grid,
+  .proof-health-flow-grid,
+  .proof-health-summary-strip,
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14018,8 +14156,13 @@ svg {
   .proof-ledger-flow-grid,
   .proof-ledger-summary-strip,
   .proof-ledger-meta,
+  .proof-health-grid,
+  .proof-health-flow-grid,
+  .proof-health-summary-strip,
+  .proof-health-meta,
   .pricing-grid,
   .dashboard-metrics,
+  .launch-roadmap-track,
   .pilot-terms,
   .seal-path-track {
     grid-template-columns: 1fr;
@@ -14560,6 +14703,8 @@ svg {
 
   .landing-nav {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
   }
 
   .landing-brand {
@@ -14567,9 +14712,14 @@ svg {
   }
 
   .version-badge {
+    justify-self: end;
     width: max-content;
     min-width: 0;
     margin-left: 0;
+  }
+
+  .landing-nav nav {
+    grid-column: 1 / -1;
   }
 
   .landing-nav nav a {

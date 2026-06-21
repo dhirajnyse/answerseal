@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.82 Alpha - Ledger Health Monitor
+
+Phase: Ledger Health Monitor
+
+- Added a dedicated Ledger Health Monitor page for shipped learning changes, expected lift, live trust signals, source drift, false-block watch, owner alerts, rollback recommendations, and health exports.
+- Added public health cards with expected-vs-actual signal, drift, owner, rollback recommendation, next owner action, and audit-ready health receipt.
+- Connected landing product spine, Approval Release Ledger, Pricing, Build Phases, demo build labels, and public navigation to the new Health path.
+- Upgraded public storage to v0.82 while preserving v0.81 and earlier report memory.
+- Upgraded workspace storage to v0.82 while preserving v0.81 and earlier workspace memory, and upgraded export language to Review Pack v78.
+- Moved the next build toward v0.83 Release Recovery Desk.
+
 ## v0.81 Alpha - Approval Release Ledger
 
 Phase: Approval Release Ledger

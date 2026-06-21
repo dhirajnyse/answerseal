@@ -27,7 +27,7 @@
 
       <a class="version-badge is-current" href="versions.html" aria-current="page">
         <span>Current build</span>
-        <strong>v0.81 Alpha</strong>
+        <strong>v0.82 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
@@ -56,6 +56,7 @@
         <a href="tuning.html">Tuning</a>
         <a href="approval.html">Approval</a>
         <a href="ledger.html">Ledger</a>
+        <a href="health.html">Health</a>
         <a href="pricing.html">Pricing</a>
         <a class="nav-demo-link" href="demo.html#trust-check">Open Demo</a>
       </nav>
@@ -65,15 +66,16 @@
       <section class="build-hero" aria-label="Current build">
         <div class="build-hero-copy">
           <span class="hero-kicker">Build phases</span>
-          <h1>AnswerSeal v0.81 Alpha</h1>
+          <h1>AnswerSeal v0.82 Alpha</h1>
           <p>
-            This release records approved guard changes after they ship: release scope, owner approval, rollout state, rollback watch, and audit exports for every governed learning change.
+            This release watches shipped ledger entries after rollout: expected lift, live trust signals, source drift,
+            false blocks, reviewer load, owner alerts, rollback recommendations, and health exports.
           </p>
         </div>
 
         <aside class="build-status-panel" aria-label="Version status">
           <span class="label">Current phase</span>
-          <h2>Approval Release Ledger</h2>
+          <h2>Ledger Health Monitor</h2>
           <dl>
             <div>
               <dt>Stage</dt>
@@ -81,14 +83,76 @@
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Approval Release Ledger page, shipped change records, tenant and regional scope, owner approval, rollout state, rollback watch, audit exports, v0.80 approval memory, and Review Pack v77</dd>
+              <dd>Ledger Health Monitor page, expected-vs-actual trust signals, owner alerts, rollback recommendations, health exports, v0.81 ledger memory, and Review Pack v78</dd>
             </div>
             <div>
               <dt>Next build</dt>
-              <dd>v0.82 Alpha - Ledger Health Monitor</dd>
+              <dd>v0.83 Alpha - Release Recovery Desk</dd>
             </div>
           </dl>
         </aside>
+      </section>
+
+      <section class="launch-roadmap-section" aria-label="Launch roadmap">
+        <div class="launch-roadmap-copy">
+          <span class="hero-kicker">Launch roadmap</span>
+          <h2>We are building the trust operating system for AI work.</h2>
+          <p>
+            AnswerSeal is in Alpha: the core trust loop is visible, the governance spine is taking shape, and the next
+            milestone is turning recovery into a launch-ready operating workflow.
+          </p>
+        </div>
+
+        <div class="launch-roadmap-status" aria-label="Overall progress">
+          <article class="is-current">
+            <span>Now</span>
+            <strong>v0.82 Alpha</strong>
+            <p>Ledger health monitoring proves shipped learning changes remain healthy after rollout.</p>
+          </article>
+          <article>
+            <span>Next</span>
+            <strong>v0.83</strong>
+            <p>Release Recovery Desk turns unhealthy signals into pause, narrow, rollback, and receipt decisions.</p>
+          </article>
+          <article>
+            <span>Launch target</span>
+            <strong>v1.0</strong>
+            <p>Production-grade trust workspace with persistence, accounts, permissions, exports, and pilot-ready onboarding.</p>
+          </article>
+        </div>
+
+        <div class="launch-roadmap-track" aria-label="Path to launch">
+          <article class="is-done">
+            <span>01</span>
+            <h3>MVP Trust Check</h3>
+            <p>Paste an AI answer, score risk, attach proof, and generate a sealed report.</p>
+          </article>
+          <article class="is-done">
+            <span>02</span>
+            <h3>Governed Reuse</h3>
+            <p>Registry, review loop, evaluation bench, connectors, policy gates, and buyer-safe rooms.</p>
+          </article>
+          <article class="is-done">
+            <span>03</span>
+            <h3>Closed-Loop Learning</h3>
+            <p>Learning signals, proof memory, tenant-safe network benefit, weights, simulation, and rollout approvals.</p>
+          </article>
+          <article class="is-current">
+            <span>04</span>
+            <h3>Release Health</h3>
+            <p>Approved changes are monitored for live lift, drift, owner action, and rollback readiness.</p>
+          </article>
+          <article>
+            <span>05</span>
+            <h3>Recovery Operations</h3>
+            <p>Health problems become calm recovery packets with owner decisions and buyer-safe notices.</p>
+          </article>
+          <article>
+            <span>06</span>
+            <h3>Production Platform</h3>
+            <p>Durable backend, authentication, organization workspaces, roles, audit logs, and launch onboarding.</p>
+          </article>
+        </div>
       </section>
 
       <section class="build-section" aria-label="Release history">
@@ -101,6 +165,15 @@
           <article class="phase-card is-current">
             <header>
               <span>Current</span>
+              <strong>v0.82 Alpha</strong>
+            </header>
+            <h3>Ledger Health Monitor</h3>
+            <p>Added a public Ledger Health Monitor page with expected lift, live trust signals, source drift, false-block watch, owner alerts, rollback recommendations, health exports, v0.81 ledger memory, and Review Pack v78.</p>
+          </article>
+
+          <article class="phase-card">
+            <header>
+              <span>Shipped</span>
               <strong>v0.81 Alpha</strong>
             </header>
             <h3>Approval Release Ledger</h3>
@@ -832,39 +905,40 @@
       <section class="roadmap-section" aria-label="Next version roadmap">
         <div class="roadmap-copy">
           <span class="hero-kicker">Next version</span>
-          <h2>v0.82 Alpha - Ledger Health Monitor</h2>
+          <h2>v0.83 Alpha - Release Recovery Desk</h2>
           <p>
-            The next release should watch ledger entries after rollout: compare expected lift to actual signals, spot regressions, alert owners, and recommend rollback before buyer-facing trust weakens.
+            The next release should turn unhealthy ledger signals into owner recovery work: pause, narrow, rollback,
+            notify buyers, and capture a post-recovery receipt.
           </p>
         </div>
 
         <div class="roadmap-grid">
           <article>
             <span>01</span>
-            <h3>Health pulse</h3>
-            <p>Compare expected lift, stale-source drift, false-blocks, and reviewer load for each shipped ledger entry.</p>
+            <h3>Recovery packet</h3>
+            <p>Bundle the unhealthy health signal, affected scope, prior ledger entry, and rollback option into one action.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Owner alert</h3>
-            <p>Notify the named owner when a release entry moves outside its approved confidence or policy range.</p>
+            <h3>Owner decision</h3>
+            <p>Let the accountable owner choose pause, narrow, rollback, or continue-watch with a reason.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Rollback recommendation</h3>
-            <p>Recommend pause, narrow, or reverse when the ledger watch shows trust loss or unexpected scope expansion.</p>
+            <h3>Buyer-safe notice</h3>
+            <p>Prepare calm external wording when a shipped answer pattern is paused or narrowed.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Health export</h3>
-            <p>Export shipped result, expected impact, actual impact, owner action, and rollback decision for audits.</p>
+            <h3>Recovery receipt</h3>
+            <p>Record what changed, why, who approved it, and how to restore trust after the recovery action.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v0.81 Alpha</span>
+      <span>AnswerSeal v0.82 Alpha</span>
       <a href="./">Home</a>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
@@ -890,6 +964,7 @@
         <a href="tuning.html">Tuning</a>
         <a href="approval.html">Approval</a>
         <a href="ledger.html">Ledger</a>
+        <a href="health.html">Health</a>
         <a href="pricing.html">Pricing</a>
       <a href="demo.html#trust-check">Live Demo</a>
       <a href="https://github.com/dhirajnyse/answerseal">GitHub</a>

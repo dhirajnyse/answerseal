@@ -84,6 +84,9 @@ const guardApprovalStatus = document.querySelector("#guardApprovalStatus");
 const approvalReleaseLedgerList = document.querySelector("#approvalReleaseLedgerList");
 const approvalReleaseLedgerScore = document.querySelector("#approvalReleaseLedgerScore");
 const approvalReleaseLedgerStatus = document.querySelector("#approvalReleaseLedgerStatus");
+const ledgerHealthList = document.querySelector("#ledgerHealthList");
+const ledgerHealthScore = document.querySelector("#ledgerHealthScore");
+const ledgerHealthStatus = document.querySelector("#ledgerHealthStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -96,9 +99,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.81 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v81";
+const PUBLIC_BUILD_VERSION = "v0.82 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v82";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v81",
   "answerseal.public.reports.v80",
   "answerseal.public.reports.v79",
   "answerseal.public.reports.v78",
@@ -206,6 +210,7 @@ renderGuardOutcomeMonitor();
 renderGuardTuningQueue();
 renderGuardApprovalLab();
 renderApprovalReleaseLedger();
+renderLedgerHealthMonitor();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -3810,6 +3815,191 @@ function buildApprovalReleaseLedgerItems() {
   return [...reportEntries, ...seededEntries].slice(0, 8);
 }
 
+function renderLedgerHealthMonitor() {
+  if (!ledgerHealthList) return;
+  const entries = buildLedgerHealthItems();
+  const healthyCount = entries.filter((entry) => entry.state === "Healthy").length;
+  const watchCount = entries.filter((entry) => entry.state === "Watch").length;
+  const ownerActionCount = entries.filter((entry) => ["Pause", "Recover"].includes(entry.state)).length;
+  const healthScore = Math.round(entries.reduce((total, entry) => total + Number(entry.health || 0), 0) / entries.length);
+
+  if (ledgerHealthScore) ledgerHealthScore.textContent = `${healthScore}% healthy`;
+  if (ledgerHealthStatus) {
+    ledgerHealthStatus.textContent = `${healthyCount} releases healthy, ${watchCount} under watch, ${ownerActionCount} need owner action.`;
+  }
+
+  ledgerHealthList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass =
+      entry.state === "Healthy"
+        ? "is-healthy"
+        : entry.state === "Watch"
+          ? "is-watch"
+          : entry.state === "Pause"
+            ? "is-pause"
+            : "is-recover";
+    card.className = `proof-memory-card proof-health-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.release)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-health-meta">
+        <div>
+          <dt>Expected</dt>
+          <dd>${escapePublicHtml(entry.expected)}</dd>
+        </div>
+        <div>
+          <dt>Live signal</dt>
+          <dd>${escapePublicHtml(entry.actual)}</dd>
+        </div>
+        <div>
+          <dt>Drift</dt>
+          <dd>${escapePublicHtml(entry.drift)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Rollback recommendation</span>
+        <p>${escapePublicHtml(entry.rollback)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Next owner action</span>
+        <p>${escapePublicHtml(entry.recommendation)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Health export</span>
+        <p>${escapePublicHtml(entry.healthExport)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    ledgerHealthList.append(card);
+  });
+}
+
+function buildLedgerHealthItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const state = score >= 92 ? "Healthy" : score >= 82 ? "Watch" : score >= 72 ? "Pause" : "Recover";
+    return {
+      release: `LH-082-L${index + 1}`,
+      state,
+      health: Math.max(58, Math.min(98, score)),
+      title: report.prompt || "Saved sealed answer health check",
+      summary: "A saved sealed report is watched after reuse so approved answer memory does not quietly drift away from proof.",
+      expected: score >= 88 ? "+6 trust lift" : "+3 review speed",
+      actual: score >= 90 ? "Lift visible" : score >= 80 ? "Signals mixed" : "Action needed",
+      drift: score >= 88 ? "Low" : score >= 76 ? "Medium" : "High",
+      owner: score >= 88 ? "AI governance" : score >= 76 ? "Security reviewer" : "Compliance",
+      rollback:
+        score >= 88
+          ? "Keep live and continue the 30-day source drift watch."
+          : score >= 76
+            ? "Narrow reuse to reviewer-approved answers until source coverage improves."
+            : "Pause influence and return the report to owner review before future reuse.",
+      recommendation:
+        score >= 88
+          ? "Export health receipt for the next buyer or audit request."
+          : "Attach one stronger source and record owner rationale before the next release window.",
+      healthExport: report.summary || "Health export includes prompt, score, sources, flags, owner action, and rollback path.",
+      href: getReportShareUrl(report, true),
+      action: "Open sealed report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      release: "LH-082-001",
+      state: "Healthy",
+      health: 94,
+      title: "SOC 2 freshness gate is still producing safer sourced answers.",
+      summary: "The v0.81 release lifted first-draft trust without increasing stale-source warnings or reviewer load.",
+      expected: "+8 trust lift",
+      actual: "+7 live lift",
+      drift: "Low",
+      owner: "Compliance",
+      rollback: "Keep the 120-day SOC 2 window live with a 30-day stale-source drift watch.",
+      recommendation: "Export the health receipt and keep current owner coverage.",
+      healthExport: "Includes ledger entry RL-081-001, expected lift, actual lift, owner, source drift, and rollback watch.",
+      href: "ledger.html",
+      action: "Open ledger",
+    },
+    {
+      release: "LH-082-002",
+      state: "Watch",
+      health: 86,
+      title: "Privacy boundary wording remains useful, but shared scope stays blocked.",
+      summary: "Local answer quality improved, while the network boundary correctly prevents cross-tenant influence.",
+      expected: "Clearer privacy answers",
+      actual: "No shared scope drift",
+      drift: "Medium",
+      owner: "Privacy",
+      rollback: "Keep local wording live and keep shared-memory influence disabled.",
+      recommendation: "Privacy should review two more buyer-safe examples before any broader reuse proposal.",
+      healthExport: "Includes local-only receipt, network firewall result, privacy owner note, and held shared-scope rule.",
+      href: "network.html",
+      action: "Open network",
+    },
+    {
+      release: "LH-082-003",
+      state: "Pause",
+      health: 71,
+      title: "Regional proof pass cannot expand until country evidence rights are approved.",
+      summary: "The release is useful, but the live health monitor blocks influence where Legal has not approved scope.",
+      expected: "EU proof reuse",
+      actual: "Policy gap visible",
+      drift: "High",
+      owner: "Legal",
+      rollback: "Pause all regional influence outside explicitly approved country rules.",
+      recommendation: "Legal should attach country fallback language and transfer-boundary notes before rerun.",
+      healthExport: "Includes policy gap, paused release state, owner action, affected region, and no-live-influence receipt.",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      release: "LH-082-004",
+      state: "Healthy",
+      health: 91,
+      title: "Rollback-cost ceiling is keeping source-weight changes reversible.",
+      summary: "False blocks remain steady while source confidence improves, so the approved ceiling is still healthy.",
+      expected: "Lower weight risk",
+      actual: "False blocks steady",
+      drift: "Low",
+      owner: "AI governance",
+      rollback: "Keep the low-cost ceiling live and revert to prior weights only if false blocks rise.",
+      recommendation: "Monitor one more release window before raising any source class weight.",
+      healthExport: "Includes simulator run, weight ceiling, false-block trend, owner rationale, and rollback threshold.",
+      href: "simulator.html",
+      action: "Open simulator",
+    },
+    {
+      release: "LH-082-005",
+      state: "Watch",
+      health: 82,
+      title: "Buyer-safe packet export is waiting for external response signals.",
+      summary: "The packet is clean for pilot handoff, but buyer response data is not strong enough for broader learning.",
+      expected: "Faster buyer review",
+      actual: "Awaiting response",
+      drift: "Medium",
+      owner: "Customer success",
+      rollback: "Keep packet templates live for pilot only and block network benefit credit until buyer reply is recorded.",
+      recommendation: "Capture accepted, rejected, or revised buyer response before promoting this pattern.",
+      healthExport: "Includes buyer packet export, pilot scope, response status, owner follow-up, and network hold.",
+      href: "buyer.html",
+      action: "Open buyer",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 8);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -4026,7 +4216,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.81 Alpha - Approval Release Ledger",
+      "Pilot phase: AnswerSeal v0.82 Alpha - Ledger Health Monitor",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
