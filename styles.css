@@ -10589,6 +10589,8 @@ svg {
   overflow-y: hidden;
   overscroll-behavior-inline: contain;
   padding-inline: 2px;
+  scroll-padding-inline: 2px;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
   white-space: nowrap;
 }
@@ -10606,6 +10608,7 @@ svg {
   border-radius: 8px;
   color: var(--muted);
   font-weight: 800;
+  scroll-snap-align: start;
 }
 
 .landing-nav nav a:hover {
@@ -13287,6 +13290,11 @@ svg {
   background: rgba(0, 168, 137, 0.12);
 }
 
+.proof-conversion-card.is-ready header strong {
+  color: var(--accent-dark);
+  background: rgba(0, 168, 137, 0.12);
+}
+
 .proof-workspace-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
@@ -13333,6 +13341,11 @@ svg {
 }
 
 .proof-launch-card.is-design header strong {
+  color: #075ed1;
+  background: rgba(25, 132, 235, 0.1);
+}
+
+.proof-conversion-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -13387,6 +13400,11 @@ svg {
   background: rgba(255, 194, 89, 0.18);
 }
 
+.proof-conversion-card.is-gate header strong {
+  color: #9a6400;
+  background: rgba(255, 194, 89, 0.18);
+}
+
 .proof-workspace-card.is-held header strong {
   color: #b42318;
   background: rgba(255, 228, 226, 0.72);
@@ -13437,6 +13455,11 @@ svg {
   background: rgba(255, 228, 226, 0.72);
 }
 
+.proof-conversion-card.is-held header strong {
+  color: #b42318;
+  background: rgba(255, 228, 226, 0.72);
+}
+
 .proof-benefit-meta div {
   min-height: 82px;
 }
@@ -13463,7 +13486,8 @@ svg {
 .proof-invite-meta div,
 .proof-member-meta div,
 .proof-onboarding-meta div,
-.proof-launch-meta div {
+.proof-launch-meta div,
+.proof-conversion-meta div {
   min-height: 82px;
 }
 
@@ -13515,6 +13539,8 @@ svg {
 .proof-onboarding-summary-section,
 .proof-launch-flow-section,
 .proof-launch-summary-section,
+.proof-conversion-flow-section,
+.proof-conversion-summary-section,
 .proof-workspace-flow-section,
 .proof-workspace-summary-section {
   position: relative;
@@ -13567,7 +13593,9 @@ svg {
 .proof-onboarding-flow-grid article,
 .proof-onboarding-summary-strip article,
 .proof-launch-flow-grid article,
-.proof-launch-summary-strip article {
+.proof-launch-summary-strip article,
+.proof-conversion-flow-grid article,
+.proof-conversion-summary-strip article {
   min-height: 168px;
 }
 
@@ -14350,6 +14378,19 @@ svg {
 
   .brand strong {
     font-size: 0.96rem;
+  }
+
+  .landing-brand small {
+    display: none;
+  }
+
+  .version-badge {
+    max-width: 124px;
+    padding: 7px 9px;
+  }
+
+  .version-badge strong {
+    font-size: 0.84rem;
   }
 
   .landing-nav nav {

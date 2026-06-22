@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.94 Alpha - Paid Pilot Conversion Room
+
+Phase: Paid Pilot Conversion Room
+
+- Added a dedicated Paid Pilot Conversion Room page for conversion signal, buyer proof packet, scoped paid pilot terms, founder close receipt, hold reasons, and buyer response memory.
+- Added dynamic conversion cards for saved report proof packet candidates, ask readiness, terms drafts, buyer-safe packets, owner review, data-boundary holds, success measures, implementation steps, close receipts, and proof holds.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Convert room.
+- Upgraded public storage to v0.94 while preserving v0.93 and earlier report memory.
+- Upgraded workspace storage to v0.94 while preserving v0.93 and earlier workspace memory, and upgraded export language to Review Pack v90.
+- Moved the next build toward v0.95 Paid Pilot Success Room.
+
 ## v0.93 Alpha - Pilot Launch Control Center
 
 Phase: Pilot Launch Control Center

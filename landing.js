@@ -120,6 +120,9 @@ const privateBetaOnboardingStatus = document.querySelector("#privateBetaOnboardi
 const pilotLaunchList = document.querySelector("#pilotLaunchList");
 const pilotLaunchScore = document.querySelector("#pilotLaunchScore");
 const pilotLaunchStatus = document.querySelector("#pilotLaunchStatus");
+const paidPilotConversionList = document.querySelector("#paidPilotConversionList");
+const paidPilotConversionScore = document.querySelector("#paidPilotConversionScore");
+const paidPilotConversionStatus = document.querySelector("#paidPilotConversionStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -132,9 +135,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.93 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v93";
+const PUBLIC_BUILD_VERSION = "v0.94 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v94";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v93",
   "answerseal.public.reports.v92",
   "answerseal.public.reports.v91",
   "answerseal.public.reports.v90",
@@ -266,6 +270,7 @@ renderInviteFlowPrototype();
 renderMemberRoleConsole();
 renderPrivateBetaOnboardingRoom();
 renderPilotLaunchControlCenter();
+renderPaidPilotConversionRoom();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -6430,6 +6435,237 @@ function buildPilotLaunchItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderPaidPilotConversionRoom() {
+  if (!paidPilotConversionList) return;
+  const entries = buildPaidPilotConversionItems();
+  const readyCount = entries.filter((entry) => (
+    entry.state.includes("Ready") || entry.state.includes("Ask") || entry.state.includes("Complete")
+  )).length;
+  const holdCount = entries.filter((entry) => entry.state.includes("Hold")).length;
+  const termsCount = entries.filter((entry) => entry.state.includes("Terms")).length;
+
+  if (paidPilotConversionScore) paidPilotConversionScore.textContent = `${readyCount}/${entries.length} close-ready`;
+  if (paidPilotConversionStatus) {
+    paidPilotConversionStatus.textContent = `${termsCount} terms packets and ${holdCount} proof holds shape the paid pilot ask.`;
+  }
+
+  paidPilotConversionList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Ready") || entry.state.includes("Ask") || entry.state.includes("Complete")
+      ? "is-ready"
+      : entry.state.includes("Hold")
+        ? "is-held"
+        : entry.state.includes("Terms") || entry.state.includes("Review") || entry.state.includes("Owner")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-conversion-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-conversion-meta">
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(entry.signal)}</dd>
+        </div>
+        <div>
+          <dt>Packet</dt>
+          <dd>${escapePublicHtml(entry.packet)}</dd>
+        </div>
+        <div>
+          <dt>Terms</dt>
+          <dd>${escapePublicHtml(entry.terms)}</dd>
+        </div>
+        <div>
+          <dt>Receipt</dt>
+          <dd>${escapePublicHtml(entry.receipt)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Close action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Conversion memory</span>
+        <p>${escapePublicHtml(entry.memory)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    paidPilotConversionList.append(card);
+  });
+}
+
+function buildPaidPilotConversionItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 88;
+    return {
+      contract: `CONVERT-094-L${index + 1}`,
+      state: ready ? "Ask ready" : "Review Hold",
+      title: report.prompt || "Saved sealed report can enter the buyer proof packet.",
+      summary: "A saved report becomes commercial proof only when score, source support, safe excerpt, and buyer relevance are visible.",
+      signal: ready ? `${score}% trust` : `${score}% needs owner review`,
+      packet: ready ? "Use as proof excerpt" : "Improve before packet",
+      terms: ready ? "Attach to success measure" : "Hold paid ask",
+      receipt: ready ? "proof_packet_candidate" : "proof_packet_hold",
+      actionPath: "Open the sealed report, select the safest excerpt, and decide whether it supports a paid pilot ask.",
+      memory: ready ? "buyer_proof_packet_seeded" : "buyer_proof_packet_needs_fix",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      contract: "CONVERT-094-001",
+      state: "Ask ready",
+      title: "Conversion signal says the paid pilot ask is earned.",
+      summary: "Proof health, buyer activity, owner task closure, and weekly decision history support a direct commercial ask.",
+      signal: "82% close signal",
+      packet: "Proof packet ready",
+      terms: "2-week paid pilot",
+      receipt: "ask_ready",
+      actionPath: "Send a concise paid pilot ask with one success measure, one timeline, and one implementation next step.",
+      memory: "conversion_signal_earned",
+      href: "launch.html",
+      action: "Open launch",
+    },
+    {
+      contract: "CONVERT-094-002",
+      state: "Terms draft",
+      title: "Paid pilot terms are bounded enough to share.",
+      summary: "Scope, timeline, success measure, data boundary, pricing anchor, and implementation owner are visible in one packet.",
+      signal: "Commercially bounded",
+      packet: "Terms included",
+      terms: "$2.5k pilot anchor",
+      receipt: "terms_draft_ready",
+      actionPath: "Use narrow terms so the customer can say yes without needing a full enterprise rollout decision.",
+      memory: "paid_pilot_terms_bounded",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      contract: "CONVERT-094-003",
+      state: "Ready",
+      title: "Buyer proof packet has safe customer language.",
+      summary: "Verified answers, source coverage, proof health, pilot movement, and safe excerpts are grouped for the buyer champion.",
+      signal: "Champion-ready",
+      packet: "4 proof blocks",
+      terms: "Success tied to proof",
+      receipt: "buyer_packet_ready",
+      actionPath: "Give the champion a packet they can forward internally without exposing raw workspace evidence.",
+      memory: "safe_buyer_packet_ready",
+      href: "buyer.html",
+      action: "Open buyer room",
+    },
+    {
+      contract: "CONVERT-094-004",
+      state: "Owner review",
+      title: "Founder close script needs one named owner.",
+      summary: "The ask is almost ready, but the final message needs owner, buyer contact, next meeting, and response path.",
+      signal: "Owner needed",
+      packet: "Draft complete",
+      terms: "Needs sender",
+      receipt: "owner_pending",
+      actionPath: "Name the person who will make the ask and keep the message calm: problem, proof, paid pilot, next step.",
+      memory: "founder_close_owner_pending",
+      href: "./#pilot",
+      action: "Open pilot request",
+    },
+    {
+      contract: "CONVERT-094-005",
+      state: "Hold",
+      title: "Data boundary still blocks expansion language.",
+      summary: "The pilot can convert, but the paid proposal must not imply production-grade persistence until backend scope is explicit.",
+      signal: "Boundary risk",
+      packet: "Use safe wording",
+      terms: "Limit data scope",
+      receipt: "boundary_hold",
+      actionPath: "Keep the paid pilot terms narrow and say which data remains demo-local until production persistence is shipped.",
+      memory: "data_boundary_conversion_hold",
+      href: "data.html",
+      action: "Open data layer",
+    },
+    {
+      contract: "CONVERT-094-006",
+      state: "Ready",
+      title: "Success measure converts product value into buyer value.",
+      summary: "The customer should buy a measurable result: faster first draft, fewer unsourced answers, or smoother security review.",
+      signal: "Value clear",
+      packet: "Metric selected",
+      terms: "One success measure",
+      receipt: "success_measure_ready",
+      actionPath: "Pick one business outcome and avoid promising broad AI governance before the paid pilot proves the workflow.",
+      memory: "success_measure_buyer_ready",
+      href: "benefit.html",
+      action: "Open benefit",
+    },
+    {
+      contract: "CONVERT-094-007",
+      state: "Terms draft",
+      title: "Implementation step is small enough to start.",
+      summary: "The paid pilot starts with one team, one questionnaire, three proof assets, a weekly review, and a close receipt.",
+      signal: "Start small",
+      packet: "Scope attached",
+      terms: "1 workflow",
+      receipt: "implementation_step_ready",
+      actionPath: "Keep implementation simple so the first paid buyer feels progress in days, not a platform rollout in months.",
+      memory: "small_implementation_step_ready",
+      href: "onboarding.html",
+      action: "Open onboarding",
+    },
+    {
+      contract: "CONVERT-094-008",
+      state: "Ask ready",
+      title: "Close receipt is ready before the message goes out.",
+      summary: "The ask, buyer response, next owner action, proof gap, terms state, and decision can be captured after outreach.",
+      signal: "Receipt ready",
+      packet: "Proof attached",
+      terms: "Ask ready",
+      receipt: "close_receipt_ready",
+      actionPath: "Prepare the receipt first so every buyer reply becomes useful learning rather than a lost sales note.",
+      memory: "founder_close_receipt_ready",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "CONVERT-094-009",
+      state: "Hold",
+      title: "Weak proof should pause the paid ask.",
+      summary: "If buyer activity is low, source coverage is stale, or owner tasks remain open, the system should hold the close.",
+      signal: "Proof weak",
+      packet: "Do not send",
+      terms: "Hold ask",
+      receipt: "proof_hold",
+      actionPath: "Route the next fix instead of forcing conversion. Calm SaaS wins by knowing when not to sell yet.",
+      memory: "paid_ask_held_for_proof",
+      href: "health.html",
+      action: "Open health",
+    },
+    {
+      contract: "CONVERT-094-010",
+      state: "Complete",
+      title: "Paid pilot conversion loop is repeatable.",
+      summary: "Every pilot can now move from proof health to buyer packet, terms, founder ask, response, and next learning loop.",
+      signal: "Repeatable loop",
+      packet: "Reusable template",
+      terms: "Ready to iterate",
+      receipt: "conversion_loop_ready",
+      actionPath: "Reuse the same conversion room for every pilot until billing, customer success, and renewal motions are production-ready.",
+      memory: "paid_pilot_conversion_repeatable",
+      href: "versions.html",
+      action: "Open build plan",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -6646,7 +6882,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.93 Alpha - Pilot Launch Control Center",
+      "Pilot phase: AnswerSeal v0.94 Alpha - Paid Pilot Conversion Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
