@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v1.7 Alpha - Security And Compliance Pack
+
+Phase: Security And Compliance Pack
+
+- Added a dedicated Security And Compliance Pack page for privacy notes, evidence handling rules, audit log language, access control summaries, and buyer-safe trust proof.
+- Upgraded the Build page roadmap to 96% overall progress, 28/30 done, 1 active security gate, 1 pending launch gate, and 4% remaining to private beta readiness.
+- Updated readiness category percentages for governance surface, pilot learning, backend readiness, launch operations, and launch proof.
+- Reworked the path-to-launch track so Account And Billing Gate is shipped and Security And Compliance Pack is the active phase.
+- Added Security And Compliance Pack language across the landing page, pricing page, demo build label, README, release notes, and public release identity.
+- Upgraded public storage to v1.7 while preserving v1.6 and earlier report memory.
+- Upgraded workspace storage to v1.7 while preserving v1.6 and earlier workspace memory, and upgraded export language to Review Pack v103.
+- Moved the next build toward v1.8 Pilot Acceptance Threshold.
+
 ## v1.6 Alpha - Account And Billing Gate
 
 Phase: Account And Billing Gate
