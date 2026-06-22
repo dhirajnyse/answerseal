@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.98 Alpha - Production Health Room
+
+Phase: Production Health Room
+
+- Upgraded the existing Health page into a Production Health Room for live account adoption, support load, proof drift, renewal readiness, customer value, and intervention receipts.
+- Reworked dynamic health cards for saved report account-health candidates, healthy production usage, buyer-room support pressure, proof drift holds, renewal-story readiness, low-adoption watches, and customer success actions.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the Production Health Room release identity.
+- Upgraded public storage to v0.98 while preserving v0.97 and earlier report memory.
+- Upgraded workspace storage to v0.98 while preserving v0.97 and earlier workspace memory, and upgraded export language to Review Pack v94.
+- Moved the next build toward v0.99 Renewal Growth Room.
+
 ## v0.97 Alpha - Production Launch Room
 
 Phase: Production Launch Room

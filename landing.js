@@ -141,9 +141,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.97 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v97";
+const PUBLIC_BUILD_VERSION = "v0.98 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v98";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v97",
   "answerseal.public.reports.v96",
   "answerseal.public.reports.v95",
   "answerseal.public.reports.v94",
@@ -3894,9 +3895,9 @@ function renderLedgerHealthMonitor() {
   const ownerActionCount = entries.filter((entry) => ["Pause", "Recover"].includes(entry.state)).length;
   const healthScore = Math.round(entries.reduce((total, entry) => total + Number(entry.health || 0), 0) / entries.length);
 
-  if (ledgerHealthScore) ledgerHealthScore.textContent = `${healthScore}% healthy`;
+  if (ledgerHealthScore) ledgerHealthScore.textContent = `${healthScore}% account health`;
   if (ledgerHealthStatus) {
-    ledgerHealthStatus.textContent = `${healthyCount} releases healthy, ${watchCount} under watch, ${ownerActionCount} need owner action.`;
+    ledgerHealthStatus.textContent = `${healthyCount} accounts healthy, ${watchCount} under watch, ${ownerActionCount} need owner action.`;
   }
 
   ledgerHealthList.innerHTML = "";
@@ -3920,15 +3921,15 @@ function renderLedgerHealthMonitor() {
       <p>${escapePublicHtml(entry.summary)}</p>
       <dl class="proof-memory-meta proof-health-meta">
         <div>
-          <dt>Expected</dt>
+          <dt>Adoption</dt>
           <dd>${escapePublicHtml(entry.expected)}</dd>
         </div>
         <div>
-          <dt>Live signal</dt>
+          <dt>Support</dt>
           <dd>${escapePublicHtml(entry.actual)}</dd>
         </div>
         <div>
-          <dt>Drift</dt>
+          <dt>Proof drift</dt>
           <dd>${escapePublicHtml(entry.drift)}</dd>
         </div>
         <div>
@@ -3937,7 +3938,7 @@ function renderLedgerHealthMonitor() {
         </div>
       </dl>
       <div class="proof-memory-rule">
-        <span>Rollback recommendation</span>
+        <span>Health action</span>
         <p>${escapePublicHtml(entry.rollback)}</p>
       </div>
       <div class="proof-memory-rule">
@@ -3945,7 +3946,7 @@ function renderLedgerHealthMonitor() {
         <p>${escapePublicHtml(entry.recommendation)}</p>
       </div>
       <div class="proof-memory-receipt">
-        <span>Health export</span>
+        <span>Health receipt</span>
         <p>${escapePublicHtml(entry.healthExport)}</p>
       </div>
       <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
@@ -3960,26 +3961,26 @@ function buildLedgerHealthItems() {
     const score = Number(report.score || 0);
     const state = score >= 92 ? "Healthy" : score >= 82 ? "Watch" : score >= 72 ? "Pause" : "Recover";
     return {
-      release: `LH-082-L${index + 1}`,
+      release: `HEALTH-098-L${index + 1}`,
       state,
       health: Math.max(58, Math.min(98, score)),
-      title: report.prompt || "Saved sealed answer health check",
-      summary: "A saved sealed report is watched after reuse so approved answer memory does not quietly drift away from proof.",
-      expected: score >= 88 ? "+6 trust lift" : "+3 review speed",
-      actual: score >= 90 ? "Lift visible" : score >= 80 ? "Signals mixed" : "Action needed",
+      title: report.prompt || "Live account report health check",
+      summary: "A saved sealed report becomes account health evidence when reuse, proof freshness, owner response, and buyer activity stay visible after launch.",
+      expected: score >= 88 ? "Reusable report" : "Low reuse",
+      actual: score >= 90 ? "Low support load" : score >= 80 ? "Owner watch" : "Action needed",
       drift: score >= 88 ? "Low" : score >= 76 ? "Medium" : "High",
-      owner: score >= 88 ? "AI governance" : score >= 76 ? "Security reviewer" : "Compliance",
+      owner: score >= 88 ? "Customer success" : score >= 76 ? "Security reviewer" : "Compliance",
       rollback:
         score >= 88
-          ? "Keep live and continue the 30-day source drift watch."
+          ? "Keep the account expanding and continue the 30-day proof freshness watch."
           : score >= 76
-            ? "Narrow reuse to reviewer-approved answers until source coverage improves."
-            : "Pause influence and return the report to owner review before future reuse.",
+            ? "Guide reuse to reviewer-approved answers until source coverage and response time improve."
+            : "Pause expansion and return the account to owner recovery before future reuse.",
       recommendation:
         score >= 88
-          ? "Export health receipt for the next buyer or audit request."
-          : "Attach one stronger source and record owner rationale before the next release window.",
-      healthExport: report.summary || "Health export includes prompt, score, sources, flags, owner action, and rollback path.",
+          ? "Export account health receipt for the next success review or renewal request."
+          : "Attach one stronger source and record owner rationale before the next account review.",
+      healthExport: report.summary || "Health receipt includes prompt, score, sources, flags, adoption signal, owner action, and renewal path.",
       href: getReportShareUrl(report, true),
       action: "Open sealed report",
     };
@@ -3987,84 +3988,84 @@ function buildLedgerHealthItems() {
 
   const seededEntries = [
     {
-      release: "LH-082-001",
+      release: "HEALTH-098-001",
       state: "Healthy",
       health: 94,
-      title: "SOC 2 freshness gate is still producing safer sourced answers.",
-      summary: "The v0.81 release lifted first-draft trust without increasing stale-source warnings or reviewer load.",
-      expected: "+8 trust lift",
-      actual: "+7 live lift",
+      title: "Aster Health is using verified answers without proof drift.",
+      summary: "The production account is reusing sealed reports, buyer-room activity is steady, and no stale-source warnings increased after go-live.",
+      expected: "9 active users",
+      actual: "2 open gaps",
       drift: "Low",
-      owner: "Compliance",
-      rollback: "Keep the 120-day SOC 2 window live with a 30-day stale-source drift watch.",
-      recommendation: "Export the health receipt and keep current owner coverage.",
-      healthExport: "Includes ledger entry RL-081-001, expected lift, actual lift, owner, source drift, and rollback watch.",
-      href: "ledger.html",
-      action: "Open ledger",
+      owner: "Customer success",
+      rollback: "Keep the account in expansion-ready state and continue weekly proof freshness review.",
+      recommendation: "Export the health receipt and schedule the first production success review.",
+      healthExport: "Includes adoption, report reuse, open gaps, proof freshness, owner action, and renewal path.",
+      href: "launch.html",
+      action: "Open launch",
     },
     {
-      release: "LH-082-002",
+      release: "HEALTH-098-002",
       state: "Watch",
       health: 86,
-      title: "Privacy boundary wording remains useful, but shared scope stays blocked.",
-      summary: "Local answer quality improved, while the network boundary correctly prevents cross-tenant influence.",
-      expected: "Clearer privacy answers",
-      actual: "No shared scope drift",
+      title: "Buyer room views are strong, but response time needs attention.",
+      summary: "The customer is inspecting sealed packets, but support replies are slowing and one owner queue needs a clearer SLA.",
+      expected: "14 room views",
+      actual: "26h response",
       drift: "Medium",
-      owner: "Privacy",
-      rollback: "Keep local wording live and keep shared-memory influence disabled.",
-      recommendation: "Privacy should review two more buyer-safe examples before any broader reuse proposal.",
-      healthExport: "Includes local-only receipt, network firewall result, privacy owner note, and held shared-scope rule.",
-      href: "network.html",
-      action: "Open network",
+      owner: "Support owner",
+      rollback: "Keep account live, but hold expansion until response time and owner routing return to target.",
+      recommendation: "Customer success should route open gaps and set a named response owner before renewal review.",
+      healthExport: "Includes buyer-room activity, support load, owner SLA, open gaps, and expansion hold.",
+      href: "buyer.html",
+      action: "Open buyer",
     },
     {
-      release: "LH-082-003",
+      release: "HEALTH-098-003",
       state: "Pause",
       health: 71,
-      title: "Regional proof pass cannot expand until country evidence rights are approved.",
-      summary: "The release is useful, but the live health monitor blocks influence where Legal has not approved scope.",
-      expected: "EU proof reuse",
-      actual: "Policy gap visible",
+      title: "Proof drift blocks the next department rollout.",
+      summary: "The account wants more seats, but a stale policy source and unresolved access hold make expansion unsafe this week.",
+      expected: "More seats",
+      actual: "Policy gap",
       drift: "High",
       owner: "Legal",
-      rollback: "Pause all regional influence outside explicitly approved country rules.",
-      recommendation: "Legal should attach country fallback language and transfer-boundary notes before rerun.",
-      healthExport: "Includes policy gap, paused release state, owner action, affected region, and no-live-influence receipt.",
+      rollback: "Pause department rollout until source freshness, access rights, and regional wording are approved.",
+      recommendation: "Legal should attach fallback language and approve the boundary before the next success review.",
+      healthExport: "Includes stale source, access hold, affected team, owner action, and expansion pause receipt.",
       href: "policy.html",
       action: "Open policy",
     },
     {
-      release: "LH-082-004",
+      release: "HEALTH-098-004",
       state: "Healthy",
       health: 91,
-      title: "Rollback-cost ceiling is keeping source-weight changes reversible.",
-      summary: "False blocks remain steady while source confidence improves, so the approved ceiling is still healthy.",
-      expected: "Lower weight risk",
-      actual: "False blocks steady",
+      title: "Support load is low enough for a renewal story.",
+      summary: "Verified answers are resolving repeat buyer questions while support tickets stay low and customer value is easy to explain.",
+      expected: "18 reports reused",
+      actual: "1 support ticket",
       drift: "Low",
-      owner: "AI governance",
-      rollback: "Keep the low-cost ceiling live and revert to prior weights only if false blocks rise.",
-      recommendation: "Monitor one more release window before raising any source class weight.",
-      healthExport: "Includes simulator run, weight ceiling, false-block trend, owner rationale, and rollback threshold.",
-      href: "simulator.html",
-      action: "Open simulator",
+      owner: "Founder owner",
+      rollback: "Keep launch scope live and prepare the renewal story with concrete saved-time and risk-reduction proof.",
+      recommendation: "Package value, support history, and next expansion ask into the renewal readiness view.",
+      healthExport: "Includes report reuse, support load, value proof, customer owner, and renewal-ready receipt.",
+      href: "success.html",
+      action: "Open success",
     },
     {
-      release: "LH-082-005",
+      release: "HEALTH-098-005",
       state: "Watch",
       health: 82,
-      title: "Buyer-safe packet export is waiting for external response signals.",
-      summary: "The packet is clean for pilot handoff, but buyer response data is not strong enough for broader learning.",
-      expected: "Faster buyer review",
-      actual: "Awaiting response",
+      title: "Low adoption account needs a customer success nudge.",
+      summary: "The workspace is live, but only one team is saving reports and the second department has not adopted the workflow.",
+      expected: "2 teams active",
+      actual: "1 team active",
       drift: "Medium",
       owner: "Customer success",
-      rollback: "Keep packet templates live for pilot only and block network benefit credit until buyer reply is recorded.",
-      recommendation: "Capture accepted, rejected, or revised buyer response before promoting this pattern.",
-      healthExport: "Includes buyer packet export, pilot scope, response status, owner follow-up, and network hold.",
-      href: "buyer.html",
-      action: "Open buyer",
+      rollback: "Hold expansion pricing until the second team completes one verified answer workflow.",
+      recommendation: "Run a guided adoption session and track the next saved report as the renewal proof point.",
+      healthExport: "Includes adoption gap, target team, support action, next report goal, and renewal watch.",
+      href: "expansion.html",
+      action: "Open expansion",
     },
   ];
 
@@ -7353,7 +7354,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.97 Alpha - Production Launch Room",
+      "Pilot phase: AnswerSeal v0.98 Alpha - Production Health Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
