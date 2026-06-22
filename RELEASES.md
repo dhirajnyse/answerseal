@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.3 Alpha - Expansion Readiness Board
+
+Phase: Expansion Readiness Board
+
+- Added a dedicated Expansion Readiness Board page for value proof, proof health, support capacity, buyer unblock, cohort fit, go/hold decisions, and controlled beta expansion.
+- Upgraded the Build page beta operations view from 24% to 32%, showing the cohort room, signal ledger, friction queue, and readiness board as the first four active beta loops.
+- Added Expansion Readiness Board to the landing product spine, pricing page, demo build label, README, release notes, footer routes, and public release identity.
+- Reworked the path-to-launch track so Beta Friction Queue is shipped and Expansion Readiness Board is the active operating phase.
+- Upgraded public storage to v2.3 while preserving v2.2 and earlier report memory.
+- Upgraded workspace storage to v2.3 while preserving v2.2 and earlier workspace memory, and upgraded export language to Review Pack v109.
+- Moved the next build toward v2.4 Beta Invite Control Room.
+
 ## v2.2 Alpha - Beta Friction Queue
 
 Phase: Beta Friction Queue

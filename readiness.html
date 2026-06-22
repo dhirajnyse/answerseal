@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Cohort Signal Ledger</title>
+    <title>AnswerSeal | Expansion Readiness Board</title>
     <meta
       name="description"
-      content="AnswerSeal Cohort Signal Ledger turns weekly beta receipts into measured customer signals with owners, confidence, learning boundaries, and expansion decisions."
+      content="AnswerSeal Expansion Readiness Board decides whether private beta can expand based on value proof, friction health, support capacity, and buyer confidence."
     />
     <meta name="theme-color" content="#00a889" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
@@ -31,7 +31,7 @@
         <a href="verify.html">Verify</a>
         <a href="reports.html">Reports</a>
         <a href="registry.html">Registry</a>
-        <a href="readiness.html">Readiness</a>
+        <a href="readiness.html" aria-current="page">Readiness</a>
         <a href="versions.html">Build</a>
         <a href="pricing.html">Pricing</a>
         <a href="pilot.html">Pilot</a>
@@ -42,28 +42,28 @@
     <main>
       <section class="product-hero proof-workspace-hero">
         <div>
-          <span class="hero-kicker">Cohort Signal Ledger</span>
-          <h1>Turn beta noise into decisions the team can trust.</h1>
+          <span class="hero-kicker">Expansion Readiness Board</span>
+          <h1>Expand only when the beta can stay calm.</h1>
           <p>
-            v2.1 records weekly customer signals with source, owner, confidence, learning boundary,
-            and next action so beta learning becomes accountable before it changes the product.
+            v2.3 turns value proof, friction health, support load, buyer unblock,
+            and cohort fit into a clear go, narrow, hold, or recover decision.
           </p>
         </div>
         <aside class="product-status-card">
-          <span>Signal ledger</span>
-          <strong>16% operating</strong>
-          <p>2 beta loops active: cohort room plus measured signal ledger.</p>
+          <span>Expansion readiness</span>
+          <strong>32% operating</strong>
+          <p>4 beta loops active: cohort, signals, friction queue, and expansion readiness.</p>
         </aside>
       </section>
 
-      <section class="proof-memory-shell proof-workspace-shell" aria-label="Cohort signal ledger">
+      <section class="proof-memory-shell proof-workspace-shell" aria-label="Expansion readiness board">
         <div class="dashboard-toolbar">
-          <span class="hero-kicker">Weekly signals</span>
+          <span class="hero-kicker">Readiness gates</span>
           <div class="dashboard-actions">
             <a class="hero-secondary" href="versions.html">Open Build Roadmap</a>
+            <a class="hero-secondary" href="friction.html">Open Friction Queue</a>
+            <a class="hero-secondary" href="signals.html">Open Signal Ledger</a>
             <a class="hero-secondary" href="cohort.html">Open Cohort Room</a>
-            <a class="hero-secondary" href="feedback.html">Open Feedback Loop</a>
-            <a class="hero-secondary" href="learning.html">Open Learning Loop</a>
             <a class="hero-primary" href="verify.html">Verify New Answer</a>
           </div>
         </div>
@@ -71,32 +71,68 @@
         <div class="proof-memory-grid proof-workspace-grid beta-gate-grid">
           <article class="proof-memory-card proof-workspace-card is-ready">
             <header>
-              <span>Value</span>
-              <strong>Aster Health saved 4.5 hours</strong>
+              <span>Value proof</span>
+              <strong>2 teams show repeatable time saved</strong>
             </header>
-            <p>Security review answers moved from manual draft to sourced report in one session with two reviewer edits.</p>
+            <p>Aster Health and Northstar both saved review time without increasing unsupported-claim risk.</p>
             <dl class="proof-memory-meta proof-workspace-meta">
               <div>
-                <dt>Confidence</dt>
-                <dd>High</dd>
+                <dt>Threshold</dt>
+                <dd>Met</dd>
               </div>
               <div>
                 <dt>Decision</dt>
-                <dd>Keep workflow</dd>
+                <dd>Continue</dd>
               </div>
             </dl>
           </article>
 
           <article class="proof-memory-card proof-workspace-card is-ready">
             <header>
-              <span>Trust lift</span>
-              <strong>Northstar AI +11 points</strong>
+              <span>Proof health</span>
+              <strong>Fresh sources cover 82% of active claims</strong>
             </header>
-            <p>Approved source language lifted buyer-ready trust score after the AI usage answer was tied to a policy excerpt.</p>
+            <p>The remaining stale-policy issue is routed, but current buyer-facing answers have enough source coverage for a narrow invite.</p>
             <dl class="proof-memory-meta proof-workspace-meta">
               <div>
                 <dt>Confidence</dt>
                 <dd>Medium</dd>
+              </div>
+              <div>
+                <dt>Decision</dt>
+                <dd>Narrow invite</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="proof-memory-card proof-workspace-card is-gate">
+            <header>
+              <span>Support capacity</span>
+              <strong>Founder touch still above target</strong>
+            </header>
+            <p>Onboarding and export coaching are improving, but support load still gates broad expansion.</p>
+            <dl class="proof-memory-meta proof-workspace-meta">
+              <div>
+                <dt>Owner</dt>
+                <dd>Success</dd>
+              </div>
+              <div>
+                <dt>Decision</dt>
+                <dd>Hold broad invite</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="proof-memory-card proof-workspace-card is-ready">
+            <header>
+              <span>Buyer unblock</span>
+              <strong>Legal and security objections now have owners</strong>
+            </header>
+            <p>Model-use wording and source freshness are routed to named owners instead of slowing every pilot conversation.</p>
+            <dl class="proof-memory-meta proof-workspace-meta">
+              <div>
+                <dt>Blockers</dt>
+                <dd>Owned</dd>
               </div>
               <div>
                 <dt>Decision</dt>
@@ -105,70 +141,34 @@
             </dl>
           </article>
 
-          <article class="proof-memory-card proof-workspace-card is-gate">
-            <header>
-              <span>Friction</span>
-              <strong>HelioData source freshness</strong>
-            </header>
-            <p>One high-value answer still depends on an older AI policy. Signal stays tenant-local until the source is refreshed.</p>
-            <dl class="proof-memory-meta proof-workspace-meta">
-              <div>
-                <dt>Boundary</dt>
-                <dd>Local only</dd>
-              </div>
-              <div>
-                <dt>Decision</dt>
-                <dd>Hold learning</dd>
-              </div>
-            </dl>
-          </article>
-
           <article class="proof-memory-card proof-workspace-card is-ready">
             <header>
-              <span>Buyer unblock</span>
-              <strong>Canopy Legal review cleared</strong>
+              <span>Cohort fit</span>
+              <strong>Next invite: proof-heavy SaaS teams</strong>
             </header>
-            <p>Buyer packet answered the follow-up without exposing internal-only evidence or unsourced language.</p>
+            <p>Expansion should stay close to the strongest current wedge: security review teams with existing policies and SOC evidence.</p>
             <dl class="proof-memory-meta proof-workspace-meta">
               <div>
-                <dt>Confidence</dt>
-                <dd>High</dd>
+                <dt>Cohort</dt>
+                <dd>Proof-heavy</dd>
               </div>
               <div>
-                <dt>Decision</dt>
-                <dd>Share pattern</dd>
+                <dt>Size</dt>
+                <dd>2 teams</dd>
               </div>
             </dl>
           </article>
 
           <article class="proof-memory-card proof-workspace-card is-gate">
             <header>
-              <span>Support drag</span>
-              <strong>Orbit Supply needs guided setup</strong>
+              <span>Expansion decision</span>
+              <strong>Go narrow, not broad</strong>
             </header>
-            <p>Setup took too many founder touches, so expansion pauses until the first-run checklist becomes clearer.</p>
-            <dl class="proof-memory-meta proof-workspace-meta">
-              <div>
-                <dt>Load</dt>
-                <dd>High</dd>
-              </div>
-              <div>
-                <dt>Decision</dt>
-                <dd>Fix before expand</dd>
-              </div>
-            </dl>
-          </article>
-
-          <article class="proof-memory-card proof-workspace-card is-ready">
-            <header>
-              <span>Expansion</span>
-              <strong>2 accounts ready to continue</strong>
-            </header>
-            <p>Expansion stays scoped: invite two more proof-heavy teams only after the next weekly receipt stays healthy.</p>
+            <p>Invite two similar teams only after the export handoff and source-freshness fix are checked in the next weekly receipt.</p>
             <dl class="proof-memory-meta proof-workspace-meta">
               <div>
                 <dt>Gate</dt>
-                <dd>Weekly receipt</dd>
+                <dd>2 fixes</dd>
               </div>
               <div>
                 <dt>Decision</dt>
@@ -179,69 +179,69 @@
         </div>
       </section>
 
-      <section class="proof-network-firewall proof-workspace-flow-section" aria-label="Signal ledger rules">
+      <section class="proof-network-firewall proof-workspace-flow-section" aria-label="Expansion readiness rules">
         <div>
-          <span class="hero-kicker">Signal rules</span>
-          <h2>Useful beta learning is measured, owned, and reversible.</h2>
+          <span class="hero-kicker">Readiness rules</span>
+          <h2>Expansion should be earned by calmer operations, not louder excitement.</h2>
           <p>
-            The signal ledger protects AnswerSeal from learning too quickly from too little data.
-            Every signal gets a boundary before it becomes a product, support, pricing, or automation decision.
+            The board protects the product from growing before the workflow is repeatable.
+            Every invite decision must pass value, proof, support, buyer, and cohort-fit checks.
           </p>
         </div>
 
         <div class="proof-network-firewall-grid proof-workspace-flow-grid">
           <article>
             <span>01</span>
-            <strong>Attach source</strong>
-            <p>Each signal points to a sealed report, buyer comment, support note, or weekly receipt.</p>
+            <strong>Measure value</strong>
+            <p>Invite growth needs repeatable saved time, trust lift, or buyer unblock from real beta work.</p>
           </article>
           <article>
             <span>02</span>
-            <strong>Name owner</strong>
-            <p>Every signal has one person who decides whether to keep, fix, repeat, hold, or expand.</p>
+            <strong>Check friction</strong>
+            <p>High-friction themes must have owners, fixes, and a next review before expansion.</p>
           </article>
           <article>
             <span>03</span>
-            <strong>Set boundary</strong>
-            <p>Customer context stays tenant-local unless it is approved as aggregate-safe learning.</p>
+            <strong>Match cohort</strong>
+            <p>New teams should resemble the customers where proof quality and value are already strongest.</p>
           </article>
           <article>
             <span>04</span>
-            <strong>Record decision</strong>
-            <p>Signals end as continue, pause, narrow, expand, convert, or hold decisions.</p>
+            <strong>Choose gate</strong>
+            <p>The decision is go, narrow, hold, or recover, never vague enthusiasm.</p>
           </article>
         </div>
       </section>
 
-      <section class="proof-network-lift-section proof-workspace-summary-section" aria-label="Signal ledger summary">
+      <section class="proof-network-lift-section proof-workspace-summary-section" aria-label="Expansion readiness summary">
         <div>
           <span class="hero-kicker">Beta discipline</span>
-          <h2>The first cohort teaches the product only when the evidence is strong enough.</h2>
+          <h2>The best growth signal is a workflow that gets easier each week.</h2>
           <p>
-            v2.1 makes closed-loop learning safer: teams get the benefit of customer signals,
-            but the platform keeps local context, aggregate learning, and expansion choices separate.
+            v2.3 turns early customer learning into an expansion control surface:
+            invite carefully, keep support calm, protect buyer trust, and preserve local boundaries.
           </p>
         </div>
         <div class="proof-network-lift-strip proof-workspace-summary-strip">
           <article>
             <span>Value</span>
-            <strong>Saved time</strong>
-            <p>Track hours saved and review edits before claiming repeatable ROI.</p>
+            <strong>Repeatable proof</strong>
+            <p>Expansion needs value that survives beyond one founder-led demo.</p>
           </article>
           <article>
-            <span>Risk</span>
-            <strong>Support drag</strong>
-            <p>Expansion pauses when a workflow needs too many manual founder touches.</p>
+            <span>Support</span>
+            <strong>Capacity visible</strong>
+            <p>New customers wait when setup, export, or evidence coaching is too heavy.</p>
           </article>
           <article>
-            <span>Boundary</span>
-            <strong>Tenant first</strong>
-            <p>Customer-specific signals help that customer before they influence anyone else.</p>
+            <span>Cohort</span>
+            <strong>Right customers</strong>
+            <p>Proof-heavy teams stay first because they make the wedge sharper.</p>
           </article>
           <article>
             <span>Decision</span>
-            <strong>Expand carefully</strong>
-            <p>More invites require healthy signals, not excitement alone.</p>
+            <strong>Go narrow</strong>
+            <p>The board favors small controlled invites over broad beta noise.</p>
           </article>
         </div>
       </section>

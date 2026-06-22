@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.2 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v220";
+const PUBLIC_BUILD_VERSION = "v2.3 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v230";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v220",
   "answerseal.public.reports.v210",
   "answerseal.public.reports.v200",
   "answerseal.public.reports.v109",
@@ -1036,7 +1037,7 @@ function buildArtifactRegistry() {
       title: "Customer data training answer prompt",
       summary: "Reusable prompt that asks the model to answer only from approved AI usage and SOC 2 evidence.",
       owner: "AI governance",
-      version: "v2.2",
+      version: "v2.3",
       review: "Approved",
       template: "Promoted",
       href: "verify.html",
@@ -1100,7 +1101,7 @@ function buildEvaluationBenchItems() {
       title: "Customer data training answer",
       summary: "Challenge absolute language and require the answer to stay inside named policy evidence.",
       baseline: "94% sealed",
-      candidate: "Prompt v2.3",
+      candidate: "Prompt v2.4",
       risk: "Low",
       gate: "Promote",
       finding: "Candidate preserved source-backed wording and did not add unsupported training claims.",
@@ -4415,7 +4416,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v108 records beta friction queue, cohort signal ledger, private beta cohort room, private beta launch decision, pilot acceptance threshold, security and compliance pack, account and billing gate, live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
+      audit: "Review Pack v109 records expansion readiness board, beta friction queue, cohort signal ledger, private beta cohort room, private beta launch decision, pilot acceptance threshold, security and compliance pack, account and billing gate, live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7670,7 +7671,7 @@ function buildReviewLoopItems() {
       title: "Customer data training answer prompt",
       note: "Prompt version now requires named sources and a reviewer note before output reuse.",
       reviewer: "AI governance",
-      version: "v2.2 -> v2.3",
+      version: "v2.3 -> v2.4",
       riskMove: "Medium to low",
       decision: "Promote",
       before: "Answer from approved context.",
@@ -7856,7 +7857,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.2 Alpha - Beta Friction Queue",
+      "Pilot phase: AnswerSeal v2.3 Alpha - Expansion Readiness Board",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
