@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v1.3 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v103";
+const BUILD_VERSION = "v1.4 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v104";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v103",
   "answerseal.workspace.v102",
   "answerseal.workspace.v101",
   "answerseal.workspace.v100",
@@ -6825,7 +6826,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v99 with Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
+      detail: `Create Review Pack v100 with Private Beta Launch Gate, Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine, global matrix, reinforcement policy board, outcome learning, command bar, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25572,7 +25573,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v99</h1>
+        <h1>AnswerSeal Review Pack v100</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29717,7 +29718,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v99 created with Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
+  addAudit("Review pack exported", "Review Pack v100 created with Private Beta Launch Gate, Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, trust weight controller, network benefit ledger, tenant-safe proof network, proof learning memory, buyer proof concierge, buyer trust portal, trust policy gateway, learning signal loop, model connector lab, evaluation bench, versioned review loop, AI artifact registry, calm first view polish, MVP answer verification, self-contained report links, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer graph, revenue loop, release train, optimizer, governance controls, learning ledger, eval lab, reinforcement control, simulator, federated graph, orchestrator, benchmarks, playbooks, outcome memory, governed agent, adaptive proof coach, launchpad, runs, gaps, import studio, connectors, follow-up inbox, trust room, pipeline, analytics, portal readiness, retrieval rationale, and claim trace.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29762,7 +29763,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v99 exported.");
+  showToast("Review Pack v100 exported.");
 }
 
 function toCsv(rows) {

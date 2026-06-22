@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v1.4 Alpha - Private Beta Launch Gate
+
+Phase: Private Beta Launch Gate
+
+- Added a dedicated Private Beta Launch Gate page for go, hold, owner, next action, readiness percentage, and remaining launch decision status.
+- Upgraded the Build page roadmap to 86% overall progress, 25/30 done, 1 active launch gate, 4 pending launch gates, and 14% remaining to private beta readiness.
+- Updated readiness category percentages for governance surface, pilot learning, backend readiness, launch operations, and launch proof.
+- Reworked the path-to-launch track so Pilot Outcome Ledger is shipped and Private Beta Launch Gate is the active phase.
+- Added Private Beta Launch Gate language across the landing page, pricing page, feedback loop, pilot board, demo build label, README, and public release identity.
+- Upgraded public storage to v1.4 while preserving v1.3 and earlier report memory.
+- Upgraded workspace storage to v1.4 while preserving v1.3 and earlier workspace memory, and upgraded export language to Review Pack v100.
+- Moved the next build toward v1.5 Live Backend Wiring.
+
 ## v1.3 Alpha - Pilot Outcome Ledger
 
 Phase: Pilot Outcome Ledger

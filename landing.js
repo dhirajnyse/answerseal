@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v1.3 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v103";
+const PUBLIC_BUILD_VERSION = "v1.4 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v104";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v103",
   "answerseal.public.reports.v102",
   "answerseal.public.reports.v101",
   "answerseal.public.reports.v100",
@@ -2998,7 +2999,7 @@ function buildTrustIncidentItems() {
       readiness: 96,
       signal: "Lift below forecast",
       owner: "AI governance",
-      snapshot: "81% lift held",
+      snapshot: "86% gate ready",
       decision: "Add risk ceiling",
       timeline: "Simulator forecast -> rollout approval -> monitor underperformed -> rollback completed -> recurrence guard added to future simulations.",
       guard: "Source-bundle weight can rise only when simulated lift, owner load, policy posture, and rollback cost remain inside thresholds.",
@@ -4406,7 +4407,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v99 records pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
+      audit: "Review Pack v100 records private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
       receipt: "review_pack_v99_outcome_ledger",
       href: "reports.html",
       action: "Open reports",
@@ -7847,7 +7848,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v1.3 Alpha - Pilot Outcome Ledger",
+      "Pilot phase: AnswerSeal v1.4 Alpha - Private Beta Launch Gate",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
