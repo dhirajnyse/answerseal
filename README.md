@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v0.99 Alpha
+**Current version:** v1.0 Alpha
 
-**Current phase:** Renewal Growth Room
+**Current phase:** Launch-Ready Workspace
 
-**Current release:** v0.99 Alpha - Renewal Growth Room
+**Current release:** v1.0 Alpha - Launch-Ready Workspace
 
 ## Brand
 
@@ -107,9 +107,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Release Recovery Desk page for unhealthy release signals, owner decisions, scoped recovery actions, buyer-safe notices, rollback paths, and recovery receipts
 - Recovery cards show health signal, owner, affected scope, owner decision, buyer-safe notice, and recovery receipt before a weak signal changes customer-facing behavior
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, release ledger entries, and health signals now route naturally into the Release Recovery Desk
-- Production Workspace Foundation page for durable records, organization boundaries, simple roles, permissions, audit timelines, and pilot onboarding
-- Workspace foundation cards show owner, durable record type, access boundary, launch gate, production rule, audit timeline, and launch receipt
-- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, release ledger entries, health signals, and recovery decisions now route naturally into the Production Workspace Foundation
+- Launch-Ready Workspace page for pilot setup, access checks, evidence paths, durable records, exports, buyer-safe links, support rhythm, and customer handoff
+- Launch-ready workspace cards show owner, readiness check, workspace surface, launch gate, launch rule, audit timeline, and receipt
+- Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, release ledger entries, health signals, recovery decisions, and renewal growth now route naturally into the Launch-Ready Workspace
 - Persistent Trust Records page for sealed report schemas, organization/member records, audit events, recovery receipts, retention policies, migration jobs, and restore paths
 - Persistent record cards show table, owner, retention, restore path, minimum fields, migration path, and audit event for every backend-ready trust object
 - Verification, reports, registry, reviews, evaluation, connectors, learning, policy, buyer rooms, concierge, memory, network, benefit, weight, simulator, rollout, monitor, rollback, incident timelines, recurrence guards, outcome monitors, tuning queues, approval packets, release ledger entries, health signals, recovery decisions, and workspace foundations now route naturally into Persistent Trust Records
@@ -168,6 +168,10 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Growth cards show renewal date, value signal, risk state, owner, next growth action, and receipt so teams know when to renew, recover, expand, reference, or hold
 - Saved sealed reports can seed renewal proof while live account health, customer value, stakeholder risk, and proof drift stay visible
 - Renewal growth becomes understandable enough for founders while preserving the calm verifier and a clear path toward launch-ready customer operations
+- Launch-Ready Workspace upgrade for real pilot account setup, access checks, evidence paths, durable records, export readiness, buyer-safe links, support rhythm, and customer handoff
+- Launch-ready cards show owner, readiness check, workspace surface, gate, launch rule, audit timeline, and receipt before a customer pilot expands
+- Saved sealed reports can seed launch QA while renewal proof, access boundaries, buyer links, export state, and support notes stay visible
+- v1.0 makes the product ready to test with the first 10 pilot customers while preserving the simple verifier as the first screen
 - Private pilot conversion section with a static email request flow
 - Approved answer library for reusable response memory
 - Local browser workspace memory for edits, approvals, imports, and active review state
@@ -185,7 +189,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v95 export with Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v96 export with Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -447,7 +451,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v95 export with Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v96 export with Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -479,7 +483,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `ledger.html` - Approval Release Ledger for shipped learning changes, release scope, rollback watch, and audit exports
 - `health.html` - Production Health Room for adoption health, support load, proof drift, renewal readiness, customer value, and intervention receipts
 - `recovery.html` - Release Recovery Desk for unhealthy signals, owner decisions, scoped actions, buyer-safe notices, rollback paths, and recovery receipts
-- `workspace.html` - Production Workspace Foundation for durable records, organization boundaries, roles, audit timelines, and pilot onboarding
+- `workspace.html` - Launch-Ready Workspace for pilot setup, access, evidence, records, exports, buyer links, support readiness, and customer handoff
 - `records.html` - Persistent Trust Records for sealed report schemas, audit events, recovery receipts, retention rules, migration jobs, and restore paths
 - `data.html` - Workspace Data Layer for route contracts, API-ready payloads, permission checks, migrations, and recovery receipts
 - `persistence.html` - D1 Persistence Blueprint for tables, indexes, migrations, seed fixtures, storage boundaries, and backend handoff
@@ -506,13 +510,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v1.0 Alpha - Launch-Ready Workspace
+## Next Phase: v1.1 Alpha - Pilot Customer Command Center
 
-- Add launch-ready workspace checklist for real pilot accounts, admin setup, access, evidence, records, exports, and support readiness
-- Add clean navigation grouping so founders can move from verifier to reports, buyer rooms, health, renewal, and workspace without feeling the product is complicated
-- Add pilot-readiness QA markers for persistence, saved reports, role boundaries, export receipts, and customer-facing links
-- Add launch handoff copy for the first 10 pilot customers: what to test, what to measure, what to report, and when to renew
-- Preserve the simple verifier while the broader platform becomes easier to sell, test, and operate
+- Add a first-10 pilot account board for customer, owner, status, workflow, success metric, risk, and next check-in
+- Add a pilot feedback loop for customer quotes, friction, proof requests, support notes, and product fixes
+- Add a founder weekly view for who to call, what to fix, what proof to ship, and what to report
+- Add launch metrics for activation, saved reports, trust score, buyer unblock, exports, support load, and renewal intent
+- Preserve the simple verifier while pilot customer operations become easier to run, learn from, and sell
 
 ## License
 

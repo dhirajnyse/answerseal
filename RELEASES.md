@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v1.0 Alpha - Launch-Ready Workspace
+
+Phase: Launch-Ready Workspace
+
+- Upgraded the existing Workspace page into a Launch-Ready Workspace for pilot setup, access checks, evidence paths, durable records, exports, buyer-safe links, support readiness, and first-customer handoff.
+- Reworked dynamic workspace cards for saved report launch QA, account ownership, role clarity, evidence paths, Review Pack export readiness, buyer-link gates, support rhythm, backend holds, and first-10-pilot handoff.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, README, release notes, and public navigation to the Launch-Ready Workspace release identity.
+- Upgraded public storage to v1.0 while preserving v0.99 and earlier report memory.
+- Upgraded workspace storage to v1.0 while preserving v0.99 and earlier workspace memory, and upgraded export language to Review Pack v96.
+- Moved the next build toward v1.1 Pilot Customer Command Center.
+
 ## v0.99 Alpha - Renewal Growth Room
 
 Phase: Renewal Growth Room

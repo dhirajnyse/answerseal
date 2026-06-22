@@ -141,9 +141,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.99 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v99";
+const PUBLIC_BUILD_VERSION = "v1.0 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v100";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v99",
   "answerseal.public.reports.v98",
   "answerseal.public.reports.v97",
   "answerseal.public.reports.v96",
@@ -4253,22 +4254,22 @@ function buildReleaseRecoveryItems() {
 function renderProductionWorkspaceFoundation() {
   if (!productionWorkspaceList) return;
   const entries = buildProductionWorkspaceItems();
-  const readyCount = entries.filter((entry) => entry.state === "Ready").length;
-  const gatedCount = entries.filter((entry) => entry.gate !== "Ready").length;
+  const readyCount = entries.filter((entry) => entry.state === "Launch ready" || entry.state === "Complete").length;
+  const gatedCount = entries.filter((entry) => entry.state === "Owner gate" || entry.state === "Hold").length;
   const auditCount = entries.filter((entry) => entry.audit !== "Not started").length;
 
-  if (productionWorkspaceScore) productionWorkspaceScore.textContent = `${readyCount}/${entries.length} ready`;
+  if (productionWorkspaceScore) productionWorkspaceScore.textContent = `${readyCount}/${entries.length} launch-ready`;
   if (productionWorkspaceStatus) {
-    productionWorkspaceStatus.textContent = `${auditCount} audit streams mapped, ${gatedCount} launch gates still owner-held.`;
+    productionWorkspaceStatus.textContent = `${auditCount} launch receipts mapped, ${gatedCount} pilot gates still owner-held.`;
   }
 
   productionWorkspaceList.innerHTML = "";
   entries.forEach((entry) => {
     const card = document.createElement("article");
     const stateClass =
-      entry.state === "Ready"
+      entry.state === "Launch ready" || entry.state === "Complete"
         ? "is-ready"
-        : entry.state === "Design"
+        : entry.state === "QA ready"
           ? "is-design"
           : entry.state === "Owner gate"
             ? "is-gate"
@@ -4287,11 +4288,11 @@ function renderProductionWorkspaceFoundation() {
           <dd>${escapePublicHtml(entry.owner)}</dd>
         </div>
         <div>
-          <dt>Record</dt>
+          <dt>Check</dt>
           <dd>${escapePublicHtml(entry.recordType)}</dd>
         </div>
         <div>
-          <dt>Access</dt>
+          <dt>Surface</dt>
           <dd>${escapePublicHtml(entry.access)}</dd>
         </div>
         <div>
@@ -4300,7 +4301,7 @@ function renderProductionWorkspaceFoundation() {
         </div>
       </dl>
       <div class="proof-memory-rule">
-        <span>Production rule</span>
+        <span>Launch rule</span>
         <p>${escapePublicHtml(entry.rule)}</p>
       </div>
       <div class="proof-memory-rule">
@@ -4322,17 +4323,17 @@ function buildProductionWorkspaceItems() {
   const reportEntries = reports.slice(0, 3).map((report, index) => {
     const score = Number(report.score || 0);
     return {
-      record: `PW-084-L${index + 1}`,
-      state: score >= 86 ? "Ready" : "Owner gate",
-      title: report.prompt || "Saved sealed report becomes a durable record",
-      summary: "A sealed answer can move from browser memory into the future production workspace only with owner, access, and audit context attached.",
+      record: `LAUNCH-100-L${index + 1}`,
+      state: score >= 86 ? "Launch ready" : "Owner gate",
+      title: report.prompt || "Saved sealed report can enter pilot QA",
+      summary: "A saved report can enter the first pilot workspace only when score, source trail, owner, export state, and buyer-safe sharing are attached.",
       owner: score >= 86 ? "Trust lead" : "Reviewer",
       recordType: "Sealed report",
-      access: score >= 90 ? "Team visible" : "Reviewer-only",
+      access: score >= 90 ? "Workspace + buyer-safe" : "Reviewer-only",
       gate: score >= 86 ? "Ready" : "Review",
-      rule: "Persist only the report summary, source trail, score, risk flags, owner, and share state as a governed artifact.",
-      audit: "Create, verify, save, share, and recovery events map to one timeline entry.",
-      receipt: report.summary || "Launch receipt keeps prompt, answer, trust score, source trail, owner, access policy, and audit event together.",
+      rule: "Launch only when the report has score, source trail, owner, export state, and a buyer-safe share decision.",
+      audit: "Create, verify, save, export, share, and support events map to one launch timeline entry.",
+      receipt: report.summary || "Launch receipt keeps prompt, answer, trust score, source trail, owner, export state, access policy, and buyer link decision together.",
       href: getReportShareUrl(report, true),
       action: "Open sealed report",
     };
@@ -4340,79 +4341,124 @@ function buildProductionWorkspaceItems() {
 
   const seededEntries = [
     {
-      record: "PW-084-001",
-      state: "Ready",
-      title: "Durable sealed report record is backend-ready.",
-      summary: "The first production table is not generic notes. It is the sealed report: prompt, answer, sources, score, flags, improved answer, and share state.",
-      owner: "Product",
-      recordType: "Report",
-      access: "Workspace members",
+      record: "LAUNCH-100-001",
+      state: "Launch ready",
+      title: "First pilot account has a named owner.",
+      summary: "Launch starts only when the account has owner, company, region, recovery contact, first review, and success goal.",
+      owner: "Founder owner",
+      recordType: "Account setup",
+      access: "Owner + reviewer",
       gate: "Ready",
-      rule: "Every trusted answer becomes a durable record before it can be shared, reused, recovered, or audited.",
-      audit: "Created, verified, saved, copied, shared, and opened events become the first audit stream.",
-      receipt: "Launch receipt names the report schema, owner, access boundary, audit event list, and migration source from local memory.",
+      rule: "Every pilot workspace needs one accountable owner before proof, roles, exports, or buyer links can expand.",
+      audit: "Workspace created, owner named, first workflow selected, proof assets listed, and success metric recorded.",
+      receipt: "account_setup_launch_ready",
+      href: "access.html",
+      action: "Open access",
+    },
+    {
+      record: "LAUNCH-100-002",
+      state: "Launch ready",
+      title: "Access model is simple enough for customers.",
+      summary: "The first launch path explains Owner, Reviewer, Contributor, Viewer, and Buyer link without a setup maze.",
+      owner: "Security reviewer",
+      recordType: "Roles",
+      access: "Role scoped",
+      gate: "Ready",
+      rule: "Owners change policy, reviewers approve answers, contributors draft, viewers read, and buyer links see only scoped packets.",
+      audit: "Invite, role change, revocation, buyer-link open, export, and access recovery events stay visible.",
+      receipt: "role_model_customer_ready",
+      href: "member.html",
+      action: "Open roles",
+    },
+    {
+      record: "LAUNCH-100-003",
+      state: "QA ready",
+      title: "Evidence path supports one real questionnaire.",
+      summary: "The workspace can carry three proof assets, one saved report, one export, and a visible source trail through the pilot.",
+      owner: "Trust lead",
+      recordType: "Evidence path",
+      access: "Team visible",
+      gate: "Source check",
+      rule: "Do not launch a pilot without at least one answer, one source trail, one evidence export, and one reviewer decision.",
+      audit: "Source added, answer verified, report saved, export copied, and buyer packet prepared.",
+      receipt: "evidence_path_pilot_ready",
+      href: "data.html",
+      action: "Open data",
+    },
+    {
+      record: "LAUNCH-100-004",
+      state: "Launch ready",
+      title: "Review Pack export is customer handoff ready.",
+      summary: "The founder can export a buyer-safe packet that explains score, sources, owner decisions, and what still needs review.",
+      owner: "Founder",
+      recordType: "Export",
+      access: "Buyer-safe packet",
+      gate: "Ready",
+      rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
+      audit: "Review Pack v96 records launch room, renewal memory, workspace state, source status, and export decision.",
+      receipt: "review_pack_v96_launch_ready",
       href: "reports.html",
       action: "Open reports",
     },
     {
-      record: "PW-084-002",
-      state: "Ready",
-      title: "Organization workspace boundary is mapped.",
-      summary: "AnswerSeal needs one simple tenant container before production: organization, workspace, members, roles, regions, and pilot state.",
-      owner: "Admin",
-      recordType: "Workspace",
-      access: "Invite only",
-      gate: "Ready",
-      rule: "Exact prompts, answers, evidence files, buyer context, and recovery receipts stay inside the organization workspace.",
-      audit: "Member invite, role change, workspace setting, export, and access events are tracked as workspace-level history.",
-      receipt: "Launch receipt records workspace id, tenant boundary, default roles, region posture, and pilot onboarding state.",
-      href: "versions.html",
-      action: "Open roadmap",
-    },
-    {
-      record: "PW-084-003",
-      state: "Design",
-      title: "Role and permission model stays small on purpose.",
-      summary: "Launch does not need twenty permissions. It needs a calm role ladder: Owner, Reviewer, Contributor, Viewer, and Buyer link.",
-      owner: "Security",
-      recordType: "Permission",
-      access: "Role scoped",
-      gate: "Role review",
-      rule: "Owners approve policy and recovery, reviewers approve answers, contributors draft, viewers read, buyer links see only scoped packets.",
-      audit: "Permission grants, revocations, buyer-link opens, and export access become visible before production.",
-      receipt: "Launch receipt names each role, what it can change, what it can only view, and where human approval is required.",
+      record: "LAUNCH-100-005",
+      state: "Owner gate",
+      title: "Buyer-safe link needs expiry and revocation check.",
+      summary: "External proof sharing is not launch-ready until expiry, scope, viewer access, and revoke behavior are obvious.",
+      owner: "Reviewer",
+      recordType: "Buyer link",
+      access: "External",
+      gate: "Owner approval",
+      rule: "Buyer links can show only sealed answer context, approved excerpts, expiry, access receipt, and revoke path.",
+      audit: "Buyer link created, opened, copied, expired, revoked, and recovered events map to the launch timeline.",
+      receipt: "buyer_link_owner_gate",
       href: "buyer.html",
       action: "Open buyer",
     },
     {
-      record: "PW-084-004",
-      state: "Ready",
-      title: "Audit timeline connects trust work end to end.",
-      summary: "Verification, report save, registry promotion, review approval, recovery decision, export, and buyer share should read as one quiet timeline.",
-      owner: "Compliance",
-      recordType: "Audit event",
-      access: "Owner + reviewer",
-      gate: "Ready",
-      rule: "Every AI answer lifecycle action records who did it, what changed, why it changed, and what object it touched.",
-      audit: "Report, artifact, review, rollout, health, recovery, export, and buyer room events share one timestamped timeline.",
-      receipt: "Launch receipt maps existing demo receipts to the production audit event model without adding visual clutter.",
-      href: "recovery.html",
-      action: "Open recovery",
+      record: "LAUNCH-100-006",
+      state: "QA ready",
+      title: "Support rhythm is visible before launch.",
+      summary: "The first customer test needs a support owner, next check-in, unresolved question list, and recovery path.",
+      owner: "Customer success",
+      recordType: "Support",
+      access: "Internal",
+      gate: "Weekly review",
+      rule: "No pilot should depend on invisible support work; owner, cadence, issues, and next response must be visible.",
+      audit: "Support note, owner response, buyer question, recovery action, and weekly decision stay attached to the account.",
+      receipt: "support_rhythm_launch_ready",
+      href: "success.html",
+      action: "Open success",
     },
     {
-      record: "PW-084-005",
-      state: "Owner gate",
-      title: "Pilot onboarding is one guided path, not a setup maze.",
-      summary: "The first customer should move from one messy questionnaire to a workspace with sources, roles, one saved report, and a review pack.",
-      owner: "Customer success",
-      recordType: "Onboarding",
-      access: "Pilot team",
-      gate: "Pilot script",
-      rule: "Onboarding should ask for the fewest things needed: company, team owner, one questionnaire, three proof assets, and export goal.",
-      audit: "Workspace created, first source added, first answer verified, first report saved, and first review pack exported are launch milestones.",
-      receipt: "Launch receipt becomes the customer kickoff record: scope, owner, assets, deadline, first report, and success condition.",
-      href: "./#pilot",
-      action: "Open pilot",
+      record: "LAUNCH-100-007",
+      state: "Hold",
+      title: "Persistence remains a launch rehearsal until backend is real.",
+      summary: "The demo can prove the workflow, but durable multi-user state still needs the backend handoff before public launch.",
+      owner: "Product",
+      recordType: "Data layer",
+      access: "Browser demo",
+      gate: "Backend hold",
+      rule: "Local browser memory is acceptable for demo validation, not for production customer records.",
+      audit: "Persistence blueprint, data layer, auth boundary, records, and recovery receipts define the backend cutover.",
+      receipt: "backend_launch_hold",
+      href: "persistence.html",
+      action: "Open persistence",
+    },
+    {
+      record: "LAUNCH-100-008",
+      state: "Complete",
+      title: "First 10 pilot test path is understandable.",
+      summary: "A founder can explain the first customer path: verify one answer, save report, export packet, share safely, measure outcome.",
+      owner: "Shared room",
+      recordType: "Customer handoff",
+      access: "Pilot-facing",
+      gate: "v1.0 complete",
+      rule: "The first 10 pilots should test one workflow each, with visible owner, source, export, support, and success signal.",
+      audit: "Customer handoff records scope, owner, proof assets, report, export, link decision, support note, and success metric.",
+      receipt: "v1_0_launch_ready_workspace",
+      href: "versions.html",
+      action: "Open roadmap",
     },
   ];
 
@@ -4748,7 +4794,7 @@ function buildWorkspaceDataLayerItems() {
       permission: "Member",
       request: "workspace_id, include_members, include_policy, include_recent_audit.",
       response: "workspace, organization, members, roles, region, pilot_state, policy_summary, latest_audit_events.",
-      migration: "Production Workspace Foundation records seed the first workspace response shape.",
+      migration: "Launch-Ready Workspace records seed the first pilot response shape.",
       href: "workspace.html",
       action: "Open workspace",
     },
@@ -7355,7 +7401,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.99 Alpha - Renewal Growth Room",
+      "Pilot phase: AnswerSeal v1.0 Alpha - Launch-Ready Workspace",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
