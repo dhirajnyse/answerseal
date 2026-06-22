@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v1.9 Alpha - Private Beta Launch Decision
+
+Phase: Private Beta Launch Decision
+
+- Added a dedicated Private Beta Launch Decision page for invite scope, launch owners, support rhythm, rollback path, buyer-safe messaging, and a scoped go-small decision.
+- Upgraded the Build page roadmap to 100% overall progress, 30/30 done, 0 hidden launch gates, a scoped private beta cohort, and 0% remaining to private beta readiness.
+- Updated readiness category percentages for pilot learning, backend readiness, launch operations, and launch proof.
+- Reworked the path-to-launch track so Pilot Acceptance Threshold is shipped and Private Beta Launch Decision is the active phase.
+- Added Private Beta Launch Decision language across the landing page, pricing page, demo build label, README, release notes, and public release identity.
+- Upgraded public storage to v1.9 while preserving v1.8 and earlier report memory.
+- Upgraded workspace storage to v1.9 while preserving v1.8 and earlier workspace memory, and upgraded export language to Review Pack v105.
+- Moved the next build toward v2.0 Private Beta Cohort Room.
+
 ## v1.8 Alpha - Pilot Acceptance Threshold
 
 Phase: Pilot Acceptance Threshold
