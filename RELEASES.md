@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.2 Alpha - Beta Friction Queue
+
+Phase: Beta Friction Queue
+
+- Added a dedicated Beta Friction Queue page for setup confusion, weak proof, buyer objections, support drag, pricing questions, owner fixes, fix confidence, and expansion gates.
+- Upgraded the Build page beta operations view from 16% to 24%, showing the cohort room, signal ledger, and friction queue as the first three active beta loops.
+- Added Beta Friction Queue to the landing product spine, pricing page, demo build label, README, release notes, footer routes, and public release identity.
+- Reworked the path-to-launch track so Cohort Signal Ledger is shipped and Beta Friction Queue is the active operating phase.
+- Upgraded public storage to v2.2 while preserving v2.1 and earlier report memory.
+- Upgraded workspace storage to v2.2 while preserving v2.1 and earlier workspace memory, and upgraded export language to Review Pack v108.
+- Moved the next build toward v2.3 Expansion Readiness Board.
+
 ## v2.1 Alpha - Cohort Signal Ledger
 
 Phase: Cohort Signal Ledger
