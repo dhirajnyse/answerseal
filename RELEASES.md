@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v1.5 Alpha - Live Backend Wiring
+
+Phase: Live Backend Wiring
+
+- Added a dedicated Live Backend Wiring page for durable reports, workspace identity, audit events, evidence metadata boundaries, and restore rehearsals.
+- Upgraded the Build page roadmap to 90% overall progress, 26/30 done, 1 active backend gate, 3 pending launch gates, and 10% remaining to private beta readiness.
+- Updated readiness category percentages for governance surface, pilot learning, backend readiness, launch operations, and launch proof.
+- Reworked the path-to-launch track so Private Beta Launch Gate is shipped and Live Backend Wiring is the active phase.
+- Added Live Backend Wiring language across the landing page, beta gate, pricing page, demo build label, README, and public release identity.
+- Upgraded public storage to v1.5 while preserving v1.4 and earlier report memory.
+- Upgraded workspace storage to v1.5 while preserving v1.4 and earlier workspace memory, and upgraded export language to Review Pack v101.
+- Moved the next build toward v1.6 Account And Billing Gate.
+
 ## v1.4 Alpha - Private Beta Launch Gate
 
 Phase: Private Beta Launch Gate
