@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v1.5 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v105";
+const PUBLIC_BUILD_VERSION = "v1.6 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v106";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v105",
   "answerseal.public.reports.v104",
   "answerseal.public.reports.v103",
   "answerseal.public.reports.v102",
@@ -4408,8 +4409,8 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v101 records live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
-      receipt: "review_pack_v101_backend_wiring",
+      audit: "Review Pack v102 records account and billing gate, live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
+      receipt: "review_pack_v102_account_billing",
       href: "reports.html",
       action: "Open reports",
     },
@@ -7677,7 +7678,7 @@ function buildReviewLoopItems() {
       title: "Buyer security questionnaire workflow",
       note: "Workflow added legal approval before compliance-sensitive answers can be copied into a buyer portal.",
       reviewer: "Legal",
-      version: "v1.4 -> v1.5",
+      version: "v1.5 -> v1.6",
       riskMove: "High to medium",
       decision: "Route",
       before: "Reviewer approves answer after source match.",
@@ -7849,7 +7850,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v1.5 Alpha - Live Backend Wiring",
+      "Pilot phase: AnswerSeal v1.6 Alpha - Account And Billing Gate",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

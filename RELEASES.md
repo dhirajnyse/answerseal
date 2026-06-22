@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v1.6 Alpha - Account And Billing Gate
+
+Phase: Account And Billing Gate
+
+- Added a dedicated Account And Billing Gate page for workspace creation, role acceptance, buyer-safe links, pricing handoff, billing boundary, and recovery authority.
+- Upgraded the Build page roadmap to 93% overall progress, 27/30 done, 1 active account gate, 2 pending launch gates, and 7% remaining to private beta readiness.
+- Updated readiness category percentages for governance surface, pilot learning, backend readiness, launch operations, and launch proof.
+- Reworked the path-to-launch track so Live Backend Wiring is shipped and Account And Billing Gate is the active phase.
+- Added Account And Billing Gate language across the landing page, pricing page, backend handoff, demo build label, README, and public release identity.
+- Upgraded public storage to v1.6 while preserving v1.5 and earlier report memory.
+- Upgraded workspace storage to v1.6 while preserving v1.5 and earlier workspace memory, and upgraded export language to Review Pack v102.
+- Moved the next build toward v1.7 Security And Compliance Pack.
+
 ## v1.5 Alpha - Live Backend Wiring
 
 Phase: Live Backend Wiring
