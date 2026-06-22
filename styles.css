@@ -13795,6 +13795,98 @@ svg {
   gap: 12px;
 }
 
+.launch-progress-panel {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.55fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.launch-progress-score,
+.launch-progress-stats article,
+.launch-readiness-grid article {
+  border: 1px solid rgba(31, 41, 38, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 36px rgba(31, 41, 38, 0.06);
+}
+
+.launch-progress-score {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+}
+
+.launch-progress-score > span,
+.launch-progress-stats span,
+.launch-readiness-grid article > span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.launch-progress-score strong {
+  color: var(--accent-dark);
+  font-size: 4.2rem;
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.launch-progress-score p,
+.launch-progress-stats p,
+.launch-readiness-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.launch-progress-bar,
+.launch-readiness-grid article > div {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(31, 41, 38, 0.1);
+}
+
+.launch-progress-bar span,
+.launch-readiness-grid article > div span {
+  display: block;
+  width: var(--progress);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), #1479ff);
+}
+
+.launch-progress-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.launch-progress-stats article,
+.launch-readiness-grid article {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 16px;
+}
+
+.launch-progress-stats strong,
+.launch-readiness-grid strong {
+  color: var(--ink);
+  font-size: 1.35rem;
+  line-height: 1.05;
+}
+
+.launch-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .launch-roadmap-status {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -13830,6 +13922,43 @@ svg {
   background:
     linear-gradient(180deg, rgba(220, 251, 244, 0.72) 0%, rgba(255, 255, 255, 0.96) 100%),
     #ffffff;
+}
+
+.launch-roadmap-track article.is-pending {
+  border-color: rgba(176, 116, 12, 0.22);
+  background:
+    linear-gradient(180deg, rgba(255, 249, 232, 0.74) 0%, rgba(255, 255, 255, 0.96) 100%),
+    #ffffff;
+}
+
+.launch-roadmap-track article::after {
+  width: fit-content;
+  min-height: 24px;
+  margin-top: auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  content: "Queued";
+}
+
+.launch-roadmap-track article.is-done::after {
+  content: "100% done";
+}
+
+.launch-roadmap-track article.is-current::after {
+  color: #0b5788;
+  background: #e9f4ff;
+  content: "81% active";
+}
+
+.launch-roadmap-track article.is-pending::after {
+  color: #875600;
+  background: #fff1ce;
+  content: "Pending";
 }
 
 .launch-roadmap-status span,
@@ -14259,6 +14388,12 @@ svg {
     grid-template-columns: 1fr;
   }
 
+  .launch-progress-panel,
+  .launch-progress-stats,
+  .launch-readiness-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .launch-roadmap-track {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -14582,6 +14717,9 @@ svg {
     .proof-member-meta,
   .pricing-grid,
   .dashboard-metrics,
+  .launch-progress-panel,
+  .launch-progress-stats,
+  .launch-readiness-grid,
   .launch-roadmap-track,
   .pilot-terms,
   .seal-path-track {

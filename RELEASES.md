@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v1.3 Alpha - Pilot Outcome Ledger
+
+Phase: Pilot Outcome Ledger
+
+- Added a launch-readiness meter to the Build page with 81% overall progress, 24/30 shipped milestones, 1 active outcome-ledger phase, 5 pending launch gates, and 19% remaining to private beta readiness.
+- Added category-level readiness percentages for core verifier, governance surface, pilot learning, backend readiness, launch operations, and launch proof.
+- Added roadmap status badges so each launch milestone shows done/current/pending progress directly in the path to 100%.
+- Added Pilot Outcome Ledger language across the landing page, feedback loop, pilot board, pricing page, demo build label, README, and public release identity.
+- Upgraded public storage to v1.3 while preserving v1.2 and earlier report memory.
+- Upgraded workspace storage to v1.3 while preserving v1.2 and earlier workspace memory, and upgraded export language to Review Pack v99.
+- Moved the next build toward v1.4 Private Beta Launch Gate.
+
 ## v1.2 Alpha - Pilot Feedback Learning Loop
 
 Phase: Pilot Feedback Learning Loop

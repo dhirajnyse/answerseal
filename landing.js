@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v1.2 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v102";
+const PUBLIC_BUILD_VERSION = "v1.3 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v103";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v102",
   "answerseal.public.reports.v101",
   "answerseal.public.reports.v100",
   "answerseal.public.reports.v99",
@@ -4405,8 +4406,8 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v98 records pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
-      receipt: "review_pack_v98_feedback_learning",
+      audit: "Review Pack v99 records pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
+      receipt: "review_pack_v99_outcome_ledger",
       href: "reports.html",
       action: "Open reports",
     },
@@ -7846,7 +7847,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v1.2 Alpha - Pilot Feedback Learning Loop",
+      "Pilot phase: AnswerSeal v1.3 Alpha - Pilot Outcome Ledger",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
