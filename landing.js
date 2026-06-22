@@ -114,6 +114,9 @@ const inviteFlowStatus = document.querySelector("#inviteFlowStatus");
 const memberRoleList = document.querySelector("#memberRoleList");
 const memberRoleScore = document.querySelector("#memberRoleScore");
 const memberRoleStatus = document.querySelector("#memberRoleStatus");
+const privateBetaOnboardingList = document.querySelector("#privateBetaOnboardingList");
+const privateBetaOnboardingScore = document.querySelector("#privateBetaOnboardingScore");
+const privateBetaOnboardingStatus = document.querySelector("#privateBetaOnboardingStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -126,9 +129,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.91 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v91";
+const PUBLIC_BUILD_VERSION = "v0.92 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v92";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v91",
   "answerseal.public.reports.v90",
   "answerseal.public.reports.v89",
   "answerseal.public.reports.v88",
@@ -256,6 +260,7 @@ renderAuthTenantBoundary();
 renderWorkspaceAccessConsole();
 renderInviteFlowPrototype();
 renderMemberRoleConsole();
+renderPrivateBetaOnboardingRoom();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -5962,6 +5967,235 @@ function buildMemberRoleItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderPrivateBetaOnboardingRoom() {
+  if (!privateBetaOnboardingList) return;
+  const entries = buildPrivateBetaOnboardingItems();
+  const readyCount = entries.filter((entry) => entry.state.includes("Ready") || entry.state.includes("Complete")).length;
+  const holdCount = entries.filter((entry) => entry.state.includes("Hold")).length;
+  const taskCount = entries.filter((entry) => entry.state.includes("Task") || entry.state.includes("Review")).length;
+
+  if (privateBetaOnboardingScore) privateBetaOnboardingScore.textContent = `${readyCount}/${entries.length} launch-ready`;
+  if (privateBetaOnboardingStatus) {
+    privateBetaOnboardingStatus.textContent = `${taskCount} owner tasks and ${holdCount} holds are visible before the first private beta workspace goes live.`;
+  }
+
+  privateBetaOnboardingList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Ready") || entry.state.includes("Complete")
+      ? "is-ready"
+      : entry.state.includes("Hold")
+        ? "is-held"
+        : entry.state.includes("Task") || entry.state.includes("Review")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-onboarding-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-onboarding-meta">
+        <div>
+          <dt>Step</dt>
+          <dd>${escapePublicHtml(entry.step)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(entry.signal)}</dd>
+        </div>
+        <div>
+          <dt>Gate</dt>
+          <dd>${escapePublicHtml(entry.gate)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Launch check</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Onboarding receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    privateBetaOnboardingList.append(card);
+  });
+}
+
+function buildPrivateBetaOnboardingItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 86;
+    return {
+      contract: `BETA-092-L${index + 1}`,
+      state: ready ? "Ready" : "Review task",
+      title: report.prompt || "Saved report becomes first proof asset.",
+      summary: "A sealed report can seed the first private beta proof pack when score, sources, owner, and reuse decision are visible.",
+      step: index === 0 ? "First report" : "Proof memory",
+      owner: ready ? "Reviewer" : "Workspace owner",
+      signal: ready ? `${score}% trust score` : "Needs stronger proof",
+      gate: ready ? "Can enter launch receipt" : "Hold until reviewed",
+      actionPath: "Open the sealed report, confirm the attached sources, and decide whether it belongs in the pilot proof pack.",
+      receipt: ready ? "sealed_report_onboarded" : "sealed_report_review_needed",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      contract: "BETA-092-001",
+      state: "Ready",
+      title: "Workspace profile is ready for first pilot setup.",
+      summary: "Company, owner, workspace ID, plan, region, recovery contact, and pilot window are visible before the team joins.",
+      step: "Workspace",
+      owner: "Founder owner",
+      signal: "Profile complete",
+      gate: "Launch allowed",
+      actionPath: "Confirm account identity, recovery contact, workspace plan, and private pilot window before issuing invites.",
+      receipt: "workspace_profile_ready",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      contract: "BETA-092-002",
+      state: "Ready",
+      title: "Owner and first reviewer roles are confirmed.",
+      summary: "The first owner and reviewer are active, bounded, and tied to visible receipts before live buyer work begins.",
+      step: "Team",
+      owner: "Workspace owner",
+      signal: "2 active roles",
+      gate: "Role receipt",
+      actionPath: "Confirm the owner, reviewer, contributor, and viewer boundaries before inviting the broader pilot team.",
+      receipt: "first_team_roles_confirmed",
+      href: "member.html",
+      action: "Open members",
+    },
+    {
+      contract: "BETA-092-003",
+      state: "Task",
+      title: "Contributor scope still needs a short owner decision.",
+      summary: "Contributor access should be limited to drafts and proof attachment until the approval boundary is accepted.",
+      step: "Role boundary",
+      owner: "Founder owner",
+      signal: "Scope review",
+      gate: "Approve or downgrade",
+      actionPath: "Decide whether contributor access can draft only, then write the role receipt before private beta launch.",
+      receipt: "contributor_beta_scope_pending",
+      href: "member.html",
+      action: "Review role",
+    },
+    {
+      contract: "BETA-092-004",
+      state: "Ready",
+      title: "Minimum proof pack is visible.",
+      summary: "AI Usage Standard, SOC 2 report, security policy, and one sealed answer are enough to run the first trust workflow.",
+      step: "Proof assets",
+      owner: "Security reviewer",
+      signal: "4 assets mapped",
+      gate: "Proof pack ready",
+      actionPath: "Map each source to the first questionnaire categories so the verifier has enough evidence to draft safely.",
+      receipt: "minimum_proof_pack_ready",
+      href: "records.html",
+      action: "Open records",
+    },
+    {
+      contract: "BETA-092-005",
+      state: "Review task",
+      title: "Buyer link preview needs expiry and scope confirmed.",
+      summary: "External proof links should be scoped, expiring, and revocable before any buyer opens the first sealed report.",
+      step: "Buyer link",
+      owner: "Sales owner",
+      signal: "Expiry missing",
+      gate: "Set expiry",
+      actionPath: "Set buyer link expiry, visible sections, evidence access level, and revocation owner before sharing.",
+      receipt: "buyer_link_scope_pending",
+      href: "buyer.html",
+      action: "Open buyer room",
+    },
+    {
+      contract: "BETA-092-006",
+      state: "Ready",
+      title: "First verification path can be rehearsed.",
+      summary: "The sample answer, source list, score, improved answer, saved report, and copy-ready summary are connected.",
+      step: "Verification",
+      owner: "Reviewer",
+      signal: "94% sample score",
+      gate: "Run rehearsal",
+      actionPath: "Run the verifier once, save the sealed report, and confirm the report appears in the dashboard.",
+      receipt: "first_verification_rehearsed",
+      href: "verify.html",
+      action: "Open verifier",
+    },
+    {
+      contract: "BETA-092-007",
+      state: "Hold",
+      title: "Data boundary must stay explicit before beta starts.",
+      summary: "Private beta can proceed only if tenant records, buyer links, saved reports, and local demo memory stay separated.",
+      step: "Data boundary",
+      owner: "Product owner",
+      signal: "Boundary hold",
+      gate: "Document limits",
+      actionPath: "Confirm what stays browser-local in the demo and what becomes durable when the backend build begins.",
+      receipt: "beta_data_boundary_hold",
+      href: "data.html",
+      action: "Open data layer",
+    },
+    {
+      contract: "BETA-092-008",
+      state: "Ready",
+      title: "Launch receipt has a draft path.",
+      summary: "Readiness, holds, owner tasks, proof assets, role state, and buyer-link status can roll into one launch receipt.",
+      step: "Receipt",
+      owner: "Founder owner",
+      signal: "Draft available",
+      gate: "Owner approve",
+      actionPath: "Review the ready, held, and missing items, then approve the private beta launch receipt.",
+      receipt: "private_beta_receipt_draft",
+      href: "versions.html",
+      action: "Open roadmap",
+    },
+    {
+      contract: "BETA-092-009",
+      state: "Task",
+      title: "Pilot terms should match the onboarding promise.",
+      summary: "The public pilot form should explain the exact first setup: one team, one questionnaire, three proof assets, one receipt.",
+      step: "Pilot offer",
+      owner: "Founder",
+      signal: "Copy refresh",
+      gate: "Offer aligned",
+      actionPath: "Keep the pilot offer narrow enough that a founder can understand the full first setup in one minute.",
+      receipt: "pilot_offer_aligned",
+      href: "./#pilot",
+      action: "Open pilot",
+    },
+    {
+      contract: "BETA-092-010",
+      state: "Complete",
+      title: "Private beta is ready when setup becomes repeatable.",
+      summary: "The first workspace can launch when every setup step has an owner, a gate, a signal, and a receipt.",
+      step: "Go/no-go",
+      owner: "Launch owner",
+      signal: "Repeatable path",
+      gate: "Beta launch",
+      actionPath: "Use this room as the private beta runbook until the production backend turns the checklist into live state.",
+      receipt: "private_beta_onboarding_ready",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -6178,7 +6412,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.91 Alpha - Member Role Console",
+      "Pilot phase: AnswerSeal v0.92 Alpha - Private Beta Onboarding Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

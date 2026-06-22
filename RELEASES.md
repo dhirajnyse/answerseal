@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.92 Alpha - Private Beta Onboarding Room
+
+Phase: Private Beta Onboarding Room
+
+- Added a dedicated Private Beta Onboarding Room page for workspace readiness, first-team setup, proof asset intake, buyer-link checks, launch holds, and go-live receipts.
+- Added dynamic onboarding cards for saved report proof assets, workspace profile, owner and reviewer roles, contributor scope, minimum proof pack, buyer link expiry, first verification rehearsal, data boundary holds, pilot offer alignment, and private beta go/no-go.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Onboarding room.
+- Upgraded public storage to v0.92 while preserving v0.91 and earlier report memory.
+- Upgraded workspace storage to v0.92 while preserving v0.91 and earlier workspace memory, and upgraded export language to Review Pack v88.
+- Moved the next build toward v0.93 Pilot Launch Control Center.
+
 ## v0.91 Alpha - Member Role Console
 
 Phase: Member Role Console
