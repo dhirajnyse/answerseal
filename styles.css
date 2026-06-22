@@ -13291,7 +13291,8 @@ svg {
 }
 
 .proof-conversion-card.is-ready header strong,
-.proof-success-card.is-ready header strong {
+.proof-success-card.is-ready header strong,
+.proof-expansion-card.is-ready header strong {
   color: var(--accent-dark);
   background: rgba(0, 168, 137, 0.12);
 }
@@ -13347,7 +13348,8 @@ svg {
 }
 
 .proof-conversion-card.is-design header strong,
-.proof-success-card.is-design header strong {
+.proof-success-card.is-design header strong,
+.proof-expansion-card.is-design header strong {
   color: #075ed1;
   background: rgba(25, 132, 235, 0.1);
 }
@@ -13403,7 +13405,8 @@ svg {
 }
 
 .proof-conversion-card.is-gate header strong,
-.proof-success-card.is-gate header strong {
+.proof-success-card.is-gate header strong,
+.proof-expansion-card.is-gate header strong {
   color: #9a6400;
   background: rgba(255, 194, 89, 0.18);
 }
@@ -13459,7 +13462,8 @@ svg {
 }
 
 .proof-conversion-card.is-held header strong,
-.proof-success-card.is-held header strong {
+.proof-success-card.is-held header strong,
+.proof-expansion-card.is-held header strong {
   color: #b42318;
   background: rgba(255, 228, 226, 0.72);
 }
@@ -13492,7 +13496,8 @@ svg {
 .proof-onboarding-meta div,
 .proof-launch-meta div,
 .proof-conversion-meta div,
-.proof-success-meta div {
+.proof-success-meta div,
+.proof-expansion-meta div {
   min-height: 82px;
 }
 
@@ -13548,6 +13553,8 @@ svg {
 .proof-conversion-summary-section,
 .proof-success-flow-section,
 .proof-success-summary-section,
+.proof-expansion-flow-section,
+.proof-expansion-summary-section,
 .proof-workspace-flow-section,
 .proof-workspace-summary-section {
   position: relative;
@@ -13604,7 +13611,9 @@ svg {
 .proof-conversion-flow-grid article,
 .proof-conversion-summary-strip article,
 .proof-success-flow-grid article,
-.proof-success-summary-strip article {
+.proof-success-summary-strip article,
+.proof-expansion-flow-grid article,
+.proof-expansion-summary-strip article {
   min-height: 168px;
 }
 

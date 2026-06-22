@@ -126,6 +126,9 @@ const paidPilotConversionStatus = document.querySelector("#paidPilotConversionSt
 const paidPilotSuccessList = document.querySelector("#paidPilotSuccessList");
 const paidPilotSuccessScore = document.querySelector("#paidPilotSuccessScore");
 const paidPilotSuccessStatus = document.querySelector("#paidPilotSuccessStatus");
+const customerExpansionList = document.querySelector("#customerExpansionList");
+const customerExpansionScore = document.querySelector("#customerExpansionScore");
+const customerExpansionStatus = document.querySelector("#customerExpansionStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -138,9 +141,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.95 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v95";
+const PUBLIC_BUILD_VERSION = "v0.96 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v96";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v95",
   "answerseal.public.reports.v94",
   "answerseal.public.reports.v93",
   "answerseal.public.reports.v92",
@@ -276,6 +280,7 @@ renderPrivateBetaOnboardingRoom();
 renderPilotLaunchControlCenter();
 renderPaidPilotConversionRoom();
 renderPaidPilotSuccessRoom();
+renderCustomerExpansionRoom();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -6902,6 +6907,235 @@ function buildPaidPilotSuccessItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderCustomerExpansionRoom() {
+  if (!customerExpansionList) return;
+  const entries = buildCustomerExpansionItems();
+  const readyCount = entries.filter((entry) => entry.state.includes("ready") || entry.state.includes("Complete")).length;
+  const holdCount = entries.filter((entry) => entry.state.includes("Hold") || entry.state.includes("Review")).length;
+  const scopeCount = entries.filter((entry) => entry.state.includes("Scope") || entry.state.includes("Billing")).length;
+
+  if (customerExpansionScore) customerExpansionScore.textContent = `${readyCount}/${entries.length} expansion-ready`;
+  if (customerExpansionStatus) {
+    customerExpansionStatus.textContent = `${scopeCount} scope signals and ${holdCount} hold paths decide whether expansion is earned.`;
+  }
+
+  customerExpansionList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("ready") || entry.state.includes("Complete")
+      ? "is-ready"
+      : entry.state.includes("Hold") || entry.state.includes("Review")
+        ? "is-held"
+        : entry.state.includes("Scope") || entry.state.includes("Billing")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-conversion-card proof-success-card proof-expansion-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-conversion-meta proof-success-meta proof-expansion-meta">
+        <div>
+          <dt>Stakeholder</dt>
+          <dd>${escapePublicHtml(entry.stakeholder)}</dd>
+        </div>
+        <div>
+          <dt>Expansion</dt>
+          <dd>${escapePublicHtml(entry.expansion)}</dd>
+        </div>
+        <div>
+          <dt>Billing</dt>
+          <dd>${escapePublicHtml(entry.billing)}</dd>
+        </div>
+        <div>
+          <dt>Handoff</dt>
+          <dd>${escapePublicHtml(entry.handoff)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Expansion action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Expansion memory</span>
+        <p>${escapePublicHtml(entry.memory)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    customerExpansionList.append(card);
+  });
+}
+
+function buildCustomerExpansionItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const strong = score >= 88;
+    return {
+      contract: `EXPAND-096-L${index + 1}`,
+      state: strong ? "Expansion ready" : "Proof Hold",
+      title: report.prompt || "Saved sealed report can support customer expansion.",
+      summary: "A sealed report becomes expansion proof only when the stakeholder, scope, billing, and launch owner are visible.",
+      stakeholder: strong ? "Champion packet" : "Needs buyer owner",
+      expansion: strong ? "Next workflow candidate" : "Hold next workflow",
+      billing: strong ? "Value basis exists" : "Do not price yet",
+      handoff: strong ? "Customer success note" : "Owner missing",
+      actionPath: "Open the sealed report, connect it to a stakeholder map, and decide whether it supports expansion or a proof hold.",
+      memory: strong ? "customer_expansion_story_seeded" : "customer_expansion_hold",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      contract: "EXPAND-096-001",
+      state: "Expansion ready",
+      title: "Stakeholder map covers the real buying room.",
+      summary: "Champion, security, legal, budget owner, implementation owner, and executive context are named before the ask grows.",
+      stakeholder: "6 roles mapped",
+      expansion: "Internal share ready",
+      billing: "Value sponsor visible",
+      handoff: "Named owners",
+      actionPath: "Give the champion a clean internal packet so expansion starts with clarity rather than another discovery call.",
+      memory: "stakeholder_map_expansion_ready",
+      href: "buyer.html",
+      action: "Open buyer room",
+    },
+    {
+      contract: "EXPAND-096-002",
+      state: "Scope draft",
+      title: "Next workflow is bounded enough to test.",
+      summary: "Expansion starts with one additional buyer workflow, not a vague all-company rollout.",
+      stakeholder: "Champion aligned",
+      expansion: "Second workflow",
+      billing: "Scope estimate",
+      handoff: "Pilot to launch",
+      actionPath: "Define the next workflow in one sentence, the owner in one name, and the proof needed in one list.",
+      memory: "next_workflow_scope_draft",
+      href: "launch.html",
+      action: "Open launch",
+    },
+    {
+      contract: "EXPAND-096-003",
+      state: "Billing ready",
+      title: "Pricing package matches the proven outcome.",
+      summary: "The expansion proposal references the pilot outcome, the workflow scope, and the governance depth the customer will use.",
+      stakeholder: "Budget owner known",
+      expansion: "Team package",
+      billing: "$899/mo path",
+      handoff: "Finance note",
+      actionPath: "Use the simplest commercial package that fits the proof instead of over-selling the platform too early.",
+      memory: "billing_scope_expansion_ready",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      contract: "EXPAND-096-004",
+      state: "Owner Review",
+      title: "Implementation handoff needs a named customer owner.",
+      summary: "Expansion should wait until the customer has a person accountable for rollout, access, proof assets, and feedback.",
+      stakeholder: "Owner unclear",
+      expansion: "Useful but fragile",
+      billing: "Hold package",
+      handoff: "Needs owner",
+      actionPath: "Ask for the implementation owner before expanding the scope; otherwise success work will land on the wrong person.",
+      memory: "implementation_owner_review",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      contract: "EXPAND-096-005",
+      state: "Risk Hold",
+      title: "Production data boundary blocks expansion.",
+      summary: "The customer wants more users, but data, access, or buyer-link rules are not ready for a larger deployment.",
+      stakeholder: "Security owner",
+      expansion: "Hold rollout",
+      billing: "No production scope",
+      handoff: "Boundary review",
+      actionPath: "Hold expansion until tenant boundaries, buyer links, exports, and access receipts are production-safe.",
+      memory: "production_boundary_expansion_hold",
+      href: "auth.html",
+      action: "Open auth",
+    },
+    {
+      contract: "EXPAND-096-006",
+      state: "Expansion ready",
+      title: "Champion packet is ready for internal approval.",
+      summary: "The packet includes outcome, proof examples, risk holds, buyer-safe story, next workflow, and commercial scope.",
+      stakeholder: "Champion equipped",
+      expansion: "Approval packet",
+      billing: "Package attached",
+      handoff: "Forwardable",
+      actionPath: "Make the champion look prepared with one packet that answers value, risk, scope, and next step.",
+      memory: "champion_expansion_packet_ready",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "EXPAND-096-007",
+      state: "Scope draft",
+      title: "Rollout plan starts with one additional team.",
+      summary: "The first expansion can move to legal review, sales engineering, or customer success before wider enterprise launch.",
+      stakeholder: "Team owner named",
+      expansion: "One team",
+      billing: "Seat estimate",
+      handoff: "Launch checklist",
+      actionPath: "Choose one team, one buyer workflow, one proof goal, and one review rhythm for the first expansion step.",
+      memory: "one_team_expansion_plan",
+      href: "onboarding.html",
+      action: "Open onboarding",
+    },
+    {
+      contract: "EXPAND-096-008",
+      state: "Risk Hold",
+      title: "Stakeholder gap blocks wider rollout.",
+      summary: "The customer likes the product, but legal, budget, or implementation owner has not approved the path.",
+      stakeholder: "Gap visible",
+      expansion: "Do not widen",
+      billing: "Hold quote",
+      handoff: "Find owner",
+      actionPath: "Route the missing stakeholder instead of sending an expansion proposal that cannot be approved.",
+      memory: "stakeholder_gap_expansion_hold",
+      href: "conversion.html",
+      action: "Open convert",
+    },
+    {
+      contract: "EXPAND-096-009",
+      state: "Billing ready",
+      title: "Renewal and expansion proposal are separate.",
+      summary: "The customer can renew the proven workflow while a second scope waits for owner and boundary approval.",
+      stakeholder: "Budget split",
+      expansion: "Two-step ask",
+      billing: "Renew plus option",
+      handoff: "Scope note",
+      actionPath: "Avoid confusing renewal with expansion: price the proven value, then attach the next workflow as an option.",
+      memory: "renewal_expansion_scope_split",
+      href: "success.html",
+      action: "Open success",
+    },
+    {
+      contract: "EXPAND-096-010",
+      state: "Complete",
+      title: "Customer expansion loop is repeatable.",
+      summary: "Every successful paid pilot can now become stakeholder map, expansion path, billing scope, launch handoff, or hold receipt.",
+      stakeholder: "Repeatable map",
+      expansion: "Method ready",
+      billing: "Package logic",
+      handoff: "Launch bridge",
+      actionPath: "Use the same expansion room for every paid pilot until production launch, billing, and customer success become real systems.",
+      memory: "customer_expansion_loop_ready",
+      href: "versions.html",
+      action: "Open build plan",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -7118,7 +7352,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.95 Alpha - Paid Pilot Success Room",
+      "Pilot phase: AnswerSeal v0.96 Alpha - Customer Expansion Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

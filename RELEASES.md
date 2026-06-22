@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.96 Alpha - Customer Expansion Room
+
+Phase: Customer Expansion Room
+
+- Added a dedicated Customer Expansion Room page for stakeholder map, expansion path, billing scope, launch handoff, growth hold reasons, and reusable expansion memory.
+- Added dynamic expansion cards for saved report expansion candidates, stakeholder maps, next-workflow scope, billing readiness, implementation owner review, production boundary holds, champion packets, one-team rollout plans, stakeholder gaps, renewal-expansion splits, and repeatable expansion loops.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Expansion room.
+- Upgraded public storage to v0.96 while preserving v0.95 and earlier report memory.
+- Upgraded workspace storage to v0.96 while preserving v0.95 and earlier workspace memory, and upgraded export language to Review Pack v92.
+- Moved the next build toward v0.97 Production Launch Room.
+
 ## v0.95 Alpha - Paid Pilot Success Room
 
 Phase: Paid Pilot Success Room
