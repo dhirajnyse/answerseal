@@ -117,6 +117,9 @@ const memberRoleStatus = document.querySelector("#memberRoleStatus");
 const privateBetaOnboardingList = document.querySelector("#privateBetaOnboardingList");
 const privateBetaOnboardingScore = document.querySelector("#privateBetaOnboardingScore");
 const privateBetaOnboardingStatus = document.querySelector("#privateBetaOnboardingStatus");
+const pilotLaunchList = document.querySelector("#pilotLaunchList");
+const pilotLaunchScore = document.querySelector("#pilotLaunchScore");
+const pilotLaunchStatus = document.querySelector("#pilotLaunchStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -129,9 +132,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.92 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v92";
+const PUBLIC_BUILD_VERSION = "v0.93 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v93";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v92",
   "answerseal.public.reports.v91",
   "answerseal.public.reports.v90",
   "answerseal.public.reports.v89",
@@ -261,6 +265,7 @@ renderWorkspaceAccessConsole();
 renderInviteFlowPrototype();
 renderMemberRoleConsole();
 renderPrivateBetaOnboardingRoom();
+renderPilotLaunchControlCenter();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -6196,6 +6201,235 @@ function buildPrivateBetaOnboardingItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderPilotLaunchControlCenter() {
+  if (!pilotLaunchList) return;
+  const entries = buildPilotLaunchItems();
+  const readyCount = entries.filter((entry) => entry.state.includes("Ready") || entry.state.includes("Complete")).length;
+  const holdCount = entries.filter((entry) => entry.state.includes("Hold")).length;
+  const taskCount = entries.filter((entry) => entry.state.includes("Task") || entry.state.includes("Review")).length;
+
+  if (pilotLaunchScore) pilotLaunchScore.textContent = `${readyCount}/${entries.length} pilot-ready`;
+  if (pilotLaunchStatus) {
+    pilotLaunchStatus.textContent = `${taskCount} owner tasks and ${holdCount} launch holds are visible before the weekly pilot decision.`;
+  }
+
+  pilotLaunchList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Ready") || entry.state.includes("Complete")
+      ? "is-ready"
+      : entry.state.includes("Hold")
+        ? "is-held"
+        : entry.state.includes("Task") || entry.state.includes("Review")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-launch-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-launch-meta">
+        <div>
+          <dt>Pilot</dt>
+          <dd>${escapePublicHtml(entry.pilot)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Health</dt>
+          <dd>${escapePublicHtml(entry.health)}</dd>
+        </div>
+        <div>
+          <dt>Decision</dt>
+          <dd>${escapePublicHtml(entry.decision)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Pilot action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Launch receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    pilotLaunchList.append(card);
+  });
+}
+
+function buildPilotLaunchItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 86;
+    return {
+      contract: `LAUNCH-093-L${index + 1}`,
+      state: ready ? "Ready" : "Review task",
+      title: report.prompt || "Saved sealed report feeds pilot proof health.",
+      summary: "A saved report becomes useful pilot evidence when score, sources, owner review, and reuse decision are visible together.",
+      pilot: index === 0 ? "Aster Health" : "Pilot proof pack",
+      owner: ready ? "Reviewer" : "Workspace owner",
+      health: ready ? `${score}% trust` : "Proof needs work",
+      decision: ready ? "Enter weekly decision" : "Route proof fix",
+      actionPath: "Open the sealed report, confirm sources, then decide whether it improves customer proof health this week.",
+      receipt: ready ? "sealed_report_pilot_ready" : "sealed_report_pilot_review",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      contract: "LAUNCH-093-001",
+      state: "Ready",
+      title: "Pilot state is live-ready.",
+      summary: "Workspace, owner, first reviewer, proof pack, sample workflow, and buyer-safe link have a launch receipt.",
+      pilot: "Aster Health",
+      owner: "Founder owner",
+      health: "Launch baseline",
+      decision: "Start week one",
+      actionPath: "Confirm the pilot state before the first customer workflow starts so the team has one visible source of truth.",
+      receipt: "pilot_state_live_ready",
+      href: "onboarding.html",
+      action: "Open onboarding",
+    },
+    {
+      contract: "LAUNCH-093-002",
+      state: "Task",
+      title: "Owner task lane groups open proof gaps.",
+      summary: "Buyer questions, stale source checks, role decisions, and conversion blockers route into one owner queue.",
+      pilot: "Week one",
+      owner: "Security reviewer",
+      health: "3 open tasks",
+      decision: "Fix before expand",
+      actionPath: "Review the owner lane each week and close proof gaps before asking the customer to expand usage.",
+      receipt: "owner_task_lane_open",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "LAUNCH-093-003",
+      state: "Ready",
+      title: "Customer proof health is measurable.",
+      summary: "Trust score, source coverage, saved report reuse, and buyer activity show whether the pilot is becoming safer.",
+      pilot: "Aster Health",
+      owner: "AI governance",
+      health: "83% coverage",
+      decision: "Watch trend",
+      actionPath: "Use proof health as the weekly quality signal before changing the pilot scope or promising conversion outcomes.",
+      receipt: "proof_health_measured",
+      href: "health.html",
+      action: "Open health",
+    },
+    {
+      contract: "LAUNCH-093-004",
+      state: "Review task",
+      title: "Buyer question needs an accountable response owner.",
+      summary: "A customer data training question is ready to answer, but final release needs owner confirmation and proof note.",
+      pilot: "Buyer room",
+      owner: "Omar Khan",
+      health: "78% confidence",
+      decision: "Route answer",
+      actionPath: "Assign a response owner, attach the proof note, and decide whether the answer can be sent this week.",
+      receipt: "buyer_question_owner_routed",
+      href: "buyer.html",
+      action: "Open buyer room",
+    },
+    {
+      contract: "LAUNCH-093-005",
+      state: "Ready",
+      title: "Weekly pilot decision has a draft.",
+      summary: "Keep, fix, expand, or close can be decided from proof health, owner tasks, buyer activity, and launch holds.",
+      pilot: "Weekly review",
+      owner: "Founder owner",
+      health: "Decision-ready",
+      decision: "Keep and fix",
+      actionPath: "Write the weekly pilot decision in plain language and keep only the next owner action visible.",
+      receipt: "weekly_pilot_decision_draft",
+      href: "versions.html",
+      action: "Open build plan",
+    },
+    {
+      contract: "LAUNCH-093-006",
+      state: "Hold",
+      title: "Data boundary hold blocks paid pilot until documented.",
+      summary: "The first pilot can run, but durable workspace storage, buyer link history, and cross-tenant learning remain explicit holds.",
+      pilot: "Paid pilot gate",
+      owner: "Product owner",
+      health: "Boundary hold",
+      decision: "Document limits",
+      actionPath: "Explain which records are local demo memory today and which become production-backed before paid pilot expansion.",
+      receipt: "paid_pilot_data_boundary_hold",
+      href: "data.html",
+      action: "Open data layer",
+    },
+    {
+      contract: "LAUNCH-093-007",
+      state: "Ready",
+      title: "Launch receipt links back to onboarding.",
+      summary: "Onboarding state, role receipts, proof assets, buyer links, and current launch decision remain traceable.",
+      pilot: "Receipt trail",
+      owner: "Launch owner",
+      health: "Trace complete",
+      decision: "Retain receipt",
+      actionPath: "Keep the launch receipt connected to the original setup path so a future customer can repeat the pilot cleanly.",
+      receipt: "launch_receipt_traced",
+      href: "onboarding.html",
+      action: "Open onboarding",
+    },
+    {
+      contract: "LAUNCH-093-008",
+      state: "Task",
+      title: "Close signal needs a conversion owner.",
+      summary: "The pilot has proof movement, but the paid pilot conversation needs one owner, one ask, and one success measure.",
+      pilot: "Conversion",
+      owner: "Founder",
+      health: "Close signal",
+      decision: "Prepare ask",
+      actionPath: "Name the conversion owner and define the paid pilot proof: workflow saved, time saved, risk reduced, or buyer unblocked.",
+      receipt: "conversion_owner_pending",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      contract: "LAUNCH-093-009",
+      state: "Ready",
+      title: "Learning loop has safe beta notes.",
+      summary: "The pilot can learn from outcomes while raw buyer context, private evidence, and tenant records stay local.",
+      pilot: "Learning loop",
+      owner: "AI governance",
+      health: "Safe notes",
+      decision: "Use local only",
+      actionPath: "Capture reusable lessons as abstract proof patterns, not raw buyer questions, files, prompts, or customer names.",
+      receipt: "safe_beta_learning_notes",
+      href: "learning.html",
+      action: "Open learning",
+    },
+    {
+      contract: "LAUNCH-093-010",
+      state: "Complete",
+      title: "Pilot launch control is repeatable.",
+      summary: "The first customer pilot has a simple weekly operating layer: state, tasks, health, activity, decision, and receipt.",
+      pilot: "Launch model",
+      owner: "Founder owner",
+      health: "Repeatable rhythm",
+      decision: "Run weekly",
+      actionPath: "Use this control center as the operating room until production data, auth, billing, and paid pilot conversion are ready.",
+      receipt: "pilot_launch_control_ready",
+      href: "pricing.html",
+      action: "Open paid path",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -6412,7 +6646,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.92 Alpha - Private Beta Onboarding Room",
+      "Pilot phase: AnswerSeal v0.93 Alpha - Pilot Launch Control Center",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

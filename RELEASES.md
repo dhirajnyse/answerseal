@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.93 Alpha - Pilot Launch Control Center
+
+Phase: Pilot Launch Control Center
+
+- Added a dedicated Pilot Launch Control Center page for live pilot state, owner task lane, proof health, buyer activity, weekly decisions, launch holds, and conversion-ready receipts.
+- Added dynamic launch cards for saved report proof health, live-ready pilot state, owner task lane, customer proof health, buyer question routing, weekly decisions, data-boundary holds, conversion ownership, safe beta learning, and repeatable pilot rhythm.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Launch room.
+- Upgraded public storage to v0.93 while preserving v0.92 and earlier report memory.
+- Upgraded workspace storage to v0.93 while preserving v0.92 and earlier workspace memory, and upgraded export language to Review Pack v89.
+- Moved the next build toward v0.94 Paid Pilot Conversion Room.
+
 ## v0.92 Alpha - Private Beta Onboarding Room
 
 Phase: Private Beta Onboarding Room
