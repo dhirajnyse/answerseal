@@ -1,5 +1,18 @@
 # AnswerSeal Releases
 
+## v1.8 Alpha - Pilot Acceptance Threshold
+
+Phase: Pilot Acceptance Threshold
+
+- Added a dedicated Pilot Acceptance Threshold page for saved-time proof, trust-score lift, support load, buyer unblock, customer receipts, and launch decision rules.
+- Upgraded the Build page roadmap to 99% overall progress, 29/30 done, 1 active pilot acceptance gate, 0 hidden launch gates, and 1% remaining to private beta readiness.
+- Updated readiness category percentages for governance surface, pilot learning, backend readiness, launch operations, and launch proof.
+- Reworked the path-to-launch track so Security And Compliance Pack is shipped and Pilot Acceptance Threshold is the active phase.
+- Added Pilot Acceptance Threshold language across the landing page, pricing page, demo build label, README, release notes, and public release identity.
+- Upgraded public storage to v1.8 while preserving v1.7 and earlier report memory.
+- Upgraded workspace storage to v1.8 while preserving v1.7 and earlier workspace memory, and upgraded export language to Review Pack v104.
+- Moved the next build toward v1.9 Private Beta Launch Decision.
+
 ## v1.7 Alpha - Security And Compliance Pack
 
 Phase: Security And Compliance Pack
