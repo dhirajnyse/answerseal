@@ -123,6 +123,9 @@ const pilotLaunchStatus = document.querySelector("#pilotLaunchStatus");
 const paidPilotConversionList = document.querySelector("#paidPilotConversionList");
 const paidPilotConversionScore = document.querySelector("#paidPilotConversionScore");
 const paidPilotConversionStatus = document.querySelector("#paidPilotConversionStatus");
+const paidPilotSuccessList = document.querySelector("#paidPilotSuccessList");
+const paidPilotSuccessScore = document.querySelector("#paidPilotSuccessScore");
+const paidPilotSuccessStatus = document.querySelector("#paidPilotSuccessStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -135,9 +138,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.94 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v94";
+const PUBLIC_BUILD_VERSION = "v0.95 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v95";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v94",
   "answerseal.public.reports.v93",
   "answerseal.public.reports.v92",
   "answerseal.public.reports.v91",
@@ -271,6 +275,7 @@ renderMemberRoleConsole();
 renderPrivateBetaOnboardingRoom();
 renderPilotLaunchControlCenter();
 renderPaidPilotConversionRoom();
+renderPaidPilotSuccessRoom();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -6666,6 +6671,237 @@ function buildPaidPilotConversionItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderPaidPilotSuccessRoom() {
+  if (!paidPilotSuccessList) return;
+  const entries = buildPaidPilotSuccessItems();
+  const readyCount = entries.filter((entry) => (
+    entry.state.includes("Active") || entry.state.includes("Renewal") || entry.state.includes("Story")
+  )).length;
+  const riskCount = entries.filter((entry) => entry.state.includes("Risk") || entry.state.includes("Hold")).length;
+  const measureCount = entries.filter((entry) => entry.state.includes("Measure") || entry.state.includes("Outcome")).length;
+
+  if (paidPilotSuccessScore) paidPilotSuccessScore.textContent = `${readyCount}/${entries.length} success-ready`;
+  if (paidPilotSuccessStatus) {
+    paidPilotSuccessStatus.textContent = `${measureCount} outcome loops and ${riskCount} risk holds decide renewal confidence.`;
+  }
+
+  paidPilotSuccessList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Active") || entry.state.includes("Renewal") || entry.state.includes("Story")
+      ? "is-ready"
+      : entry.state.includes("Risk") || entry.state.includes("Hold")
+        ? "is-held"
+        : entry.state.includes("Measure") || entry.state.includes("Outcome")
+          ? "is-gate"
+          : "is-design";
+    card.className = `proof-memory-card proof-conversion-card proof-success-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.contract)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-conversion-meta proof-success-meta">
+        <div>
+          <dt>Activation</dt>
+          <dd>${escapePublicHtml(entry.activation)}</dd>
+        </div>
+        <div>
+          <dt>Outcome</dt>
+          <dd>${escapePublicHtml(entry.outcome)}</dd>
+        </div>
+        <div>
+          <dt>Renewal</dt>
+          <dd>${escapePublicHtml(entry.renewal)}</dd>
+        </div>
+        <div>
+          <dt>Proof story</dt>
+          <dd>${escapePublicHtml(entry.story)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Success action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Success memory</span>
+        <p>${escapePublicHtml(entry.memory)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    paidPilotSuccessList.append(card);
+  });
+}
+
+function buildPaidPilotSuccessItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 2).map((report, index) => {
+    const score = Number(report.score || 0);
+    const strong = score >= 88;
+    return {
+      contract: `SUCCESS-095-L${index + 1}`,
+      state: strong ? "Story ready" : "Outcome Hold",
+      title: report.prompt || "Saved sealed report can become a paid pilot outcome.",
+      summary: "A sealed report becomes success proof only when the customer outcome, source trail, and renewal use case are visible.",
+      activation: strong ? "First proof reused" : "Needs owner note",
+      outcome: strong ? `${score}% proof quality` : `${score}% needs lift`,
+      renewal: strong ? "Can support memo" : "Hold renewal signal",
+      story: strong ? "Safe excerpt candidate" : "Do not quote yet",
+      actionPath: "Open the sealed report, connect it to a customer outcome, and decide whether it supports renewal or a case note.",
+      memory: strong ? "paid_pilot_success_story_seeded" : "paid_pilot_success_hold",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      contract: "SUCCESS-095-001",
+      state: "Active",
+      title: "Activation plan is clear enough for week one.",
+      summary: "The paid pilot starts with one owner, one workspace, one questionnaire, three proof assets, and one success measure.",
+      activation: "Week-one plan",
+      outcome: "Baseline set",
+      renewal: "Too early",
+      story: "Setup receipt",
+      actionPath: "Keep activation narrow so the customer sees useful proof inside the first few working days.",
+      memory: "week_one_activation_ready",
+      href: "onboarding.html",
+      action: "Open onboarding",
+    },
+    {
+      contract: "SUCCESS-095-002",
+      state: "Measure",
+      title: "Outcome tracker connects product usage to buyer value.",
+      summary: "Time saved, proof gaps closed, buyer questions answered, and reviewer confidence become the first paid pilot scorecard.",
+      activation: "Usage started",
+      outcome: "4 value signals",
+      renewal: "Monitor weekly",
+      story: "Metric trail",
+      actionPath: "Track only the outcomes the buyer already cares about instead of inventing vanity platform metrics.",
+      memory: "paid_pilot_outcome_scorecard",
+      href: "benefit.html",
+      action: "Open benefit",
+    },
+    {
+      contract: "SUCCESS-095-003",
+      state: "Renewal ready",
+      title: "Renewal signal is strong enough for a customer check-in.",
+      summary: "Adoption, trust score, proof coverage, and buyer activity show enough value to ask whether the pilot should continue.",
+      activation: "Adopted",
+      outcome: "Proof gaps down",
+      renewal: "Check-in ready",
+      story: "Champion memo",
+      actionPath: "Ask for renewal feedback from proof, not pressure: what worked, what blocked value, and what should expand next.",
+      memory: "renewal_signal_ready",
+      href: "conversion.html",
+      action: "Open conversion",
+    },
+    {
+      contract: "SUCCESS-095-004",
+      state: "Risk Hold",
+      title: "Outcome is not strong enough to expand yet.",
+      summary: "The customer has activity, but stale proof, unresolved owner tasks, or unclear value should hold expansion language.",
+      activation: "Partially active",
+      outcome: "Mixed signal",
+      renewal: "Hold expansion",
+      story: "Do not publish",
+      actionPath: "Fix the next blocker before turning the pilot into a renewal or customer story.",
+      memory: "paid_pilot_expansion_hold",
+      href: "health.html",
+      action: "Open health",
+    },
+    {
+      contract: "SUCCESS-095-005",
+      state: "Story ready",
+      title: "Customer proof story has safe, shareable language.",
+      summary: "The story uses approved evidence, anonymized context, measurable outcome, and buyer-safe wording.",
+      activation: "Customer active",
+      outcome: "Value visible",
+      renewal: "Supports ask",
+      story: "Safe case note",
+      actionPath: "Package only the outcome, workflow, and proof method. Keep raw buyer files, prompts, and private evidence out of the story.",
+      memory: "safe_customer_proof_story",
+      href: "buyer.html",
+      action: "Open buyer room",
+    },
+    {
+      contract: "SUCCESS-095-006",
+      state: "Outcome",
+      title: "Weekly success review has one decision.",
+      summary: "The founder can decide continue, fix, renew, expand, or pause from one success room instead of scattered notes.",
+      activation: "Operating rhythm",
+      outcome: "Weekly review",
+      renewal: "Decision lane",
+      story: "Receipt ready",
+      actionPath: "Keep the weekly success decision plain: what changed, what proof supports it, and who owns the next action.",
+      memory: "weekly_success_review_ready",
+      href: "launch.html",
+      action: "Open launch",
+    },
+    {
+      contract: "SUCCESS-095-007",
+      state: "Active",
+      title: "Buyer champion has a proof packet for internal sharing.",
+      summary: "The champion can forward a clean memo with outcome, verified answer examples, source coverage, and next-step terms.",
+      activation: "Champion engaged",
+      outcome: "Internal proof",
+      renewal: "Memo ready",
+      story: "Forwardable",
+      actionPath: "Make the champion look prepared: one page, one outcome, one source-backed example, and one renewal next step.",
+      memory: "champion_success_packet_ready",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      contract: "SUCCESS-095-008",
+      state: "Risk Hold",
+      title: "Production scope is still separate from pilot success.",
+      summary: "The paid pilot can succeed while production persistence, account controls, billing, and integrations remain launch holds.",
+      activation: "Pilot scope",
+      outcome: "Value proven",
+      renewal: "Scope carefully",
+      story: "Mention limits",
+      actionPath: "Do not confuse pilot success with enterprise readiness. Show what is proven and what remains before production rollout.",
+      memory: "pilot_success_scope_boundary",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      contract: "SUCCESS-095-009",
+      state: "Renewal ready",
+      title: "Pricing path matches proven customer value.",
+      summary: "The next proposal can reference the measured pilot outcome, governance needs, and team workflow depth.",
+      activation: "Buyer sees value",
+      outcome: "Pricing basis",
+      renewal: "Offer ready",
+      story: "Value memo",
+      actionPath: "Use pilot evidence to choose a simple renewal ask instead of jumping straight into a complex enterprise package.",
+      memory: "renewal_pricing_path_ready",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      contract: "SUCCESS-095-010",
+      state: "Story ready",
+      title: "Paid pilot success loop is repeatable.",
+      summary: "Every paid pilot can now move from activation to measured outcome, renewal signal, customer story, and safe learning receipt.",
+      activation: "Repeatable setup",
+      outcome: "Outcome loop",
+      renewal: "Expansion-ready",
+      story: "Reusable method",
+      actionPath: "Use the same success room for every paid pilot until customer success, billing, and production onboarding become real systems.",
+      memory: "paid_pilot_success_loop_ready",
+      href: "versions.html",
+      action: "Open build plan",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 12);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -6882,7 +7118,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.94 Alpha - Paid Pilot Conversion Room",
+      "Pilot phase: AnswerSeal v0.95 Alpha - Paid Pilot Success Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

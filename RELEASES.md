@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.95 Alpha - Paid Pilot Success Room
+
+Phase: Paid Pilot Success Room
+
+- Added a dedicated Paid Pilot Success Room page for activation plan, outcome tracker, renewal signal, customer proof story, expansion hold reasons, and reusable success memory.
+- Added dynamic success cards for saved report story candidates, week-one activation, outcome scorecards, renewal readiness, proof-story packaging, risk holds, champion packets, scope boundaries, renewal pricing, and repeatable success loops.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Success room.
+- Upgraded public storage to v0.95 while preserving v0.94 and earlier report memory.
+- Upgraded workspace storage to v0.95 while preserving v0.94 and earlier workspace memory, and upgraded export language to Review Pack v91.
+- Moved the next build toward v0.96 Customer Expansion Room.
+
 ## v0.94 Alpha - Paid Pilot Conversion Room
 
 Phase: Paid Pilot Conversion Room
