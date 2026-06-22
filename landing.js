@@ -129,6 +129,9 @@ const paidPilotSuccessStatus = document.querySelector("#paidPilotSuccessStatus")
 const customerExpansionList = document.querySelector("#customerExpansionList");
 const customerExpansionScore = document.querySelector("#customerExpansionScore");
 const customerExpansionStatus = document.querySelector("#customerExpansionStatus");
+const pilotCustomerList = document.querySelector("#pilotCustomerList");
+const pilotCustomerScore = document.querySelector("#pilotCustomerScore");
+const pilotCustomerStatus = document.querySelector("#pilotCustomerStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -141,9 +144,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v1.0 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v100";
+const PUBLIC_BUILD_VERSION = "v1.1 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v101";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v100",
   "answerseal.public.reports.v99",
   "answerseal.public.reports.v98",
   "answerseal.public.reports.v97",
@@ -285,6 +289,7 @@ renderPilotLaunchControlCenter();
 renderPaidPilotConversionRoom();
 renderPaidPilotSuccessRoom();
 renderCustomerExpansionRoom();
+renderPilotCustomerCommandCenter();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -4395,7 +4400,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v96 records launch room, renewal memory, workspace state, source status, and export decision.",
+      audit: "Review Pack v97 records pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
       receipt: "review_pack_v96_launch_ready",
       href: "reports.html",
       action: "Open reports",
@@ -7185,6 +7190,251 @@ function buildCustomerExpansionItems() {
   return [...reportEntries, ...seededEntries].slice(0, 12);
 }
 
+function renderPilotCustomerCommandCenter() {
+  if (!pilotCustomerList) return;
+  const entries = buildPilotCustomerItems();
+  const mappedCount = entries.length;
+  const actionCount = entries.filter((entry) => entry.state.includes("Action") || entry.state.includes("Watch") || entry.state.includes("Hold")).length;
+  const renewalCount = entries.filter((entry) => entry.renewal.includes("Ready") || entry.renewal.includes("Expand")).length;
+
+  if (pilotCustomerScore) pilotCustomerScore.textContent = `${mappedCount}/10 mapped`;
+  if (pilotCustomerStatus) {
+    pilotCustomerStatus.textContent = `${actionCount} need owner action; ${renewalCount} show renewal or expansion signal.`;
+  }
+
+  pilotCustomerList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Ready") || entry.state.includes("On track")
+      ? "is-ready"
+      : entry.state.includes("Action") || entry.state.includes("Watch")
+        ? "is-gate"
+        : entry.state.includes("Hold")
+          ? "is-held"
+          : "is-design";
+    card.className = `proof-memory-card proof-workspace-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.record)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.customer)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-workspace-meta">
+        <div>
+          <dt>Workflow</dt>
+          <dd>${escapePublicHtml(entry.workflow)}</dd>
+        </div>
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Next check</dt>
+          <dd>${escapePublicHtml(entry.nextCheck)}</dd>
+        </div>
+        <div>
+          <dt>Renewal</dt>
+          <dd>${escapePublicHtml(entry.renewal)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Customer signal</span>
+        <p>${escapePublicHtml(entry.signal)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Founder action</span>
+        <p>${escapePublicHtml(entry.actionPath)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Pilot receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    pilotCustomerList.append(card);
+  });
+}
+
+function buildPilotCustomerItems() {
+  const reports = readPublicReports();
+  const pilotNames = ["Aster Health", "Northstar Cloud", "Kairo Legal"];
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const ready = score >= 88;
+    return {
+      record: `PILOT-110-L${index + 1}`,
+      state: ready ? "On track" : "Action needed",
+      customer: pilotNames[index] || `Pilot ${index + 1}`,
+      summary: report.prompt || "Saved sealed report can become a live pilot workflow.",
+      workflow: "Verified answer",
+      owner: ready ? "Customer success" : "Proof owner",
+      nextCheck: ready ? "This week" : "Before buyer share",
+      renewal: ready ? "Ready signal" : "Hold",
+      signal: ready ? `${score}% trust score can seed the pilot value story.` : "Customer value is possible, but the proof trail needs one more owner action.",
+      actionPath: "Use this report in the weekly pilot review: confirm value, log friction, assign owner, and decide renew, recover, expand, or hold.",
+      receipt: ready ? "saved_report_pilot_signal" : "saved_report_owner_action",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      record: "PILOT-110-001",
+      state: "On track",
+      customer: "Aster Health",
+      summary: "Security questionnaire pilot is active with clean proof, a named reviewer, and a buyer-safe packet path.",
+      workflow: "SOC 2 buyer review",
+      owner: "Maya Shah",
+      nextCheck: "Tuesday",
+      renewal: "Ready signal",
+      signal: "Customer says the team can answer buyer reviews without rewriting the same source-backed language.",
+      actionPath: "Send the weekly value note: time saved, unsupported claims avoided, proof reused, and next buyer question.",
+      receipt: "aster_weekly_value_signal",
+      href: "reports.html",
+      action: "Open reports",
+    },
+    {
+      record: "PILOT-110-002",
+      state: "Action needed",
+      customer: "Northstar Cloud",
+      summary: "Pilot has strong interest but needs one data-processing proof source before the buyer-safe packet can be shared.",
+      workflow: "AI governance answer",
+      owner: "Omar Khan",
+      nextCheck: "Friday",
+      renewal: "Proof hold",
+      signal: "Customer quote: 'This is useful, but legal needs the exact source before we reuse it.'",
+      actionPath: "Attach the missing DPA excerpt, rerun the verifier, and send a revised sealed report before Friday.",
+      receipt: "northstar_missing_source_action",
+      href: "verify.html",
+      action: "Verify answer",
+    },
+    {
+      record: "PILOT-110-003",
+      state: "Ready to expand",
+      customer: "Kairo Legal",
+      summary: "Legal team finished one workflow and wants the same trust check for client-facing AI memo language.",
+      workflow: "Client memo QA",
+      owner: "Founder",
+      nextCheck: "Monday",
+      renewal: "Expand",
+      signal: "Second workflow request is specific: same source check, different output template, same approval trail.",
+      actionPath: "Price the second workflow as an expansion option and keep the original pilot renewal separate.",
+      receipt: "kairo_second_workflow_signal",
+      href: "pricing.html",
+      action: "Open pricing",
+    },
+    {
+      record: "PILOT-110-004",
+      state: "Watch",
+      customer: "HelioFin",
+      summary: "Finance buyer likes the sealed report, but support questions are rising before the team has a repeatable answer path.",
+      workflow: "Vendor risk reply",
+      owner: "Customer success",
+      nextCheck: "Wednesday",
+      renewal: "Support watch",
+      signal: "Three support questions mention export format and buyer-link expiry.",
+      actionPath: "Turn the support questions into one FAQ-style proof packet and review buyer-link expiry before the next call.",
+      receipt: "heliofin_support_watch",
+      href: "buyer.html",
+      action: "Open buyer",
+    },
+    {
+      record: "PILOT-110-005",
+      state: "On track",
+      customer: "BrightOps",
+      summary: "Operations team completed the first saved report and used it in an internal compliance review.",
+      workflow: "Internal policy answer",
+      owner: "Security reviewer",
+      nextCheck: "Thursday",
+      renewal: "Ready signal",
+      signal: "Pilot value is internal speed: fewer rework cycles before security signs off.",
+      actionPath: "Ask for a measured before-and-after cycle time and attach it to the renewal value story.",
+      receipt: "brightops_cycle_time_signal",
+      href: "success.html",
+      action: "Open success",
+    },
+    {
+      record: "PILOT-110-006",
+      state: "Hold",
+      customer: "CivicBridge",
+      summary: "Public-sector pilot should wait until regional evidence rights and buyer-link sharing rules are approved.",
+      workflow: "Regional proof packet",
+      owner: "Legal owner",
+      nextCheck: "Blocked",
+      renewal: "Hold",
+      signal: "Country-specific proof cannot be reused across tenants until the policy owner approves the boundary.",
+      actionPath: "Hold shared-learning influence, document the reason, and route the approval to policy before any buyer packet ships.",
+      receipt: "civicbridge_regional_hold",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      record: "PILOT-110-007",
+      state: "Action needed",
+      customer: "Medora Labs",
+      summary: "Healthcare pilot needs clearer HIPAA-safe language before the sealed answer becomes buyer-facing.",
+      workflow: "Privacy answer QA",
+      owner: "AI governance",
+      nextCheck: "Tomorrow",
+      renewal: "Risk review",
+      signal: "Reviewer flagged one sentence as too broad for regulated buyer reuse.",
+      actionPath: "Use the risk flag engine, replace the broad claim with sourced wording, and record the reviewer decision.",
+      receipt: "medora_regulated_language_action",
+      href: "reviews.html",
+      action: "Open reviews",
+    },
+    {
+      record: "PILOT-110-008",
+      state: "On track",
+      customer: "QuantaScale",
+      summary: "Pilot reached the first value checkpoint with two saved reports and one clean buyer-safe packet.",
+      workflow: "Enterprise security review",
+      owner: "Sales engineering",
+      nextCheck: "Next week",
+      renewal: "Ready signal",
+      signal: "Buyer unblock happened without adding a new custom evidence document.",
+      actionPath: "Ask the customer to confirm whether the buyer accepted the packet and capture that outcome in the next weekly note.",
+      receipt: "quantascale_buyer_unblock_signal",
+      href: "concierge.html",
+      action: "Open concierge",
+    },
+    {
+      record: "PILOT-110-009",
+      state: "Watch",
+      customer: "AtlasDesk",
+      summary: "The workflow is useful, but the champion has not invited the reviewer who owns final approval.",
+      workflow: "Procurement response",
+      owner: "Founder",
+      nextCheck: "Friday",
+      renewal: "Stakeholder watch",
+      signal: "Champion positive, reviewer absent.",
+      actionPath: "Ask for the reviewer invite, keep the pilot scoped to one questionnaire, and avoid expansion language until approval is visible.",
+      receipt: "atlasdesk_reviewer_gap",
+      href: "invite.html",
+      action: "Open invites",
+    },
+    {
+      record: "PILOT-110-010",
+      state: "Ready to expand",
+      customer: "SignalForge",
+      summary: "Pilot customer has reusable answer memory, a clear buyer packet, and a second team asking for access.",
+      workflow: "Reusable answer memory",
+      owner: "Founder",
+      nextCheck: "Monday",
+      renewal: "Expand",
+      signal: "Second team request is a strong expansion signal if access and support stay simple.",
+      actionPath: "Offer a small paid expansion, name the support owner, and keep the first workflow renewal as the proof base.",
+      receipt: "signalforge_expansion_signal",
+      href: "access.html",
+      action: "Open access",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 10);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -7401,7 +7651,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v1.0 Alpha - Launch-Ready Workspace",
+      "Pilot phase: AnswerSeal v1.1 Alpha - Pilot Customer Command Center",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

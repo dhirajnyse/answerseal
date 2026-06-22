@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v1.1 Alpha - Pilot Customer Command Center
+
+Phase: Pilot Customer Command Center
+
+- Added a dedicated Pilot Customer Command Center page for the first 10 pilot customers, workflows, owners, risk states, feedback, support notes, next check-ins, and renewal signals.
+- Added dynamic pilot customer cards that can seed live pilot rows from saved sealed reports while preserving v1.0 report memory.
+- Connected the landing product spine, primary navigation, demo sidebar, pricing tiers, build phases page, README, release notes, and public footer paths to the Pilot Customer Command Center release identity.
+- Upgraded public storage to v1.1 while preserving v1.0 and earlier report memory.
+- Upgraded workspace storage to v1.1 while preserving v1.0 and earlier workspace memory, and upgraded export language to Review Pack v97.
+- Moved the next build toward v1.2 Pilot Feedback Learning Loop.
+
 ## v1.0 Alpha - Launch-Ready Workspace
 
 Phase: Launch-Ready Workspace
