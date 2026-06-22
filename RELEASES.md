@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.99 Alpha - Renewal Growth Room
+
+Phase: Renewal Growth Room
+
+- Upgraded the existing Expansion page into a Renewal Growth Room for renewal pipeline, executive value proof, churn prevention, expansion readiness, reference readiness, and growth receipts.
+- Reworked dynamic growth cards for saved report renewal proof, healthy renewal stories, executive value summaries, low-adoption recovery, proof drift watches, expansion options, reference readiness, support-load readiness, stakeholder holds, and board-ready renewal notes.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the Renewal Growth Room release identity.
+- Upgraded public storage to v0.99 while preserving v0.98 and earlier report memory.
+- Upgraded workspace storage to v0.99 while preserving v0.98 and earlier workspace memory, and upgraded export language to Review Pack v95.
+- Moved the next build toward v1.0 Launch-Ready Workspace.
+
 ## v0.98 Alpha - Production Health Room
 
 Phase: Production Health Room
