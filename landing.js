@@ -132,6 +132,9 @@ const customerExpansionStatus = document.querySelector("#customerExpansionStatus
 const pilotCustomerList = document.querySelector("#pilotCustomerList");
 const pilotCustomerScore = document.querySelector("#pilotCustomerScore");
 const pilotCustomerStatus = document.querySelector("#pilotCustomerStatus");
+const pilotFeedbackList = document.querySelector("#pilotFeedbackList");
+const pilotFeedbackScore = document.querySelector("#pilotFeedbackScore");
+const pilotFeedbackStatus = document.querySelector("#pilotFeedbackStatus");
 const sealedReportScore = document.querySelector("#sealedReportScore");
 const sealedReportStatus = document.querySelector("#sealedReportStatus");
 const sealedReportPrompt = document.querySelector("#sealedReportPrompt");
@@ -144,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v1.1 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v101";
+const PUBLIC_BUILD_VERSION = "v1.2 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v102";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v101",
   "answerseal.public.reports.v100",
   "answerseal.public.reports.v99",
   "answerseal.public.reports.v98",
@@ -290,6 +294,7 @@ renderPaidPilotConversionRoom();
 renderPaidPilotSuccessRoom();
 renderCustomerExpansionRoom();
 renderPilotCustomerCommandCenter();
+renderPilotFeedbackLearningLoop();
 renderSealedReportPage();
 
 function renderLandingVerification() {
@@ -4400,8 +4405,8 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v97 records pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
-      receipt: "review_pack_v96_launch_ready",
+      audit: "Review Pack v98 records pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
+      receipt: "review_pack_v98_feedback_learning",
       href: "reports.html",
       action: "Open reports",
     },
@@ -7435,6 +7440,196 @@ function buildPilotCustomerItems() {
   return [...reportEntries, ...seededEntries].slice(0, 10);
 }
 
+function renderPilotFeedbackLearningLoop() {
+  if (!pilotFeedbackList) return;
+  const entries = buildPilotFeedbackItems();
+  const ownerReviewCount = entries.filter((entry) => entry.state.includes("Owner") || entry.state.includes("Review")).length;
+  const approvedCount = entries.filter((entry) => entry.state.includes("Approved") || entry.state.includes("Ready")).length;
+  const heldCount = entries.filter((entry) => entry.state.includes("Hold") || entry.state.includes("Blocked")).length;
+
+  if (pilotFeedbackScore) pilotFeedbackScore.textContent = `${entries.length} signals`;
+  if (pilotFeedbackStatus) {
+    pilotFeedbackStatus.textContent = `${approvedCount} approved improvements; ${ownerReviewCount} need owner review; ${heldCount} stay held by policy.`;
+  }
+
+  pilotFeedbackList.innerHTML = "";
+  entries.forEach((entry) => {
+    const card = document.createElement("article");
+    const stateClass = entry.state.includes("Approved") || entry.state.includes("Ready")
+      ? "is-ready"
+      : entry.state.includes("Owner") || entry.state.includes("Review")
+        ? "is-gate"
+        : entry.state.includes("Hold") || entry.state.includes("Blocked")
+          ? "is-held"
+          : "is-design";
+    card.className = `proof-memory-card proof-workspace-card ${stateClass}`;
+    card.innerHTML = `
+      <header>
+        <span>${escapePublicHtml(entry.record)}</span>
+        <strong>${escapePublicHtml(entry.state)}</strong>
+      </header>
+      <h3>${escapePublicHtml(entry.title)}</h3>
+      <p>${escapePublicHtml(entry.summary)}</p>
+      <dl class="proof-memory-meta proof-workspace-meta">
+        <div>
+          <dt>Owner</dt>
+          <dd>${escapePublicHtml(entry.owner)}</dd>
+        </div>
+        <div>
+          <dt>Signal</dt>
+          <dd>${escapePublicHtml(entry.signalType)}</dd>
+        </div>
+        <div>
+          <dt>Boundary</dt>
+          <dd>${escapePublicHtml(entry.boundary)}</dd>
+        </div>
+        <div>
+          <dt>Rollout</dt>
+          <dd>${escapePublicHtml(entry.rollout)}</dd>
+        </div>
+      </dl>
+      <div class="proof-memory-rule">
+        <span>Customer quote or friction</span>
+        <p>${escapePublicHtml(entry.quote)}</p>
+      </div>
+      <div class="proof-memory-rule">
+        <span>Smallest useful improvement</span>
+        <p>${escapePublicHtml(entry.improvement)}</p>
+      </div>
+      <div class="proof-memory-receipt">
+        <span>Learning receipt</span>
+        <p>${escapePublicHtml(entry.receipt)}</p>
+      </div>
+      <a href="${escapePublicHtml(entry.href)}">${escapePublicHtml(entry.action)}</a>
+    `;
+    pilotFeedbackList.append(card);
+  });
+}
+
+function buildPilotFeedbackItems() {
+  const reports = readPublicReports();
+  const reportEntries = reports.slice(0, 3).map((report, index) => {
+    const score = Number(report.score || 0);
+    const sealed = score >= 86;
+    return {
+      record: `FEED-120-L${index + 1}`,
+      state: sealed ? "Ready pattern" : "Owner review",
+      title: report.prompt || "Saved answer feedback",
+      summary: sealed
+        ? "A saved sealed report can become reusable pilot learning after the owner confirms the context and boundary."
+        : "The saved answer is valuable feedback, but it needs source or reviewer work before influencing future recommendations.",
+      owner: sealed ? "Customer success" : "Proof owner",
+      signalType: sealed ? "Accepted answer" : "Proof gap",
+      boundary: "Tenant-local first",
+      rollout: sealed ? "Candidate" : "Hold",
+      quote: sealed
+        ? `${score}% trust score shows a pattern worth reviewing for future answer guidance.`
+        : "Customer value is possible, but the answer needs one stronger proof move before reuse.",
+      improvement: sealed
+        ? "Promote only the proof pattern, not the raw customer answer, after owner approval."
+        : "Attach the missing evidence, rerun the verifier, and keep the signal local until approved.",
+      receipt: sealed ? "saved_report_learning_candidate" : "saved_report_feedback_hold",
+      href: getReportShareUrl(report, true),
+      action: "Open report",
+    };
+  });
+
+  const seededEntries = [
+    {
+      record: "FEED-120-001",
+      state: "Approved improvement",
+      title: "Make evidence expiry visible on buyer packets",
+      summary: "Three pilot teams asked when shared proof links expire. The fix is copy and UI, not a bigger workflow.",
+      owner: "Product",
+      signalType: "Support note",
+      boundary: "Aggregate-safe",
+      rollout: "Next UI build",
+      quote: "Can the buyer see when this packet expires before forwarding it internally?",
+      improvement: "Add an expiry line to buyer packet cards, share-copy text, and sealed report summaries.",
+      receipt: "feedback_expiry_visibility_approved",
+      href: "buyer.html",
+      action: "Open buyer",
+    },
+    {
+      record: "FEED-120-002",
+      state: "Owner review",
+      title: "Separate legal-sensitive claims before reuse",
+      summary: "Regulated pilots like the trust score, but legal wants stronger review gates around broad compliance language.",
+      owner: "Legal",
+      signalType: "Risk flag",
+      boundary: "Tenant-local",
+      rollout: "Review first",
+      quote: "The answer is useful, but the compliance sentence needs legal review before we send it.",
+      improvement: "Add a legal-sensitive label to repeated compliance phrases and route them to an owner before promotion.",
+      receipt: "legal_sensitive_learning_review",
+      href: "reviews.html",
+      action: "Open reviews",
+    },
+    {
+      record: "FEED-120-003",
+      state: "Approved improvement",
+      title: "Turn proof requests into evidence tasks",
+      summary: "Pilot teams repeatedly ask for DPA, SOC 2, and incident proof. The learning loop should create an owner task, not a loose note.",
+      owner: "Security",
+      signalType: "Proof request",
+      boundary: "Aggregate-safe category",
+      rollout: "Approved",
+      quote: "This would be perfect if it automatically told us which document we need next.",
+      improvement: "Group repeated proof requests by source class and add a suggested owner task to the improvement queue.",
+      receipt: "proof_request_tasking_approved",
+      href: "workspace.html",
+      action: "Open workspace",
+    },
+    {
+      record: "FEED-120-004",
+      state: "Policy hold",
+      title: "Do not learn from regional evidence until country rules are clear",
+      summary: "Country-specific proof patterns are valuable, but the learning boundary must stay stricter until policy approves reuse.",
+      owner: "Policy",
+      signalType: "Regional rule",
+      boundary: "Blocked sharing",
+      rollout: "Hold",
+      quote: "This source is valid in our region, but we cannot assume it applies elsewhere.",
+      improvement: "Keep the signal tenant-local and require a regional policy label before it can become aggregate guidance.",
+      receipt: "regional_learning_boundary_hold",
+      href: "policy.html",
+      action: "Open policy",
+    },
+    {
+      record: "FEED-120-005",
+      state: "Owner review",
+      title: "Shorten first-run review notes",
+      summary: "Pilot users understand the trust score faster when the review note gives one next action instead of a long explanation.",
+      owner: "Customer success",
+      signalType: "UX friction",
+      boundary: "Aggregate-safe",
+      rollout: "Experiment",
+      quote: "I like the result, but tell me the one thing I should fix first.",
+      improvement: "Add a one-line next action to report summaries and keep detailed flags behind the calm result cards.",
+      receipt: "first_run_next_action_experiment",
+      href: "verify.html",
+      action: "Open verifier",
+    },
+    {
+      record: "FEED-120-006",
+      state: "Ready pattern",
+      title: "Reuse accepted AI-training answer structure",
+      summary: "Multiple pilots ask the same AI-training question. The structure can become a reusable template after owner approval.",
+      owner: "AI governance",
+      signalType: "Accepted answer",
+      boundary: "Template only",
+      rollout: "Candidate",
+      quote: "This answer is exactly the shape we need for our customer security review.",
+      improvement: "Promote the structure, source list, and review note while keeping customer-specific wording tenant-local.",
+      receipt: "ai_training_template_candidate",
+      href: "registry.html",
+      action: "Open registry",
+    },
+  ];
+
+  return [...reportEntries, ...seededEntries].slice(0, 9);
+}
+
 function buildReviewLoopItems() {
   const reports = readPublicReports();
   const reportItems = reports.slice(0, 3).map((report, index) => {
@@ -7651,7 +7846,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v1.1 Alpha - Pilot Customer Command Center",
+      "Pilot phase: AnswerSeal v1.2 Alpha - Pilot Feedback Learning Loop",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

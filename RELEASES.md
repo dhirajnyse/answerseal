@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v1.2 Alpha - Pilot Feedback Learning Loop
+
+Phase: Pilot Feedback Learning Loop
+
+- Added a dedicated Pilot Feedback Learning Loop page for customer quotes, friction, proof requests, support notes, outcome signals, improvement owners, learning boundaries, and rollout receipts.
+- Added dynamic feedback cards that can seed learning candidates from saved sealed reports while preserving v1.1 report memory.
+- Connected the landing product spine, primary navigation, pilot board, demo sidebar, pricing tiers, build phases page, README, release notes, and public footer paths to the Pilot Feedback Learning Loop release identity.
+- Upgraded public storage to v1.2 while preserving v1.1 and earlier report memory.
+- Upgraded workspace storage to v1.2 while preserving v1.1 and earlier workspace memory, and upgraded export language to Review Pack v98.
+- Moved the next build toward v1.3 Pilot Outcome Ledger.
+
 ## v1.1 Alpha - Pilot Customer Command Center
 
 Phase: Pilot Customer Command Center
