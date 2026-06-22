@@ -13952,7 +13952,7 @@ svg {
 .launch-roadmap-track article.is-current::after {
   color: #0b5788;
   background: #e9f4ff;
-  content: "100% ready";
+  content: "Beta active";
 }
 
 .launch-roadmap-track article.is-pending::after {

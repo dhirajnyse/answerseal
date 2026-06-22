@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.0 Alpha - Private Beta Cohort Room
+
+Phase: Private Beta Cohort Room
+
+- Added a dedicated Private Beta Cohort Room page for invited beta teams, setup state, proof progress, support load, buyer activity, weekly receipts, owner actions, and expansion holds.
+- Evolved the Build page from 100% launch readiness into the first beta operating view, with launch still complete and beta operations starting at 8%.
+- Added Private Beta Cohort Room to the landing product spine, pricing page, demo build label, README, release notes, footer routes, and public release identity.
+- Reworked the path-to-launch track so Private Beta Launch Decision is shipped and Private Beta Cohort Room is the active operating phase.
+- Upgraded public storage to v2.0 while preserving v1.9 and earlier report memory.
+- Upgraded workspace storage to v2.0 while preserving v1.9 and earlier workspace memory, and upgraded export language to Review Pack v106.
+- Moved the next build toward v2.1 Cohort Signal Ledger.
+
 ## v1.9 Alpha - Private Beta Launch Decision
 
 Phase: Private Beta Launch Decision
