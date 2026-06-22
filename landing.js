@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.0 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v200";
+const PUBLIC_BUILD_VERSION = "v2.1 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v210";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v200",
   "answerseal.public.reports.v109",
   "answerseal.public.reports.v108",
   "answerseal.public.reports.v107",
@@ -4413,7 +4414,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v106 records private beta cohort room, private beta launch decision, pilot acceptance threshold, security and compliance pack, account and billing gate, live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
+      audit: "Review Pack v107 records cohort signal ledger, private beta cohort room, private beta launch decision, pilot acceptance threshold, security and compliance pack, account and billing gate, live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7854,7 +7855,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.0 Alpha - Private Beta Cohort Room",
+      "Pilot phase: AnswerSeal v2.1 Alpha - Cohort Signal Ledger",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

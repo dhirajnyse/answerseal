@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.1 Alpha - Cohort Signal Ledger
+
+Phase: Cohort Signal Ledger
+
+- Added a dedicated Cohort Signal Ledger page for weekly beta receipts, customer value, friction, support drag, buyer unblock, confidence levels, learning boundaries, owner decisions, and expansion evidence.
+- Upgraded the Build page beta operations view from 8% to 16%, showing the cohort room and signal ledger as the first two active beta loops.
+- Added Cohort Signal Ledger to the landing product spine, pricing page, demo build label, README, release notes, footer routes, and public release identity.
+- Reworked the path-to-launch track so Private Beta Cohort Room is shipped and Cohort Signal Ledger is the active operating phase.
+- Upgraded public storage to v2.1 while preserving v2.0 and earlier report memory.
+- Upgraded workspace storage to v2.1 while preserving v2.0 and earlier workspace memory, and upgraded export language to Review Pack v107.
+- Moved the next build toward v2.2 Beta Friction Queue.
+
 ## v2.0 Alpha - Private Beta Cohort Room
 
 Phase: Private Beta Cohort Room

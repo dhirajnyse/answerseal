@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.0 Alpha
+**Current version:** v2.1 Alpha
 
-**Current phase:** Private Beta Cohort Room
+**Current phase:** Cohort Signal Ledger
 
-**Current release:** v2.0 Alpha - Private Beta Cohort Room
+**Current release:** v2.1 Alpha - Cohort Signal Ledger
 
 ## Brand
 
@@ -180,7 +180,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Feedback learning cards show signal type, owner, boundary, rollout state, customer quote, smallest useful improvement, and learning receipt
 - Saved sealed reports can seed learning candidates while the team separates tenant-local feedback from aggregate-safe patterns
 - v1.2 turns pilot feedback into governed learning without letting raw customer context spread across tenants
-- Launch Readiness and Beta Operations Meter on the Build page with 100% private-beta launch readiness, 30/30 launch phases done, 0 hidden launch gates, and beta operations starting at 8%
+- Cohort Signal Ledger page for weekly beta receipts, customer value, friction, support drag, buyer unblock, confidence levels, learning boundaries, owner decisions, and expansion evidence
+- v2.1 turns beta activity into measured signals before it changes product, pricing, support, learning, or expansion decisions
+- Launch Readiness and Beta Operations Meter on the Build page with 100% private-beta launch readiness, 30/30 launch phases done, 0 hidden launch gates, and beta operations at 16% with measured signal learning
 - Readiness category percentages for core verifier, governance surface, pilot learning, backend readiness, launch operations, and launch proof
 - Roadmap cards now show done/current/pending percentage status directly inside the Build page path to 100%
 - Pilot Outcome Ledger connects approved feedback changes to before score, after score, buyer unblock, support load, proof reuse, renewal movement, and rollback watch
@@ -215,7 +217,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Trust score across factual risk, missing sources, unsupported claims, clarity, compliance risk, and actionability
 - Sealed report generation with risk flags, suggested improvements, the original prompt, the answer, check results, and a reuse decision
 - Saved local sealed reports for verified answer memory and quick restoration
-- CSV trust context and Word-compatible Review Pack v106 export with Private Beta Cohort Room, Private Beta Launch Decision, Pilot Acceptance Threshold, Security And Compliance Pack, Account And Billing Gate, Live Backend Wiring, Private Beta Launch Gate, Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
+- CSV trust context and Word-compatible Review Pack v107 export with Cohort Signal Ledger, Private Beta Cohort Room, Private Beta Launch Decision, Pilot Acceptance Threshold, Security And Compliance Pack, Account And Billing Gate, Live Backend Wiring, Private Beta Launch Gate, Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Success Room, Paid Pilot Conversion Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, and product spine sections
 - Evidence intake drawer with file preview status for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style uploads
 - Evidence coverage map for ready, weak, missing, and stale trust categories
 - Portal copy mode for buyer portals, including answer, citations, and risk status
@@ -477,7 +479,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - Manual question intake plus TXT, CSV, or Markdown imports
 - Evidence import for TXT, CSV, Markdown, PDF, DOCX, and XLSX-style files
 - Approval trail for reviewer handoff
-- CSV export and Word-compatible Review Pack v106 export with Private Beta Cohort Room, Private Beta Launch Decision, Pilot Acceptance Threshold, Security And Compliance Pack, Account And Billing Gate, Live Backend Wiring, Private Beta Launch Gate, Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Conversion Room, Paid Pilot Success Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
+- CSV export and Word-compatible Review Pack v107 export with Cohort Signal Ledger, Private Beta Cohort Room, Private Beta Launch Decision, Pilot Acceptance Threshold, Security And Compliance Pack, Account And Billing Gate, Live Backend Wiring, Private Beta Launch Gate, Pilot Outcome Ledger, Launch Readiness Meter, Pilot Feedback Learning Loop, Pilot Customer Command Center, Launch-Ready Workspace, Renewal Growth Room, Production Health Room, Production Launch Room, Customer Expansion Room, Paid Pilot Conversion Room, Paid Pilot Success Room, Private Beta Onboarding Room, Member Role Console, Invite Flow Prototype, Workspace Access Console, Auth Tenant Boundary, D1 Persistence Blueprint, Workspace Data Layer, Persistent Trust Records, Production Workspace Foundation, Release Recovery Desk, Ledger Health Monitor, Approval Release Ledger, Guard Approval Lab, Guard Tuning Queue, Guard Outcome Monitor, Recurrence Guard Engine, Trust Incident Timeline, Rollback Automation Agent, Live Rollout Monitor, Rollout Approval Console, Trust Weight Controller, Network Benefit Ledger, Tenant-Safe Proof Network, Proof Learning Memory, Buyer Proof Concierge, Buyer Trust Portal, Trust Policy Gateway, Learning Signal Loop, Model Connector Lab, Evaluation Bench, Versioned Review Loop, AI Artifact Registry, Answer Trust Check, Calm First View, MVP Core, product spine pages, global environment matrix, reinforcement policy board, outcome learning console, trust playbook studio, mission memory graph, trust mission autopilot, calm command bar, sovereign workspace console, network learning firewall, buyer feedback loop, buyer access room, buyer trust packet studio, evidence pack marketplace readiness, buyer trust graph, revenue outcome loop, trust operations command center, autonomous trust release train, continuous trust optimizer, governance feedback loop, policy enforcement agent, learning policy governor, learning ledger, evaluation lab, reinforcement control room, trust policy simulator, federated trust graph, autonomous trust orchestrator, trust benchmark network, adaptive trust playbooks, trust outcome memory, governed evidence agent, adaptive proof coach, privacy-safe learning network, trust center launchpad, learning loop, autonomous review runs, evidence gap autopilot, questionnaire import studio, evidence vault connectors, buyer follow-up inbox, buyer trust room, multi-buyer pipeline, deal analytics, portal readiness, retrieval rationale, workspace routing, secure access, data room folders, notes, close checklist, and claim trace
 
 ## Project Files
 
@@ -533,6 +535,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `acceptance.html` - Pilot Acceptance Threshold for saved-time proof, trust-score lift, support load, buyer unblock, customer receipts, and launch decision rules
 - `decision.html` - Private Beta Launch Decision for invite scope, owners, support rhythm, rollback paths, buyer-safe messaging, and the scoped go-small decision
 - `cohort.html` - Private Beta Cohort Room for beta customer health, weekly receipts, support load, buyer activity, and expansion holds
+- `signals.html` - Cohort Signal Ledger for weekly beta signals, learning boundaries, owner decisions, and expansion evidence
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -545,13 +548,14 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.1 Alpha - Cohort Signal Ledger
+## Next Phase: v2.2 Alpha - Beta Friction Queue
 
-- Record every weekly beta signal with customer, owner, source, confidence, and decision state.
-- Separate product friction, evidence gaps, support burden, and buyer objections before they become roadmap noise.
-- Show which customer signals stay tenant-local and which can become aggregate-safe improvement candidates.
-- Let the beta expand only when saved time, trust lift, buyer unblock, and support load stay healthy.
-- Use the signal ledger to choose continue, pause, narrow, expand, or convert decisions.
+- Separate setup confusion, weak proof, buyer objections, support drag, and pricing questions.
+- Assign one next action for every blocker so beta learning becomes work, not commentary.
+- Show whether a fix is enough to continue, repeat the test, hold expansion, or recover a customer.
+- Keep invite growth paused until the highest-friction themes have owners and proof of improvement.
+- Use friction resolution to decide whether the cohort can expand beyond proof-heavy teams.
+
 
 
 ## License
