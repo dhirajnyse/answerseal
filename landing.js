@@ -141,9 +141,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v0.96 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v96";
+const PUBLIC_BUILD_VERSION = "v0.97 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v97";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v96",
   "answerseal.public.reports.v95",
   "answerseal.public.reports.v94",
   "answerseal.public.reports.v93",
@@ -6223,9 +6224,9 @@ function renderPilotLaunchControlCenter() {
   const holdCount = entries.filter((entry) => entry.state.includes("Hold")).length;
   const taskCount = entries.filter((entry) => entry.state.includes("Task") || entry.state.includes("Review")).length;
 
-  if (pilotLaunchScore) pilotLaunchScore.textContent = `${readyCount}/${entries.length} pilot-ready`;
+  if (pilotLaunchScore) pilotLaunchScore.textContent = `${readyCount}/${entries.length} launch-ready`;
   if (pilotLaunchStatus) {
-    pilotLaunchStatus.textContent = `${taskCount} owner tasks and ${holdCount} launch holds are visible before the weekly pilot decision.`;
+    pilotLaunchStatus.textContent = `${taskCount} owner tasks and ${holdCount} launch holds are visible before production go-live.`;
   }
 
   pilotLaunchList.innerHTML = "";
@@ -6248,7 +6249,7 @@ function renderPilotLaunchControlCenter() {
       <p>${escapePublicHtml(entry.summary)}</p>
       <dl class="proof-memory-meta proof-launch-meta">
         <div>
-          <dt>Pilot</dt>
+          <dt>Launch</dt>
           <dd>${escapePublicHtml(entry.pilot)}</dd>
         </div>
         <div>
@@ -6265,7 +6266,7 @@ function renderPilotLaunchControlCenter() {
         </div>
       </dl>
       <div class="proof-memory-rule">
-        <span>Pilot action</span>
+        <span>Launch action</span>
         <p>${escapePublicHtml(entry.actionPath)}</p>
       </div>
       <div class="proof-memory-receipt">
@@ -6284,16 +6285,16 @@ function buildPilotLaunchItems() {
     const score = Number(report.score || 0);
     const ready = score >= 86;
     return {
-      contract: `LAUNCH-093-L${index + 1}`,
+      contract: `LAUNCH-097-L${index + 1}`,
       state: ready ? "Ready" : "Review task",
-      title: report.prompt || "Saved sealed report feeds pilot proof health.",
-      summary: "A saved report becomes useful pilot evidence when score, sources, owner review, and reuse decision are visible together.",
-      pilot: index === 0 ? "Aster Health" : "Pilot proof pack",
-      owner: ready ? "Reviewer" : "Workspace owner",
-      health: ready ? `${score}% trust` : "Proof needs work",
-      decision: ready ? "Enter weekly decision" : "Route proof fix",
-      actionPath: "Open the sealed report, confirm sources, then decide whether it improves customer proof health this week.",
-      receipt: ready ? "sealed_report_pilot_ready" : "sealed_report_pilot_review",
+      title: report.prompt || "Saved sealed report feeds production launch proof.",
+      summary: "A saved report becomes launch evidence when score, sources, owner review, share state, and customer-safe scope travel together.",
+      pilot: index === 0 ? "Aster Health go-live" : "Launch proof pack",
+      owner: ready ? "Launch owner" : "Reviewer",
+      health: ready ? `${score}% trust` : "Proof hold",
+      decision: ready ? "Attach to launch receipt" : "Route proof fix",
+      actionPath: "Open the sealed report, confirm source rights, then decide whether it can become part of the customer launch receipt.",
+      receipt: ready ? "sealed_report_launch_ready" : "sealed_report_launch_review",
       href: getReportShareUrl(report, true),
       action: "Open report",
     };
@@ -6301,142 +6302,142 @@ function buildPilotLaunchItems() {
 
   const seededEntries = [
     {
-      contract: "LAUNCH-093-001",
+      contract: "LAUNCH-097-001",
       state: "Ready",
-      title: "Pilot state is live-ready.",
-      summary: "Workspace, owner, first reviewer, proof pack, sample workflow, and buyer-safe link have a launch receipt.",
-      pilot: "Aster Health",
-      owner: "Founder owner",
-      health: "Launch baseline",
-      decision: "Start week one",
-      actionPath: "Confirm the pilot state before the first customer workflow starts so the team has one visible source of truth.",
-      receipt: "pilot_state_live_ready",
+      title: "Production account setup is launch-ready.",
+      summary: "Workspace, customer owner, admin owner, first reviewer, proof pack, buyer-safe links, and data scope have a go-live receipt.",
+      pilot: "Aster Health production",
+      owner: "Launch owner",
+      health: "Account baseline",
+      decision: "Prepare go-live",
+      actionPath: "Confirm workspace setup before production use starts so the customer and internal team share one visible source of truth.",
+      receipt: "production_account_setup_ready",
       href: "onboarding.html",
       action: "Open onboarding",
     },
     {
-      contract: "LAUNCH-093-002",
+      contract: "LAUNCH-097-002",
       state: "Task",
-      title: "Owner task lane groups open proof gaps.",
-      summary: "Buyer questions, stale source checks, role decisions, and conversion blockers route into one owner queue.",
-      pilot: "Week one",
-      owner: "Security reviewer",
-      health: "3 open tasks",
-      decision: "Fix before expand",
-      actionPath: "Review the owner lane each week and close proof gaps before asking the customer to expand usage.",
-      receipt: "owner_task_lane_open",
+      title: "Billing handoff needs package boundaries.",
+      summary: "Seat count, workspace limits, expansion package, renewal term, invoice contact, and commercial owner need one clean handoff.",
+      pilot: "Billing scope",
+      owner: "Founder",
+      health: "2 open terms",
+      decision: "Scope before launch",
+      actionPath: "Name the billing owner and freeze launch scope before inviting more customer users into the production workspace.",
+      receipt: "billing_handoff_terms_open",
       href: "reports.html",
       action: "Open reports",
     },
     {
-      contract: "LAUNCH-093-003",
+      contract: "LAUNCH-097-003",
       state: "Ready",
-      title: "Customer proof health is measurable.",
-      summary: "Trust score, source coverage, saved report reuse, and buyer activity show whether the pilot is becoming safer.",
-      pilot: "Aster Health",
+      title: "Launch proof health is measurable.",
+      summary: "Trust score, source coverage, saved report reuse, customer activity, and open holds show whether go-live is getting safer.",
+      pilot: "Launch health",
       owner: "AI governance",
       health: "83% coverage",
-      decision: "Watch trend",
-      actionPath: "Use proof health as the weekly quality signal before changing the pilot scope or promising conversion outcomes.",
-      receipt: "proof_health_measured",
+      decision: "Attach health review",
+      actionPath: "Use proof health as the go-live quality signal before changing customer scope or promising production outcomes.",
+      receipt: "launch_proof_health_measured",
       href: "health.html",
       action: "Open health",
     },
     {
-      contract: "LAUNCH-093-004",
+      contract: "LAUNCH-097-004",
       state: "Review task",
-      title: "Buyer question needs an accountable response owner.",
-      summary: "A customer data training question is ready to answer, but final release needs owner confirmation and proof note.",
-      pilot: "Buyer room",
-      owner: "Omar Khan",
-      health: "78% confidence",
-      decision: "Route answer",
-      actionPath: "Assign a response owner, attach the proof note, and decide whether the answer can be sent this week.",
-      receipt: "buyer_question_owner_routed",
+      title: "Support plan needs an accountable response owner.",
+      summary: "The first production customer needs onboarding cadence, response owner, proof refresh rhythm, and escalation path before go-live.",
+      pilot: "Support plan",
+      owner: "Customer success",
+      health: "Owner pending",
+      decision: "Route support",
+      actionPath: "Assign a customer response owner and define how proof gaps, escalations, and weekly health reviews are handled.",
+      receipt: "support_owner_routed",
       href: "buyer.html",
       action: "Open buyer room",
     },
     {
-      contract: "LAUNCH-093-005",
+      contract: "LAUNCH-097-005",
       state: "Ready",
-      title: "Weekly pilot decision has a draft.",
-      summary: "Keep, fix, expand, or close can be decided from proof health, owner tasks, buyer activity, and launch holds.",
-      pilot: "Weekly review",
+      title: "Customer-safe launch receipt has a draft.",
+      summary: "Go-live can be decided from proof health, billing scope, support owner, buyer access, data boundary, and rollback path.",
+      pilot: "Launch receipt",
       owner: "Founder owner",
       health: "Decision-ready",
-      decision: "Keep and fix",
-      actionPath: "Write the weekly pilot decision in plain language and keep only the next owner action visible.",
-      receipt: "weekly_pilot_decision_draft",
+      decision: "Draft receipt",
+      actionPath: "Write the launch decision in plain language and include only the scope, owners, holds, rollback path, and first success review.",
+      receipt: "customer_safe_launch_receipt_draft",
       href: "versions.html",
       action: "Open build plan",
     },
     {
-      contract: "LAUNCH-093-006",
+      contract: "LAUNCH-097-006",
       state: "Hold",
-      title: "Data boundary hold blocks paid pilot until documented.",
-      summary: "The first pilot can run, but durable workspace storage, buyer link history, and cross-tenant learning remain explicit holds.",
-      pilot: "Paid pilot gate",
+      title: "Data boundary hold blocks production launch.",
+      summary: "The customer can expand, but durable workspace storage, buyer link history, regional rules, and cross-tenant learning need explicit approval.",
+      pilot: "Production gate",
       owner: "Product owner",
       health: "Boundary hold",
       decision: "Document limits",
-      actionPath: "Explain which records are local demo memory today and which become production-backed before paid pilot expansion.",
-      receipt: "paid_pilot_data_boundary_hold",
+      actionPath: "Explain which records are production-backed, which stay customer-local, and which learning signals are never shared.",
+      receipt: "production_data_boundary_hold",
       href: "data.html",
       action: "Open data layer",
     },
     {
-      contract: "LAUNCH-093-007",
+      contract: "LAUNCH-097-007",
       state: "Ready",
-      title: "Launch receipt links back to onboarding.",
-      summary: "Onboarding state, role receipts, proof assets, buyer links, and current launch decision remain traceable.",
+      title: "Launch receipt links back to expansion proof.",
+      summary: "Expansion signal, stakeholder map, billing scope, support plan, proof assets, and go-live decision remain traceable.",
       pilot: "Receipt trail",
       owner: "Launch owner",
       health: "Trace complete",
       decision: "Retain receipt",
-      actionPath: "Keep the launch receipt connected to the original setup path so a future customer can repeat the pilot cleanly.",
+      actionPath: "Keep the launch receipt connected to expansion proof so the next production customer can repeat the path cleanly.",
       receipt: "launch_receipt_traced",
-      href: "onboarding.html",
-      action: "Open onboarding",
+      href: "expansion.html",
+      action: "Open expansion",
     },
     {
-      contract: "LAUNCH-093-008",
+      contract: "LAUNCH-097-008",
       state: "Task",
-      title: "Close signal needs a conversion owner.",
-      summary: "The pilot has proof movement, but the paid pilot conversation needs one owner, one ask, and one success measure.",
-      pilot: "Conversion",
+      title: "First success review needs a production owner.",
+      summary: "The launch has scope, but the first production review needs one owner, one date, and one success measure.",
+      pilot: "Success review",
       owner: "Founder",
-      health: "Close signal",
-      decision: "Prepare ask",
-      actionPath: "Name the conversion owner and define the paid pilot proof: workflow saved, time saved, risk reduced, or buyer unblocked.",
-      receipt: "conversion_owner_pending",
+      health: "Review signal",
+      decision: "Schedule review",
+      actionPath: "Name the production success owner and define the first review proof: workflow saved, time saved, risk reduced, or buyer unblocked.",
+      receipt: "production_success_owner_pending",
       href: "pricing.html",
       action: "Open pricing",
     },
     {
-      contract: "LAUNCH-093-009",
+      contract: "LAUNCH-097-009",
       state: "Ready",
-      title: "Learning loop has safe beta notes.",
-      summary: "The pilot can learn from outcomes while raw buyer context, private evidence, and tenant records stay local.",
-      pilot: "Learning loop",
+      title: "Learning loop has launch-safe boundaries.",
+      summary: "Production can learn from outcomes while raw customer context, private evidence, tenant records, and regional rules stay protected.",
+      pilot: "Learning boundary",
       owner: "AI governance",
       health: "Safe notes",
       decision: "Use local only",
-      actionPath: "Capture reusable lessons as abstract proof patterns, not raw buyer questions, files, prompts, or customer names.",
-      receipt: "safe_beta_learning_notes",
+      actionPath: "Capture reusable lessons as abstract proof patterns, never raw customer questions, files, prompts, or account names.",
+      receipt: "launch_safe_learning_boundary",
       href: "learning.html",
       action: "Open learning",
     },
     {
-      contract: "LAUNCH-093-010",
+      contract: "LAUNCH-097-010",
       state: "Complete",
-      title: "Pilot launch control is repeatable.",
-      summary: "The first customer pilot has a simple weekly operating layer: state, tasks, health, activity, decision, and receipt.",
+      title: "Production launch room is repeatable.",
+      summary: "The first production customer has a simple operating layer: readiness, billing, support, proof health, hold path, and launch receipt.",
       pilot: "Launch model",
       owner: "Founder owner",
       health: "Repeatable rhythm",
-      decision: "Run weekly",
-      actionPath: "Use this control center as the operating room until production data, auth, billing, and paid pilot conversion are ready.",
-      receipt: "pilot_launch_control_ready",
+      decision: "Go live carefully",
+      actionPath: "Use this room as the operating layer until production backend, billing, support, and customer success become real systems.",
+      receipt: "production_launch_room_ready",
       href: "pricing.html",
       action: "Open paid path",
     },
@@ -7352,7 +7353,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v0.96 Alpha - Customer Expansion Room",
+      "Pilot phase: AnswerSeal v0.97 Alpha - Production Launch Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

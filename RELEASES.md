@@ -1,5 +1,16 @@
 # AnswerSeal Releases
 
+## v0.97 Alpha - Production Launch Room
+
+Phase: Production Launch Room
+
+- Upgraded the existing Launch page into a Production Launch Room for account setup, billing handoff, support plan, customer-safe launch receipt, production holds, and reusable launch memory.
+- Reworked dynamic launch cards for saved report launch candidates, production account setup, billing handoff, launch proof health, support ownership, launch receipt, data boundary holds, first success review, launch-safe learning, and repeatable go-live rhythm.
+- Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the Production Launch Room release identity.
+- Upgraded public storage to v0.97 while preserving v0.96 and earlier report memory.
+- Upgraded workspace storage to v0.97 while preserving v0.96 and earlier workspace memory, and upgraded export language to Review Pack v93.
+- Moved the next build toward v0.98 Production Health Room.
+
 ## v0.96 Alpha - Customer Expansion Room
 
 Phase: Customer Expansion Room
@@ -19,7 +30,7 @@ Phase: Paid Pilot Success Room
 - Added dynamic success cards for saved report story candidates, week-one activation, outcome scorecards, renewal readiness, proof-story packaging, risk holds, champion packets, scope boundaries, renewal pricing, and repeatable success loops.
 - Connected the landing product spine, demo sidebar, pricing tiers, build phases page, footer paths, and public navigation to the new Success room.
 - Upgraded public storage to v0.95 while preserving v0.94 and earlier report memory.
-- Upgraded workspace storage to v0.95 while preserving v0.94 and earlier workspace memory, and upgraded export language to Review Pack v91.
+- Upgraded workspace storage to v0.95 while preserving v0.94 and earlier workspace memory, and upgraded export language to Review Pack v92.
 - Moved the next build toward v0.96 Customer Expansion Room.
 
 ## v0.94 Alpha - Paid Pilot Conversion Room
