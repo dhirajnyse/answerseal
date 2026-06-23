@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.7 Alpha - Customer Handoff Loop
+
+Phase: Customer Handoff Loop
+
+- Added `handoff.html` as the Customer Handoff Loop for support owners, next meetings, blocked proof, success signals, and expansion guards after the first review receipt.
+- Moved beta operations from 56% to 64% with 8/8 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, and customer handoff loop.
+- Added Customer Handoff Loop to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so First Review Receipt is shipped and Customer Handoff Loop is the active operating phase.
+- Upgraded public storage to v2.7 while preserving v2.6 and earlier report memory.
+- Upgraded workspace storage to v2.7 while preserving v2.6 and earlier workspace memory, and upgraded export language to Review Pack v113.
+- Moved the next build toward v2.8 Beta Expansion Decision.
+
 ## v2.6 Alpha - First Review Receipt
 
 Phase: First Review Receipt
