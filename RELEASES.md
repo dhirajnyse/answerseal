@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.4 Alpha - Beta Invite Control Room
+
+Phase: Beta Invite Control Room
+
+- Upgraded `invite.html` from the older invite prototype into the current Beta Invite Control Room for small invite batches, cohort fit, support capacity, onboarding promises, buyer-safe messaging, and expansion receipts.
+- Moved beta operations from 32% to 40% with 5/8 beta loops active: cohort, signal ledger, friction queue, readiness board, and invite control.
+- Added Beta Invite Control Room to the landing product spine, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Expansion Readiness Board is shipped and Beta Invite Control Room is the active operating phase.
+- Upgraded public storage to v2.4 while preserving v2.3 and earlier report memory.
+- Upgraded workspace storage to v2.4 while preserving v2.3 and earlier workspace memory, and upgraded export language to Review Pack v110.
+- Moved the next build toward v2.5 Beta Onboarding Promise.
+
 ## v2.3 Alpha - Expansion Readiness Board
 
 Phase: Expansion Readiness Board

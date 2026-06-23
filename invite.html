@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Invite Flow Prototype</title>
+    <title>AnswerSeal | Beta Invite Control Room</title>
     <meta
       name="description"
-      content="AnswerSeal Invite Flow Prototype guides owner invites, acceptance preview, role receipts, revocation, and recovery for private workspaces."
+      content="AnswerSeal Beta Invite Control Room approves small beta batches with cohort fit, support capacity, onboarding promises, and expansion receipts."
     />
     <meta name="theme-color" content="#00a889" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
@@ -24,14 +24,14 @@
 
       <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
         <span>Current build</span>
-        <strong>v2.3 Alpha</strong>
+        <strong>v2.4 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
         <a href="verify.html">Verify</a>
         <a href="reports.html">Reports</a>
         <a href="registry.html">Registry</a>
-        <a href="readiness.html">Readiness</a>
+        <a href="invite.html" aria-current="page">Invites</a>
         <a href="versions.html">Build</a>
         <a href="pricing.html">Pricing</a>
         <a href="pilot.html">Pilot</a>
@@ -42,26 +42,26 @@
     <main>
       <section class="product-hero proof-invite-hero">
         <div>
-          <span class="hero-kicker">Invite flow prototype</span>
-          <h1>Invite the first teammate without creating access confusion.</h1>
+          <span class="hero-kicker">Beta Invite Control Room</span>
+          <h1>Grow the beta in small batches the team can actually serve.</h1>
           <p>
-            v0.90 turns workspace access into a guided flow: owner invite composer, acceptance preview, role receipt,
-            revoke and recovery controls, buyer-safe access separation, and private beta readiness.
+            v2.4 turns readiness into controlled invite batches: cohort fit, support capacity,
+            onboarding promise, buyer-safe message, and a reversible expansion receipt.
           </p>
         </div>
         <aside class="product-status-card">
-          <span>Invite readiness</span>
+          <span>Batch readiness</span>
           <strong id="inviteFlowScore">0/0 invite-ready</strong>
-          <p id="inviteFlowStatus">Invite controls are waiting for workspace signals.</p>
+          <p id="inviteFlowStatus">Invite batches are waiting for readiness signals.</p>
         </aside>
       </section>
 
-      <section class="proof-memory-shell proof-invite-shell" aria-label="Invite flow prototype">
+      <section class="proof-memory-shell proof-invite-shell" aria-label="Beta invite control room">
         <div class="dashboard-toolbar">
-          <span class="hero-kicker">Guided access</span>
+          <span class="hero-kicker">Controlled batches</span>
           <div class="dashboard-actions">
-            <a class="hero-secondary" href="access.html">Open Access</a>
-            <a class="hero-secondary" href="auth.html">Open Auth</a>
+            <a class="hero-secondary" href="readiness.html">Open Readiness</a>
+            <a class="hero-secondary" href="cohort.html">Open Cohort</a>
             <a class="hero-secondary" href="versions.html">Open Roadmap</a>
             <a class="hero-primary" href="verify.html">Verify New Answer</a>
           </div>
@@ -70,76 +70,76 @@
         <div class="proof-memory-grid proof-invite-grid" id="inviteFlowList"></div>
       </section>
 
-      <section class="proof-network-firewall proof-invite-flow-section" aria-label="Invite flow model">
+      <section class="proof-network-firewall proof-invite-flow-section" aria-label="Invite batch model">
         <div>
           <span class="hero-kicker">Invite model</span>
-          <h2>Every invite should explain the role before it grants the role.</h2>
+          <h2>Every invite batch should explain why it is allowed now.</h2>
           <p>
-            The prototype keeps onboarding calm: owners compose one clear invite, teammates understand what they are
-            accepting, and every grant, revoke, expiry, or recovery step leaves a receipt.
+            The control room keeps beta growth quiet: each batch has a cohort reason, a capacity check,
+            a named onboarding promise, and a rollback path before the invite leaves the founder.
           </p>
         </div>
 
         <div class="proof-network-firewall-grid proof-invite-flow-grid">
           <article>
-            <span>Compose</span>
-            <strong>Owner sends with intent</strong>
-            <p>Email, role, expiry, workspace, reason, and access preview are visible before send.</p>
+            <span>Cohort</span>
+            <strong>Invite the right teams</strong>
+            <p>Each batch names the customer profile, proof pain, buyer motion, and reason for entering now.</p>
           </article>
           <article>
-            <span>Accept</span>
-            <strong>Teammate sees boundaries</strong>
-            <p>The invited user sees allowed actions, data scope, expiry, and inviter before accepting.</p>
+            <span>Capacity</span>
+            <strong>Support load is visible</strong>
+            <p>Founder time, setup help, proof review load, and buyer coaching are checked before approval.</p>
+          </article>
+          <article>
+            <span>Promise</span>
+            <strong>Onboarding is explicit</strong>
+            <p>New beta teams know the setup path, proof checklist, first review receipt, and support rhythm.</p>
           </article>
           <article>
             <span>Receipt</span>
-            <strong>Access becomes auditable</strong>
-            <p>The product records who granted which role, when it was accepted, and what it allowed.</p>
-          </article>
-          <article>
-            <span>Recover</span>
-            <strong>Access stays reversible</strong>
-            <p>Owners can revoke, expire, downgrade, renew, or recover without losing the original receipt.</p>
+            <strong>Expansion stays reversible</strong>
+            <p>Every go, narrow, hold, or recover decision leaves a readable expansion receipt.</p>
           </article>
         </div>
       </section>
 
-      <section class="proof-network-lift-section proof-invite-summary-section" aria-label="Private beta gate">
+      <section class="proof-network-lift-section proof-invite-summary-section" aria-label="Beta invite promise">
         <div>
-          <span class="hero-kicker">Private beta gate</span>
-          <h2>The first team invite is a product moment, not an admin chore.</h2>
+          <span class="hero-kicker">Beta promise</span>
+          <h2>A calm beta grows by proof, not by excitement.</h2>
           <p>
-            v0.90 keeps the product human: a founder can bring in a reviewer, contributor, or viewer with confidence,
-            while buyer links stay separate and every access change remains reversible.
+            v2.4 keeps expansion honest: invite fewer teams, choose sharper cohorts, protect support time,
+            and record why every new customer entered the beta.
           </p>
         </div>
         <div class="proof-network-lift-strip proof-invite-summary-strip">
           <article>
-            <span>Reviewer</span>
-            <strong>Approves trusted work</strong>
-            <p>Can review and approve sealed answers, but every promotion leaves a role receipt.</p>
+            <span>Fit</span>
+            <strong>Proof-heavy customers first</strong>
+            <p>Teams with real buyer trust pain enter before broad curiosity traffic.</p>
           </article>
           <article>
-            <span>Contributor</span>
-            <strong>Drafts without sealing</strong>
-            <p>Can create drafts and attach proof without gaining approval or external share authority.</p>
+            <span>Load</span>
+            <strong>Founder capacity protected</strong>
+            <p>No batch ships if setup, evidence review, or support coaching is already overloaded.</p>
           </article>
           <article>
-            <span>Viewer</span>
-            <strong>Reads safe summaries</strong>
-            <p>Can inspect sealed reports without opening private notes, drafts, or raw evidence.</p>
+            <span>Promise</span>
+            <strong>Onboarding stays specific</strong>
+            <p>Each invited team receives a clear first-workflow promise and a first review receipt.</p>
           </article>
           <article>
-            <span>Buyer</span>
-            <strong>Uses tokenized links</strong>
-            <p>Never becomes a workspace member and can be revoked without changing internal roles.</p>
+            <span>Control</span>
+            <strong>Expansion can pause</strong>
+            <p>Invite growth can narrow or stop without disturbing active beta teams.</p>
           </article>
         </div>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v2.3 Alpha</span>
+      <span>AnswerSeal v2.4 Alpha</span>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Reports</a>
       <a href="registry.html">Registry</a>
