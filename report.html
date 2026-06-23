@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AnswerSeal | Sealed Report</title>
+    <title>AnswerSeal | First Review Receipt</title>
     <meta
       name="description"
-      content="A shareable sealed report for a verified AI-generated answer."
+      content="AnswerSeal First Review Receipt captures the first beta workflow proof: sealed answer, sources, customer feedback, support effort, handoff decision, and learning boundary."
     />
     <meta name="theme-color" content="#00a889" />
     <link rel="icon" href="assets/answerseal-logo.svg" type="image/svg+xml" />
@@ -24,14 +24,14 @@
 
       <a class="version-badge" href="versions.html" aria-label="Open AnswerSeal build phases">
         <span>Current build</span>
-        <strong>v2.5 Alpha</strong>
+        <strong>v2.6 Alpha</strong>
       </a>
 
       <nav aria-label="Primary">
         <a href="verify.html">Verify</a>
         <a href="reports.html">Reports</a>
         <a href="registry.html">Registry</a>
-        <a href="onboarding.html">Onboard</a>
+        <a href="report.html" aria-current="page">Receipt</a>
         <a href="versions.html">Build</a>
         <a href="pricing.html">Pricing</a>
         <a href="pilot.html">Pilot</a>
@@ -42,15 +42,15 @@
     <main>
       <section class="product-hero">
         <div>
-          <span class="hero-kicker">Sealed report page</span>
-          <h1>One certified answer, ready for review.</h1>
+          <span class="hero-kicker">First review receipt</span>
+          <h1>Prove the first customer workflow before expansion.</h1>
           <p>
-            A sealed report is the artifact AnswerSeal creates after verification: score, flags,
-            improved answer, version note, and a clear summary of what can be trusted.
+            v2.6 turns the first beta answer into a receipt: trust score, source trail,
+            customer note, support effort, handoff decision, and safe learning boundary.
           </p>
         </div>
-        <aside class="report-score-card" aria-label="Sealed report score">
-          <span>Trust score</span>
+        <aside class="report-score-card" aria-label="First review receipt score">
+          <span>Receipt score</span>
           <strong id="sealedReportScore">0%</strong>
           <b id="sealedReportStatus">Ready</b>
         </aside>
@@ -58,27 +58,50 @@
 
       <section class="sealed-report-layout" aria-label="Sealed report detail">
         <article class="sealed-report-main">
-          <span class="hero-kicker">Report summary</span>
+          <span class="hero-kicker">Customer proof</span>
           <h2 id="sealedReportSummary">No report generated yet.</h2>
 
           <div class="report-block">
-            <span>Original prompt</span>
+            <span>Customer question</span>
             <p id="sealedReportPrompt">No prompt attached.</p>
           </div>
 
           <div class="report-block">
-            <span>Verified answer</span>
+            <span>First sealed answer</span>
             <p id="sealedReportAnswer">No answer attached.</p>
           </div>
 
           <div class="report-block">
-            <span>Sources or evidence</span>
+            <span>Source trail</span>
             <p id="sealedReportSources">No source attached.</p>
           </div>
 
           <div class="report-block">
-            <span>Suggested improved answer</span>
+            <span>Approved answer or safer rewrite</span>
             <p id="sealedReportImproved">Run the verifier to generate an improved answer.</p>
+          </div>
+
+          <div class="receipt-proof-grid" aria-label="First review receipt operations">
+            <article>
+              <span>Customer feedback</span>
+              <strong>Useful with source trail</strong>
+              <p>Capture whether the buyer accepted, challenged, or needed more proof.</p>
+            </article>
+            <article>
+              <span>Support effort</span>
+              <strong>One owner touch</strong>
+              <p>Record setup time, blocker count, and next support action before expanding.</p>
+            </article>
+            <article>
+              <span>Handoff decision</span>
+              <strong>Continue / narrow / hold</strong>
+              <p>The receipt says whether to keep onboarding, narrow scope, or pause expansion.</p>
+            </article>
+            <article>
+              <span>Learning boundary</span>
+              <strong>Tenant-safe first</strong>
+              <p>Reusable lessons are separated from private customer context.</p>
+            </article>
           </div>
         </article>
 
@@ -87,25 +110,18 @@
           <ul id="sealedReportFlags"></ul>
           <span class="hero-kicker">Trust checks</span>
           <ul class="check-list" id="sealedReportChecks"></ul>
-          <button class="hero-secondary" id="copySealedReport" type="button">Copy Report</button>
+          <button class="hero-secondary" id="copySealedReport" type="button">Copy Receipt</button>
           <button class="hero-secondary" id="shareSealedReport" type="button">Copy Share Link</button>
           <a class="hero-primary" href="verify.html">Verify Another Answer</a>
-          <a class="hero-secondary" href="reports.html">Open Dashboard</a>
-          <a class="hero-secondary" href="registry.html">Open Registry</a>
-          <a class="hero-secondary" href="reviews.html">Open Reviews</a>
-          <a class="hero-secondary" href="evaluation.html">Open Bench</a>
-          <a class="hero-secondary" href="connectors.html">Open Connectors</a>
+          <a class="hero-secondary" href="reports.html">Open Reports</a>
+          <a class="hero-secondary" href="onboarding.html">Open Onboarding</a>
           <a class="hero-secondary" href="learning.html">Open Learning Loop</a>
-          <a class="hero-secondary" href="policy.html">Open Policy Gateway</a>
-            <a class="hero-secondary" href="buyer.html">Open Buyer Portal</a>
-            <a class="hero-secondary" href="concierge.html">Open Concierge</a>
-            <a class="hero-secondary" href="memory.html">Open Memory</a>
         </aside>
       </section>
     </main>
 
     <footer class="landing-footer">
-      <span>AnswerSeal v2.5 Alpha</span>
+      <span>AnswerSeal v2.6 Alpha</span>
       <a href="verify.html">Verify</a>
       <a href="reports.html">Saved Reports</a>
       <a href="registry.html">Registry</a>

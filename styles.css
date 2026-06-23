@@ -13952,7 +13952,7 @@ svg {
 .launch-roadmap-track article.is-current::after {
   color: #0b5788;
   background: #e9f4ff;
-  content: "Onboarding active";
+  content: "Receipt active";
 }
 
 .launch-roadmap-track article.is-pending::after {
@@ -13988,6 +13988,47 @@ svg {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.48;
+}
+
+.receipt-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.receipt-proof-grid article {
+  min-height: 148px;
+  padding: 16px;
+  border: 1px solid rgba(0, 120, 100, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.receipt-proof-grid span {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.receipt-proof-grid strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.receipt-proof-grid p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 .phase-list {
@@ -14314,6 +14355,10 @@ svg {
 
   .hero-preview {
     display: none;
+  }
+
+  .receipt-proof-grid {
+    grid-template-columns: 1fr;
   }
 
   .hero-metrics,

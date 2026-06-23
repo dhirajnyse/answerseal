@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.6 Alpha - First Review Receipt
+
+Phase: First Review Receipt
+
+- Upgraded `report.html` from a generic sealed report into the current First Review Receipt for sealed first answers, source trails, customer feedback, support effort, handoff decisions, and safe learning boundaries.
+- Moved beta operations from 48% to 56% with 7/8 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, and first review receipt.
+- Added First Review Receipt to the landing product spine, reports dashboard language, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Beta Onboarding Promise is shipped and First Review Receipt is the active operating phase.
+- Upgraded public storage to v2.6 while preserving v2.5 and earlier report memory.
+- Upgraded workspace storage to v2.6 while preserving v2.5 and earlier workspace memory, and upgraded export language to Review Pack v112.
+- Moved the next build toward v2.7 Customer Handoff Loop.
+
 ## v2.5 Alpha - Beta Onboarding Promise
 
 Phase: Beta Onboarding Promise
