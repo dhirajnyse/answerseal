@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.5 Alpha - Beta Onboarding Promise
+
+Phase: Beta Onboarding Promise
+
+- Upgraded `onboarding.html` from the older onboarding foundation into the current Beta Onboarding Promise for first-workflow setup, proof checklist, named owner, support cadence, and first review receipt.
+- Moved beta operations from 40% to 48% with 6/8 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, and onboarding promise.
+- Added Beta Onboarding Promise to the landing product spine, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Beta Invite Control Room is shipped and Beta Onboarding Promise is the active operating phase.
+- Upgraded public storage to v2.5 while preserving v2.4 and earlier report memory.
+- Upgraded workspace storage to v2.5 while preserving v2.4 and earlier workspace memory, and upgraded export language to Review Pack v111.
+- Moved the next build toward v2.6 First Review Receipt.
+
 ## v2.4 Alpha - Beta Invite Control Room
 
 Phase: Beta Invite Control Room
