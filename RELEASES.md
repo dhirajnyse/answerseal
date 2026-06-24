@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.13 Alpha - Beta Confidence Digest
+
+Phase: Beta Confidence Digest
+
+- Added `beta-confidence-digest.html` as the Beta Confidence Digest for launch confidence, recovered holds, learning boundaries, founder weekly readout, and next-cohort decisions.
+- Moved beta operations from 98% to 100% with 14/14 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, customer handoff loop, expansion decision, support capacity forecast, expansion batch planner, beta promise calendar, promise follow-through monitor, and beta confidence digest.
+- Added Beta Confidence Digest to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Promise Follow-Through Monitor is shipped and Beta Confidence Digest is the active operating phase.
+- Upgraded public storage to v2.13 while preserving v2.12 and earlier report memory.
+- Upgraded workspace storage to v2.13 while preserving v2.12 and earlier workspace memory, and upgraded export language to Review Pack v119.
+- Moved the next build toward v2.14 Launch Evidence Binder.
+
 ## v2.12 Alpha - Promise Follow-Through Monitor
 
 Phase: Promise Follow-Through Monitor
