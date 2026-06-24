@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.16 Alpha - Buyer Follow-Up Console
+
+Phase: Buyer Follow-Up Console
+
+- Added `buyer-follow-up-console.html` as the Buyer Follow-Up Console for room questions, owner SLA routing, safe reply composing, learning receipts, and room context.
+- Moved beta operations to a 17/17 active loop with buyer follow-up console joining buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Buyer Follow-Up Console to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Buyer Launch Room is shipped and Buyer Follow-Up Console is the active operating phase.
+- Upgraded public storage to v2.16 while preserving v2.15 and earlier report memory.
+- Upgraded workspace storage to v2.16 while preserving v2.15 and earlier workspace memory, and upgraded export language to Review Pack v122.
+- Moved the next build toward v2.17 Buyer Outcome Ledger.
+
 ## v2.15 Alpha - Buyer Launch Room
 
 Phase: Buyer Launch Room
