@@ -13952,7 +13952,7 @@ svg {
 .launch-roadmap-track article.is-current::after {
   color: #0b5788;
   background: #e9f4ff;
-  content: "Batch active";
+  content: "Calendar active";
 }
 
 .launch-roadmap-track article.is-pending::after {
@@ -14416,7 +14416,9 @@ svg {
 }
 
 .batch-planner-section,
-.batch-receipt-section {
+.batch-receipt-section,
+.promise-calendar-section,
+.promise-receipt-section {
   display: grid;
   grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr);
   gap: clamp(24px, 5vw, 72px);
@@ -14431,13 +14433,21 @@ svg {
   background: #ffffff;
 }
 
+.promise-receipt-section {
+  background: #ffffff;
+}
+
 .batch-planner-copy,
-.batch-receipt-section > div:first-child {
+.batch-receipt-section > div:first-child,
+.promise-calendar-copy,
+.promise-receipt-section > div:first-child {
   max-width: 760px;
 }
 
 .batch-planner-copy h2,
-.batch-receipt-section h2 {
+.batch-receipt-section h2,
+.promise-calendar-copy h2,
+.promise-receipt-section h2 {
   margin: 18px 0 14px;
   color: var(--ink);
   font-size: clamp(2.1rem, 4vw, 4.2rem);
@@ -14445,7 +14455,9 @@ svg {
 }
 
 .batch-planner-copy p,
-.batch-receipt-section > div:first-child p {
+.batch-receipt-section > div:first-child p,
+.promise-calendar-copy p,
+.promise-receipt-section > div:first-child p {
   margin: 0;
   color: var(--muted);
   font-size: 1.04rem;
@@ -14453,18 +14465,23 @@ svg {
 }
 
 .batch-planner-grid,
-.batch-receipt-grid {
+.batch-receipt-grid,
+.promise-calendar-grid,
+.promise-receipt-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-.batch-receipt-grid {
+.batch-receipt-grid,
+.promise-receipt-grid {
   grid-template-columns: 1fr;
 }
 
 .batch-planner-grid article,
-.batch-receipt-grid article {
+.batch-receipt-grid article,
+.promise-calendar-grid article,
+.promise-receipt-grid article {
   display: grid;
   align-content: start;
   gap: 12px;
@@ -14481,8 +14498,14 @@ svg {
   min-height: 126px;
 }
 
+.promise-receipt-grid article {
+  min-height: 126px;
+}
+
 .batch-planner-grid span,
-.batch-receipt-grid span {
+.batch-receipt-grid span,
+.promise-calendar-grid span,
+.promise-receipt-grid span {
   display: inline-flex;
   width: fit-content;
   padding: 4px 9px;
@@ -14495,7 +14518,9 @@ svg {
 }
 
 .batch-planner-grid h3,
-.batch-receipt-grid strong {
+.batch-receipt-grid strong,
+.promise-calendar-grid h3,
+.promise-receipt-grid strong {
   margin: 0;
   color: var(--ink);
   font-size: 1.12rem;
@@ -14503,13 +14528,16 @@ svg {
 }
 
 .batch-planner-grid p,
-.batch-receipt-grid p {
+.batch-receipt-grid p,
+.promise-calendar-grid p,
+.promise-receipt-grid p {
   margin: 0;
   color: var(--muted);
   line-height: 1.52;
 }
 
-.batch-planner-grid dl {
+.batch-planner-grid dl,
+.promise-calendar-grid dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
@@ -14520,25 +14548,30 @@ svg {
   background: rgba(0, 168, 137, 0.14);
 }
 
-.batch-planner-grid dl div {
+.batch-planner-grid dl div,
+.promise-calendar-grid dl div {
   min-width: 0;
   padding: 10px;
   background: #fbfffd;
 }
 
 .batch-planner-grid dt,
-.batch-planner-grid dd {
+.batch-planner-grid dd,
+.promise-calendar-grid dt,
+.promise-calendar-grid dd {
   margin: 0;
 }
 
-.batch-planner-grid dt {
+.batch-planner-grid dt,
+.promise-calendar-grid dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
   text-transform: uppercase;
 }
 
-.batch-planner-grid dd {
+.batch-planner-grid dd,
+.promise-calendar-grid dd {
   color: var(--ink);
   font-size: 0.86rem;
   font-weight: 850;
@@ -14888,7 +14921,11 @@ svg {
   .batch-planner-section,
   .batch-receipt-section,
   .batch-planner-grid,
-  .batch-receipt-grid {
+  .batch-receipt-grid,
+  .promise-calendar-section,
+  .promise-receipt-section,
+  .promise-calendar-grid,
+  .promise-receipt-grid {
     grid-template-columns: 1fr;
   }
 

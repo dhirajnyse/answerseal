@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.11 Alpha - Beta Promise Calendar
+
+Phase: Beta Promise Calendar
+
+- Added `beta-promise-calendar.html` as the Beta Promise Calendar room for first-week milestones, proof due dates, review checkpoints, support follow-through, and calendar receipts.
+- Moved beta operations from 88% to 96% with 12/12 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, customer handoff loop, expansion decision, support capacity forecast, expansion batch planner, and beta promise calendar.
+- Added Beta Promise Calendar to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Expansion Batch Planner is shipped and Beta Promise Calendar is the active operating phase.
+- Upgraded public storage to v2.11 while preserving v2.10 and earlier report memory.
+- Upgraded workspace storage to v2.11 while preserving v2.10 and earlier workspace memory, and upgraded export language to Review Pack v117.
+- Moved the next build toward v2.12 Promise Follow-Through Monitor.
+
 ## v2.10 Alpha - Expansion Batch Planner
 
 Phase: Expansion Batch Planner
