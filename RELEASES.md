@@ -1,3 +1,17 @@
+# AnswerSeal Release Notes
+
+## v2.9 Alpha - Support Capacity Forecast
+
+Phase: Support Capacity Forecast
+
+- Added `support-capacity.html` as the Support Capacity Forecast room for owner load, proof work, response rhythm, review capacity, and rollback cost before beta expansion.
+- Moved beta operations from 72% to 80% with 10/10 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, customer handoff loop, expansion decision, and support capacity forecast.
+- Added Support Capacity Forecast to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Beta Expansion Decision is shipped and Support Capacity Forecast is the active operating phase.
+- Upgraded public storage to v2.9 while preserving v2.8 and earlier report memory.
+- Upgraded workspace storage to v2.9 while preserving v2.8 and earlier workspace memory, and upgraded export language to Review Pack v115.
+- Moved the next build toward v2.10 Expansion Batch Planner.
+
 # AnswerSeal Releases
 
 ## v2.8 Alpha - Beta Expansion Decision

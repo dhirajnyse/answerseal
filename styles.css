@@ -13952,7 +13952,7 @@ svg {
 .launch-roadmap-track article.is-current::after {
   color: #0b5788;
   background: #e9f4ff;
-  content: "Decision active";
+  content: "Capacity active";
 }
 
 .launch-roadmap-track article.is-pending::after {
@@ -14162,6 +14162,7 @@ svg {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: clamp(24px, 5vw, 72px);
+  padding: clamp(48px, 7vw, 92px) clamp(18px, 5vw, 78px);
   border-top: 1px solid rgba(31, 41, 38, 0.1);
   background:
     linear-gradient(115deg, rgba(236, 253, 249, 0.7), rgba(255, 255, 255, 0.9) 56%, rgba(238, 248, 255, 0.62)),
@@ -14280,6 +14281,135 @@ svg {
 }
 
 .beta-decision-grid dd {
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
+.capacity-forecast-section,
+.capacity-receipt-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 72px);
+  padding: clamp(48px, 7vw, 92px) clamp(18px, 5vw, 78px);
+  border-top: 1px solid rgba(31, 41, 38, 0.1);
+  background:
+    linear-gradient(115deg, rgba(236, 253, 249, 0.76), rgba(255, 255, 255, 0.9) 56%, rgba(238, 248, 255, 0.62)),
+    #fbfffd;
+}
+
+.capacity-receipt-section {
+  background: #ffffff;
+}
+
+.capacity-forecast-copy,
+.capacity-receipt-section > div:first-child {
+  max-width: 760px;
+}
+
+.capacity-forecast-copy h2,
+.capacity-receipt-section h2 {
+  margin: 18px 0 14px;
+  color: var(--ink);
+  font-size: clamp(2.1rem, 4vw, 4.2rem);
+  line-height: 0.98;
+}
+
+.capacity-forecast-copy p,
+.capacity-receipt-section > div:first-child p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.04rem;
+  line-height: 1.55;
+}
+
+.capacity-forecast-grid,
+.capacity-receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.capacity-receipt-grid {
+  grid-template-columns: 1fr;
+}
+
+.capacity-forecast-grid article,
+.capacity-receipt-grid article {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  min-height: 196px;
+  padding: 18px;
+  border: 1px solid rgba(0, 120, 100, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 42px rgba(31, 41, 38, 0.06);
+}
+
+.capacity-receipt-grid article {
+  min-height: 126px;
+}
+
+.capacity-forecast-grid span,
+.capacity-receipt-grid span {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: #dcfbf4;
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.capacity-forecast-grid h3,
+.capacity-receipt-grid strong {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.12rem;
+  line-height: 1.24;
+}
+
+.capacity-forecast-grid p,
+.capacity-receipt-grid p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.52;
+}
+
+.capacity-forecast-grid dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: auto 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 168, 137, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 168, 137, 0.14);
+}
+
+.capacity-forecast-grid dl div {
+  min-width: 0;
+  padding: 10px;
+  background: #fbfffd;
+}
+
+.capacity-forecast-grid dt,
+.capacity-forecast-grid dd {
+  margin: 0;
+}
+
+.capacity-forecast-grid dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.capacity-forecast-grid dd {
   color: var(--ink);
   font-size: 0.86rem;
   font-weight: 850;
@@ -14621,7 +14751,11 @@ svg {
   .beta-decision-section,
   .beta-receipt-section,
   .beta-decision-grid,
-  .beta-receipt-grid {
+  .beta-receipt-grid,
+  .capacity-forecast-section,
+  .capacity-receipt-section,
+  .capacity-forecast-grid,
+  .capacity-receipt-grid {
     grid-template-columns: 1fr;
   }
 
