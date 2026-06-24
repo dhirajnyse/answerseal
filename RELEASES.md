@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.10 Alpha - Expansion Batch Planner
+
+Phase: Expansion Batch Planner
+
+- Added `expansion-batch.html` as the Expansion Batch Planner room for batch size, cohort balance, support promises, held-account reasons, and batch receipts before beta growth.
+- Moved beta operations from 80% to 88% with 11/11 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, customer handoff loop, expansion decision, support capacity forecast, and expansion batch planner.
+- Added Expansion Batch Planner to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Support Capacity Forecast is shipped and Expansion Batch Planner is the active operating phase.
+- Upgraded public storage to v2.10 while preserving v2.9 and earlier report memory.
+- Upgraded workspace storage to v2.10 while preserving v2.9 and earlier workspace memory, and upgraded export language to Review Pack v116.
+- Moved the next build toward v2.11 Beta Promise Calendar.
+
 ## v2.9 Alpha - Support Capacity Forecast
 
 Phase: Support Capacity Forecast
