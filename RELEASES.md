@@ -1,5 +1,17 @@
 # AnswerSeal Releases
 
+## v2.8 Alpha - Beta Expansion Decision
+
+Phase: Beta Expansion Decision
+
+- Added `expansion-decision.html` as the Beta Expansion Decision room for invite, narrow, wait, and hold choices before customer growth.
+- Moved beta operations from 64% to 72% with 9/9 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, customer handoff loop, and expansion decision.
+- Added Beta Expansion Decision to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Customer Handoff Loop is shipped and Beta Expansion Decision is the active operating phase.
+- Upgraded public storage to v2.8 while preserving v2.7 and earlier report memory.
+- Upgraded workspace storage to v2.8 while preserving v2.7 and earlier workspace memory, and upgraded export language to Review Pack v114.
+- Moved the next build toward v2.9 Support Capacity Forecast.
+
 ## v2.7 Alpha - Customer Handoff Loop
 
 Phase: Customer Handoff Loop
