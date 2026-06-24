@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.12 Alpha - Promise Follow-Through Monitor
+
+Phase: Promise Follow-Through Monitor
+
+- Added `promise-follow-through.html` as the Promise Follow-Through Monitor for healthy milestones, overdue proof, owner recovery, customer confidence, and next-batch safety.
+- Moved beta operations from 96% to 98% with 13/13 beta loops active: cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, customer handoff loop, expansion decision, support capacity forecast, expansion batch planner, beta promise calendar, and promise follow-through monitor.
+- Added Promise Follow-Through Monitor to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Beta Promise Calendar is shipped and Promise Follow-Through Monitor is the active operating phase.
+- Upgraded public storage to v2.12 while preserving v2.11 and earlier report memory.
+- Upgraded workspace storage to v2.12 while preserving v2.11 and earlier workspace memory, and upgraded export language to Review Pack v118.
+- Moved the next build toward v2.13 Beta Confidence Digest.
+
 ## v2.11 Alpha - Beta Promise Calendar
 
 Phase: Beta Promise Calendar

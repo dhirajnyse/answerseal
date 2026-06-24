@@ -13952,7 +13952,7 @@ svg {
 .launch-roadmap-track article.is-current::after {
   color: #0b5788;
   background: #e9f4ff;
-  content: "Calendar active";
+  content: "Follow-up active";
 }
 
 .launch-roadmap-track article.is-pending::after {
@@ -14418,6 +14418,7 @@ svg {
 .batch-planner-section,
 .batch-receipt-section,
 .promise-calendar-section,
+.follow-through-section,
 .promise-receipt-section {
   display: grid;
   grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr);
@@ -14440,6 +14441,7 @@ svg {
 .batch-planner-copy,
 .batch-receipt-section > div:first-child,
 .promise-calendar-copy,
+.follow-through-copy,
 .promise-receipt-section > div:first-child {
   max-width: 760px;
 }
@@ -14447,6 +14449,7 @@ svg {
 .batch-planner-copy h2,
 .batch-receipt-section h2,
 .promise-calendar-copy h2,
+.follow-through-copy h2,
 .promise-receipt-section h2 {
   margin: 18px 0 14px;
   color: var(--ink);
@@ -14457,6 +14460,7 @@ svg {
 .batch-planner-copy p,
 .batch-receipt-section > div:first-child p,
 .promise-calendar-copy p,
+.follow-through-copy p,
 .promise-receipt-section > div:first-child p {
   margin: 0;
   color: var(--muted);
@@ -14467,6 +14471,8 @@ svg {
 .batch-planner-grid,
 .batch-receipt-grid,
 .promise-calendar-grid,
+.follow-through-grid,
+.follow-through-decision-grid,
 .promise-receipt-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -14474,6 +14480,7 @@ svg {
 }
 
 .batch-receipt-grid,
+.follow-through-decision-grid,
 .promise-receipt-grid {
   grid-template-columns: 1fr;
 }
@@ -14481,6 +14488,8 @@ svg {
 .batch-planner-grid article,
 .batch-receipt-grid article,
 .promise-calendar-grid article,
+.follow-through-grid article,
+.follow-through-decision-grid article,
 .promise-receipt-grid article {
   display: grid;
   align-content: start;
@@ -14498,6 +14507,7 @@ svg {
   min-height: 126px;
 }
 
+.follow-through-decision-grid article,
 .promise-receipt-grid article {
   min-height: 126px;
 }
@@ -14505,6 +14515,8 @@ svg {
 .batch-planner-grid span,
 .batch-receipt-grid span,
 .promise-calendar-grid span,
+.follow-through-grid span,
+.follow-through-decision-grid span,
 .promise-receipt-grid span {
   display: inline-flex;
   width: fit-content;
@@ -14520,6 +14532,8 @@ svg {
 .batch-planner-grid h3,
 .batch-receipt-grid strong,
 .promise-calendar-grid h3,
+.follow-through-grid h3,
+.follow-through-decision-grid strong,
 .promise-receipt-grid strong {
   margin: 0;
   color: var(--ink);
@@ -14530,6 +14544,8 @@ svg {
 .batch-planner-grid p,
 .batch-receipt-grid p,
 .promise-calendar-grid p,
+.follow-through-grid p,
+.follow-through-decision-grid p,
 .promise-receipt-grid p {
   margin: 0;
   color: var(--muted);
@@ -14537,7 +14553,8 @@ svg {
 }
 
 .batch-planner-grid dl,
-.promise-calendar-grid dl {
+.promise-calendar-grid dl,
+.follow-through-grid dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
@@ -14549,7 +14566,8 @@ svg {
 }
 
 .batch-planner-grid dl div,
-.promise-calendar-grid dl div {
+.promise-calendar-grid dl div,
+.follow-through-grid dl div {
   min-width: 0;
   padding: 10px;
   background: #fbfffd;
@@ -14558,12 +14576,15 @@ svg {
 .batch-planner-grid dt,
 .batch-planner-grid dd,
 .promise-calendar-grid dt,
-.promise-calendar-grid dd {
+.promise-calendar-grid dd,
+.follow-through-grid dt,
+.follow-through-grid dd {
   margin: 0;
 }
 
 .batch-planner-grid dt,
-.promise-calendar-grid dt {
+.promise-calendar-grid dt,
+.follow-through-grid dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
@@ -14571,10 +14592,23 @@ svg {
 }
 
 .batch-planner-grid dd,
-.promise-calendar-grid dd {
+.promise-calendar-grid dd,
+.follow-through-grid dd {
   color: var(--ink);
   font-size: 0.86rem;
   font-weight: 850;
+}
+
+.follow-through-grid article:first-child,
+.follow-through-decision-grid article:first-child {
+  border-color: rgba(0, 168, 137, 0.26);
+  background: linear-gradient(180deg, rgba(220, 251, 244, 0.9), rgba(255, 255, 255, 0.96));
+}
+
+.follow-through-grid article:nth-child(2),
+.follow-through-decision-grid article:nth-child(2) {
+  border-color: rgba(154, 103, 0, 0.26);
+  background: linear-gradient(180deg, rgba(255, 250, 240, 0.95), rgba(255, 255, 255, 0.98));
 }
 
 .phase-list {
@@ -14925,6 +14959,9 @@ svg {
   .promise-calendar-section,
   .promise-receipt-section,
   .promise-calendar-grid,
+  .follow-through-section,
+  .follow-through-grid,
+  .follow-through-decision-grid,
   .promise-receipt-grid {
     grid-template-columns: 1fr;
   }
