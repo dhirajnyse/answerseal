@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.14 Alpha - Launch Evidence Binder
+
+Phase: Launch Evidence Binder
+
+- Added `launch-evidence-binder.html` as the Launch Evidence Binder for buyer-ready proof packets, founder approval, support handoff, compliance receipts, and rollback notes.
+- Moved beta operations to a 15/15 active loop with launch evidence binder joining cohort, signal ledger, friction queue, readiness board, invite control, onboarding promise, first review receipt, customer handoff loop, expansion decision, support capacity forecast, expansion batch planner, beta promise calendar, promise follow-through monitor, and beta confidence digest.
+- Added Launch Evidence Binder to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Beta Confidence Digest is shipped and Launch Evidence Binder is the active operating phase.
+- Upgraded public storage to v2.14 while preserving v2.13 and earlier report memory.
+- Upgraded workspace storage to v2.14 while preserving v2.13 and earlier workspace memory, and upgraded export language to Review Pack v120.
+- Moved the next build toward v2.15 Buyer Launch Room.
+
 ## v2.13 Alpha - Beta Confidence Digest
 
 Phase: Beta Confidence Digest
