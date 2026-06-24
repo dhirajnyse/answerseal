@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.15 Alpha - Buyer Launch Room
+
+Phase: Buyer Launch Room
+
+- Added `buyer-launch-room.html` as the Buyer Launch Room for scoped proof access, buyer-safe evidence views, activity receipts, follow-up routing, expiry controls, and revocation clarity.
+- Moved beta operations to a 16/16 active loop with buyer launch room joining launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Buyer Launch Room to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Launch Evidence Binder is shipped and Buyer Launch Room is the active operating phase.
+- Upgraded public storage to v2.15 while preserving v2.14 and earlier report memory.
+- Upgraded workspace storage to v2.15 while preserving v2.14 and earlier workspace memory, and upgraded export language to Review Pack v121.
+- Moved the next build toward v2.16 Buyer Follow-Up Console.
+
 ## v2.14 Alpha - Launch Evidence Binder
 
 Phase: Launch Evidence Binder

@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.14 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2140";
+const PUBLIC_BUILD_VERSION = "v2.15 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2150";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v2140",
   "answerseal.public.reports.v2130",
   "answerseal.public.reports.v2120",
   "answerseal.public.reports.v2110",
@@ -1112,7 +1113,7 @@ function buildEvaluationBenchItems() {
       title: "Customer data training answer",
       summary: "Challenge absolute language and require the answer to stay inside named policy evidence.",
       baseline: "94% sealed",
-      candidate: "Prompt v2.15",
+      candidate: "Prompt v2.16",
       risk: "Low",
       gate: "Promote",
       finding: "Candidate preserved source-backed wording and did not add unsupported training claims.",
@@ -4427,7 +4428,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v120 records launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, beta invite control room, expansion readiness board, beta friction queue, cohort signal ledger, private beta cohort room, private beta launch decision, pilot acceptance threshold, security and compliance pack, account and billing gate, live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
+      audit: "Review Pack v121 records buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, beta invite control room, expansion readiness board, beta friction queue, cohort signal ledger, private beta cohort room, private beta launch decision, pilot acceptance threshold, security and compliance pack, account and billing gate, live backend wiring, private beta launch gate, pilot outcome ledger, launch readiness meter, pilot feedback learning, pilot customer command, launch room, renewal memory, workspace state, source status, and export decision.",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7682,7 +7683,7 @@ function buildReviewLoopItems() {
       title: "Customer data training answer prompt",
       note: "Prompt version now requires named sources and a reviewer note before output reuse.",
       reviewer: "AI governance",
-      version: "v2.14 -> v2.15",
+      version: "v2.15 -> v2.16",
       riskMove: "Medium to low",
       decision: "Promote",
       before: "Answer from approved context.",
@@ -7868,7 +7869,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.14 Alpha - Launch Evidence Binder",
+      "Pilot phase: AnswerSeal v2.15 Alpha - Buyer Launch Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
