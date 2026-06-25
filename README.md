@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.32 Alpha
+**Current version:** v2.33 Alpha
 
-**Current phase:** Audit Export Room
+**Current phase:** Buyer Portal Polish Room
 
-**Current release:** v2.32 Alpha - Audit Export Room
+**Current release:** v2.33 Alpha - Buyer Portal Polish Room
 
 ## Brand
 
@@ -36,6 +36,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 
 
+
+- Buyer Portal Polish Room page to simplify the external buyer experience with cleaner proof rooms, fewer clicks, clearer source summaries, and calm follow-up
 - Audit Export Room page to package sealed reports, source trails, owners, approvals, exceptions, and tenant controls into export-ready evidence
 - Trust Analytics Room page to show trust score movement, answer cycle time, proof coverage, buyer unblock, support load, and revenue confidence
 - Connector Handoff Room page to prepare CRM, ticketing, storage, docs, email, and API handoffs without breaking governance

@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.33 Alpha - Buyer Portal Polish Room
+
+Phase: Buyer Portal Polish Room
+
+- Added `buyer-portal-polish-room.html` as the Buyer Portal Polish Room to simplify the external buyer experience with cleaner proof rooms, fewer clicks, clearer source summaries, and calm follow-up.
+- Moved beta operations to a 34/34 active loop with buyer Portal Polish Room joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Buyer Portal Polish Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Buyer Portal Polish Room is the active operating phase.
+- Upgraded public storage to v2.33 while preserving v2.32 and earlier report memory.
+- Upgraded workspace storage to v2.33 while preserving v2.32 and earlier workspace memory, and upgraded export language to Review Pack v139.
+- Moved the next build toward v2.34 Launch Command Console.
+
 ## v2.32 Alpha - Audit Export Room
 
 Phase: Audit Export Room
