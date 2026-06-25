@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.30 Alpha - Connector Handoff Room
+
+Phase: Connector Handoff Room
+
+- Added `connector-handoff-room.html` as the Connector Handoff Room to prepare CRM, ticketing, storage, docs, email, and API handoffs without breaking governance.
+- Moved beta operations to a 31/31 active loop with connector Handoff Room joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Connector Handoff Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Connector Handoff Room is the active operating phase.
+- Upgraded public storage to v2.30 while preserving v2.29 and earlier report memory.
+- Upgraded workspace storage to v2.30 while preserving v2.29 and earlier workspace memory, and upgraded export language to Review Pack v136.
+- Moved the next build toward v2.31 Trust Analytics Room.
+
 ## v2.29 Alpha - Team Operating Layer
 
 Phase: Team Operating Layer

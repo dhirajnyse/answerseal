@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.29 Alpha
+**Current version:** v2.30 Alpha
 
-**Current phase:** Team Operating Layer
+**Current phase:** Connector Handoff Room
 
-**Current release:** v2.29 Alpha - Team Operating Layer
+**Current release:** v2.30 Alpha - Connector Handoff Room
 
 ## Brand
 
@@ -33,6 +33,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 
 
+
+- Connector Handoff Room page to prepare CRM, ticketing, storage, docs, email, and API handoffs without breaking governance
 - Team Operating Layer page to turn verification into daily roles, queues, rituals, SLAs, and escalation paths for real teams
 - Tenant Trust Control Room page to keep every customer workspace governed by local policy, region rules, access boundaries, and learning consent
 - Launch Readiness Console page to turn trust work into launch go, hold, owner, proof, support, and commercial readiness decisions
