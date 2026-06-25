@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.50 Alpha - Revenue Operations Ledger
+
+Phase: Revenue Operations Ledger
+
+- Added `revenue-operations-ledger.html` as the Revenue Operations Ledger to track pipeline, pricing, paid conversion, expansion, churn risk, proof ROI, and finance-ready revenue receipts.
+- Moved revenue launch readiness to 60% with Revenue Operations Ledger joining the commercial launch path.
+- Added Revenue Operations Ledger to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Support Assurance Center is shipped and Revenue Operations Ledger is the active revenue-launch phase.
+- Upgraded public report storage to v2500 and workspace storage to v2500 while preserving earlier report memory.
+- Upgraded export language to Review Pack v156.
+- Moved the next build toward v2.51 Security Review Exchange.
+
 ## v2.49 Alpha - Support Assurance Center
 
 Phase: Support Assurance Center
