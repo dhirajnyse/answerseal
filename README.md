@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.43 Alpha
+**Current version:** v2.44 Alpha
 
-**Current phase:** Global Compliance Command
+**Current phase:** Public Launch Board
 
-**Current release:** v2.43 Alpha - Global Compliance Command
+**Current release:** v2.44 Alpha - Public Launch Board
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Public Launch Board page to present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board
 
 - Global Compliance Command page to map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts
 
@@ -628,6 +630,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `expansion-intelligence-board.html` - Expansion Intelligence Board for identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts
 - `marketplace-partner-room.html` - Marketplace Partner Room for prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts
 - `global-compliance-command.html` - Global Compliance Command for map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts
+- `public-launch-board.html` - Public Launch Board for present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -652,13 +655,10 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.44 Alpha - Public Launch Board
+## Next Phase: v2.45 Alpha - Revenue Launch Engine
 
-The next release should present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board.
+The next release should turn launch readiness into pipeline motions, buyer qualification, paid conversion, and success handoff.
 
 Planned focus:
 
-- Product, support, compliance, onboarding, integration, partner, and global readiness show one score.
-- Verify AI answers, seal evidence, govern reuse, and export proof without a heavy platform rollout.
-- Screens, reports, receipts, audit language, and trial outcomes connect to the promise.
-- Launch, narrow, wait, or partner-led rollout recommendation shows reason and next action.
+- Connect launch proof to the next commercial motion.

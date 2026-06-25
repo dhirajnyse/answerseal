@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.44 Alpha - Public Launch Board
+
+Phase: Public Launch Board
+
+- Added `public-launch-board.html` as the Public Launch Board to present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board.
+- Moved production launch readiness to 100% with Public Launch Board joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Public Launch Board to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Global Compliance Command is shipped and Public Launch Board is the active production-launch phase.
+- Upgraded public storage to v2.44 while preserving v2.43 and earlier report memory.
+- Upgraded workspace storage to v2.44 while preserving v2.43 and earlier workspace memory, and upgraded export language to Review Pack v150.
+- Moved the next build toward v2.45 Revenue Launch Engine.
+
 ## v2.43 Alpha - Global Compliance Command
 
 Phase: Global Compliance Command
