@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.36 Alpha - Customer Onboarding Studio
+
+Phase: Customer Onboarding Studio
+
+- Added `customer-onboarding-studio.html` as the Customer Onboarding Studio to guide the first customer from account setup to first sealed answer with workspace setup, evidence intake, role checks, and success handoff.
+- Moved production launch readiness to 77% with Customer Onboarding Studio joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Customer Onboarding Studio to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Production Trial Room is shipped and Customer Onboarding Studio is the active production-launch phase.
+- Upgraded public storage to v2.36 while preserving v2.35 and earlier report memory.
+- Upgraded workspace storage to v2.36 while preserving v2.35 and earlier workspace memory, and upgraded export language to Review Pack v142.
+- Moved the next build toward v2.37 Enterprise Admin Console.
+
 ## v2.35 Alpha - Production Trial Room
 
 Phase: Production Trial Room
