@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.38 Alpha - Integration Readiness Hub
+
+Phase: Integration Readiness Hub
+
+- Added `integration-readiness-hub.html` as the Integration Readiness Hub to prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch.
+- Moved production launch readiness to 83% with Integration Readiness Hub joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Integration Readiness Hub to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Enterprise Admin Console is shipped and Integration Readiness Hub is the active production-launch phase.
+- Upgraded public storage to v2.38 while preserving v2.37 and earlier report memory.
+- Upgraded workspace storage to v2.38 while preserving v2.37 and earlier workspace memory, and upgraded export language to Review Pack v144.
+- Moved the next build toward v2.39 Audit Evidence Vault.
+
 ## v2.37 Alpha - Enterprise Admin Console
 
 Phase: Enterprise Admin Console

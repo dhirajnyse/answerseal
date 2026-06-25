@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.37 Alpha
+**Current version:** v2.38 Alpha
 
-**Current phase:** Enterprise Admin Console
+**Current phase:** Integration Readiness Hub
 
-**Current release:** v2.37 Alpha - Enterprise Admin Console
+**Current release:** v2.38 Alpha - Integration Readiness Hub
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Integration Readiness Hub page to prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch
 
 - Enterprise Admin Console page to give admins one calm control surface for organization policy, roles, workspace settings, billing boundaries, and launch health
 
@@ -610,6 +612,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `production-trial-room.html` - Production Trial Room for start the first production rehearsal with live data boundaries, role checks, support rhythm, rollback proof, and buyer-safe evidence
 - `customer-onboarding-studio.html` - Customer Onboarding Studio for guide the first customer from account setup to first sealed answer with workspace setup, evidence intake, role checks, and success handoff
 - `enterprise-admin-console.html` - Enterprise Admin Console for give admins one calm control surface for organization policy, roles, workspace settings, billing boundaries, and launch health
+- `integration-readiness-hub.html` - Integration Readiness Hub for prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -634,13 +637,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.38 Alpha - Integration Readiness Hub
+## Next Phase: v2.39 Alpha - Audit Evidence Vault
 
-The next release should prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch.
+The next release should centralize export-ready evidence, source retention, chain of custody, auditor views, compliance scopes, and audit receipts.
 
 Planned focus:
 
-- Key owner, environment, allowed events, expiry, and rotation plan are visible.
-- Report sealed, source stale, buyer viewed, and owner routed events have retry and audit rules.
-- Buyer account, deal risk, sealed report, and follow-up owner can sync without raw evidence leakage.
-- Drive, SharePoint, Notion, and upload routes show owner, freshness, and permission state.
+- Policy, SOC report, contract, reviewer note, and sealed report retention rules are visible.
+- Claim, evidence, reviewer, export, and buyer-room views are connected into one chain.
+- Auditors get evidence summaries, receipts, owner notes, and export logs without workspace clutter.
+- Every export shows included evidence, excluded data, owner, date, and reason.
