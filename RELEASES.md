@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.55 Alpha - Scale Learning Network
+
+Phase: Scale Learning Network
+
+- Added `scale-learning-network.html` as the Scale Learning Network to turn sealed outcomes into tenant-safe learning signals, network benefit, consent receipts, and evidence reuse without exposing raw customer work.
+- Moved scale launch readiness to 10% with Scale Learning Network joining the controlled-learning launch path.
+- Added Scale Learning Network to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2550 and workspace storage to v2550 while preserving earlier report memory.
+- Upgraded export language to Review Pack v161.
+- Moved the next build toward v2.56 Alpha Tenant Learning Controls.
+
 ## v2.54 Alpha - Launch Revenue Command
 
 Phase: Launch Revenue Command
