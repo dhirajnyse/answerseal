@@ -10616,6 +10616,11 @@ svg {
   background: #dcfbf4;
 }
 
+.landing-nav nav a[aria-current="page"] {
+  color: var(--accent-dark);
+  background: rgba(220, 251, 244, 0.84);
+}
+
 .landing-nav .nav-demo-link {
   color: #ffffff;
   background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
@@ -13952,7 +13957,7 @@ svg {
 .launch-roadmap-track article.is-current::after {
   color: #0b5788;
   background: #e9f4ff;
-  content: "Follow-up active";
+  content: "Outcome active";
 }
 
 .launch-roadmap-track article.is-pending::after {
@@ -14426,6 +14431,8 @@ svg {
 .buyer-room-receipt-section,
 .follow-up-console-section,
 .follow-up-receipt-section,
+.buyer-outcome-section,
+.buyer-outcome-receipt-section,
 .promise-receipt-section {
   display: grid;
   grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr);
@@ -14448,6 +14455,10 @@ svg {
   background: #ffffff;
 }
 
+.buyer-outcome-receipt-section {
+  background: #ffffff;
+}
+
 .batch-planner-copy,
 .batch-receipt-section > div:first-child,
 .promise-calendar-copy,
@@ -14456,9 +14467,11 @@ svg {
 .binder-copy,
 .buyer-room-copy,
 .follow-up-console-copy,
+.buyer-outcome-copy,
 .binder-receipt-section > div:first-child,
 .buyer-room-receipt-section > div:first-child,
 .follow-up-receipt-section > div:first-child,
+.buyer-outcome-receipt-section > div:first-child,
 .promise-receipt-section > div:first-child {
   max-width: 760px;
 }
@@ -14474,6 +14487,8 @@ svg {
 .buyer-room-receipt-section h2,
 .follow-up-console-copy h2,
 .follow-up-receipt-section h2,
+.buyer-outcome-copy h2,
+.buyer-outcome-receipt-section h2,
 .promise-receipt-section h2 {
   margin: 18px 0 14px;
   color: var(--ink);
@@ -14492,6 +14507,8 @@ svg {
 .buyer-room-receipt-section > div:first-child p,
 .follow-up-console-copy p,
 .follow-up-receipt-section > div:first-child p,
+.buyer-outcome-copy p,
+.buyer-outcome-receipt-section > div:first-child p,
 .promise-receipt-section > div:first-child p {
   margin: 0;
   color: var(--muted);
@@ -14512,6 +14529,8 @@ svg {
 .buyer-room-decision-grid,
 .follow-up-console-grid,
 .follow-up-decision-grid,
+.buyer-outcome-grid,
+.buyer-outcome-decision-grid,
 .promise-receipt-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -14524,6 +14543,7 @@ svg {
 .binder-decision-grid,
 .buyer-room-decision-grid,
 .follow-up-decision-grid,
+.buyer-outcome-decision-grid,
 .promise-receipt-grid {
   grid-template-columns: 1fr;
 }
@@ -14541,6 +14561,8 @@ svg {
 .buyer-room-decision-grid article,
 .follow-up-console-grid article,
 .follow-up-decision-grid article,
+.buyer-outcome-grid article,
+.buyer-outcome-decision-grid article,
 .promise-receipt-grid article {
   display: grid;
   align-content: start;
@@ -14563,6 +14585,7 @@ svg {
 .binder-decision-grid article,
 .buyer-room-decision-grid article,
 .follow-up-decision-grid article,
+.buyer-outcome-decision-grid article,
 .promise-receipt-grid article {
   min-height: 126px;
 }
@@ -14580,6 +14603,8 @@ svg {
 .buyer-room-decision-grid span,
 .follow-up-console-grid span,
 .follow-up-decision-grid span,
+.buyer-outcome-grid span,
+.buyer-outcome-decision-grid span,
 .promise-receipt-grid span {
   display: inline-flex;
   width: fit-content;
@@ -14605,6 +14630,8 @@ svg {
 .buyer-room-decision-grid strong,
 .follow-up-console-grid h3,
 .follow-up-decision-grid strong,
+.buyer-outcome-grid h3,
+.buyer-outcome-decision-grid strong,
 .promise-receipt-grid strong {
   margin: 0;
   color: var(--ink);
@@ -14625,6 +14652,8 @@ svg {
 .buyer-room-decision-grid p,
 .follow-up-console-grid p,
 .follow-up-decision-grid p,
+.buyer-outcome-grid p,
+.buyer-outcome-decision-grid p,
 .promise-receipt-grid p {
   margin: 0;
   color: var(--muted);
@@ -14637,7 +14666,8 @@ svg {
 .digest-grid dl,
 .binder-grid dl,
 .buyer-room-grid dl,
-.follow-up-console-grid dl {
+.follow-up-console-grid dl,
+.buyer-outcome-grid dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
@@ -14654,7 +14684,8 @@ svg {
 .digest-grid dl div,
 .binder-grid dl div,
 .buyer-room-grid dl div,
-.follow-up-console-grid dl div {
+.follow-up-console-grid dl div,
+.buyer-outcome-grid dl div {
   min-width: 0;
   padding: 10px;
   background: #fbfffd;
@@ -14673,7 +14704,9 @@ svg {
 .buyer-room-grid dt,
 .buyer-room-grid dd,
 .follow-up-console-grid dt,
-.follow-up-console-grid dd {
+.follow-up-console-grid dd,
+.buyer-outcome-grid dt,
+.buyer-outcome-grid dd {
   margin: 0;
 }
 
@@ -14683,7 +14716,8 @@ svg {
 .digest-grid dt,
 .binder-grid dt,
 .buyer-room-grid dt,
-.follow-up-console-grid dt {
+.follow-up-console-grid dt,
+.buyer-outcome-grid dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
@@ -14696,7 +14730,8 @@ svg {
 .digest-grid dd,
 .binder-grid dd,
 .buyer-room-grid dd,
-.follow-up-console-grid dd {
+.follow-up-console-grid dd,
+.buyer-outcome-grid dd {
   color: var(--ink);
   font-size: 0.86rem;
   font-weight: 850;
@@ -14711,7 +14746,9 @@ svg {
 .buyer-room-grid article:first-child,
 .buyer-room-decision-grid article:first-child,
 .follow-up-console-grid article:first-child,
-.follow-up-decision-grid article:first-child {
+.follow-up-decision-grid article:first-child,
+.buyer-outcome-grid article:first-child,
+.buyer-outcome-decision-grid article:first-child {
   border-color: rgba(0, 168, 137, 0.26);
   background: linear-gradient(180deg, rgba(220, 251, 244, 0.9), rgba(255, 255, 255, 0.96));
 }
@@ -14725,7 +14762,9 @@ svg {
 .buyer-room-grid article:nth-child(2),
 .buyer-room-decision-grid article:nth-child(2),
 .follow-up-console-grid article:nth-child(2),
-.follow-up-decision-grid article:nth-child(2) {
+.follow-up-decision-grid article:nth-child(2),
+.buyer-outcome-grid article:nth-child(2),
+.buyer-outcome-decision-grid article:nth-child(2) {
   border-color: rgba(154, 103, 0, 0.26);
   background: linear-gradient(180deg, rgba(255, 250, 240, 0.95), rgba(255, 255, 255, 0.98));
 }
@@ -15088,6 +15127,8 @@ svg {
   .buyer-room-receipt-section,
   .follow-up-console-section,
   .follow-up-receipt-section,
+  .buyer-outcome-section,
+  .buyer-outcome-receipt-section,
   .digest-grid,
   .digest-decision-grid,
   .binder-grid,
@@ -15096,6 +15137,8 @@ svg {
   .buyer-room-decision-grid,
   .follow-up-console-grid,
   .follow-up-decision-grid,
+  .buyer-outcome-grid,
+  .buyer-outcome-decision-grid,
   .promise-receipt-grid {
     grid-template-columns: 1fr;
   }

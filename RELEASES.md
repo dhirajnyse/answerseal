@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.17 Alpha - Buyer Outcome Ledger
+
+Phase: Buyer Outcome Ledger
+
+- Added `buyer-outcome-ledger.html` as the Buyer Outcome Ledger for unblock signal, proof improvement, support-drag visibility, reuse scope, and deal confidence.
+- Moved beta operations to an 18/18 active loop with buyer outcome ledger joining buyer follow-up console, buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Buyer Outcome Ledger to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Buyer Follow-Up Console is shipped and Buyer Outcome Ledger is the active operating phase.
+- Upgraded public storage to v2.17 while preserving v2.16 and earlier report memory.
+- Upgraded workspace storage to v2.17 while preserving v2.16 and earlier workspace memory, and upgraded export language to Review Pack v123.
+- Moved the next build toward v2.18 Revenue Confidence Room.
+
 ## v2.16 Alpha - Buyer Follow-Up Console
 
 Phase: Buyer Follow-Up Console
