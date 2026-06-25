@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.72 Alpha - Enterprise Command Plane
+
+Phase: Enterprise Command Plane
+
+- Added `enterprise-command-plane.html` as the Enterprise Command Plane to unify tenant portfolio views, workspace policies, admin roles, usage limits, billing readiness, environment controls, and executive trust oversight.
+- Moved scale launch readiness to 80% with Enterprise Command Plane joining the controlled-learning launch path.
+- Added Enterprise Command Plane to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2720 and workspace storage to v2720 while preserving earlier report memory.
+- Upgraded export language to Review Pack v178.
+- Moved the next build toward v2.73 Alpha Launch Monetization Suite.
+
 ## v2.71 Alpha - Operations Observability Grid
 
 Phase: Operations Observability Grid

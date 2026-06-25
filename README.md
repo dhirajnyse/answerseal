@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.71 Alpha
+**Current version:** v2.72 Alpha
 
-**Current phase:** Operations Observability Grid
+**Current phase:** Enterprise Command Plane
 
-**Current release:** v2.71 Alpha - Operations Observability Grid
+**Current release:** v2.72 Alpha - Enterprise Command Plane
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Enterprise Command Plane page to unify tenant portfolio views, workspace policies, admin roles, usage limits, billing readiness, environment controls, and executive trust oversight
 
 - Operations Observability Grid page to track service health, trust SLOs, connector latency, export queues, reviewer bottlenecks, incident watch, and customer-facing reliability signals
 
@@ -693,6 +695,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `enterprise-command-plane.html` - Enterprise Command Plane for unify tenant portfolio views, workspace policies, admin roles, usage limits, billing readiness, environment controls, and executive trust oversight
 - `operations-observability-grid.html` - Operations Observability Grid for track service health, trust SLOs, connector latency, export queues, reviewer bottlenecks, incident watch, and customer-facing reliability signals
 - `partner-connector-market.html` - Partner Connector Market for catalog verified connectors, partner packages, implementation paths, connector risk scores, setup receipts, and marketplace-ready trust extensions
 - `residency-privacy-plane.html` - Residency Privacy Plane for manage country rules, residency zones, privacy redaction, regional evidence rights, transfer holds, and tenant-specific data boundaries
@@ -736,13 +739,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.72 Alpha - Enterprise Command Plane
+## Next Phase: v2.73 Alpha - Launch Monetization Suite
 
-The next release should unify tenant portfolio views, workspace policies, admin roles, usage limits, billing readiness, environment controls, and executive trust oversight.
+The next release should connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions.
 
 Planned focus:
 
-- Launch monetization suite.
-- Plan gates.
-- Usage packaging.
-- Customer expansion.
+- Go-to-market command.
+- Launch calendar.
+- Founder dashboard.
+- Customer proof engine.
