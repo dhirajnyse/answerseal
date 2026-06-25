@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.18 Alpha - Revenue Confidence Room
+
+Phase: Revenue Confidence Room
+
+- Added `revenue-confidence-room.html` as the Revenue Confidence Room for pipeline confidence, revenue risk, expansion timing, executive proof, and owner routing.
+- Moved beta operations to a 19/19 active loop with revenue confidence room joining buyer outcome ledger, buyer follow-up console, buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Revenue Confidence Room to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Buyer Outcome Ledger is shipped and Revenue Confidence Room is the active operating phase.
+- Upgraded public storage to v2.18 while preserving v2.17 and earlier report memory.
+- Upgraded workspace storage to v2.18 while preserving v2.17 and earlier workspace memory, and upgraded export language to Review Pack v124.
+- Moved the next build toward v2.19 Executive Trust Briefing Room.
+
 ## v2.17 Alpha - Buyer Outcome Ledger
 
 Phase: Buyer Outcome Ledger
