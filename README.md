@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.36 Alpha
+**Current version:** v2.37 Alpha
 
-**Current phase:** Customer Onboarding Studio
+**Current phase:** Enterprise Admin Console
 
-**Current release:** v2.36 Alpha - Customer Onboarding Studio
+**Current release:** v2.37 Alpha - Enterprise Admin Console
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Enterprise Admin Console page to give admins one calm control surface for organization policy, roles, workspace settings, billing boundaries, and launch health
 
 - Customer Onboarding Studio page to guide the first customer from account setup to first sealed answer with workspace setup, evidence intake, role checks, and success handoff
 
@@ -607,6 +609,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `expansion.html` - Renewal Growth Room for renewal pipeline, executive value proof, churn prevention, expansion asks, reference readiness, and growth receipts
 - `production-trial-room.html` - Production Trial Room for start the first production rehearsal with live data boundaries, role checks, support rhythm, rollback proof, and buyer-safe evidence
 - `customer-onboarding-studio.html` - Customer Onboarding Studio for guide the first customer from account setup to first sealed answer with workspace setup, evidence intake, role checks, and success handoff
+- `enterprise-admin-console.html` - Enterprise Admin Console for give admins one calm control surface for organization policy, roles, workspace settings, billing boundaries, and launch health
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -631,13 +634,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.37 Alpha - Enterprise Admin Console
+## Next Phase: v2.38 Alpha - Integration Readiness Hub
 
-The next release should give admins one calm control surface for organization policy, roles, workspace settings, billing boundaries, and launch health.
+The next release should prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch.
 
 Planned focus:
 
-- Tenant defaults, AI learning, evidence sharing, and buyer-room settings show owner and receipt.
-- Admin, trust lead, reviewer, legal, CS, and buyer viewer roles map to exact actions.
-- Admins see where data can move and which controls block promotion.
-- Plan, seat, trial, upgrade, and enterprise hold states are shown without clutter.
+- Key owner, environment, allowed events, expiry, and rotation plan are visible.
+- Report sealed, source stale, buyer viewed, and owner routed events have retry and audit rules.
+- Buyer account, deal risk, sealed report, and follow-up owner can sync without raw evidence leakage.
+- Drive, SharePoint, Notion, and upload routes show owner, freshness, and permission state.

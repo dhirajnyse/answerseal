@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.37 Alpha - Enterprise Admin Console
+
+Phase: Enterprise Admin Console
+
+- Added `enterprise-admin-console.html` as the Enterprise Admin Console to give admins one calm control surface for organization policy, roles, workspace settings, billing boundaries, and launch health.
+- Moved production launch readiness to 80% with Enterprise Admin Console joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Enterprise Admin Console to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Customer Onboarding Studio is shipped and Enterprise Admin Console is the active production-launch phase.
+- Upgraded public storage to v2.37 while preserving v2.36 and earlier report memory.
+- Upgraded workspace storage to v2.37 while preserving v2.36 and earlier workspace memory, and upgraded export language to Review Pack v143.
+- Moved the next build toward v2.38 Integration Readiness Hub.
+
 ## v2.36 Alpha - Customer Onboarding Studio
 
 Phase: Customer Onboarding Studio
