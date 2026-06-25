@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.34 Alpha
+**Current version:** v2.35 Alpha
 
-**Current phase:** Launch Command Console
+**Current phase:** Production Trial Room
 
-**Current release:** v2.34 Alpha - Launch Command Console
+**Current release:** v2.35 Alpha - Production Trial Room
 
 ## Brand
 
@@ -28,14 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-
-
-
-
-
-
-
-
+- Production Trial Room page to start the first production rehearsal with live data boundaries, role checks, support rhythm, rollback proof, and buyer-safe evidence
 
 
 - Launch Command Console page to unify readiness, tenants, teams, connectors, analytics, audits, buyer rooms, and launch decisions into one calm command surface
@@ -610,6 +603,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `conversion.html` - Paid Pilot Conversion Room for conversion signal, buyer proof packet, scoped terms, close receipts, and proof holds
 - `success.html` - Paid Pilot Success Room for activation, outcome scorecards, renewal signals, customer proof stories, and expansion holds
 - `expansion.html` - Renewal Growth Room for renewal pipeline, executive value proof, churn prevention, expansion asks, reference readiness, and growth receipts
+- `production-trial-room.html` - Production Trial Room for start the first production rehearsal with live data boundaries, role checks, support rhythm, rollback proof, and buyer-safe evidence
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -634,13 +628,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.25 Alpha - Renewal Watch Room
+## Next Phase: v2.36 Alpha - Customer Onboarding Studio
 
-The next release should watch reopened packets after resend: buyer activity, unanswered questions, stale-proof risk, access drift, and the next owner action.
+The next release should guide the first customer from account setup to first sealed answer with workspace setup, evidence intake, role checks, and success handoff.
 
 Planned focus:
 
-- Show whether the renewed packet was viewed by the intended audience in the watch window
-- Route new buyer questions back to the right owner without losing the resend context
-- Warn when old links, expired viewers, or broad access no longer match the approved distribution
-- Decide whether to close, follow up, resend again, revoke, or refresh proof after the watch period
+- Workspace, account, invite, evidence, first review, and handoff steps are shown in order.
+- Founder, trust lead, reviewer, legal, and buyer-room owner have visible permissions.
+- The first policy, SOC report, or approved answer is attached before broad import.
+- Customer success sees activation, blocker, next meeting, and renewal signal from day one.

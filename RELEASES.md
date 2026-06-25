@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.35 Alpha - Production Trial Room
+
+Phase: Production Trial Room
+
+- Added `production-trial-room.html` as the Production Trial Room to start the first production rehearsal with live data boundaries, role checks, support rhythm, rollback proof, and buyer-safe evidence.
+- Moved production launch readiness to 74% with Production Trial Room joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Production Trial Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Launch Command Console is shipped and Production Trial Room is the active production-launch phase.
+- Upgraded public storage to v2.35 while preserving v2.34 and earlier report memory.
+- Upgraded workspace storage to v2.35 while preserving v2.34 and earlier workspace memory, and upgraded export language to Review Pack v141.
+- Moved the next build toward v2.36 Customer Onboarding Studio.
+
 ## v2.34 Alpha - Launch Command Console
 
 Phase: Launch Command Console
