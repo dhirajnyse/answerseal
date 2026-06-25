@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.20 Alpha - Leadership Share Control Room
+
+Phase: Leadership Share Control Room
+
+- Added `leadership-share-control-room.html` as the Leadership Share Control Room for audience rules, redaction levels, expiry, revocation, share receipts, and governed executive-brief distribution.
+- Moved beta operations to a 21/21 active loop with leadership share control room joining executive briefing room, revenue confidence room, buyer outcome ledger, buyer follow-up console, buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Leadership Share Control Room to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Executive Trust Briefing Room is shipped and Leadership Share Control Room is the active operating phase.
+- Upgraded public storage to v2.20 while preserving v2.19 and earlier report memory.
+- Upgraded workspace storage to v2.20 while preserving v2.19 and earlier workspace memory, and upgraded export language to Review Pack v126.
+- Moved the next build toward v2.21 Share Activity Observatory.
+
 ## v2.19 Alpha - Executive Trust Briefing Room
 
 Phase: Executive Trust Briefing Room
