@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.54 Alpha - Launch Revenue Command
+
+Phase: Launch Revenue Command
+
+- Added `launch-revenue-command.html` as the Launch Revenue Command to unify pipeline, qualification, deal rooms, implementation, support, revenue ops, security exchange, policy, procurement, and launch decisions.
+- Moved revenue launch readiness to 100% with Launch Revenue Command joining the commercial launch path.
+- Added Launch Revenue Command to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Enterprise Procurement Pack is shipped and Launch Revenue Command is the active revenue-launch phase.
+- Upgraded public report storage to v2540 and workspace storage to v2540 while preserving earlier report memory.
+- Upgraded export language to Review Pack v160.
+- Moved the next build toward v2.55 Scale Learning Network.
+
 ## v2.53 Alpha - Enterprise Procurement Pack
 
 Phase: Enterprise Procurement Pack
