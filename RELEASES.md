@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.43 Alpha - Global Compliance Command
+
+Phase: Global Compliance Command
+
+- Added `global-compliance-command.html` as the Global Compliance Command to map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts.
+- Moved production launch readiness to 98% with Global Compliance Command joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Global Compliance Command to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Marketplace Partner Room is shipped and Global Compliance Command is the active production-launch phase.
+- Upgraded public storage to v2.43 while preserving v2.42 and earlier report memory.
+- Upgraded workspace storage to v2.43 while preserving v2.42 and earlier workspace memory, and upgraded export language to Review Pack v149.
+- Moved the next build toward v2.44 Public Launch Board.
+
 ## v2.42 Alpha - Marketplace Partner Room
 
 Phase: Marketplace Partner Room

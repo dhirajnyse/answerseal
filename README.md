@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.42 Alpha
+**Current version:** v2.43 Alpha
 
-**Current phase:** Marketplace Partner Room
+**Current phase:** Global Compliance Command
 
-**Current release:** v2.42 Alpha - Marketplace Partner Room
+**Current release:** v2.43 Alpha - Global Compliance Command
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Global Compliance Command page to map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts
 
 - Marketplace Partner Room page to prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts
 
@@ -625,6 +627,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `customer-success-cockpit.html` - Customer Success Cockpit for turn customer activation into health, usage, support load, proof quality, renewal risk, owner actions, and success receipts
 - `expansion-intelligence-board.html` - Expansion Intelligence Board for identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts
 - `marketplace-partner-room.html` - Marketplace Partner Room for prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts
+- `global-compliance-command.html` - Global Compliance Command for map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -649,13 +652,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.43 Alpha - Global Compliance Command
+## Next Phase: v2.44 Alpha - Public Launch Board
 
-The next release should map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts.
+The next release should present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board.
 
 Planned focus:
 
-- Launch-ready, review, gated, blocked, and partner-led states are visible by country.
-- Evidence, reports, user records, buyer rooms, and exports show residency expectation.
-- Tenant-local memory, aggregate-safe patterns, and blocked raw data are separated by region.
-- Buyer-safe rooms, audit exports, and leadership briefs show allowed audience and expiry.
+- Product, support, compliance, onboarding, integration, partner, and global readiness show one score.
+- Verify AI answers, seal evidence, govern reuse, and export proof without a heavy platform rollout.
+- Screens, reports, receipts, audit language, and trial outcomes connect to the promise.
+- Launch, narrow, wait, or partner-led rollout recommendation shows reason and next action.
