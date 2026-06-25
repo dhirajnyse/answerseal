@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.64 Alpha - Autonomous Improvement Command
+
+Phase: Autonomous Improvement Command
+
+- Added `autonomous-improvement-command.html` as the Autonomous Improvement Command to coordinate closed-loop improvement proposals, simulations, human approvals, controlled rollout, monitoring, rollback, and shared learning receipts.
+- Moved scale launch readiness to 100% with Autonomous Improvement Command joining the controlled-learning launch path.
+- Added Autonomous Improvement Command to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2640 and workspace storage to v2640 while preserving earlier report memory.
+- Upgraded export language to Review Pack v170.
+- Moved the next build toward v2.65 Alpha Platform API Fabric.
+
 ## v2.63 Alpha - Global Trust Operations Hub
 
 Phase: Global Trust Operations Hub
