@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.66 Alpha - Webhook Integration Console
+
+Phase: Webhook Integration Console
+
+- Added `webhook-integration-console.html` as the Webhook Integration Console to manage signed webhooks, retry queues, event receipts, integration health, failure triage, and downstream workflow handoffs.
+- Moved scale launch readiness to 20% with Webhook Integration Console joining the controlled-learning launch path.
+- Added Webhook Integration Console to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2660 and workspace storage to v2660 while preserving earlier report memory.
+- Upgraded export language to Review Pack v172.
+- Moved the next build toward v2.67 Alpha Identity Trust Gateway.
+
 ## v2.65 Alpha - Platform API Fabric
 
 Phase: Platform API Fabric
