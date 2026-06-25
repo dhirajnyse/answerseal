@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.61 Alpha
+**Current version:** v2.62 Alpha
 
-**Current phase:** Cross-Org Benchmark Exchange
+**Current phase:** Enterprise Policy Automation
 
-**Current release:** v2.61 Alpha - Cross-Org Benchmark Exchange
+**Current release:** v2.62 Alpha - Enterprise Policy Automation
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Enterprise Policy Automation page to convert enterprise policy into automated holds, exception routing, audit exports, country rules, approval receipts, and release constraints
 
 - Cross-Org Benchmark Exchange page to share aggregate-safe trust benchmarks, category bands, friction signals, improvement lift, and privacy boundaries across organizations
 
@@ -673,6 +675,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `enterprise-policy-automation.html` - Enterprise Policy Automation for convert enterprise policy into automated holds, exception routing, audit exports, country rules, approval receipts, and release constraints
 - `cross-org-benchmark-exchange.html` - Cross-Org Benchmark Exchange for share aggregate-safe trust benchmarks, category bands, friction signals, improvement lift, and privacy boundaries across organizations
 - `model-risk-observatory.html` - Model Risk Observatory for track model drift, hallucination patterns, vendor comparison, confidence movement, regression failures, and risk trends across verified work
 - `agent-qa-control-center.html` - Agent QA Control Center for test agent outputs against source gates, regression cases, policy limits, owner approvals, and rollback paths before automated work expands
@@ -706,13 +709,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.62 Alpha - Enterprise Policy Automation
+## Next Phase: v2.63 Alpha - Global Trust Operations Hub
 
-The next release should convert enterprise policy into automated holds, exception routing, audit exports, country rules, approval receipts, and release constraints.
+The next release should coordinate regional readiness, environment health, support posture, policy status, buyer commitments, and launch operations for global rollout.
 
 Planned focus:
 
-- Global trust operations.
-- Country readiness.
-- Environment health.
-- Support command.
+- Autonomous improvement command.
+- Closed-loop proposals.
+- Simulate and approve.
+- Monitor rollback.

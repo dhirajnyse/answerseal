@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.62 Alpha - Enterprise Policy Automation
+
+Phase: Enterprise Policy Automation
+
+- Added `enterprise-policy-automation.html` as the Enterprise Policy Automation to convert enterprise policy into automated holds, exception routing, audit exports, country rules, approval receipts, and release constraints.
+- Moved scale launch readiness to 80% with Enterprise Policy Automation joining the controlled-learning launch path.
+- Added Enterprise Policy Automation to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2620 and workspace storage to v2620 while preserving earlier report memory.
+- Upgraded export language to Review Pack v168.
+- Moved the next build toward v2.63 Alpha Global Trust Operations Hub.
+
 ## v2.61 Alpha - Cross-Org Benchmark Exchange
 
 Phase: Cross-Org Benchmark Exchange
