@@ -1,6 +1,7 @@
 const BUILD_VERSION = "v2.24 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v2380";
+const STORAGE_KEY = "answerseal.workspace.v2390";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v2380",
   "answerseal.workspace.v2370",
   "answerseal.workspace.v2360",
   "answerseal.workspace.v2350",
@@ -6870,7 +6871,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v144 with Integration Readiness Hub, Renewal Distribution Room, Renewal Packet Studio, Shared Brief Follow-Up Console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, proof, and trace sections.`,
+      detail: `Create Review Pack v145 with Audit Evidence Vault, Renewal Distribution Room, Renewal Packet Studio, Shared Brief Follow-Up Console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, proof, and trace sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25617,7 +25618,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v144</h1>
+        <h1>AnswerSeal Review Pack v145</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29762,7 +29763,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v144 created with Integration Readiness Hub, Renewal Distribution Room, Renewal Packet Studio, Shared Brief Follow-Up Console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, proof, and trace sections.");
+  addAudit("Review pack exported", "Review Pack v145 created with Audit Evidence Vault, Renewal Distribution Room, Renewal Packet Studio, Shared Brief Follow-Up Console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, proof, and trace sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29807,7 +29808,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v144 exported.");
+  showToast("Review Pack v145 exported.");
 }
 
 function toCsv(rows) {

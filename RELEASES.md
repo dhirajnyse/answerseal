@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.39 Alpha - Audit Evidence Vault
+
+Phase: Audit Evidence Vault
+
+- Added `audit-evidence-vault.html` as the Audit Evidence Vault to centralize export-ready evidence, source retention, chain of custody, auditor views, compliance scopes, and audit receipts.
+- Moved production launch readiness to 86% with Audit Evidence Vault joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Audit Evidence Vault to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Integration Readiness Hub is shipped and Audit Evidence Vault is the active production-launch phase.
+- Upgraded public storage to v2.39 while preserving v2.38 and earlier report memory.
+- Upgraded workspace storage to v2.39 while preserving v2.38 and earlier workspace memory, and upgraded export language to Review Pack v145.
+- Moved the next build toward v2.40 Customer Success Cockpit.
+
 ## v2.38 Alpha - Integration Readiness Hub
 
 Phase: Integration Readiness Hub

@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.38 Alpha
+**Current version:** v2.39 Alpha
 
-**Current phase:** Integration Readiness Hub
+**Current phase:** Audit Evidence Vault
 
-**Current release:** v2.38 Alpha - Integration Readiness Hub
+**Current release:** v2.39 Alpha - Audit Evidence Vault
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Audit Evidence Vault page to centralize export-ready evidence, source retention, chain of custody, auditor views, compliance scopes, and audit receipts
 
 - Integration Readiness Hub page to prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch
 
@@ -613,6 +615,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `customer-onboarding-studio.html` - Customer Onboarding Studio for guide the first customer from account setup to first sealed answer with workspace setup, evidence intake, role checks, and success handoff
 - `enterprise-admin-console.html` - Enterprise Admin Console for give admins one calm control surface for organization policy, roles, workspace settings, billing boundaries, and launch health
 - `integration-readiness-hub.html` - Integration Readiness Hub for prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch
+- `audit-evidence-vault.html` - Audit Evidence Vault for centralize export-ready evidence, source retention, chain of custody, auditor views, compliance scopes, and audit receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -637,13 +640,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.39 Alpha - Audit Evidence Vault
+## Next Phase: v2.40 Alpha - Customer Success Cockpit
 
-The next release should centralize export-ready evidence, source retention, chain of custody, auditor views, compliance scopes, and audit receipts.
+The next release should turn customer activation into health, usage, support load, proof quality, renewal risk, owner actions, and success receipts.
 
 Planned focus:
 
-- Policy, SOC report, contract, reviewer note, and sealed report retention rules are visible.
-- Claim, evidence, reviewer, export, and buyer-room views are connected into one chain.
-- Auditors get evidence summaries, receipts, owner notes, and export logs without workspace clutter.
-- Every export shows included evidence, excluded data, owner, date, and reason.
+- Sealed answers, saved reports, sources added, buyer views, and first workflow completion roll up.
+- Stale sources, missing owners, buyer objections, and unresolved questions are visible.
+- Owner tasks, open questions, SLA risk, and support hours are summarized by account.
+- Saved time, trust lift, buyer unblock, and reuse signal become renewal evidence.
