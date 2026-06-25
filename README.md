@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.27 Alpha
+**Current version:** v2.28 Alpha
 
-**Current phase:** Launch Readiness Console
+**Current phase:** Tenant Trust Control Room
 
-**Current release:** v2.27 Alpha - Launch Readiness Console
+**Current release:** v2.28 Alpha - Tenant Trust Control Room
 
 ## Brand
 
@@ -31,6 +31,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 
 
+
+- Tenant Trust Control Room page to keep every customer workspace governed by local policy, region rules, access boundaries, and learning consent
 - Launch Readiness Console page to turn trust work into launch go, hold, owner, proof, support, and commercial readiness decisions
 - Exception Triage Room page to route buyer objections, missing evidence, stale access, policy holds, and owner decisions
 - Renewal Watch Room page to observe opened packets, buyer questions, stale proof, access drift, and next follow-up triggers

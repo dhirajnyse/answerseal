@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.28 Alpha - Tenant Trust Control Room
+
+Phase: Tenant Trust Control Room
+
+- Added `tenant-trust-control-room.html` as the Tenant Trust Control Room to keep every customer workspace governed by local policy, region rules, access boundaries, and learning consent.
+- Moved beta operations to a 29/29 active loop with tenant Trust Control Room joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Tenant Trust Control Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Tenant Trust Control Room is the active operating phase.
+- Upgraded public storage to v2.28 while preserving v2.27 and earlier report memory.
+- Upgraded workspace storage to v2.28 while preserving v2.27 and earlier workspace memory, and upgraded export language to Review Pack v134.
+- Moved the next build toward v2.29 Team Operating Layer.
+
 ## v2.27 Alpha - Launch Readiness Console
 
 Phase: Launch Readiness Console
