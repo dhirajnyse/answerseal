@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.40 Alpha - Customer Success Cockpit
+
+Phase: Customer Success Cockpit
+
+- Added `customer-success-cockpit.html` as the Customer Success Cockpit to turn customer activation into health, usage, support load, proof quality, renewal risk, owner actions, and success receipts.
+- Moved production launch readiness to 89% with Customer Success Cockpit joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Customer Success Cockpit to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Audit Evidence Vault is shipped and Customer Success Cockpit is the active production-launch phase.
+- Upgraded public storage to v2.40 while preserving v2.39 and earlier report memory.
+- Upgraded workspace storage to v2.40 while preserving v2.39 and earlier workspace memory, and upgraded export language to Review Pack v146.
+- Moved the next build toward v2.41 Expansion Intelligence Board.
+
 ## v2.39 Alpha - Audit Evidence Vault
 
 Phase: Audit Evidence Vault
