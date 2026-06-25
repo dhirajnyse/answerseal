@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.73 Alpha - Launch Monetization Suite
+
+Phase: Launch Monetization Suite
+
+- Added `launch-monetization-suite.html` as the Launch Monetization Suite to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions.
+- Moved scale launch readiness to 90% with Launch Monetization Suite joining the controlled-learning launch path.
+- Added Launch Monetization Suite to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2730 and workspace storage to v2730 while preserving earlier report memory.
+- Upgraded export language to Review Pack v179.
+- Moved the next build toward v2.74 Alpha Global Go-To-Market Command.
+
 ## v2.72 Alpha - Enterprise Command Plane
 
 Phase: Enterprise Command Plane
