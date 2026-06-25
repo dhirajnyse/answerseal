@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.52 Alpha - AI Governance Policy Center
+
+Phase: AI Governance Policy Center
+
+- Added `ai-governance-policy-center.html` as the AI Governance Policy Center to centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts.
+- Moved revenue launch readiness to 80% with AI Governance Policy Center joining the commercial launch path.
+- Added AI Governance Policy Center to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Security Review Exchange is shipped and AI Governance Policy Center is the active revenue-launch phase.
+- Upgraded public report storage to v2520 and workspace storage to v2520 while preserving earlier report memory.
+- Upgraded export language to Review Pack v158.
+- Moved the next build toward v2.53 Enterprise Procurement Pack.
+
 ## v2.51 Alpha - Security Review Exchange
 
 Phase: Security Review Exchange
