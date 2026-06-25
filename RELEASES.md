@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.29 Alpha - Team Operating Layer
+
+Phase: Team Operating Layer
+
+- Added `team-operating-layer.html` as the Team Operating Layer to turn verification into daily roles, queues, rituals, SLAs, and escalation paths for real teams.
+- Moved beta operations to a 30/30 active loop with team Operating Layer joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Team Operating Layer to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Team Operating Layer is the active operating phase.
+- Upgraded public storage to v2.29 while preserving v2.28 and earlier report memory.
+- Upgraded workspace storage to v2.29 while preserving v2.28 and earlier workspace memory, and upgraded export language to Review Pack v135.
+- Moved the next build toward v2.30 Connector Handoff Room.
+
 ## v2.28 Alpha - Tenant Trust Control Room
 
 Phase: Tenant Trust Control Room
