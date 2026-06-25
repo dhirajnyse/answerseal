@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.65 Alpha - Platform API Fabric
+
+Phase: Platform API Fabric
+
+- Added `platform-api-fabric.html` as the Platform API Fabric to connect AnswerSeal to enterprise tools through governed APIs, webhook receipts, identity scopes, evidence sync, and partner integration contracts.
+- Moved scale launch readiness to 10% with Platform API Fabric joining the controlled-learning launch path.
+- Added Platform API Fabric to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2650 and workspace storage to v2650 while preserving earlier report memory.
+- Upgraded export language to Review Pack v171.
+- Moved the next build toward v2.66 Alpha Webhook Integration Console.
+
 ## v2.64 Alpha - Autonomous Improvement Command
 
 Phase: Autonomous Improvement Command
