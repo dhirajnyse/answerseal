@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.24 Alpha - Renewal Distribution Room
+
+Phase: Renewal Distribution Room
+
+- Added `renewal-distribution-room.html` as the Renewal Distribution Room for audience choice, old-access changes, resend receipts, and post-send watch plans.
+- Moved beta operations to a 25/25 active loop with renewal distribution room joining renewal packet studio, shared brief follow-up console, share activity observatory, leadership share control room, executive briefing room, revenue confidence room, buyer outcome ledger, buyer follow-up console, buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Renewal Distribution Room to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Renewal Packet Studio is shipped and Renewal Distribution Room is the active operating phase.
+- Upgraded public storage to v2.24 while preserving v2.23 and earlier report memory.
+- Upgraded workspace storage to v2.24 while preserving v2.23 and earlier workspace memory, and upgraded export language to Review Pack v130.
+- Moved the next build toward v2.25 Renewal Watch Room.
+
 ## v2.23 Alpha - Renewal Packet Studio
 
 Phase: Renewal Packet Studio
