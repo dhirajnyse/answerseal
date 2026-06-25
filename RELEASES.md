@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.60 Alpha - Model Risk Observatory
+
+Phase: Model Risk Observatory
+
+- Added `model-risk-observatory.html` as the Model Risk Observatory to track model drift, hallucination patterns, vendor comparison, confidence movement, regression failures, and risk trends across verified work.
+- Moved scale launch readiness to 60% with Model Risk Observatory joining the controlled-learning launch path.
+- Added Model Risk Observatory to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2600 and workspace storage to v2600 while preserving earlier report memory.
+- Upgraded export language to Review Pack v166.
+- Moved the next build toward v2.61 Alpha Cross-Org Benchmark Exchange.
+
 ## v2.59 Alpha - Agent QA Control Center
 
 Phase: Agent QA Control Center
