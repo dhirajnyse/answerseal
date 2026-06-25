@@ -147,8 +147,8 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.48 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2480";
+const PUBLIC_BUILD_VERSION = "v2.49 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2490";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
   "answerseal.public.reports.v2460",
   "answerseal.public.reports.v2460",
@@ -4457,7 +4457,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v154 records Implementation Runbook Studio, renewal distribution room, renewal packet studio, shared brief follow-up console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, source status, and export decision.",
+      audit: "Review Pack v155 records Support Assurance Center, renewal distribution room, renewal packet studio, shared brief follow-up console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, source status, and export decision.",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7898,7 +7898,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.48 Alpha - Implementation Runbook Studio",
+      "Pilot phase: AnswerSeal v2.49 Alpha - Support Assurance Center",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

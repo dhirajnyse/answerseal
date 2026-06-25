@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.48 Alpha
+**Current version:** v2.49 Alpha
 
-**Current phase:** Implementation Runbook Studio
+**Current phase:** Support Assurance Center
 
-**Current release:** v2.48 Alpha - Implementation Runbook Studio
+**Current release:** v2.49 Alpha - Support Assurance Center
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Support Assurance Center page to make support readiness visible with response promises, escalation paths, incident triage, feedback loops, and customer confidence receipts
 
 - Implementation Runbook Studio page to convert a signed pilot into implementation tasks, owners, integrations, data boundaries, success criteria, and first-value receipts
 
@@ -642,6 +644,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `buyer-qualification-desk.html` - Buyer Qualification Desk for route inbound buyers by use case, urgency, proof need, security review, budget, and pilot fit
 - `deal-room-console.html` - Deal Room Console for manage live pilot and sales rooms with stakeholders, proof requests, blockers, approvals, close plans, and buyer-safe receipts
 - `implementation-runbook-studio.html` - Implementation Runbook Studio for convert a signed pilot into implementation tasks, owners, integrations, data boundaries, success criteria, and first-value receipts
+- `support-assurance-center.html` - Support Assurance Center for make support readiness visible with response promises, escalation paths, incident triage, feedback loops, and customer confidence receipts
 - `public-launch-board.html` - Public Launch Board for present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
@@ -667,7 +670,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.49 Alpha - Support Assurance Center
+## Next Phase: v2.50 Alpha - Revenue Operations Ledger
 
 The next release should turn launch readiness into pipeline motions, buyer qualification, paid conversion, and success handoff.
 

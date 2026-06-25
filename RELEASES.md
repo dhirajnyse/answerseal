@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.49 Alpha - Support Assurance Center
+
+Phase: Support Assurance Center
+
+- Added `support-assurance-center.html` as the Support Assurance Center to make support readiness visible with response promises, escalation paths, incident triage, feedback loops, and customer confidence receipts.
+- Moved revenue launch readiness to 50% with Support Assurance Center joining the commercial launch path.
+- Added Support Assurance Center to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Implementation Runbook Studio is shipped and Support Assurance Center is the active revenue-launch phase.
+- Upgraded public report storage to v2490 and workspace storage to v2490 while preserving earlier report memory.
+- Upgraded export language to Review Pack v155.
+- Moved the next build toward v2.50 Revenue Operations Ledger.
+
 ## v2.48 Alpha - Implementation Runbook Studio
 
 Phase: Implementation Runbook Studio
