@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.59 Alpha - Agent QA Control Center
+
+Phase: Agent QA Control Center
+
+- Added `agent-qa-control-center.html` as the Agent QA Control Center to test agent outputs against source gates, regression cases, policy limits, owner approvals, and rollback paths before automated work expands.
+- Moved scale launch readiness to 50% with Agent QA Control Center joining the controlled-learning launch path.
+- Added Agent QA Control Center to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2590 and workspace storage to v2590 while preserving earlier report memory.
+- Upgraded export language to Review Pack v165.
+- Moved the next build toward v2.60 Alpha Model Risk Observatory.
+
 ## v2.58 Alpha - Prompt Workflow Registry
 
 Phase: Prompt Workflow Registry

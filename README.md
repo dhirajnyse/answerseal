@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.58 Alpha
+**Current version:** v2.59 Alpha
 
-**Current phase:** Prompt Workflow Registry
+**Current phase:** Agent QA Control Center
 
-**Current release:** v2.58 Alpha - Prompt Workflow Registry
+**Current release:** v2.59 Alpha - Agent QA Control Center
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Agent QA Control Center page to test agent outputs against source gates, regression cases, policy limits, owner approvals, and rollback paths before automated work expands
 
 - Prompt Workflow Registry page to organize approved prompts, workflows, and agent instructions with owners, versions, tests, evidence dependencies, and release decisions
 
@@ -667,6 +669,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `agent-qa-control-center.html` - Agent QA Control Center for test agent outputs against source gates, regression cases, policy limits, owner approvals, and rollback paths before automated work expands
 - `prompt-workflow-registry.html` - Prompt Workflow Registry for organize approved prompts, workflows, and agent instructions with owners, versions, tests, evidence dependencies, and release decisions
 - `evidence-quality-graph.html` - Evidence Quality Graph for map evidence strength, freshness, coverage, conflict risk, claim links, and reusable proof patterns before answers become trusted knowledge
 - `tenant-learning-controls.html` - Tenant Learning Controls for set tenant rules for opt-in, hold, deny, region limits, owner approval, and learning rollback before any answer pattern is reused
@@ -697,13 +700,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.59 Alpha - Agent QA Control Center
+## Next Phase: v2.60 Alpha - Model Risk Observatory
 
-The next release should test agent outputs against source gates, regression cases, policy limits, owner approvals, and rollback paths before automated work expands.
+The next release should track model drift, hallucination patterns, vendor comparison, confidence movement, regression failures, and risk trends across verified work.
 
 Planned focus:
 
-- Model risk observatory.
-- Drift watch.
-- Model comparison.
-- Vendor risk bands.
+- Benchmark exchange.
+- Aggregate-safe metrics.
+- Category bands.
+- Privacy firewall.
