@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.31 Alpha - Trust Analytics Room
+
+Phase: Trust Analytics Room
+
+- Added `trust-analytics-room.html` as the Trust Analytics Room to show trust score movement, answer cycle time, proof coverage, buyer unblock, support load, and revenue confidence.
+- Moved beta operations to a 32/32 active loop with trust Analytics Room joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Trust Analytics Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Trust Analytics Room is the active operating phase.
+- Upgraded public storage to v2.31 while preserving v2.30 and earlier report memory.
+- Upgraded workspace storage to v2.31 while preserving v2.30 and earlier workspace memory, and upgraded export language to Review Pack v137.
+- Moved the next build toward v2.32 Audit Export Room.
+
 ## v2.30 Alpha - Connector Handoff Room
 
 Phase: Connector Handoff Room
