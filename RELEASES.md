@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.32 Alpha - Audit Export Room
+
+Phase: Audit Export Room
+
+- Added `audit-export-room.html` as the Audit Export Room to package sealed reports, source trails, owners, approvals, exceptions, and tenant controls into export-ready evidence.
+- Moved beta operations to a 33/33 active loop with audit Export Room joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Audit Export Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Audit Export Room is the active operating phase.
+- Upgraded public storage to v2.32 while preserving v2.31 and earlier report memory.
+- Upgraded workspace storage to v2.32 while preserving v2.31 and earlier workspace memory, and upgraded export language to Review Pack v138.
+- Moved the next build toward v2.33 Buyer Portal Polish Room.
+
 ## v2.31 Alpha - Trust Analytics Room
 
 Phase: Trust Analytics Room
