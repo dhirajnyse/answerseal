@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.60 Alpha
+**Current version:** v2.61 Alpha
 
-**Current phase:** Model Risk Observatory
+**Current phase:** Cross-Org Benchmark Exchange
 
-**Current release:** v2.60 Alpha - Model Risk Observatory
+**Current release:** v2.61 Alpha - Cross-Org Benchmark Exchange
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Cross-Org Benchmark Exchange page to share aggregate-safe trust benchmarks, category bands, friction signals, improvement lift, and privacy boundaries across organizations
 
 - Model Risk Observatory page to track model drift, hallucination patterns, vendor comparison, confidence movement, regression failures, and risk trends across verified work
 
@@ -671,6 +673,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `cross-org-benchmark-exchange.html` - Cross-Org Benchmark Exchange for share aggregate-safe trust benchmarks, category bands, friction signals, improvement lift, and privacy boundaries across organizations
 - `model-risk-observatory.html` - Model Risk Observatory for track model drift, hallucination patterns, vendor comparison, confidence movement, regression failures, and risk trends across verified work
 - `agent-qa-control-center.html` - Agent QA Control Center for test agent outputs against source gates, regression cases, policy limits, owner approvals, and rollback paths before automated work expands
 - `prompt-workflow-registry.html` - Prompt Workflow Registry for organize approved prompts, workflows, and agent instructions with owners, versions, tests, evidence dependencies, and release decisions
@@ -703,13 +706,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.61 Alpha - Cross-Org Benchmark Exchange
+## Next Phase: v2.62 Alpha - Enterprise Policy Automation
 
-The next release should share aggregate-safe trust benchmarks, category bands, friction signals, improvement lift, and privacy boundaries across organizations.
+The next release should convert enterprise policy into automated holds, exception routing, audit exports, country rules, approval receipts, and release constraints.
 
 Planned focus:
 
-- Enterprise policy automation.
-- Automated holds.
-- Exception routing.
-- Audit-ready controls.
+- Global trust operations.
+- Country readiness.
+- Environment health.
+- Support command.

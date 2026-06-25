@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.61 Alpha - Cross-Org Benchmark Exchange
+
+Phase: Cross-Org Benchmark Exchange
+
+- Added `cross-org-benchmark-exchange.html` as the Cross-Org Benchmark Exchange to share aggregate-safe trust benchmarks, category bands, friction signals, improvement lift, and privacy boundaries across organizations.
+- Moved scale launch readiness to 70% with Cross-Org Benchmark Exchange joining the controlled-learning launch path.
+- Added Cross-Org Benchmark Exchange to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2610 and workspace storage to v2610 while preserving earlier report memory.
+- Upgraded export language to Review Pack v167.
+- Moved the next build toward v2.62 Alpha Enterprise Policy Automation.
+
 ## v2.60 Alpha - Model Risk Observatory
 
 Phase: Model Risk Observatory
