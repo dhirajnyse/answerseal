@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.47 Alpha - Deal Room Console
+
+Phase: Deal Room Console
+
+- Added `deal-room-console.html` as the Deal Room Console to manage live pilot and sales rooms with stakeholders, proof requests, blockers, approvals, close plans, and buyer-safe receipts.
+- Moved revenue launch readiness to 30% with Deal Room Console joining the commercial launch path.
+- Added Deal Room Console to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Buyer Qualification Desk is shipped and Deal Room Console is the active revenue-launch phase.
+- Upgraded public report storage to v2470 and workspace storage to v2470 while preserving earlier report memory.
+- Upgraded export language to Review Pack v153.
+- Moved the next build toward v2.48 Implementation Runbook Studio.
+
 ## v2.46 Alpha - Buyer Qualification Desk
 
 Phase: Buyer Qualification Desk
