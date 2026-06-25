@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.69 Alpha
+**Current version:** v2.70 Alpha
 
-**Current phase:** Residency Privacy Plane
+**Current phase:** Partner Connector Market
 
-**Current release:** v2.69 Alpha - Residency Privacy Plane
+**Current release:** v2.70 Alpha - Partner Connector Market
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Partner Connector Market page to catalog verified connectors, partner packages, implementation paths, connector risk scores, setup receipts, and marketplace-ready trust extensions
 
 - Residency Privacy Plane page to manage country rules, residency zones, privacy redaction, regional evidence rights, transfer holds, and tenant-specific data boundaries
 
@@ -689,6 +691,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `partner-connector-market.html` - Partner Connector Market for catalog verified connectors, partner packages, implementation paths, connector risk scores, setup receipts, and marketplace-ready trust extensions
 - `residency-privacy-plane.html` - Residency Privacy Plane for manage country rules, residency zones, privacy redaction, regional evidence rights, transfer holds, and tenant-specific data boundaries
 - `audit-assurance-export.html` - Audit Assurance Export for package sealed reports, source trails, approval receipts, policy decisions, access logs, and control evidence into audit-ready exports
 - `identity-trust-gateway.html` - Identity Trust Gateway for define SSO, SCIM, tenant roles, API scopes, key rotation, session trails, and approval authority for regulated teams
@@ -730,13 +733,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.70 Alpha - Partner Connector Market
+## Next Phase: v2.71 Alpha - Operations Observability Grid
 
-The next release should catalog verified connectors, partner packages, implementation paths, connector risk scores, setup receipts, and marketplace-ready trust extensions.
+The next release should track service health, trust SLOs, connector latency, export queues, reviewer bottlenecks, incident watch, and customer-facing reliability signals.
 
 Planned focus:
 
-- Operations observability grid.
-- Service health.
-- Trust SLOs.
-- Incident watch.
+- Enterprise command plane.
+- Admin policy.
+- Tenant portfolio.
+- Workspace governance.

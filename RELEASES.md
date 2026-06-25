@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.70 Alpha - Partner Connector Market
+
+Phase: Partner Connector Market
+
+- Added `partner-connector-market.html` as the Partner Connector Market to catalog verified connectors, partner packages, implementation paths, connector risk scores, setup receipts, and marketplace-ready trust extensions.
+- Moved scale launch readiness to 60% with Partner Connector Market joining the controlled-learning launch path.
+- Added Partner Connector Market to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2700 and workspace storage to v2700 while preserving earlier report memory.
+- Upgraded export language to Review Pack v176.
+- Moved the next build toward v2.71 Alpha Operations Observability Grid.
+
 ## v2.69 Alpha - Residency Privacy Plane
 
 Phase: Residency Privacy Plane
