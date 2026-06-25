@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.26 Alpha - Exception Triage Room
+
+Phase: Exception Triage Room
+
+- Added `exception-triage-room.html` as the Exception Triage Room to route buyer objections, missing evidence, stale access, policy holds, and owner decisions.
+- Moved beta operations to a 27/27 active loop with exception Triage Room joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Exception Triage Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Exception Triage Room is the active operating phase.
+- Upgraded public storage to v2.26 while preserving v2.25 and earlier report memory.
+- Upgraded workspace storage to v2.26 while preserving v2.25 and earlier workspace memory, and upgraded export language to Review Pack v132.
+- Moved the next build toward v2.27 Launch Readiness Console.
+
 ## v2.25 Alpha - Renewal Watch Room
 
 Phase: Renewal Watch Room
