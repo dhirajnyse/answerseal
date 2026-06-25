@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.42 Alpha - Marketplace Partner Room
+
+Phase: Marketplace Partner Room
+
+- Added `marketplace-partner-room.html` as the Marketplace Partner Room to prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts.
+- Moved production launch readiness to 95% with Marketplace Partner Room joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Marketplace Partner Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Expansion Intelligence Board is shipped and Marketplace Partner Room is the active production-launch phase.
+- Upgraded public storage to v2.42 while preserving v2.41 and earlier report memory.
+- Upgraded workspace storage to v2.42 while preserving v2.41 and earlier workspace memory, and upgraded export language to Review Pack v148.
+- Moved the next build toward v2.43 Global Compliance Command.
+
 ## v2.41 Alpha - Expansion Intelligence Board
 
 Phase: Expansion Intelligence Board

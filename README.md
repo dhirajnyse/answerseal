@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.41 Alpha
+**Current version:** v2.42 Alpha
 
-**Current phase:** Expansion Intelligence Board
+**Current phase:** Marketplace Partner Room
 
-**Current release:** v2.41 Alpha - Expansion Intelligence Board
+**Current release:** v2.42 Alpha - Marketplace Partner Room
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Marketplace Partner Room page to prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts
 
 - Expansion Intelligence Board page to identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts
 
@@ -622,6 +624,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `audit-evidence-vault.html` - Audit Evidence Vault for centralize export-ready evidence, source retention, chain of custody, auditor views, compliance scopes, and audit receipts
 - `customer-success-cockpit.html` - Customer Success Cockpit for turn customer activation into health, usage, support load, proof quality, renewal risk, owner actions, and success receipts
 - `expansion-intelligence-board.html` - Expansion Intelligence Board for identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts
+- `marketplace-partner-room.html` - Marketplace Partner Room for prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -646,13 +649,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.42 Alpha - Marketplace Partner Room
+## Next Phase: v2.43 Alpha - Global Compliance Command
 
-The next release should prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts.
+The next release should map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts.
 
 Planned focus:
 
-- Questionnaire packs, evidence checklists, onboarding flows, and reply templates are sealed before reuse.
-- Setup, evidence intake, first review, buyer room, and renewal packet become partner services.
-- Partner access uses approved templates and receipts, not raw customer answer memory.
-- Referral source, proof story, partner owner, and customer-safe quote status are visible.
+- Launch-ready, review, gated, blocked, and partner-led states are visible by country.
+- Evidence, reports, user records, buyer rooms, and exports show residency expectation.
+- Tenant-local memory, aggregate-safe patterns, and blocked raw data are separated by region.
+- Buyer-safe rooms, audit exports, and leadership briefs show allowed audience and expiry.

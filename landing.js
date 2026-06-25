@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.41 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2410";
+const PUBLIC_BUILD_VERSION = "v2.42 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2420";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v2410",
   "answerseal.public.reports.v2400",
   "answerseal.public.reports.v2390",
   "answerseal.public.reports.v2380",
@@ -4454,7 +4455,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v147 records Expansion Intelligence Board, renewal distribution room, renewal packet studio, shared brief follow-up console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, source status, and export decision.",
+      audit: "Review Pack v148 records Marketplace Partner Room, renewal distribution room, renewal packet studio, shared brief follow-up console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, source status, and export decision.",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7709,7 +7710,7 @@ function buildReviewLoopItems() {
       title: "Customer data training answer prompt",
       note: "Prompt version now requires named sources and a reviewer note before output reuse.",
       reviewer: "AI governance",
-      version: "v2.41 -> v2.42",
+      version: "v2.42 -> v2.43",
       riskMove: "Medium to low",
       decision: "Promote",
       before: "Answer from approved context.",
@@ -7895,7 +7896,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.41 Alpha - Expansion Intelligence Board",
+      "Pilot phase: AnswerSeal v2.42 Alpha - Marketplace Partner Room",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
