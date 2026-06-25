@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.34 Alpha - Launch Command Console
+
+Phase: Launch Command Console
+
+- Added `launch-command-console.html` as the Launch Command Console to unify readiness, tenants, teams, connectors, analytics, audits, buyer rooms, and launch decisions into one calm command surface.
+- Moved beta operations to a 35/35 active loop with launch Command Console joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Launch Command Console to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Launch Command Console is the active operating phase.
+- Upgraded public storage to v2.34 while preserving v2.33 and earlier report memory.
+- Upgraded workspace storage to v2.34 while preserving v2.33 and earlier workspace memory, and upgraded export language to Review Pack v140.
+- Moved the next build toward v2.35 Production Trial Room.
+
 ## v2.33 Alpha - Buyer Portal Polish Room
 
 Phase: Buyer Portal Polish Room
