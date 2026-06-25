@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.27 Alpha - Launch Readiness Console
+
+Phase: Launch Readiness Console
+
+- Added `launch-readiness-console.html` as the Launch Readiness Console to turn trust work into launch go, hold, owner, proof, support, and commercial readiness decisions.
+- Moved beta operations to a 28/28 active loop with launch Readiness Console joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Launch Readiness Console to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Launch Readiness Console is the active operating phase.
+- Upgraded public storage to v2.27 while preserving v2.26 and earlier report memory.
+- Upgraded workspace storage to v2.27 while preserving v2.26 and earlier workspace memory, and upgraded export language to Review Pack v133.
+- Moved the next build toward v2.28 Tenant Trust Control Room.
+
 ## v2.26 Alpha - Exception Triage Room
 
 Phase: Exception Triage Room
