@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.45 Alpha
+**Current version:** v2.46 Alpha
 
-**Current phase:** Revenue Launch Engine
+**Current phase:** Buyer Qualification Desk
 
-**Current release:** v2.45 Alpha - Revenue Launch Engine
+**Current release:** v2.46 Alpha - Buyer Qualification Desk
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Buyer Qualification Desk page to route inbound buyers by use case, urgency, proof need, security review, budget, and pilot fit
 
 - Revenue Launch Engine page to turn launch readiness into pipeline motions, buyer qualification, paid conversion, and customer success handoff
 
@@ -633,6 +635,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `marketplace-partner-room.html` - Marketplace Partner Room for prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts
 - `global-compliance-command.html` - Global Compliance Command for map countries, residency, privacy rules, AI learning boundaries, buyer exports, regional rollout controls, and compliance receipts
 - `revenue-launch-engine.html` - Revenue Launch Engine for turn launch readiness into pipeline motions, buyer qualification, paid conversion, and customer success handoff
+- `buyer-qualification-desk.html` - Buyer Qualification Desk for route inbound buyers by use case, urgency, proof need, security review, budget, and pilot fit
 - `public-launch-board.html` - Public Launch Board for present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
@@ -658,7 +661,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.46 Alpha - Buyer Qualification Desk
+## Next Phase: v2.47 Alpha - Deal Room Console
 
 The next release should turn launch readiness into pipeline motions, buyer qualification, paid conversion, and success handoff.
 

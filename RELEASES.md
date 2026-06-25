@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.46 Alpha - Buyer Qualification Desk
+
+Phase: Buyer Qualification Desk
+
+- Added `buyer-qualification-desk.html` as the Buyer Qualification Desk to route inbound buyers by use case, urgency, proof need, security review, budget, and pilot fit.
+- Moved revenue launch readiness to 20% with Buyer Qualification Desk joining the commercial launch path.
+- Added Buyer Qualification Desk to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Revenue Launch Engine is shipped and Buyer Qualification Desk is the active revenue-launch phase.
+- Upgraded public report storage to v2460 and workspace storage to v2460 while preserving earlier report memory.
+- Upgraded export language to Review Pack v152.
+- Moved the next build toward v2.47 Deal Room Console.
+
 ## v2.45 Alpha - Revenue Launch Engine
 
 Phase: Revenue Launch Engine
