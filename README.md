@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.67 Alpha
+**Current version:** v2.68 Alpha
 
-**Current phase:** Identity Trust Gateway
+**Current phase:** Audit Assurance Export
 
-**Current release:** v2.67 Alpha - Identity Trust Gateway
+**Current release:** v2.68 Alpha - Audit Assurance Export
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Audit Assurance Export page to package sealed reports, source trails, approval receipts, policy decisions, access logs, and control evidence into audit-ready exports
 
 - Identity Trust Gateway page to define SSO, SCIM, tenant roles, API scopes, key rotation, session trails, and approval authority for regulated teams
 
@@ -685,6 +687,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `audit-assurance-export.html` - Audit Assurance Export for package sealed reports, source trails, approval receipts, policy decisions, access logs, and control evidence into audit-ready exports
 - `identity-trust-gateway.html` - Identity Trust Gateway for define SSO, SCIM, tenant roles, API scopes, key rotation, session trails, and approval authority for regulated teams
 - `webhook-integration-console.html` - Webhook Integration Console for manage signed webhooks, retry queues, event receipts, integration health, failure triage, and downstream workflow handoffs
 - `platform-api-fabric.html` - Platform API Fabric for connect AnswerSeal to enterprise tools through governed APIs, webhook receipts, identity scopes, evidence sync, and partner integration contracts
@@ -724,13 +727,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.68 Alpha - Audit Assurance Export
+## Next Phase: v2.69 Alpha - Residency Privacy Plane
 
-The next release should package sealed reports, source trails, approval receipts, policy decisions, access logs, and control evidence into audit-ready exports.
+The next release should manage country rules, residency zones, privacy redaction, regional evidence rights, transfer holds, and tenant-specific data boundaries.
 
 Planned focus:
 
-- Residency policy plane.
-- Country controls.
-- Privacy redaction.
-- Data boundary receipts.
+- Partner connector market.
+- Verified connector badges.
+- Implementation partners.
+- Connector risk score.

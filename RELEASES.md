@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.68 Alpha - Audit Assurance Export
+
+Phase: Audit Assurance Export
+
+- Added `audit-assurance-export.html` as the Audit Assurance Export to package sealed reports, source trails, approval receipts, policy decisions, access logs, and control evidence into audit-ready exports.
+- Moved scale launch readiness to 40% with Audit Assurance Export joining the controlled-learning launch path.
+- Added Audit Assurance Export to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2680 and workspace storage to v2680 while preserving earlier report memory.
+- Upgraded export language to Review Pack v174.
+- Moved the next build toward v2.69 Alpha Residency Privacy Plane.
+
 ## v2.67 Alpha - Identity Trust Gateway
 
 Phase: Identity Trust Gateway
