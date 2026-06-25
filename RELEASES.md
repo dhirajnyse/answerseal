@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.67 Alpha - Identity Trust Gateway
+
+Phase: Identity Trust Gateway
+
+- Added `identity-trust-gateway.html` as the Identity Trust Gateway to define SSO, SCIM, tenant roles, API scopes, key rotation, session trails, and approval authority for regulated teams.
+- Moved scale launch readiness to 30% with Identity Trust Gateway joining the controlled-learning launch path.
+- Added Identity Trust Gateway to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2670 and workspace storage to v2670 while preserving earlier report memory.
+- Upgraded export language to Review Pack v173.
+- Moved the next build toward v2.68 Alpha Audit Assurance Export.
+
 ## v2.66 Alpha - Webhook Integration Console
 
 Phase: Webhook Integration Console

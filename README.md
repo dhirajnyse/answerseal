@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.66 Alpha
+**Current version:** v2.67 Alpha
 
-**Current phase:** Webhook Integration Console
+**Current phase:** Identity Trust Gateway
 
-**Current release:** v2.66 Alpha - Webhook Integration Console
+**Current release:** v2.67 Alpha - Identity Trust Gateway
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Identity Trust Gateway page to define SSO, SCIM, tenant roles, API scopes, key rotation, session trails, and approval authority for regulated teams
 
 - Webhook Integration Console page to manage signed webhooks, retry queues, event receipts, integration health, failure triage, and downstream workflow handoffs
 
@@ -683,6 +685,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `identity-trust-gateway.html` - Identity Trust Gateway for define SSO, SCIM, tenant roles, API scopes, key rotation, session trails, and approval authority for regulated teams
 - `webhook-integration-console.html` - Webhook Integration Console for manage signed webhooks, retry queues, event receipts, integration health, failure triage, and downstream workflow handoffs
 - `platform-api-fabric.html` - Platform API Fabric for connect AnswerSeal to enterprise tools through governed APIs, webhook receipts, identity scopes, evidence sync, and partner integration contracts
 - `autonomous-improvement-command.html` - Autonomous Improvement Command for coordinate closed-loop improvement proposals, simulations, human approvals, controlled rollout, monitoring, rollback, and shared learning receipts
@@ -721,13 +724,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.67 Alpha - Identity Trust Gateway
+## Next Phase: v2.68 Alpha - Audit Assurance Export
 
-The next release should define SSO, SCIM, tenant roles, API scopes, key rotation, session trails, and approval authority for regulated teams.
+The next release should package sealed reports, source trails, approval receipts, policy decisions, access logs, and control evidence into audit-ready exports.
 
 Planned focus:
 
-- Audit assurance export.
-- Control evidence.
-- Auditor packet.
-- Export trail.
+- Residency policy plane.
+- Country controls.
+- Privacy redaction.
+- Data boundary receipts.
