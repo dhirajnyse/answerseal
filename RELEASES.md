@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.71 Alpha - Operations Observability Grid
+
+Phase: Operations Observability Grid
+
+- Added `operations-observability-grid.html` as the Operations Observability Grid to track service health, trust SLOs, connector latency, export queues, reviewer bottlenecks, incident watch, and customer-facing reliability signals.
+- Moved scale launch readiness to 70% with Operations Observability Grid joining the controlled-learning launch path.
+- Added Operations Observability Grid to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2710 and workspace storage to v2710 while preserving earlier report memory.
+- Upgraded export language to Review Pack v177.
+- Moved the next build toward v2.72 Alpha Enterprise Command Plane.
+
 ## v2.70 Alpha - Partner Connector Market
 
 Phase: Partner Connector Market
