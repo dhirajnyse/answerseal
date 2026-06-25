@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.69 Alpha - Residency Privacy Plane
+
+Phase: Residency Privacy Plane
+
+- Added `residency-privacy-plane.html` as the Residency Privacy Plane to manage country rules, residency zones, privacy redaction, regional evidence rights, transfer holds, and tenant-specific data boundaries.
+- Moved scale launch readiness to 50% with Residency Privacy Plane joining the controlled-learning launch path.
+- Added Residency Privacy Plane to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2690 and workspace storage to v2690 while preserving earlier report memory.
+- Upgraded export language to Review Pack v175.
+- Moved the next build toward v2.70 Alpha Partner Connector Market.
+
 ## v2.68 Alpha - Audit Assurance Export
 
 Phase: Audit Assurance Export
