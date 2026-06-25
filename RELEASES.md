@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.58 Alpha - Prompt Workflow Registry
+
+Phase: Prompt Workflow Registry
+
+- Added `prompt-workflow-registry.html` as the Prompt Workflow Registry to organize approved prompts, workflows, and agent instructions with owners, versions, tests, evidence dependencies, and release decisions.
+- Moved scale launch readiness to 40% with Prompt Workflow Registry joining the controlled-learning launch path.
+- Added Prompt Workflow Registry to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2580 and workspace storage to v2580 while preserving earlier report memory.
+- Upgraded export language to Review Pack v164.
+- Moved the next build toward v2.59 Alpha Agent QA Control Center.
+
 ## v2.57 Alpha - Evidence Quality Graph
 
 Phase: Evidence Quality Graph
