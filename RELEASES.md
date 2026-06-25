@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.21 Alpha - Share Activity Observatory
+
+Phase: Share Activity Observatory
+
+- Added `share-activity-observatory.html` as the Share Activity Observatory for opened briefs, stale proof, viewer questions, revocation triggers, and follow-up owners after distribution.
+- Moved beta operations to a 22/22 active loop with share activity observatory joining leadership share control room, executive briefing room, revenue confidence room, buyer outcome ledger, buyer follow-up console, buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Share Activity Observatory to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Leadership Share Control Room is shipped and Share Activity Observatory is the active operating phase.
+- Upgraded public storage to v2.21 while preserving v2.20 and earlier report memory.
+- Upgraded workspace storage to v2.21 while preserving v2.20 and earlier workspace memory, and upgraded export language to Review Pack v127.
+- Moved the next build toward v2.22 Shared Brief Follow-Up Console.
+
 ## v2.20 Alpha - Leadership Share Control Room
 
 Phase: Leadership Share Control Room
