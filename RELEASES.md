@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.56 Alpha - Tenant Learning Controls
+
+Phase: Tenant Learning Controls
+
+- Added `tenant-learning-controls.html` as the Tenant Learning Controls to set tenant rules for opt-in, hold, deny, region limits, owner approval, and learning rollback before any answer pattern is reused.
+- Moved scale launch readiness to 20% with Tenant Learning Controls joining the controlled-learning launch path.
+- Added Tenant Learning Controls to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2560 and workspace storage to v2560 while preserving earlier report memory.
+- Upgraded export language to Review Pack v162.
+- Moved the next build toward v2.57 Alpha Evidence Quality Graph.
+
 ## v2.55 Alpha - Scale Learning Network
 
 Phase: Scale Learning Network

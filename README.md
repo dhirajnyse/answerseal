@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.55 Alpha
+**Current version:** v2.56 Alpha
 
-**Current phase:** Scale Learning Network
+**Current phase:** Tenant Learning Controls
 
-**Current release:** v2.55 Alpha - Scale Learning Network
+**Current release:** v2.56 Alpha - Tenant Learning Controls
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Tenant Learning Controls page to set tenant rules for opt-in, hold, deny, region limits, owner approval, and learning rollback before any answer pattern is reused
 
 - Scale Learning Network page to turn sealed outcomes into tenant-safe learning signals, network benefit, consent receipts, and evidence reuse without exposing raw customer work
 
@@ -661,6 +663,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `tenant-learning-controls.html` - Tenant Learning Controls for set tenant rules for opt-in, hold, deny, region limits, owner approval, and learning rollback before any answer pattern is reused
 - `scale-learning-network.html` - Scale Learning Network for turn sealed outcomes into tenant-safe learning signals, network benefit, consent receipts, and evidence reuse without exposing raw customer work
 - `launch-revenue-command.html` - Launch Revenue Command for unify pipeline, qualification, deal rooms, implementation, support, revenue ops, security exchange, policy, procurement, and launch decisions
 - `public-launch-board.html` - Public Launch Board for present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board
@@ -688,13 +691,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.56 Alpha - Tenant Learning Controls
+## Next Phase: v2.57 Alpha - Evidence Quality Graph
 
-The next release should set tenant rules for opt-in, hold, deny, region limits, owner approval, and learning rollback before any answer pattern is reused.
+The next release should map evidence strength, freshness, coverage, conflict risk, claim links, and reusable proof patterns before answers become trusted knowledge.
 
 Planned focus:
 
-- Evidence quality graph.
-- Coverage freshness.
-- Weak node routing.
-- Reusable proof ranking.
+- Prompt workflow registry.
+- Prompt versions.
+- Owner reviews.
+- Workflow test history.
