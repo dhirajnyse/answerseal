@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.51 Alpha - Security Review Exchange
+
+Phase: Security Review Exchange
+
+- Added `security-review-exchange.html` as the Security Review Exchange to give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts.
+- Moved revenue launch readiness to 70% with Security Review Exchange joining the commercial launch path.
+- Added Security Review Exchange to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Revenue Operations Ledger is shipped and Security Review Exchange is the active revenue-launch phase.
+- Upgraded public report storage to v2510 and workspace storage to v2510 while preserving earlier report memory.
+- Upgraded export language to Review Pack v157.
+- Moved the next build toward v2.52 AI Governance Policy Center.
+
 ## v2.50 Alpha - Revenue Operations Ledger
 
 Phase: Revenue Operations Ledger
