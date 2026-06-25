@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.40 Alpha
+**Current version:** v2.41 Alpha
 
-**Current phase:** Customer Success Cockpit
+**Current phase:** Expansion Intelligence Board
 
-**Current release:** v2.40 Alpha - Customer Success Cockpit
+**Current release:** v2.41 Alpha - Expansion Intelligence Board
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Expansion Intelligence Board page to identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts
 
 - Customer Success Cockpit page to turn customer activation into health, usage, support load, proof quality, renewal risk, owner actions, and success receipts
 
@@ -619,6 +621,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `integration-readiness-hub.html` - Integration Readiness Hub for prepare CRM, ticketing, document storage, webhooks, API keys, and evidence connectors for controlled production launch
 - `audit-evidence-vault.html` - Audit Evidence Vault for centralize export-ready evidence, source retention, chain of custody, auditor views, compliance scopes, and audit receipts
 - `customer-success-cockpit.html` - Customer Success Cockpit for turn customer activation into health, usage, support load, proof quality, renewal risk, owner actions, and success receipts
+- `expansion-intelligence-board.html` - Expansion Intelligence Board for identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
 - `beta.html` - Private Beta Launch Gate for go, hold, owner, next action, and remaining launch readiness decisions
@@ -643,13 +646,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.41 Alpha - Expansion Intelligence Board
+## Next Phase: v2.42 Alpha - Marketplace Partner Room
 
-The next release should identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts.
+The next release should prepare partner-led implementation with verified templates, service packages, referral paths, customer proof, and partner receipts.
 
 Planned focus:
 
-- Score lift, buyer unblock, reuse rate, and support effort show whether expansion is earned.
-- Departments, workflows, buyer types, and repeated proof requests are ranked.
-- Owner bandwidth, open holds, unresolved proof gaps, and onboarding effort shape the recommendation.
-- Recommendation, owner, proof, scope, risk, and next meeting are recorded.
+- Questionnaire packs, evidence checklists, onboarding flows, and reply templates are sealed before reuse.
+- Setup, evidence intake, first review, buyer room, and renewal packet become partner services.
+- Partner access uses approved templates and receipts, not raw customer answer memory.
+- Referral source, proof story, partner owner, and customer-safe quote status are visible.

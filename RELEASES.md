@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.41 Alpha - Expansion Intelligence Board
+
+Phase: Expansion Intelligence Board
+
+- Added `expansion-intelligence-board.html` as the Expansion Intelligence Board to identify expansion opportunities from trust lift, buyer unblock, renewal proof, department demand, support capacity, and growth receipts.
+- Moved production launch readiness to 92% with Expansion Intelligence Board joining the launch command, governance, buyer, audit, support, and learning rooms.
+- Added Expansion Intelligence Board to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the build roadmap so Customer Success Cockpit is shipped and Expansion Intelligence Board is the active production-launch phase.
+- Upgraded public storage to v2.41 while preserving v2.40 and earlier report memory.
+- Upgraded workspace storage to v2.41 while preserving v2.40 and earlier workspace memory, and upgraded export language to Review Pack v147.
+- Moved the next build toward v2.42 Marketplace Partner Room.
+
 ## v2.40 Alpha - Customer Success Cockpit
 
 Phase: Customer Success Cockpit
