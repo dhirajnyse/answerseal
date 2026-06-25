@@ -147,8 +147,8 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.52 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2520";
+const PUBLIC_BUILD_VERSION = "v2.53 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2530";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
   "answerseal.public.reports.v2460",
   "answerseal.public.reports.v2460",
@@ -4457,7 +4457,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v158 records AI Governance Policy Center, renewal distribution room, renewal packet studio, shared brief follow-up console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, source status, and export decision.",
+      audit: "Review Pack v159 records Enterprise Procurement Pack, renewal distribution room, renewal packet studio, shared brief follow-up console, buyer proof, launch readiness, tenant control, team operation, connector handoff, analytics, audit export, buyer portal, source status, and export decision.",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7898,7 +7898,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.52 Alpha - AI Governance Policy Center",
+      "Pilot phase: AnswerSeal v2.53 Alpha - Enterprise Procurement Pack",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

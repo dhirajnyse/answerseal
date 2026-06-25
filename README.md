@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.52 Alpha
+**Current version:** v2.53 Alpha
 
-**Current phase:** AI Governance Policy Center
+**Current phase:** Enterprise Procurement Pack
 
-**Current release:** v2.52 Alpha - AI Governance Policy Center
+**Current release:** v2.53 Alpha - Enterprise Procurement Pack
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Enterprise Procurement Pack page to prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
 
 - AI Governance Policy Center page to centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 
@@ -654,6 +656,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `revenue-operations-ledger.html` - Revenue Operations Ledger for track pipeline, pricing, paid conversion, expansion, churn risk, proof ROI, and finance-ready revenue receipts
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
+- `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
 - `public-launch-board.html` - Public Launch Board for present launch readiness, remaining holds, offer, buyer proof, support confidence, compliance posture, and go-live decision in one board
 - `pricing.html` - Pricing page for Starter, Team, and Enterprise packages
 - `versions.html` - Current version, build phases, and next-release roadmap
@@ -679,7 +682,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.53 Alpha - Enterprise Procurement Pack
+## Next Phase: v2.54 Alpha - Launch Revenue Command
 
 The next release should turn launch readiness into pipeline motions, buyer qualification, paid conversion, and success handoff.
 
