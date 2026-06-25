@@ -13957,7 +13957,7 @@ svg {
 .launch-roadmap-track article.is-current::after {
   color: #0b5788;
   background: #e9f4ff;
-  content: "Revenue active";
+  content: "Brief active";
 }
 
 .launch-roadmap-track article.is-pending::after {
@@ -14435,6 +14435,8 @@ svg {
 .buyer-outcome-receipt-section,
 .revenue-confidence-section,
 .revenue-confidence-receipt-section,
+.executive-briefing-section,
+.executive-briefing-receipt-section,
 .promise-receipt-section {
   display: grid;
   grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr);
@@ -14465,6 +14467,10 @@ svg {
   background: #ffffff;
 }
 
+.executive-briefing-receipt-section {
+  background: #ffffff;
+}
+
 .batch-planner-copy,
 .batch-receipt-section > div:first-child,
 .promise-calendar-copy,
@@ -14475,11 +14481,13 @@ svg {
 .follow-up-console-copy,
 .buyer-outcome-copy,
 .revenue-confidence-copy,
+.executive-briefing-copy,
 .binder-receipt-section > div:first-child,
 .buyer-room-receipt-section > div:first-child,
 .follow-up-receipt-section > div:first-child,
 .buyer-outcome-receipt-section > div:first-child,
 .revenue-confidence-receipt-section > div:first-child,
+.executive-briefing-receipt-section > div:first-child,
 .promise-receipt-section > div:first-child {
   max-width: 760px;
 }
@@ -14499,6 +14507,8 @@ svg {
 .buyer-outcome-receipt-section h2,
 .revenue-confidence-copy h2,
 .revenue-confidence-receipt-section h2,
+.executive-briefing-copy h2,
+.executive-briefing-receipt-section h2,
 .promise-receipt-section h2 {
   margin: 18px 0 14px;
   color: var(--ink);
@@ -14521,6 +14531,8 @@ svg {
 .buyer-outcome-receipt-section > div:first-child p,
 .revenue-confidence-copy p,
 .revenue-confidence-receipt-section > div:first-child p,
+.executive-briefing-copy p,
+.executive-briefing-receipt-section > div:first-child p,
 .promise-receipt-section > div:first-child p {
   margin: 0;
   color: var(--muted);
@@ -14545,6 +14557,8 @@ svg {
 .buyer-outcome-decision-grid,
 .revenue-confidence-grid,
 .revenue-confidence-decision-grid,
+.executive-briefing-grid,
+.executive-briefing-decision-grid,
 .promise-receipt-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -14559,6 +14573,7 @@ svg {
 .follow-up-decision-grid,
 .buyer-outcome-decision-grid,
 .revenue-confidence-decision-grid,
+.executive-briefing-decision-grid,
 .promise-receipt-grid {
   grid-template-columns: 1fr;
 }
@@ -14580,6 +14595,8 @@ svg {
 .buyer-outcome-decision-grid article,
 .revenue-confidence-grid article,
 .revenue-confidence-decision-grid article,
+.executive-briefing-grid article,
+.executive-briefing-decision-grid article,
 .promise-receipt-grid article {
   display: grid;
   align-content: start;
@@ -14604,6 +14621,7 @@ svg {
 .follow-up-decision-grid article,
 .buyer-outcome-decision-grid article,
 .revenue-confidence-decision-grid article,
+.executive-briefing-decision-grid article,
 .promise-receipt-grid article {
   min-height: 126px;
 }
@@ -14625,6 +14643,8 @@ svg {
 .buyer-outcome-decision-grid span,
 .revenue-confidence-grid span,
 .revenue-confidence-decision-grid span,
+.executive-briefing-grid span,
+.executive-briefing-decision-grid span,
 .promise-receipt-grid span {
   display: inline-flex;
   width: fit-content;
@@ -14654,6 +14674,8 @@ svg {
 .buyer-outcome-decision-grid strong,
 .revenue-confidence-grid h3,
 .revenue-confidence-decision-grid strong,
+.executive-briefing-grid h3,
+.executive-briefing-decision-grid strong,
 .promise-receipt-grid strong {
   margin: 0;
   color: var(--ink);
@@ -14678,6 +14700,8 @@ svg {
 .buyer-outcome-decision-grid p,
 .revenue-confidence-grid p,
 .revenue-confidence-decision-grid p,
+.executive-briefing-grid p,
+.executive-briefing-decision-grid p,
 .promise-receipt-grid p {
   margin: 0;
   color: var(--muted);
@@ -14692,7 +14716,8 @@ svg {
 .buyer-room-grid dl,
 .follow-up-console-grid dl,
 .buyer-outcome-grid dl,
-.revenue-confidence-grid dl {
+.revenue-confidence-grid dl,
+.executive-briefing-grid dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
@@ -14711,7 +14736,8 @@ svg {
 .buyer-room-grid dl div,
 .follow-up-console-grid dl div,
 .buyer-outcome-grid dl div,
-.revenue-confidence-grid dl div {
+.revenue-confidence-grid dl div,
+.executive-briefing-grid dl div {
   min-width: 0;
   padding: 10px;
   background: #fbfffd;
@@ -14734,7 +14760,9 @@ svg {
 .buyer-outcome-grid dt,
 .buyer-outcome-grid dd,
 .revenue-confidence-grid dt,
-.revenue-confidence-grid dd {
+.revenue-confidence-grid dd,
+.executive-briefing-grid dt,
+.executive-briefing-grid dd {
   margin: 0;
 }
 
@@ -14746,7 +14774,8 @@ svg {
 .buyer-room-grid dt,
 .follow-up-console-grid dt,
 .buyer-outcome-grid dt,
-.revenue-confidence-grid dt {
+.revenue-confidence-grid dt,
+.executive-briefing-grid dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
@@ -14761,7 +14790,8 @@ svg {
 .buyer-room-grid dd,
 .follow-up-console-grid dd,
 .buyer-outcome-grid dd,
-.revenue-confidence-grid dd {
+.revenue-confidence-grid dd,
+.executive-briefing-grid dd {
   color: var(--ink);
   font-size: 0.86rem;
   font-weight: 850;
@@ -14780,7 +14810,9 @@ svg {
 .buyer-outcome-grid article:first-child,
 .buyer-outcome-decision-grid article:first-child,
 .revenue-confidence-grid article:first-child,
-.revenue-confidence-decision-grid article:first-child {
+.revenue-confidence-decision-grid article:first-child,
+.executive-briefing-grid article:first-child,
+.executive-briefing-decision-grid article:first-child {
   border-color: rgba(0, 168, 137, 0.26);
   background: linear-gradient(180deg, rgba(220, 251, 244, 0.9), rgba(255, 255, 255, 0.96));
 }
@@ -14798,7 +14830,9 @@ svg {
 .buyer-outcome-grid article:nth-child(2),
 .buyer-outcome-decision-grid article:nth-child(2),
 .revenue-confidence-grid article:nth-child(2),
-.revenue-confidence-decision-grid article:nth-child(2) {
+.revenue-confidence-decision-grid article:nth-child(2),
+.executive-briefing-grid article:nth-child(2),
+.executive-briefing-decision-grid article:nth-child(2) {
   border-color: rgba(154, 103, 0, 0.26);
   background: linear-gradient(180deg, rgba(255, 250, 240, 0.95), rgba(255, 255, 255, 0.98));
 }
@@ -15165,6 +15199,8 @@ svg {
   .buyer-outcome-receipt-section,
   .revenue-confidence-section,
   .revenue-confidence-receipt-section,
+  .executive-briefing-section,
+  .executive-briefing-receipt-section,
   .digest-grid,
   .digest-decision-grid,
   .binder-grid,
@@ -15177,6 +15213,8 @@ svg {
   .buyer-outcome-decision-grid,
   .revenue-confidence-grid,
   .revenue-confidence-decision-grid,
+  .executive-briefing-grid,
+  .executive-briefing-decision-grid,
   .promise-receipt-grid {
     grid-template-columns: 1fr;
   }
