@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.74 Alpha - Global Go-To-Market Command
+
+Phase: Global Go-To-Market Command
+
+- Added `global-go-to-market-command.html` as the Global Go-To-Market Command to coordinate launch calendar, target segments, customer proof, sales rooms, support readiness, country rollout, partner motion, and founder decision receipts.
+- Moved scale launch readiness to 100% with Global Go-To-Market Command joining the controlled-learning launch path.
+- Added Global Go-To-Market Command to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2740 and workspace storage to v2740 while preserving earlier report memory.
+- Upgraded export language to Review Pack v180.
+- Moved the next build toward v2.75 Alpha Customer Growth Flywheel.
+
 ## v2.73 Alpha - Launch Monetization Suite
 
 Phase: Launch Monetization Suite

@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.73 Alpha
+**Current version:** v2.74 Alpha
 
-**Current phase:** Launch Monetization Suite
+**Current phase:** Global Go-To-Market Command
 
-**Current release:** v2.73 Alpha - Launch Monetization Suite
+**Current release:** v2.74 Alpha - Global Go-To-Market Command
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Global Go-To-Market Command page to coordinate launch calendar, target segments, customer proof, sales rooms, support readiness, country rollout, partner motion, and founder decision receipts
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -697,6 +699,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `global-go-to-market-command.html` - Global Go-To-Market Command for coordinate launch calendar, target segments, customer proof, sales rooms, support readiness, country rollout, partner motion, and founder decision receipts
 - `launch-monetization-suite.html` - Launch Monetization Suite for connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 - `enterprise-command-plane.html` - Enterprise Command Plane for unify tenant portfolio views, workspace policies, admin roles, usage limits, billing readiness, environment controls, and executive trust oversight
 - `operations-observability-grid.html` - Operations Observability Grid for track service health, trust SLOs, connector latency, export queues, reviewer bottlenecks, incident watch, and customer-facing reliability signals
@@ -742,13 +745,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.74 Alpha - Global Go-To-Market Command
+## Next Phase: v2.75 Alpha - Customer Growth Flywheel
 
-The next release should coordinate launch calendar, target segments, customer proof, sales rooms, support readiness, country rollout, partner motion, and founder decision receipts.
+The next release should turn verified trust outcomes into lifecycle automation, expansion playbooks, renewal confidence, and customer-led growth loops.
 
 Planned focus:
 
-- Customer growth flywheel.
 - Lifecycle automation.
 - Expansion playbooks.
 - Renewal trust engine.
+- Customer proof loops.
