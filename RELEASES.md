@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.48 Alpha - Implementation Runbook Studio
+
+Phase: Implementation Runbook Studio
+
+- Added `implementation-runbook-studio.html` as the Implementation Runbook Studio to convert a signed pilot into implementation tasks, owners, integrations, data boundaries, success criteria, and first-value receipts.
+- Moved revenue launch readiness to 40% with Implementation Runbook Studio joining the commercial launch path.
+- Added Implementation Runbook Studio to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap so Deal Room Console is shipped and Implementation Runbook Studio is the active revenue-launch phase.
+- Upgraded public report storage to v2480 and workspace storage to v2480 while preserving earlier report memory.
+- Upgraded export language to Review Pack v154.
+- Moved the next build toward v2.49 Support Assurance Center.
+
 ## v2.47 Alpha - Deal Room Console
 
 Phase: Deal Room Console
