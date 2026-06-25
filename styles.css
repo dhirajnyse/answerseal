@@ -14441,6 +14441,8 @@ svg {
 .leadership-share-receipt-section,
 .share-observatory-section,
 .share-observatory-receipt-section,
+.shared-followup-section,
+.shared-followup-receipt-section,
 .promise-receipt-section {
   display: grid;
   grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr);
@@ -14483,6 +14485,10 @@ svg {
   background: #ffffff;
 }
 
+.shared-followup-receipt-section {
+  background: #ffffff;
+}
+
 .batch-planner-copy,
 .batch-receipt-section > div:first-child,
 .promise-calendar-copy,
@@ -14496,6 +14502,7 @@ svg {
 .executive-briefing-copy,
 .leadership-share-copy,
 .share-observatory-copy,
+.shared-followup-copy,
 .binder-receipt-section > div:first-child,
 .buyer-room-receipt-section > div:first-child,
 .follow-up-receipt-section > div:first-child,
@@ -14504,6 +14511,7 @@ svg {
 .executive-briefing-receipt-section > div:first-child,
 .leadership-share-receipt-section > div:first-child,
 .share-observatory-receipt-section > div:first-child,
+.shared-followup-receipt-section > div:first-child,
 .promise-receipt-section > div:first-child {
   max-width: 760px;
 }
@@ -14529,6 +14537,8 @@ svg {
 .leadership-share-receipt-section h2,
 .share-observatory-copy h2,
 .share-observatory-receipt-section h2,
+.shared-followup-copy h2,
+.shared-followup-receipt-section h2,
 .promise-receipt-section h2 {
   margin: 18px 0 14px;
   color: var(--ink);
@@ -14557,6 +14567,8 @@ svg {
 .leadership-share-receipt-section > div:first-child p,
 .share-observatory-copy p,
 .share-observatory-receipt-section > div:first-child p,
+.shared-followup-copy p,
+.shared-followup-receipt-section > div:first-child p,
 .promise-receipt-section > div:first-child p {
   margin: 0;
   color: var(--muted);
@@ -14587,6 +14599,8 @@ svg {
 .leadership-share-decision-grid,
 .share-observatory-grid,
 .share-observatory-decision-grid,
+.shared-followup-grid,
+.shared-followup-decision-grid,
 .promise-receipt-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -14604,6 +14618,7 @@ svg {
 .executive-briefing-decision-grid,
 .leadership-share-decision-grid,
 .share-observatory-decision-grid,
+.shared-followup-decision-grid,
 .promise-receipt-grid {
   grid-template-columns: 1fr;
 }
@@ -14631,6 +14646,8 @@ svg {
 .leadership-share-decision-grid article,
 .share-observatory-grid article,
 .share-observatory-decision-grid article,
+.shared-followup-grid article,
+.shared-followup-decision-grid article,
 .promise-receipt-grid article {
   display: grid;
   align-content: start;
@@ -14658,6 +14675,7 @@ svg {
 .executive-briefing-decision-grid article,
 .leadership-share-decision-grid article,
 .share-observatory-decision-grid article,
+.shared-followup-decision-grid article,
 .promise-receipt-grid article {
   min-height: 126px;
 }
@@ -14685,6 +14703,8 @@ svg {
 .leadership-share-decision-grid span,
 .share-observatory-grid span,
 .share-observatory-decision-grid span,
+.shared-followup-grid span,
+.shared-followup-decision-grid span,
 .promise-receipt-grid span {
   display: inline-flex;
   width: fit-content;
@@ -14720,6 +14740,8 @@ svg {
 .leadership-share-decision-grid strong,
 .share-observatory-grid h3,
 .share-observatory-decision-grid strong,
+.shared-followup-grid h3,
+.shared-followup-decision-grid strong,
 .promise-receipt-grid strong {
   margin: 0;
   color: var(--ink);
@@ -14750,6 +14772,8 @@ svg {
 .leadership-share-decision-grid p,
 .share-observatory-grid p,
 .share-observatory-decision-grid p,
+.shared-followup-grid p,
+.shared-followup-decision-grid p,
 .promise-receipt-grid p {
   margin: 0;
   color: var(--muted);
@@ -14767,7 +14791,8 @@ svg {
 .revenue-confidence-grid dl,
 .executive-briefing-grid dl,
 .leadership-share-grid dl,
-.share-observatory-grid dl {
+.share-observatory-grid dl,
+.shared-followup-grid dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
@@ -14789,7 +14814,8 @@ svg {
 .revenue-confidence-grid dl div,
 .executive-briefing-grid dl div,
 .leadership-share-grid dl div,
-.share-observatory-grid dl div {
+.share-observatory-grid dl div,
+.shared-followup-grid dl div {
   min-width: 0;
   padding: 10px;
   background: #fbfffd;
@@ -14818,7 +14844,9 @@ svg {
 .leadership-share-grid dt,
 .leadership-share-grid dd,
 .share-observatory-grid dt,
-.share-observatory-grid dd {
+.share-observatory-grid dd,
+.shared-followup-grid dt,
+.shared-followup-grid dd {
   margin: 0;
 }
 
@@ -14833,7 +14861,8 @@ svg {
 .revenue-confidence-grid dt,
 .executive-briefing-grid dt,
 .leadership-share-grid dt,
-.share-observatory-grid dt {
+.share-observatory-grid dt,
+.shared-followup-grid dt {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
@@ -14851,7 +14880,8 @@ svg {
 .revenue-confidence-grid dd,
 .executive-briefing-grid dd,
 .leadership-share-grid dd,
-.share-observatory-grid dd {
+.share-observatory-grid dd,
+.shared-followup-grid dd {
   color: var(--ink);
   font-size: 0.86rem;
   font-weight: 850;
@@ -14876,7 +14906,9 @@ svg {
 .leadership-share-grid article:first-child,
 .leadership-share-decision-grid article:first-child,
 .share-observatory-grid article:first-child,
-.share-observatory-decision-grid article:first-child {
+.share-observatory-decision-grid article:first-child,
+.shared-followup-grid article:first-child,
+.shared-followup-decision-grid article:first-child {
   border-color: rgba(0, 168, 137, 0.26);
   background: linear-gradient(180deg, rgba(220, 251, 244, 0.9), rgba(255, 255, 255, 0.96));
 }
@@ -14900,7 +14932,9 @@ svg {
 .leadership-share-grid article:nth-child(2),
 .leadership-share-decision-grid article:nth-child(2),
 .share-observatory-grid article:nth-child(2),
-.share-observatory-decision-grid article:nth-child(2) {
+.share-observatory-decision-grid article:nth-child(2),
+.shared-followup-grid article:nth-child(2),
+.shared-followup-decision-grid article:nth-child(2) {
   border-color: rgba(154, 103, 0, 0.26);
   background: linear-gradient(180deg, rgba(255, 250, 240, 0.95), rgba(255, 255, 255, 0.98));
 }
@@ -15273,6 +15307,8 @@ svg {
   .leadership-share-receipt-section,
   .share-observatory-section,
   .share-observatory-receipt-section,
+  .shared-followup-section,
+  .shared-followup-receipt-section,
   .digest-grid,
   .digest-decision-grid,
   .binder-grid,
@@ -15291,6 +15327,8 @@ svg {
   .leadership-share-decision-grid,
   .share-observatory-grid,
   .share-observatory-decision-grid,
+  .shared-followup-grid,
+  .shared-followup-decision-grid,
   .promise-receipt-grid {
     grid-template-columns: 1fr;
   }

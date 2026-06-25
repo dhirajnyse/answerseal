@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.22 Alpha - Shared Brief Follow-Up Console
+
+Phase: Shared Brief Follow-Up Console
+
+- Added `shared-brief-follow-up-console.html` as the Shared Brief Follow-Up Console for viewer question inbox, owner SLA, renewal packets, and keep-replace-revoke decisions after a trusted brief is observed.
+- Moved beta operations to a 23/23 active loop with shared brief follow-up console joining share activity observatory, leadership share control room, executive briefing room, revenue confidence room, buyer outcome ledger, buyer follow-up console, buyer launch room, launch evidence binder, beta confidence digest, promise follow-through monitor, beta promise calendar, expansion batch planner, support capacity forecast, beta expansion decision, customer handoff loop, first review receipt, beta onboarding promise, invite control, readiness board, friction queue, signal ledger, and cohort room.
+- Added Shared Brief Follow-Up Console to the landing product spine, reports dashboard, pricing page, demo build label, README, release notes, focused top nav, and public release identity.
+- Reworked the path-to-launch track so Share Activity Observatory is shipped and Shared Brief Follow-Up Console is the active operating phase.
+- Upgraded public storage to v2.22 while preserving v2.21 and earlier report memory.
+- Upgraded workspace storage to v2.22 while preserving v2.21 and earlier workspace memory, and upgraded export language to Review Pack v128.
+- Moved the next build toward v2.23 Renewal Packet Studio.
+
 ## v2.21 Alpha - Share Activity Observatory
 
 Phase: Share Activity Observatory
