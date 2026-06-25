@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.57 Alpha - Evidence Quality Graph
+
+Phase: Evidence Quality Graph
+
+- Added `evidence-quality-graph.html` as the Evidence Quality Graph to map evidence strength, freshness, coverage, conflict risk, claim links, and reusable proof patterns before answers become trusted knowledge.
+- Moved scale launch readiness to 30% with Evidence Quality Graph joining the controlled-learning launch path.
+- Added Evidence Quality Graph to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2570 and workspace storage to v2570 while preserving earlier report memory.
+- Upgraded export language to Review Pack v163.
+- Moved the next build toward v2.58 Alpha Prompt Workflow Registry.
+
 ## v2.56 Alpha - Tenant Learning Controls
 
 Phase: Tenant Learning Controls
