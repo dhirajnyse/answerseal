@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.24 Alpha
+**Current version:** v2.25 Alpha
 
-**Current phase:** Renewal Distribution Room
+**Current phase:** Renewal Watch Room
 
-**Current release:** v2.24 Alpha - Renewal Distribution Room
+**Current release:** v2.25 Alpha - Renewal Watch Room
 
 ## Brand
 
@@ -28,6 +28,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
+
+- Renewal Watch Room page to observe opened packets, buyer questions, stale proof, access drift, and next follow-up triggers
 - Source-backed questionnaire queue with status filters and search
 - Draft answer workspace with confidence scoring, review notes, and citations
 - Seal Summary for answer grade, evidence coverage, and source freshness

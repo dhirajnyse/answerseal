@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.25 Alpha - Renewal Watch Room
+
+Phase: Renewal Watch Room
+
+- Added `renewal-watch-room.html` as the Renewal Watch Room to observe opened packets, buyer questions, stale proof, access drift, and next follow-up triggers.
+- Moved beta operations to a 26/26 active loop with renewal Watch Room joining the prior launch, renewal, buyer, support, and governance rooms.
+- Added Renewal Watch Room to the landing product spine, public navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the path-to-launch track so the prior phase is shipped and Renewal Watch Room is the active operating phase.
+- Upgraded public storage to v2.25 while preserving v2.24 and earlier report memory.
+- Upgraded workspace storage to v2.25 while preserving v2.24 and earlier workspace memory, and upgraded export language to Review Pack v131.
+- Moved the next build toward v2.26 Exception Triage Room.
+
 ## v2.24 Alpha - Renewal Distribution Room
 
 Phase: Renewal Distribution Room
