@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.62 Alpha
+**Current version:** v2.63 Alpha
 
-**Current phase:** Enterprise Policy Automation
+**Current phase:** Global Trust Operations Hub
 
-**Current release:** v2.62 Alpha - Enterprise Policy Automation
+**Current release:** v2.63 Alpha - Global Trust Operations Hub
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Global Trust Operations Hub page to coordinate regional readiness, environment health, support posture, policy status, buyer commitments, and launch operations for global rollout
 
 - Enterprise Policy Automation page to convert enterprise policy into automated holds, exception routing, audit exports, country rules, approval receipts, and release constraints
 
@@ -675,6 +677,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `security-review-exchange.html` - Security Review Exchange for give buyers a controlled exchange for security requests, evidence sharing, NDAs, follow-ups, and source-backed response receipts
 - `ai-governance-policy-center.html` - AI Governance Policy Center for centralize AI policy templates, model boundaries, approval rules, learning consent, tenant overrides, and governance receipts
 - `enterprise-procurement-pack.html` - Enterprise Procurement Pack for prepare procurement-ready materials with legal checklist, DPA, MSA path, vendor onboarding, security packet, and purchase receipts
+- `global-trust-operations-hub.html` - Global Trust Operations Hub for coordinate regional readiness, environment health, support posture, policy status, buyer commitments, and launch operations for global rollout
 - `enterprise-policy-automation.html` - Enterprise Policy Automation for convert enterprise policy into automated holds, exception routing, audit exports, country rules, approval receipts, and release constraints
 - `cross-org-benchmark-exchange.html` - Cross-Org Benchmark Exchange for share aggregate-safe trust benchmarks, category bands, friction signals, improvement lift, and privacy boundaries across organizations
 - `model-risk-observatory.html` - Model Risk Observatory for track model drift, hallucination patterns, vendor comparison, confidence movement, regression failures, and risk trends across verified work
@@ -709,13 +712,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.63 Alpha - Global Trust Operations Hub
+## Next Phase: v2.64 Alpha - Autonomous Improvement Command
 
-The next release should coordinate regional readiness, environment health, support posture, policy status, buyer commitments, and launch operations for global rollout.
+The next release should coordinate closed-loop improvement proposals, simulations, human approvals, controlled rollout, monitoring, rollback, and shared learning receipts.
 
 Planned focus:
 
-- Autonomous improvement command.
-- Closed-loop proposals.
-- Simulate and approve.
-- Monitor rollback.
+- Platform API fabric.
+- External connectors.
+- Webhook receipts.
+- Enterprise integration launch.

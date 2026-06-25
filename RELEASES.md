@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.63 Alpha - Global Trust Operations Hub
+
+Phase: Global Trust Operations Hub
+
+- Added `global-trust-operations-hub.html` as the Global Trust Operations Hub to coordinate regional readiness, environment health, support posture, policy status, buyer commitments, and launch operations for global rollout.
+- Moved scale launch readiness to 90% with Global Trust Operations Hub joining the controlled-learning launch path.
+- Added Global Trust Operations Hub to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build scale arc.
+- Upgraded public report storage to v2630 and workspace storage to v2630 while preserving earlier report memory.
+- Upgraded export language to Review Pack v169.
+- Moved the next build toward v2.64 Alpha Autonomous Improvement Command.
+
 ## v2.62 Alpha - Enterprise Policy Automation
 
 Phase: Enterprise Policy Automation
