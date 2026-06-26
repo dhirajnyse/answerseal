@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v3.04 Alpha - Launch Operating Command
+
+Phase: Launch Operating Command
+
+- Added `launch-operating-command.html` as the Launch Operating Command to unify operating system readiness, memory, workflows, agents, governance, environments, localization, integrations, and launch decisions.
+- Moved intelligent operating system readiness to 100% with Launch Operating Command joining the governed operating-system path.
+- Added Launch Operating Command to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v3040 and workspace storage to v3040 while preserving earlier report memory.
+- Upgraded export language to Review Pack v210.
+- Moved the next build toward v3.05 Alpha Autonomous Trust Copilot.
+
 ## v3.03 Alpha - Enterprise Integration Mesh
 
 Phase: Enterprise Integration Mesh
