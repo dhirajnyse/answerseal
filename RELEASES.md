@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.90 Alpha - Customer Community Signal Room
+
+Phase: Customer Community Signal Room
+
+- Added `customer-community-signal-room.html` as the Customer Community Signal Room to capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning.
+- Moved market leadership readiness to 60% with Customer Community Signal Room joining the governed leadership path.
+- Added Customer Community Signal Room to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2900 and workspace storage to v2900 while preserving earlier report memory.
+- Upgraded export language to Review Pack v196.
+- Moved the next build toward v2.91 Alpha Enterprise Readiness Graph.
+
 ## v2.89 Alpha - Marketplace Trust Exchange
 
 Phase: Marketplace Trust Exchange

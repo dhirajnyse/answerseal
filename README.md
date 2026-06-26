@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.89 Alpha
+**Current version:** v2.90 Alpha
 
-**Current phase:** Marketplace Trust Exchange
+**Current phase:** Customer Community Signal Room
 
-**Current release:** v2.89 Alpha - Marketplace Trust Exchange
+**Current release:** v2.90 Alpha - Customer Community Signal Room
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Marketplace Trust Exchange page to prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion
+- Customer Community Signal Room page to capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -748,6 +748,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `trust-roi-observatory.html` - Trust ROI Observatory for measure time saved, risk reduced, buyer cycles shortened, proof reuse, support deflection, expansion influence, and renewal confidence
 - `executive-narrative-studio.html` - Executive Narrative Studio for compose board-ready updates, founder notes, customer proof stories, risk summaries, launch memos, and leadership talking points from sealed evidence
 - `marketplace-trust-exchange.html` - Marketplace Trust Exchange for prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion
+- `customer-community-signal-room.html` - Customer Community Signal Room for capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -760,9 +761,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.90 Alpha - Customer Community Signal Room
+## Next Phase: v2.91 Alpha - Enterprise Readiness Graph
 
-The next release should capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning.
+The next release should map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof.
 
 Planned focus:
 
