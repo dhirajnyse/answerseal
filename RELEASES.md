@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.91 Alpha - Enterprise Readiness Graph
+
+Phase: Enterprise Readiness Graph
+
+- Added `enterprise-readiness-graph.html` as the Enterprise Readiness Graph to map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof.
+- Moved market leadership readiness to 70% with Enterprise Readiness Graph joining the governed leadership path.
+- Added Enterprise Readiness Graph to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2910 and workspace storage to v2910 while preserving earlier report memory.
+- Upgraded export language to Review Pack v197.
+- Moved the next build toward v2.92 Alpha Global Expansion Control Tower.
+
 ## v2.90 Alpha - Customer Community Signal Room
 
 Phase: Customer Community Signal Room

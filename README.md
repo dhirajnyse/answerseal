@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.90 Alpha
+**Current version:** v2.91 Alpha
 
-**Current phase:** Customer Community Signal Room
+**Current phase:** Enterprise Readiness Graph
 
-**Current release:** v2.90 Alpha - Customer Community Signal Room
+**Current release:** v2.91 Alpha - Enterprise Readiness Graph
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Customer Community Signal Room page to capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning
+- Enterprise Readiness Graph page to map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -749,6 +749,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `executive-narrative-studio.html` - Executive Narrative Studio for compose board-ready updates, founder notes, customer proof stories, risk summaries, launch memos, and leadership talking points from sealed evidence
 - `marketplace-trust-exchange.html` - Marketplace Trust Exchange for prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion
 - `customer-community-signal-room.html` - Customer Community Signal Room for capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning
+- `enterprise-readiness-graph.html` - Enterprise Readiness Graph for map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -761,9 +762,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.91 Alpha - Enterprise Readiness Graph
+## Next Phase: v2.92 Alpha - Global Expansion Control Tower
 
-The next release should map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof.
+The next release should coordinate country readiness, regional proof rights, language needs, local policy rules, support coverage, partner channels, and rollout sequencing.
 
 Planned focus:
 
