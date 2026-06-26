@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.95 Alpha - Intelligent Operating System
+
+Phase: Intelligent Operating System
+
+- Added `intelligent-operating-system.html` as the Intelligent Operating System to turn verified answers, prompts, agents, workflows, policies, reports, and learning loops into one calm operating layer.
+- Moved intelligent operating system readiness to 10% with Intelligent Operating System joining the governed operating-system path.
+- Added Intelligent Operating System to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v2950 and workspace storage to v2950 while preserving earlier report memory.
+- Upgraded export language to Review Pack v201.
+- Moved the next build toward v2.96 Alpha Organization Memory Fabric.
+
 ## v2.94 Alpha - Category Leadership Command
 
 Phase: Category Leadership Command

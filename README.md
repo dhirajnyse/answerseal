@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.94 Alpha
+**Current version:** v2.95 Alpha
 
-**Current phase:** Category Leadership Command
+**Current phase:** Intelligent Operating System
 
-**Current release:** v2.94 Alpha - Category Leadership Command
+**Current release:** v2.95 Alpha - Intelligent Operating System
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Intelligent Operating System page to turn verified answers, prompts, agents, workflows, policies, reports, and learning loops into one calm operating layer
 
 - Category Leadership Command page to unify market leadership, competitive proof, ROI, executive narrative, marketplace readiness, community learning, enterprise readiness, global expansion, and board launch decisions
 
@@ -753,6 +755,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `global-expansion-control-tower.html` - Global Expansion Control Tower for coordinate country readiness, regional proof rights, language needs, local policy rules, support coverage, partner channels, and rollout sequencing
 - `board-launch-briefing-room.html` - Board Launch Briefing Room for prepare board-level launch briefs with customer proof, growth metrics, risk posture, rollout sequence, support readiness, ROI signals, and decision asks
 - `category-leadership-command.html` - Category Leadership Command for unify market leadership, competitive proof, ROI, executive narrative, marketplace readiness, community learning, enterprise readiness, global expansion, and board launch decisions
+- `intelligent-operating-system.html` - Intelligent Operating System for turn verified answers, prompts, agents, workflows, policies, reports, and learning loops into one calm operating layer
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -765,13 +768,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.95 Alpha - Intelligent Operating System
+## Next Phase: v2.96 Alpha - Organization Memory Fabric
 
-The next release should begin turning AnswerSeal from a trust application into a calm operating system for verified AI work, governed learning, and organization-wide decision memory.
+The next release should keep simplifying AnswerSeal into one calm operating system for verified AI work, governed learning, and organization-wide decision memory.
 
 Planned focus:
 
 - Keep the interface calm and simple.
-- Turn trusted work into market leadership.
+- Make trusted work easier to operate across teams.
 - Preserve tenant control, consent, and approval.
 - Make the next action visible before more automation ships.
