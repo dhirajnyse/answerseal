@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.79 Alpha - Support Knowledge Loop
+
+Phase: Support Knowledge Loop
+
+- Added `support-knowledge-loop.html` as the Support Knowledge Loop to convert support questions, setup issues, resolved blockers, customer language, and help-center gaps into verified support answers.
+- Moved customer growth readiness to 50% with Support Knowledge Loop joining the governed post-launch growth path.
+- Added Support Knowledge Loop to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2790 and workspace storage to v2790 while preserving earlier report memory.
+- Upgraded export language to Review Pack v185.
+- Moved the next build toward v2.80 Alpha Account Health Command.
+
 ## v2.78 Alpha - Expansion Signal Radar
 
 Phase: Expansion Signal Radar
