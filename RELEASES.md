@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.84 Alpha - Scale Launch Board
+
+Phase: Scale Launch Board
+
+- Added `scale-launch-board.html` as the Scale Launch Board to coordinate public launch readiness, customer references, partner channels, support capacity, sales proof, pricing confidence, and growth decision receipts.
+- Moved customer growth readiness to 100% with Scale Launch Board joining the governed post-launch growth path.
+- Added Scale Launch Board to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2840 and workspace storage to v2840 while preserving earlier report memory.
+- Upgraded export language to Review Pack v190.
+- Moved the next build toward v2.85 Alpha Market Leadership Loop.
+
 ## v2.83 Alpha - Renewal Growth Room
 
 Phase: Renewal Growth Room
