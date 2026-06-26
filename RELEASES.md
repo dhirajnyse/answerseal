@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v3.01 Alpha - Multi-Environment Control Plane
+
+Phase: Multi-Environment Control Plane
+
+- Added `multi-environment-control-plane.html` as the Multi-Environment Control Plane to coordinate dev, demo, pilot, production, enterprise, regional, and partner environments with readiness, policy, and rollback states.
+- Moved intelligent operating system readiness to 70% with Multi-Environment Control Plane joining the governed operating-system path.
+- Added Multi-Environment Control Plane to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v3010 and workspace storage to v3010 while preserving earlier report memory.
+- Upgraded export language to Review Pack v207.
+- Moved the next build toward v3.02 Alpha Global Policy Localization Hub.
+
 ## v3.00 Alpha - Governance Runtime Console
 
 Phase: Governance Runtime Console
