@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.79 Alpha
+**Current version:** v2.80 Alpha
 
-**Current phase:** Support Knowledge Loop
+**Current phase:** Account Health Command
 
-**Current release:** v2.79 Alpha - Support Knowledge Loop
+**Current release:** v2.80 Alpha - Account Health Command
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Support Knowledge Loop page to convert support questions, setup issues, resolved blockers, customer language, and help-center gaps into verified support answers
+- Account Health Command page to unify adoption, saved reports, trust scores, reviewer load, support risk, renewal health, expansion signals, and next customer action
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -738,6 +738,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `customer-proof-library.html` - Customer Proof Library for curate sealed wins, case-study fragments, ROI evidence, buyer-safe quotes, objection replies, and reusable customer proof with approvals
 - `expansion-signal-radar.html` - Expansion Signal Radar for detect teams, regions, workflows, buyer questions, proof patterns, and usage clusters ready for expansion without increasing compliance risk
 - `support-knowledge-loop.html` - Support Knowledge Loop for convert support questions, setup issues, resolved blockers, customer language, and help-center gaps into verified support answers
+- `account-health-command.html` - Account Health Command for unify adoption, saved reports, trust scores, reviewer load, support risk, renewal health, expansion signals, and next customer action
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -750,9 +751,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.80 Alpha - Account Health Command
+## Next Phase: v2.81 Alpha - Referral Partner Engine
 
-The next release should unify adoption, saved reports, trust scores, reviewer load, support risk, renewal health, expansion signals, and next customer action.
+The next release should package partner proof, referral triggers, connector wins, co-sell notes, customer-safe stories, and partner follow-up motions.
 
 Planned focus:
 

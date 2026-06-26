@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.80 Alpha - Account Health Command
+
+Phase: Account Health Command
+
+- Added `account-health-command.html` as the Account Health Command to unify adoption, saved reports, trust scores, reviewer load, support risk, renewal health, expansion signals, and next customer action.
+- Moved customer growth readiness to 60% with Account Health Command joining the governed post-launch growth path.
+- Added Account Health Command to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2800 and workspace storage to v2800 while preserving earlier report memory.
+- Upgraded export language to Review Pack v186.
+- Moved the next build toward v2.81 Alpha Referral Partner Engine.
+
 ## v2.79 Alpha - Support Knowledge Loop
 
 Phase: Support Knowledge Loop

@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.79 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2790";
+const PUBLIC_BUILD_VERSION = "v2.80 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2800";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v2790",
   "answerseal.public.reports.v2780",
   "answerseal.public.reports.v2770",
   "answerseal.public.reports.v2760",
@@ -4368,7 +4369,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v185 records Support Knowledge Loop, customer growth, activation, proof library, expansion radar, support loop, account health, referral partner, usage ledger, renewal room, launch board, buyer proof, source status, and export decision",
+      audit: "Review Pack v186 records Account Health Command, customer growth, activation, proof library, expansion radar, support loop, account health, referral partner, usage ledger, renewal room, launch board, buyer proof, source status, and export decision",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7809,7 +7810,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.79 Alpha - Support Knowledge Loop",
+      "Pilot phase: AnswerSeal v2.80 Alpha - Account Health Command",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
