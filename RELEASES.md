@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v3.00 Alpha - Governance Runtime Console
+
+Phase: Governance Runtime Console
+
+- Added `governance-runtime-console.html` as the Governance Runtime Console to show live policy enforcement, agent limits, approval gates, audit exports, exception holds, and tenant-specific runtime rules.
+- Moved intelligent operating system readiness to 60% with Governance Runtime Console joining the governed operating-system path.
+- Added Governance Runtime Console to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v3000 and workspace storage to v3000 while preserving earlier report memory.
+- Upgraded export language to Review Pack v206.
+- Moved the next build toward v3.01 Alpha Multi-Environment Control Plane.
+
 ## v2.99 Alpha - Evidence Knowledge Graph
 
 Phase: Evidence Knowledge Graph
