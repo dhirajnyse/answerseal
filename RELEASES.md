@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.82 Alpha - Usage Intelligence Ledger
+
+Phase: Usage Intelligence Ledger
+
+- Added `usage-intelligence-ledger.html` as the Usage Intelligence Ledger to meter verification usage, sealed report reuse, team activation, governance actions, API calls, value proof, and buyer-facing outcomes.
+- Moved customer growth readiness to 80% with Usage Intelligence Ledger joining the governed post-launch growth path.
+- Added Usage Intelligence Ledger to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2820 and workspace storage to v2820 while preserving earlier report memory.
+- Upgraded export language to Review Pack v188.
+- Moved the next build toward v2.83 Alpha Renewal Growth Room.
+
 ## v2.81 Alpha - Referral Partner Engine
 
 Phase: Referral Partner Engine
