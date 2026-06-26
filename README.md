@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.75 Alpha
+**Current version:** v2.76 Alpha
 
-**Current phase:** Customer Growth Flywheel
+**Current phase:** Activation Journey Studio
 
-**Current release:** v2.75 Alpha - Customer Growth Flywheel
+**Current release:** v2.76 Alpha - Activation Journey Studio
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Customer Growth Flywheel page to turn sealed reports, pilot outcomes, buyer objections, proof reuse, and customer success moments into a governed growth loop
+- Activation Journey Studio page to map first workspace setup, first verified answer, first sealed report, owner adoption, time-to-value, and activation friction into one journey
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -734,6 +734,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `friction.html` - Beta Friction Queue for setup confusion, weak proof, buyer objections, support drag, pricing questions, owner fixes, and expansion gates
 - `readiness.html` - Expansion Readiness Board for value proof, proof health, support capacity, buyer unblock, cohort fit, and go/hold decisions
 - `customer-growth-flywheel.html` - Customer Growth Flywheel for turn sealed reports, pilot outcomes, buyer objections, proof reuse, and customer success moments into a governed growth loop
+- `activation-journey-studio.html` - Activation Journey Studio for map first workspace setup, first verified answer, first sealed report, owner adoption, time-to-value, and activation friction into one journey
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -746,9 +747,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.76 Alpha - Activation Journey Studio
+## Next Phase: v2.77 Alpha - Customer Proof Library
 
-The next release should map first workspace setup, first verified answer, first sealed report, owner adoption, time-to-value, and activation friction into one journey.
+The next release should curate sealed wins, case-study fragments, ROI evidence, buyer-safe quotes, objection replies, and reusable customer proof with approvals.
 
 Planned focus:
 

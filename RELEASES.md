@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.76 Alpha - Activation Journey Studio
+
+Phase: Activation Journey Studio
+
+- Added `activation-journey-studio.html` as the Activation Journey Studio to map first workspace setup, first verified answer, first sealed report, owner adoption, time-to-value, and activation friction into one journey.
+- Moved customer growth readiness to 20% with Activation Journey Studio joining the governed post-launch growth path.
+- Added Activation Journey Studio to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2760 and workspace storage to v2760 while preserving earlier report memory.
+- Upgraded export language to Review Pack v182.
+- Moved the next build toward v2.77 Alpha Customer Proof Library.
+
 ## v2.75 Alpha - Customer Growth Flywheel
 
 Phase: Customer Growth Flywheel
