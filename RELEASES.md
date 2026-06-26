@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.93 Alpha - Board Launch Briefing Room
+
+Phase: Board Launch Briefing Room
+
+- Added `board-launch-briefing-room.html` as the Board Launch Briefing Room to prepare board-level launch briefs with customer proof, growth metrics, risk posture, rollout sequence, support readiness, ROI signals, and decision asks.
+- Moved market leadership readiness to 90% with Board Launch Briefing Room joining the governed leadership path.
+- Added Board Launch Briefing Room to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2930 and workspace storage to v2930 while preserving earlier report memory.
+- Upgraded export language to Review Pack v199.
+- Moved the next build toward v2.94 Alpha Category Leadership Command.
+
 ## v2.92 Alpha - Global Expansion Control Tower
 
 Phase: Global Expansion Control Tower
