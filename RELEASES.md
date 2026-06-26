@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.86 Alpha - Competitive Proof Atlas
+
+Phase: Competitive Proof Atlas
+
+- Added `competitive-proof-atlas.html` as the Competitive Proof Atlas to organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence.
+- Moved market leadership readiness to 20% with Competitive Proof Atlas joining the governed leadership path.
+- Added Competitive Proof Atlas to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2860 and workspace storage to v2860 while preserving earlier report memory.
+- Upgraded export language to Review Pack v192.
+- Moved the next build toward v2.87 Alpha Trust ROI Observatory.
+
 ## v2.85 Alpha - Market Leadership Loop
 
 Phase: Market Leadership Loop

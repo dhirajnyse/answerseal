@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v2.85 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v2850";
+const BUILD_VERSION = "v2.86 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v2860";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v2850",
   "answerseal.workspace.v2840",
   "answerseal.workspace.v2830",
   "answerseal.workspace.v2820",
@@ -6739,7 +6740,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v191 with Market Leadership Loop, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.`,
+      detail: `Create Review Pack v192 with Competitive Proof Atlas, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25486,7 +25487,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v191</h1>
+        <h1>AnswerSeal Review Pack v192</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29631,7 +29632,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v191 created with Market Leadership Loop, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v192 created with Competitive Proof Atlas, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29676,7 +29677,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v191 exported.");
+  showToast("Review Pack v192 exported.");
 }
 
 function toCsv(rows) {

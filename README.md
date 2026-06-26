@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.85 Alpha
+**Current version:** v2.86 Alpha
 
-**Current phase:** Market Leadership Loop
+**Current phase:** Competitive Proof Atlas
 
-**Current release:** v2.85 Alpha - Market Leadership Loop
+**Current release:** v2.86 Alpha - Competitive Proof Atlas
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Market Leadership Loop page to turn sealed proof, buyer outcomes, competitive wins, analyst-ready evidence, and customer learning into a repeatable market leadership rhythm
+- Competitive Proof Atlas page to organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -744,6 +744,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `renewal-growth-room.html` - Renewal Growth Room for prepare renewal packs with outcome evidence, unresolved risks, sponsor notes, expansion options, support history, and executive summaries
 - `scale-launch-board.html` - Scale Launch Board for coordinate public launch readiness, customer references, partner channels, support capacity, sales proof, pricing confidence, and growth decision receipts
 - `market-leadership-loop.html` - Market Leadership Loop for turn sealed proof, buyer outcomes, competitive wins, analyst-ready evidence, and customer learning into a repeatable market leadership rhythm
+- `competitive-proof-atlas.html` - Competitive Proof Atlas for organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -756,9 +757,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.86 Alpha - Competitive Proof Atlas
+## Next Phase: v2.87 Alpha - Trust ROI Observatory
 
-The next release should organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence.
+The next release should measure time saved, risk reduced, buyer cycles shortened, proof reuse, support deflection, expansion influence, and renewal confidence.
 
 Planned focus:
 
