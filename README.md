@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.91 Alpha
+**Current version:** v2.92 Alpha
 
-**Current phase:** Enterprise Readiness Graph
+**Current phase:** Global Expansion Control Tower
 
-**Current release:** v2.91 Alpha - Enterprise Readiness Graph
+**Current release:** v2.92 Alpha - Global Expansion Control Tower
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Enterprise Readiness Graph page to map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof
+- Global Expansion Control Tower page to coordinate country readiness, regional proof rights, language needs, local policy rules, support coverage, partner channels, and rollout sequencing
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -750,6 +750,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `marketplace-trust-exchange.html` - Marketplace Trust Exchange for prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion
 - `customer-community-signal-room.html` - Customer Community Signal Room for capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning
 - `enterprise-readiness-graph.html` - Enterprise Readiness Graph for map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof
+- `global-expansion-control-tower.html` - Global Expansion Control Tower for coordinate country readiness, regional proof rights, language needs, local policy rules, support coverage, partner channels, and rollout sequencing
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -762,9 +763,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.92 Alpha - Global Expansion Control Tower
+## Next Phase: v2.93 Alpha - Board Launch Briefing Room
 
-The next release should coordinate country readiness, regional proof rights, language needs, local policy rules, support coverage, partner channels, and rollout sequencing.
+The next release should prepare board-level launch briefs with customer proof, growth metrics, risk posture, rollout sequence, support readiness, ROI signals, and decision asks.
 
 Planned focus:
 

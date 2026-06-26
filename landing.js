@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v2.91 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2910";
+const PUBLIC_BUILD_VERSION = "v2.92 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v2920";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v2910",
   "answerseal.public.reports.v2900",
   "answerseal.public.reports.v2890",
   "answerseal.public.reports.v2880",
@@ -4380,7 +4381,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v197 records Enterprise Readiness Graph, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision",
+      audit: "Review Pack v198 records Global Expansion Control Tower, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7821,7 +7822,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v2.91 Alpha - Enterprise Readiness Graph",
+      "Pilot phase: AnswerSeal v2.92 Alpha - Global Expansion Control Tower",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

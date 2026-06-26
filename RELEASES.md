@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.92 Alpha - Global Expansion Control Tower
+
+Phase: Global Expansion Control Tower
+
+- Added `global-expansion-control-tower.html` as the Global Expansion Control Tower to coordinate country readiness, regional proof rights, language needs, local policy rules, support coverage, partner channels, and rollout sequencing.
+- Moved market leadership readiness to 80% with Global Expansion Control Tower joining the governed leadership path.
+- Added Global Expansion Control Tower to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2920 and workspace storage to v2920 while preserving earlier report memory.
+- Upgraded export language to Review Pack v198.
+- Moved the next build toward v2.93 Alpha Board Launch Briefing Room.
+
 ## v2.91 Alpha - Enterprise Readiness Graph
 
 Phase: Enterprise Readiness Graph
