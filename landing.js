@@ -147,9 +147,10 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v3.02 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3020";
+const PUBLIC_BUILD_VERSION = "v3.03 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3030";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v3020",
   "answerseal.public.reports.v3010",
   "answerseal.public.reports.v3000",
   "answerseal.public.reports.v2990",
@@ -4391,7 +4392,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v208 records Category Leadership Command, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision",
+      audit: "Review Pack v209 records Category Leadership Command, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7832,7 +7833,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v3.02 Alpha - Global Policy Localization Hub",
+      "Pilot phase: AnswerSeal v3.03 Alpha - Enterprise Integration Mesh",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

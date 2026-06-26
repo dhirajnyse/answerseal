@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v3.02 Alpha
+**Current version:** v3.03 Alpha
 
-**Current phase:** Global Policy Localization Hub
+**Current phase:** Enterprise Integration Mesh
 
-**Current release:** v3.02 Alpha - Global Policy Localization Hub
+**Current release:** v3.03 Alpha - Enterprise Integration Mesh
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Enterprise Integration Mesh page to govern CRM, ticketing, document, identity, data warehouse, webhook, API, and partner integrations with trust receipts
 
 - Global Policy Localization Hub page to localize trust policies, evidence rights, language needs, regional approvals, data boundaries, and country rollout constraints
 
@@ -777,6 +779,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `governance-runtime-console.html` - Governance Runtime Console for show live policy enforcement, agent limits, approval gates, audit exports, exception holds, and tenant-specific runtime rules
 - `multi-environment-control-plane.html` - Multi-Environment Control Plane for coordinate dev, demo, pilot, production, enterprise, regional, and partner environments with readiness, policy, and rollback states
 - `global-policy-localization-hub.html` - Global Policy Localization Hub for localize trust policies, evidence rights, language needs, regional approvals, data boundaries, and country rollout constraints
+- `enterprise-integration-mesh.html` - Enterprise Integration Mesh for govern CRM, ticketing, document, identity, data warehouse, webhook, API, and partner integrations with trust receipts
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -789,7 +792,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v3.03 Alpha - Enterprise Integration Mesh
+## Next Phase: v3.04 Alpha - Launch Operating Command
 
 The next release should keep simplifying AnswerSeal into one calm operating system for verified AI work, governed learning, and organization-wide decision memory.
 

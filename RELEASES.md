@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v3.03 Alpha - Enterprise Integration Mesh
+
+Phase: Enterprise Integration Mesh
+
+- Added `enterprise-integration-mesh.html` as the Enterprise Integration Mesh to govern CRM, ticketing, document, identity, data warehouse, webhook, API, and partner integrations with trust receipts.
+- Moved intelligent operating system readiness to 90% with Enterprise Integration Mesh joining the governed operating-system path.
+- Added Enterprise Integration Mesh to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v3030 and workspace storage to v3030 while preserving earlier report memory.
+- Upgraded export language to Review Pack v209.
+- Moved the next build toward v3.04 Alpha Launch Operating Command.
+
 ## v3.02 Alpha - Global Policy Localization Hub
 
 Phase: Global Policy Localization Hub
