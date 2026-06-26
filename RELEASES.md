@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.75 Alpha - Customer Growth Flywheel
+
+Phase: Customer Growth Flywheel
+
+- Added `customer-growth-flywheel.html` as the Customer Growth Flywheel to turn sealed reports, pilot outcomes, buyer objections, proof reuse, and customer success moments into a governed growth loop.
+- Moved customer growth readiness to 10% with Customer Growth Flywheel joining the governed post-launch growth path.
+- Added Customer Growth Flywheel to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2750 and workspace storage to v2750 while preserving earlier report memory.
+- Upgraded export language to Review Pack v181.
+- Moved the next build toward v2.76 Alpha Activation Journey Studio.
+
 ## v2.74 Alpha - Global Go-To-Market Command
 
 Phase: Global Go-To-Market Command
