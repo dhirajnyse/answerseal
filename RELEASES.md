@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.99 Alpha - Evidence Knowledge Graph
+
+Phase: Evidence Knowledge Graph
+
+- Added `evidence-knowledge-graph.html` as the Evidence Knowledge Graph to map questions, claims, sources, policies, owners, approvals, conflicts, freshness, and reusable proof patterns as a trust graph.
+- Moved intelligent operating system readiness to 50% with Evidence Knowledge Graph joining the governed operating-system path.
+- Added Evidence Knowledge Graph to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v2990 and workspace storage to v2990 while preserving earlier report memory.
+- Upgraded export language to Review Pack v205.
+- Moved the next build toward v3.00 Alpha Governance Runtime Console.
+
 ## v2.98 Alpha - Trust Agent Studio
 
 Phase: Trust Agent Studio
