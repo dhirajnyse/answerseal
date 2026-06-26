@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.86 Alpha
+**Current version:** v2.87 Alpha
 
-**Current phase:** Competitive Proof Atlas
+**Current phase:** Trust ROI Observatory
 
-**Current release:** v2.86 Alpha - Competitive Proof Atlas
+**Current release:** v2.87 Alpha - Trust ROI Observatory
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Competitive Proof Atlas page to organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence
+- Trust ROI Observatory page to measure time saved, risk reduced, buyer cycles shortened, proof reuse, support deflection, expansion influence, and renewal confidence
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -745,6 +745,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `scale-launch-board.html` - Scale Launch Board for coordinate public launch readiness, customer references, partner channels, support capacity, sales proof, pricing confidence, and growth decision receipts
 - `market-leadership-loop.html` - Market Leadership Loop for turn sealed proof, buyer outcomes, competitive wins, analyst-ready evidence, and customer learning into a repeatable market leadership rhythm
 - `competitive-proof-atlas.html` - Competitive Proof Atlas for organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence
+- `trust-roi-observatory.html` - Trust ROI Observatory for measure time saved, risk reduced, buyer cycles shortened, proof reuse, support deflection, expansion influence, and renewal confidence
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -757,9 +758,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.87 Alpha - Trust ROI Observatory
+## Next Phase: v2.88 Alpha - Executive Narrative Studio
 
-The next release should measure time saved, risk reduced, buyer cycles shortened, proof reuse, support deflection, expansion influence, and renewal confidence.
+The next release should compose board-ready updates, founder notes, customer proof stories, risk summaries, launch memos, and leadership talking points from sealed evidence.
 
 Planned focus:
 

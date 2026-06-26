@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.87 Alpha - Trust ROI Observatory
+
+Phase: Trust ROI Observatory
+
+- Added `trust-roi-observatory.html` as the Trust ROI Observatory to measure time saved, risk reduced, buyer cycles shortened, proof reuse, support deflection, expansion influence, and renewal confidence.
+- Moved market leadership readiness to 30% with Trust ROI Observatory joining the governed leadership path.
+- Added Trust ROI Observatory to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2870 and workspace storage to v2870 while preserving earlier report memory.
+- Upgraded export language to Review Pack v193.
+- Moved the next build toward v2.88 Alpha Executive Narrative Studio.
+
 ## v2.86 Alpha - Competitive Proof Atlas
 
 Phase: Competitive Proof Atlas
