@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.94 Alpha - Category Leadership Command
+
+Phase: Category Leadership Command
+
+- Added `category-leadership-command.html` as the Category Leadership Command to unify market leadership, competitive proof, ROI, executive narrative, marketplace readiness, community learning, enterprise readiness, global expansion, and board launch decisions.
+- Moved market leadership readiness to 100% with Category Leadership Command joining the governed leadership path.
+- Added Category Leadership Command to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2940 and workspace storage to v2940 while preserving earlier report memory.
+- Upgraded export language to Review Pack v200.
+- Moved the next build toward v2.95 Alpha Intelligent Operating System.
+
 ## v2.93 Alpha - Board Launch Briefing Room
 
 Phase: Board Launch Briefing Room

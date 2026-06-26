@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.93 Alpha
+**Current version:** v2.94 Alpha
 
-**Current phase:** Board Launch Briefing Room
+**Current phase:** Category Leadership Command
 
-**Current release:** v2.93 Alpha - Board Launch Briefing Room
+**Current release:** v2.94 Alpha - Category Leadership Command
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Board Launch Briefing Room page to prepare board-level launch briefs with customer proof, growth metrics, risk posture, rollout sequence, support readiness, ROI signals, and decision asks
+- Category Leadership Command page to unify market leadership, competitive proof, ROI, executive narrative, marketplace readiness, community learning, enterprise readiness, global expansion, and board launch decisions
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -752,6 +752,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `enterprise-readiness-graph.html` - Enterprise Readiness Graph for map enterprise readiness across security, privacy, legal, procurement, integrations, support, governance, deployment, and buyer proof
 - `global-expansion-control-tower.html` - Global Expansion Control Tower for coordinate country readiness, regional proof rights, language needs, local policy rules, support coverage, partner channels, and rollout sequencing
 - `board-launch-briefing-room.html` - Board Launch Briefing Room for prepare board-level launch briefs with customer proof, growth metrics, risk posture, rollout sequence, support readiness, ROI signals, and decision asks
+- `category-leadership-command.html` - Category Leadership Command for unify market leadership, competitive proof, ROI, executive narrative, marketplace readiness, community learning, enterprise readiness, global expansion, and board launch decisions
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -764,9 +765,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.94 Alpha - Category Leadership Command
+## Next Phase: v2.95 Alpha - Intelligent Operating System
 
-The next release should unify market leadership, competitive proof, ROI, executive narrative, marketplace readiness, community learning, enterprise readiness, global expansion, and board launch decisions.
+The next release should begin turning AnswerSeal from a trust application into a calm operating system for verified AI work, governed learning, and organization-wide decision memory.
 
 Planned focus:
 
