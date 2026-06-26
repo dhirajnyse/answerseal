@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.83 Alpha - Renewal Growth Room
+
+Phase: Renewal Growth Room
+
+- Added `renewal-growth-room.html` as the Renewal Growth Room to prepare renewal packs with outcome evidence, unresolved risks, sponsor notes, expansion options, support history, and executive summaries.
+- Moved customer growth readiness to 90% with Renewal Growth Room joining the governed post-launch growth path.
+- Added Renewal Growth Room to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2830 and workspace storage to v2830 while preserving earlier report memory.
+- Upgraded export language to Review Pack v189.
+- Moved the next build toward v2.84 Alpha Scale Launch Board.
+
 ## v2.82 Alpha - Usage Intelligence Ledger
 
 Phase: Usage Intelligence Ledger

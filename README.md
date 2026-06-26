@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.82 Alpha
+**Current version:** v2.83 Alpha
 
-**Current phase:** Usage Intelligence Ledger
+**Current phase:** Renewal Growth Room
 
-**Current release:** v2.82 Alpha - Usage Intelligence Ledger
+**Current release:** v2.83 Alpha - Renewal Growth Room
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Usage Intelligence Ledger page to meter verification usage, sealed report reuse, team activation, governance actions, API calls, value proof, and buyer-facing outcomes
+- Renewal Growth Room page to prepare renewal packs with outcome evidence, unresolved risks, sponsor notes, expansion options, support history, and executive summaries
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -741,6 +741,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `account-health-command.html` - Account Health Command for unify adoption, saved reports, trust scores, reviewer load, support risk, renewal health, expansion signals, and next customer action
 - `referral-partner-engine.html` - Referral Partner Engine for package partner proof, referral triggers, connector wins, co-sell notes, customer-safe stories, and partner follow-up motions
 - `usage-intelligence-ledger.html` - Usage Intelligence Ledger for meter verification usage, sealed report reuse, team activation, governance actions, API calls, value proof, and buyer-facing outcomes
+- `renewal-growth-room.html` - Renewal Growth Room for prepare renewal packs with outcome evidence, unresolved risks, sponsor notes, expansion options, support history, and executive summaries
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -753,9 +754,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.83 Alpha - Renewal Growth Room
+## Next Phase: v2.84 Alpha - Scale Launch Board
 
-The next release should prepare renewal packs with outcome evidence, unresolved risks, sponsor notes, expansion options, support history, and executive summaries.
+The next release should coordinate public launch readiness, customer references, partner channels, support capacity, sales proof, pricing confidence, and growth decision receipts.
 
 Planned focus:
 
