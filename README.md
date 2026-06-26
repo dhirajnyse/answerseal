@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.84 Alpha
+**Current version:** v2.85 Alpha
 
-**Current phase:** Scale Launch Board
+**Current phase:** Market Leadership Loop
 
-**Current release:** v2.84 Alpha - Scale Launch Board
+**Current release:** v2.85 Alpha - Market Leadership Loop
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Scale Launch Board page to coordinate public launch readiness, customer references, partner channels, support capacity, sales proof, pricing confidence, and growth decision receipts
+- Market Leadership Loop page to turn sealed proof, buyer outcomes, competitive wins, analyst-ready evidence, and customer learning into a repeatable market leadership rhythm
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -743,6 +743,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `usage-intelligence-ledger.html` - Usage Intelligence Ledger for meter verification usage, sealed report reuse, team activation, governance actions, API calls, value proof, and buyer-facing outcomes
 - `renewal-growth-room.html` - Renewal Growth Room for prepare renewal packs with outcome evidence, unresolved risks, sponsor notes, expansion options, support history, and executive summaries
 - `scale-launch-board.html` - Scale Launch Board for coordinate public launch readiness, customer references, partner channels, support capacity, sales proof, pricing confidence, and growth decision receipts
+- `market-leadership-loop.html` - Market Leadership Loop for turn sealed proof, buyer outcomes, competitive wins, analyst-ready evidence, and customer learning into a repeatable market leadership rhythm
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -755,13 +756,13 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.85 Alpha - Market Leadership Loop
+## Next Phase: v2.86 Alpha - Competitive Proof Atlas
 
-The next release should turn public proof, category learning, analyst-ready narratives, partner signals, customer outcomes, and market feedback into leadership decisions.
+The next release should organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence.
 
 Planned focus:
 
 - Keep the interface calm and simple.
-- Convert customer proof into governed growth.
+- Turn trusted work into market leadership.
 - Preserve tenant control, consent, and approval.
 - Make the next action visible before more automation ships.

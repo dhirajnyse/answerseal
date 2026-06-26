@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.85 Alpha - Market Leadership Loop
+
+Phase: Market Leadership Loop
+
+- Added `market-leadership-loop.html` as the Market Leadership Loop to turn sealed proof, buyer outcomes, competitive wins, analyst-ready evidence, and customer learning into a repeatable market leadership rhythm.
+- Moved market leadership readiness to 10% with Market Leadership Loop joining the governed leadership path.
+- Added Market Leadership Loop to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2850 and workspace storage to v2850 while preserving earlier report memory.
+- Upgraded export language to Review Pack v191.
+- Moved the next build toward v2.86 Alpha Competitive Proof Atlas.
+
 ## v2.84 Alpha - Scale Launch Board
 
 Phase: Scale Launch Board
