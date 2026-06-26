@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.78 Alpha - Expansion Signal Radar
+
+Phase: Expansion Signal Radar
+
+- Added `expansion-signal-radar.html` as the Expansion Signal Radar to detect teams, regions, workflows, buyer questions, proof patterns, and usage clusters ready for expansion without increasing compliance risk.
+- Moved customer growth readiness to 40% with Expansion Signal Radar joining the governed post-launch growth path.
+- Added Expansion Signal Radar to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2780 and workspace storage to v2780 while preserving earlier report memory.
+- Upgraded export language to Review Pack v184.
+- Moved the next build toward v2.79 Alpha Support Knowledge Loop.
+
 ## v2.77 Alpha - Customer Proof Library
 
 Phase: Customer Proof Library
