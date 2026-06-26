@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.96 Alpha - Organization Memory Fabric
+
+Phase: Organization Memory Fabric
+
+- Added `organization-memory-fabric.html` as the Organization Memory Fabric to connect sealed reports, approved answers, owner decisions, buyer questions, and learning receipts into durable organization memory.
+- Moved intelligent operating system readiness to 20% with Organization Memory Fabric joining the governed operating-system path.
+- Added Organization Memory Fabric to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v2960 and workspace storage to v2960 while preserving earlier report memory.
+- Upgraded export language to Review Pack v202.
+- Moved the next build toward v2.97 Alpha Decision Workflow Engine.
+
 ## v2.95 Alpha - Intelligent Operating System
 
 Phase: Intelligent Operating System

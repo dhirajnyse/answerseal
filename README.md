@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.95 Alpha
+**Current version:** v2.96 Alpha
 
-**Current phase:** Intelligent Operating System
+**Current phase:** Organization Memory Fabric
 
-**Current release:** v2.95 Alpha - Intelligent Operating System
+**Current release:** v2.96 Alpha - Organization Memory Fabric
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Organization Memory Fabric page to connect sealed reports, approved answers, owner decisions, buyer questions, and learning receipts into durable organization memory
 
 - Intelligent Operating System page to turn verified answers, prompts, agents, workflows, policies, reports, and learning loops into one calm operating layer
 
@@ -756,6 +758,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `board-launch-briefing-room.html` - Board Launch Briefing Room for prepare board-level launch briefs with customer proof, growth metrics, risk posture, rollout sequence, support readiness, ROI signals, and decision asks
 - `category-leadership-command.html` - Category Leadership Command for unify market leadership, competitive proof, ROI, executive narrative, marketplace readiness, community learning, enterprise readiness, global expansion, and board launch decisions
 - `intelligent-operating-system.html` - Intelligent Operating System for turn verified answers, prompts, agents, workflows, policies, reports, and learning loops into one calm operating layer
+- `organization-memory-fabric.html` - Organization Memory Fabric for connect sealed reports, approved answers, owner decisions, buyer questions, and learning receipts into durable organization memory
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -768,7 +771,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.96 Alpha - Organization Memory Fabric
+## Next Phase: v2.97 Alpha - Decision Workflow Engine
 
 The next release should keep simplifying AnswerSeal into one calm operating system for verified AI work, governed learning, and organization-wide decision memory.
 
