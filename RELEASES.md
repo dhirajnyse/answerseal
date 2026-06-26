@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.98 Alpha - Trust Agent Studio
+
+Phase: Trust Agent Studio
+
+- Added `trust-agent-studio.html` as the Trust Agent Studio to design governed trust agents with allowed tasks, blocked actions, test cases, human gates, rollback plans, and evidence permissions.
+- Moved intelligent operating system readiness to 40% with Trust Agent Studio joining the governed operating-system path.
+- Added Trust Agent Studio to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v2980 and workspace storage to v2980 while preserving earlier report memory.
+- Upgraded export language to Review Pack v204.
+- Moved the next build toward v2.99 Alpha Evidence Knowledge Graph.
+
 ## v2.97 Alpha - Decision Workflow Engine
 
 Phase: Decision Workflow Engine

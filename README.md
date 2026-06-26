@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.97 Alpha
+**Current version:** v2.98 Alpha
 
-**Current phase:** Decision Workflow Engine
+**Current phase:** Trust Agent Studio
 
-**Current release:** v2.97 Alpha - Decision Workflow Engine
+**Current release:** v2.98 Alpha - Trust Agent Studio
 
 ## Brand
 
@@ -27,6 +27,8 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Trust Agent Studio page to design governed trust agents with allowed tasks, blocked actions, test cases, human gates, rollback plans, and evidence permissions
 
 - Decision Workflow Engine page to route verified work through owner decisions, SLA timers, escalation paths, approvals, blockers, and release receipts
 
@@ -762,6 +764,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `intelligent-operating-system.html` - Intelligent Operating System for turn verified answers, prompts, agents, workflows, policies, reports, and learning loops into one calm operating layer
 - `organization-memory-fabric.html` - Organization Memory Fabric for connect sealed reports, approved answers, owner decisions, buyer questions, and learning receipts into durable organization memory
 - `decision-workflow-engine.html` - Decision Workflow Engine for route verified work through owner decisions, SLA timers, escalation paths, approvals, blockers, and release receipts
+- `trust-agent-studio.html` - Trust Agent Studio for design governed trust agents with allowed tasks, blocked actions, test cases, human gates, rollback plans, and evidence permissions
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -774,7 +777,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.98 Alpha - Trust Agent Studio
+## Next Phase: v2.99 Alpha - Evidence Knowledge Graph
 
 The next release should keep simplifying AnswerSeal into one calm operating system for verified AI work, governed learning, and organization-wide decision memory.
 
