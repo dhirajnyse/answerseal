@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v2.88 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v2880";
+const BUILD_VERSION = "v2.89 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v2890";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v2880",
   "answerseal.workspace.v2870",
   "answerseal.workspace.v2860",
   "answerseal.workspace.v2850",
@@ -6742,7 +6743,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v194 with Executive Narrative Studio, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.`,
+      detail: `Create Review Pack v195 with Marketplace Trust Exchange, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25489,7 +25490,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v194</h1>
+        <h1>AnswerSeal Review Pack v195</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29634,7 +29635,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v194 created with Executive Narrative Studio, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v195 created with Marketplace Trust Exchange, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29679,7 +29680,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v194 exported.");
+  showToast("Review Pack v195 exported.");
 }
 
 function toCsv(rows) {

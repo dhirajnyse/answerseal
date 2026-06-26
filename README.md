@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.88 Alpha
+**Current version:** v2.89 Alpha
 
-**Current phase:** Executive Narrative Studio
+**Current phase:** Marketplace Trust Exchange
 
-**Current release:** v2.88 Alpha - Executive Narrative Studio
+**Current release:** v2.89 Alpha - Marketplace Trust Exchange
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Executive Narrative Studio page to compose board-ready updates, founder notes, customer proof stories, risk summaries, launch memos, and leadership talking points from sealed evidence
+- Marketplace Trust Exchange page to prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -747,6 +747,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `competitive-proof-atlas.html` - Competitive Proof Atlas for organize competitor objections, win themes, proof gaps, buyer language, approved counters, and segment-specific trust evidence
 - `trust-roi-observatory.html` - Trust ROI Observatory for measure time saved, risk reduced, buyer cycles shortened, proof reuse, support deflection, expansion influence, and renewal confidence
 - `executive-narrative-studio.html` - Executive Narrative Studio for compose board-ready updates, founder notes, customer proof stories, risk summaries, launch memos, and leadership talking points from sealed evidence
+- `marketplace-trust-exchange.html` - Marketplace Trust Exchange for prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -759,9 +760,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.89 Alpha - Marketplace Trust Exchange
+## Next Phase: v2.90 Alpha - Customer Community Signal Room
 
-The next release should prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion.
+The next release should capture customer questions, community threads, feature asks, reference offers, advocacy signals, and recurring confusion as governed product learning.
 
 Planned focus:
 

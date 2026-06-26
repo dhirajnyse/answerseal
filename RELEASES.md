@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.89 Alpha - Marketplace Trust Exchange
+
+Phase: Marketplace Trust Exchange
+
+- Added `marketplace-trust-exchange.html` as the Marketplace Trust Exchange to prepare approved templates, proof packs, partner-ready artifacts, connector listings, and reusable trust assets for a future marketplace motion.
+- Moved market leadership readiness to 50% with Marketplace Trust Exchange joining the governed leadership path.
+- Added Marketplace Trust Exchange to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build market leadership arc.
+- Upgraded public report storage to v2890 and workspace storage to v2890 while preserving earlier report memory.
+- Upgraded export language to Review Pack v195.
+- Moved the next build toward v2.90 Alpha Customer Community Signal Room.
+
 ## v2.88 Alpha - Executive Narrative Studio
 
 Phase: Executive Narrative Studio
