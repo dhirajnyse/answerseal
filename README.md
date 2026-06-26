@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v2.80 Alpha
+**Current version:** v2.81 Alpha
 
-**Current phase:** Account Health Command
+**Current phase:** Referral Partner Engine
 
-**Current release:** v2.80 Alpha - Account Health Command
+**Current release:** v2.81 Alpha - Referral Partner Engine
 
 ## Brand
 
@@ -28,7 +28,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## MVP Features
 
-- Account Health Command page to unify adoption, saved reports, trust scores, reviewer load, support risk, renewal health, expansion signals, and next customer action
+- Referral Partner Engine page to package partner proof, referral triggers, connector wins, co-sell notes, customer-safe stories, and partner follow-up motions
 
 - Launch Monetization Suite page to connect pricing plans, usage meters, pilot conversion, expansion signals, buyer value proof, account health, and customer success motions
 
@@ -739,6 +739,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 - `expansion-signal-radar.html` - Expansion Signal Radar for detect teams, regions, workflows, buyer questions, proof patterns, and usage clusters ready for expansion without increasing compliance risk
 - `support-knowledge-loop.html` - Support Knowledge Loop for convert support questions, setup issues, resolved blockers, customer language, and help-center gaps into verified support answers
 - `account-health-command.html` - Account Health Command for unify adoption, saved reports, trust scores, reviewer load, support risk, renewal health, expansion signals, and next customer action
+- `referral-partner-engine.html` - Referral Partner Engine for package partner proof, referral triggers, connector wins, co-sell notes, customer-safe stories, and partner follow-up motions
 - `styles.css` - Product UI, layout, and responsive behavior
 - `landing.js` - Public verifier, local sealed report memory, report rendering, and private pilot request email flow
 - `app.js` - Demo data, drafting logic, imports, review actions, and exports
@@ -751,9 +752,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v2.81 Alpha - Referral Partner Engine
+## Next Phase: v2.82 Alpha - Usage Intelligence Ledger
 
-The next release should package partner proof, referral triggers, connector wins, co-sell notes, customer-safe stories, and partner follow-up motions.
+The next release should meter verification usage, sealed report reuse, team activation, governance actions, API calls, value proof, and buyer-facing outcomes.
 
 Planned focus:
 

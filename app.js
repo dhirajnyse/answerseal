@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v2.80 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v2800";
+const BUILD_VERSION = "v2.81 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v2810";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v2800",
   "answerseal.workspace.v2790",
   "answerseal.workspace.v2780",
   "answerseal.workspace.v2770",
@@ -6734,7 +6735,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v186 with Account Health Command, customer growth, activation, proof library, expansion radar, support loop, account health, referral partner, usage ledger, renewal room, launch board, buyer proof, source status, and export decision sections.`,
+      detail: `Create Review Pack v187 with Referral Partner Engine, customer growth, activation, proof library, expansion radar, support loop, account health, referral partner, usage ledger, renewal room, launch board, buyer proof, source status, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25481,7 +25482,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v186</h1>
+        <h1>AnswerSeal Review Pack v187</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29626,7 +29627,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v186 created with Account Health Command, customer growth, activation, proof library, expansion radar, support loop, account health, referral partner, usage ledger, renewal room, launch board, buyer proof, source status, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v187 created with Referral Partner Engine, customer growth, activation, proof library, expansion radar, support loop, account health, referral partner, usage ledger, renewal room, launch board, buyer proof, source status, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29671,7 +29672,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v186 exported.");
+  showToast("Review Pack v187 exported.");
 }
 
 function toCsv(rows) {

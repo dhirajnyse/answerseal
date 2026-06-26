@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v2.81 Alpha - Referral Partner Engine
+
+Phase: Referral Partner Engine
+
+- Added `referral-partner-engine.html` as the Referral Partner Engine to package partner proof, referral triggers, connector wins, co-sell notes, customer-safe stories, and partner follow-up motions.
+- Moved customer growth readiness to 70% with Referral Partner Engine joining the governed post-launch growth path.
+- Added Referral Partner Engine to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build customer growth arc.
+- Upgraded public report storage to v2810 and workspace storage to v2810 while preserving earlier report memory.
+- Upgraded export language to Review Pack v187.
+- Moved the next build toward v2.82 Alpha Usage Intelligence Ledger.
+
 ## v2.80 Alpha - Account Health Command
 
 Phase: Account Health Command
