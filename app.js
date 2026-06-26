@@ -1,6 +1,7 @@
-const BUILD_VERSION = "v3.01 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v3010";
+const BUILD_VERSION = "v3.02 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v3020";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v3010",
   "answerseal.workspace.v3000",
   "answerseal.workspace.v2990",
   "answerseal.workspace.v2980",
@@ -6755,7 +6756,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v207 with Category Leadership Command, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.`,
+      detail: `Create Review Pack v208 with Category Leadership Command, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25502,7 +25503,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v207</h1>
+        <h1>AnswerSeal Review Pack v208</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29647,7 +29648,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v207 created with Category Leadership Command, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v208 created with Category Leadership Command, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29692,7 +29693,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v207 exported.");
+  showToast("Review Pack v208 exported.");
 }
 
 function toCsv(rows) {

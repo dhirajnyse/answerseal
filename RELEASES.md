@@ -1,5 +1,17 @@
 # AnswerSeal Release Notes
 
+## v3.02 Alpha - Global Policy Localization Hub
+
+Phase: Global Policy Localization Hub
+
+- Added `global-policy-localization-hub.html` as the Global Policy Localization Hub to localize trust policies, evidence rights, language needs, regional approvals, data boundaries, and country rollout constraints.
+- Moved intelligent operating system readiness to 80% with Global Policy Localization Hub joining the governed operating-system path.
+- Added Global Policy Localization Hub to the landing navigation, build phases page, pilot copy, README, release notes, and release identity.
+- Reworked the Build page roadmap with percentage progress for the ten-build intelligent operating system arc.
+- Upgraded public report storage to v3020 and workspace storage to v3020 while preserving earlier report memory.
+- Upgraded export language to Review Pack v208.
+- Moved the next build toward v3.03 Alpha Enterprise Integration Mesh.
+
 ## v3.01 Alpha - Multi-Environment Control Plane
 
 Phase: Multi-Environment Control Plane
