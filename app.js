@@ -1,6 +1,11 @@
-const BUILD_VERSION = "v3.14 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v3140";
+const BUILD_VERSION = "v3.19 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v3190";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v3180",
+  "answerseal.workspace.v3170",
+  "answerseal.workspace.v3160",
+  "answerseal.workspace.v3150",
+  "answerseal.workspace.v3140",
   "answerseal.workspace.v3130",
   "answerseal.workspace.v3120",
   "answerseal.workspace.v3110",
@@ -6768,7 +6773,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v220 with Production Data Bridge, customer proof command, proof packet builder, buyer room activity, pilot outcome loop, data mapping, access boundary, migration check, rollback receipt, and export decision sections.`,
+      detail: `Create Review Pack v225 with Public Trust Launch Board, customer launch rehearsal, support handoff, production migration receipt, live pilot control, trust center readiness, public metrics, support posture, launch hold, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25515,7 +25520,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v220</h1>
+        <h1>AnswerSeal Review Pack v225</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29660,7 +29665,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v220 created with Production Data Bridge, customer proof command, proof packet builder, buyer room activity, pilot outcome loop, data mapping, access boundary, migration check, rollback receipt, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v225 created with Public Trust Launch Board, customer launch rehearsal, support handoff, production migration receipt, live pilot control, trust center readiness, public metrics, support posture, launch hold, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29705,7 +29710,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v220 exported.");
+  showToast("Review Pack v225 exported.");
 }
 
 function toCsv(rows) {

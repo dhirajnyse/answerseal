@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v3.14 Alpha
+**Current version:** v3.19 Alpha
 
-**Current phase:** Production Data Bridge
+**Current phase:** Public Trust Launch Board
 
-**Current release:** v3.14 Alpha - Production Data Bridge
+**Current release:** v3.19 Alpha - Public Trust Launch Board
 
 ## Brand
 
@@ -27,6 +27,16 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Public Trust Launch Board page to prepare public launch proof with trust center readiness, customer-safe metrics, support posture, risk holds, and announcement gates
+
+- Live Pilot Control Room page to monitor pilot health, proof usage, support load, data movement, buyer confidence, and launch blockers while the pilot is live
+
+- Production Migration Receipt page to record source mapping, dry-run checks, approval notes, migration owner, rollback path, and first production proof in one receipt
+
+- Support Handoff Console page to turn pilot promises, proof context, open questions, known risks, and customer contacts into a support-ready handoff console
+
+- Customer Launch Rehearsal page to rehearse a customer-safe launch path with proof packets, data readiness, support handoff, buyer follow-up, and launch blockers in one calm room
 
 - Production Data Bridge page to prepare verified demo workflows for production data with source mappings, access boundaries, migration checks, and rollback receipts
 
@@ -659,6 +669,11 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## Project Files
 
+- `public-trust-launch-board.html` - Public Trust Launch Board helps teams prepare public launch proof with trust center readiness, customer-safe metrics, support posture, risk holds, and announcement gates
+- `live-pilot-control-room.html` - Live Pilot Control Room helps teams monitor pilot health, proof usage, support load, data movement, buyer confidence, and launch blockers while the pilot is live
+- `production-migration-receipt.html` - Production Migration Receipt helps teams record source mapping, dry-run checks, approval notes, migration owner, rollback path, and first production proof in one receipt
+- `support-handoff-console.html` - Support Handoff Console helps teams turn pilot promises, proof context, open questions, known risks, and customer contacts into a support-ready handoff console
+- `customer-launch-rehearsal.html` - Customer Launch Rehearsal helps teams rehearse a customer-safe launch path with proof packets, data readiness, support handoff, buyer follow-up, and launch blockers in one calm room
 - `production-data-bridge.html` - Production Data Bridge prepares verified demo workflows for production data with source mappings, access boundaries, migration checks, and rollback receipts
 - `pilot-outcome-evidence-loop.html` - Pilot Outcome Evidence Loop connects pilot decisions, customer feedback, sealed outcomes, support notes, and renewal signals into a repeatable evidence loop
 - `buyer-room-activity-lens.html` - Buyer Room Activity Lens shows which buyer rooms are viewed, which proof cards are used, what follow-up is open, and where trust friction remains
@@ -825,9 +840,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v3.15 Alpha - Customer Launch Rehearsal
+## Next Phase: v3.20 Alpha - Trust Center Publishing Console
 
-The next release should rehearse a customer-safe launch path that connects proof packets, data readiness, support handoff, and buyer follow-up without adding noise.
+The next release should publish a customer-safe trust center path that turns approved proof, public claims, security notes, metrics, support posture, and launch gates into one calm public surface.
 
 Planned focus:
 

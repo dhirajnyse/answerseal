@@ -1,5 +1,162 @@
 # AnswerSeal Changelog
 
+## v3.19 Alpha - Public Trust Launch Board
+
+Phase: Public Trust Launch Board
+
+Changes made:
+- Added `public-trust-launch-board.html` as Public Trust Launch Board to prepare public launch proof with trust center readiness, customer-safe metrics, support posture, risk holds, and announcement gates.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v225.
+- Synchronized existing HTML room build badges, footers, and System links to `v3.19 Alpha` so the public site reads as one coherent current build.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.20 Alpha Trust Center Publishing Console.
+
+Files changed:
+- index.html
+- versions.html
+- public-trust-launch-board.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+- existing `*.html` room pages for current-build badge/footer/System-link normalization
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.19 Alpha" "Public Trust Launch Board" "public-trust-launch-board" --current`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.18 Alpha - Live Pilot Control Room
+
+Phase: Live Pilot Control Room
+
+Changes made:
+- Added `live-pilot-control-room.html` as Live Pilot Control Room to monitor pilot health, proof usage, support load, data movement, buyer confidence, and launch blockers while the pilot is live.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v224.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.19 Alpha Public Trust Launch Board.
+
+Files changed:
+- index.html
+- versions.html
+- live-pilot-control-room.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.18 Alpha" "Live Pilot Control Room" "live-pilot-control-room"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.17 Alpha - Production Migration Receipt
+
+Phase: Production Migration Receipt
+
+Changes made:
+- Added `production-migration-receipt.html` as Production Migration Receipt to record source mapping, dry-run checks, approval notes, migration owner, rollback path, and first production proof in one receipt.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v223.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.18 Alpha Live Pilot Control Room.
+
+Files changed:
+- index.html
+- versions.html
+- production-migration-receipt.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.17 Alpha" "Production Migration Receipt" "production-migration-receipt"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.16 Alpha - Support Handoff Console
+
+Phase: Support Handoff Console
+
+Changes made:
+- Added `support-handoff-console.html` as Support Handoff Console to turn pilot promises, proof context, open questions, known risks, and customer contacts into a support-ready handoff console.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v222.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.17 Alpha Production Migration Receipt.
+
+Files changed:
+- index.html
+- versions.html
+- support-handoff-console.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.16 Alpha" "Support Handoff Console" "support-handoff-console"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.15 Alpha - Customer Launch Rehearsal
+
+Phase: Customer Launch Rehearsal
+
+Changes made:
+- Added `customer-launch-rehearsal.html` as Customer Launch Rehearsal to rehearse a customer-safe launch path with proof packets, data readiness, support handoff, buyer follow-up, and launch blockers in one calm room.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v221.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.16 Alpha Support Handoff Console.
+
+Files changed:
+- index.html
+- versions.html
+- customer-launch-rehearsal.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.15 Alpha" "Customer Launch Rehearsal" "customer-launch-rehearsal"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
 ## v3.14 Alpha - Production Data Bridge
 
 Phase: Production Data Bridge

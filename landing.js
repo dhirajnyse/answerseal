@@ -147,9 +147,14 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v3.14 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3140";
+const PUBLIC_BUILD_VERSION = "v3.19 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3190";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v3180",
+  "answerseal.public.reports.v3170",
+  "answerseal.public.reports.v3160",
+  "answerseal.public.reports.v3150",
+  "answerseal.public.reports.v3140",
   "answerseal.public.reports.v3130",
   "answerseal.public.reports.v3120",
   "answerseal.public.reports.v3110",
@@ -4403,7 +4408,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v220 records Production Data Bridge, customer proof command, proof packet builder, buyer room activity, pilot outcome loop, data mapping, access boundary, migration check, rollback receipt, and export decision",
+      audit: "Review Pack v225 records Public Trust Launch Board, customer launch rehearsal, support handoff, production migration receipt, live pilot control, trust center readiness, public metrics, support posture, launch hold, and export decision",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7844,7 +7849,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v3.14 Alpha - Production Data Bridge",
+      "Pilot phase: AnswerSeal v3.19 Alpha - Public Trust Launch Board",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
