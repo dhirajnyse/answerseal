@@ -1,6 +1,11 @@
-const BUILD_VERSION = "v3.09 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v3090";
+const BUILD_VERSION = "v3.14 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v3140";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v3130",
+  "answerseal.workspace.v3120",
+  "answerseal.workspace.v3110",
+  "answerseal.workspace.v3100",
+  "answerseal.workspace.v3090",
   "answerseal.workspace.v3080",
   "answerseal.workspace.v3070",
   "answerseal.workspace.v3060",
@@ -6763,7 +6768,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v215 with Trust Copilot Launch Gate, autonomous guidance, permission console, evidence routing, approval queue, launch gate, buyer proof, source status, owner action, and export decision sections.`,
+      detail: `Create Review Pack v220 with Production Data Bridge, customer proof command, proof packet builder, buyer room activity, pilot outcome loop, data mapping, access boundary, migration check, rollback receipt, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25510,7 +25515,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v215</h1>
+        <h1>AnswerSeal Review Pack v220</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29655,7 +29660,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v215 created with Trust Copilot Launch Gate, autonomous guidance, permission console, evidence routing, approval queue, launch gate, buyer proof, source status, owner action, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v220 created with Production Data Bridge, customer proof command, proof packet builder, buyer room activity, pilot outcome loop, data mapping, access boundary, migration check, rollback receipt, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29700,7 +29705,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v215 exported.");
+  showToast("Review Pack v220 exported.");
 }
 
 function toCsv(rows) {

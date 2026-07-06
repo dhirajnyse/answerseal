@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v3.09 Alpha
+**Current version:** v3.14 Alpha
 
-**Current phase:** Trust Copilot Launch Gate
+**Current phase:** Production Data Bridge
 
-**Current release:** v3.09 Alpha - Trust Copilot Launch Gate
+**Current release:** v3.14 Alpha - Production Data Bridge
 
 ## Brand
 
@@ -27,6 +27,16 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Production Data Bridge page to prepare verified demo workflows for production data with source mappings, access boundaries, migration checks, and rollback receipts
+
+- Pilot Outcome Evidence Loop page to connect pilot decisions, customer feedback, sealed outcomes, support notes, and renewal signals into a repeatable evidence loop
+
+- Buyer Room Activity Lens page to show which buyer rooms are viewed, which proof cards are used, what follow-up is open, and where trust friction remains
+
+- Proof Packet Builder page to assemble score, source trail, risk flags, improved answer, approvals, and buyer notes into a clean reusable proof packet
+
+- Customer Proof Command page to turn sealed answers, buyer questions, source coverage, owner actions, and pilot promises into one customer-facing proof command room
 
 - Trust Copilot Launch Gate page to combine copilot guidance, permission rules, evidence routes, and human approvals into one readiness gate for controlled pilot launch
 
@@ -649,6 +659,11 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## Project Files
 
+- `production-data-bridge.html` - Production Data Bridge prepares verified demo workflows for production data with source mappings, access boundaries, migration checks, and rollback receipts
+- `pilot-outcome-evidence-loop.html` - Pilot Outcome Evidence Loop connects pilot decisions, customer feedback, sealed outcomes, support notes, and renewal signals into a repeatable evidence loop
+- `buyer-room-activity-lens.html` - Buyer Room Activity Lens shows which buyer rooms are viewed, which proof cards are used, what follow-up is open, and where trust friction remains
+- `proof-packet-builder.html` - Proof Packet Builder assembles score, source trail, risk flags, improved answer, approvals, and buyer notes into a clean reusable proof packet
+- `customer-proof-command.html` - Customer Proof Command turns sealed answers, buyer questions, source coverage, owner actions, and pilot promises into one customer-facing proof command room
 - `trust-copilot-launch-gate.html` - Trust Copilot Launch Gate combines copilot guidance, permission rules, evidence routes, and human approvals into one readiness gate for controlled pilot launch
 - `human-approval-queue.html` - Human Approval Queue turns copilot recommendations into reviewable approval cards with owners, status, decision notes, risk level, and export-ready receipts
 - `evidence-routing-copilot.html` - Evidence Routing Copilot routes buyer questions and answer gaps to the right evidence source, owner, policy lane, freshness check, and proof path
@@ -810,9 +825,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v3.10 Alpha - Customer Proof Command
+## Next Phase: v3.15 Alpha - Customer Launch Rehearsal
 
-The next release should keep simplifying AnswerSeal into one calm operating system for verified AI work, governed learning, and launch decisions.
+The next release should rehearse a customer-safe launch path that connects proof packets, data readiness, support handoff, and buyer follow-up without adding noise.
 
 Planned focus:
 

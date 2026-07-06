@@ -1,5 +1,164 @@
 # AnswerSeal Changelog
 
+## v3.14 Alpha - Production Data Bridge
+
+Phase: Production Data Bridge
+
+Changes made:
+- Added `production-data-bridge.html` as Production Data Bridge to prepare verified demo workflows for production data with source mappings, access boundaries, migration checks, and rollback receipts.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v220.
+- Synchronized existing HTML room build badges, footers, and System links to `v3.14 Alpha` so the public site reads as one coherent current build.
+- Improved footer wrapping so the expanded release navigation does not create horizontal scroll on desktop or mobile.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.15 Alpha Customer Launch Rehearsal.
+
+Files changed:
+- index.html
+- versions.html
+- production-data-bridge.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+- styles.css
+- existing `*.html` room pages for current-build badge/footer/System-link normalization
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.14 Alpha" "Production Data Bridge" "production-data-bridge" --current`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.13 Alpha - Pilot Outcome Evidence Loop
+
+Phase: Pilot Outcome Evidence Loop
+
+Changes made:
+- Added `pilot-outcome-evidence-loop.html` as Pilot Outcome Evidence Loop to connect pilot decisions, customer feedback, sealed outcomes, support notes, and renewal signals into a repeatable evidence loop.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v219.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.14 Alpha Production Data Bridge.
+
+Files changed:
+- index.html
+- versions.html
+- pilot-outcome-evidence-loop.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.13 Alpha" "Pilot Outcome Evidence Loop" "pilot-outcome-evidence-loop"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.12 Alpha - Buyer Room Activity Lens
+
+Phase: Buyer Room Activity Lens
+
+Changes made:
+- Added `buyer-room-activity-lens.html` as Buyer Room Activity Lens to show which buyer rooms are viewed, which proof cards are used, what follow-up is open, and where trust friction remains.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v218.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.13 Alpha Pilot Outcome Evidence Loop.
+
+Files changed:
+- index.html
+- versions.html
+- buyer-room-activity-lens.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.12 Alpha" "Buyer Room Activity Lens" "buyer-room-activity-lens"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.11 Alpha - Proof Packet Builder
+
+Phase: Proof Packet Builder
+
+Changes made:
+- Added `proof-packet-builder.html` as Proof Packet Builder to assemble score, source trail, risk flags, improved answer, approvals, and buyer notes into a clean reusable proof packet.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v217.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.12 Alpha Buyer Room Activity Lens.
+
+Files changed:
+- index.html
+- versions.html
+- proof-packet-builder.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.11 Alpha" "Proof Packet Builder" "proof-packet-builder"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.10 Alpha - Customer Proof Command
+
+Phase: Customer Proof Command
+
+Changes made:
+- Added `customer-proof-command.html` as Customer Proof Command to turn sealed answers, buyer questions, source coverage, owner actions, and pilot promises into one customer-facing proof command room.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v216.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.11 Alpha Proof Packet Builder.
+
+Files changed:
+- index.html
+- versions.html
+- customer-proof-command.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.10 Alpha" "Customer Proof Command" "customer-proof-command"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
 ## v3.09 Alpha - Trust Copilot Launch Gate
 
 Phase: Trust Copilot Launch Gate

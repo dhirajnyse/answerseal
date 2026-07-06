@@ -15094,13 +15094,18 @@ svg {
 .landing-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 14px;
   padding: 24px clamp(18px, 5vw, 78px);
   border-top: 1px solid rgba(31, 41, 38, 0.1);
   color: var(--muted);
   background: #f7fbfa;
   font-weight: 800;
+}
+
+.landing-footer span {
+  margin-right: auto;
 }
 
 .landing-footer a {

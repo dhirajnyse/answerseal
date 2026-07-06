@@ -147,9 +147,14 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v3.09 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3090";
+const PUBLIC_BUILD_VERSION = "v3.14 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3140";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v3130",
+  "answerseal.public.reports.v3120",
+  "answerseal.public.reports.v3110",
+  "answerseal.public.reports.v3100",
+  "answerseal.public.reports.v3090",
   "answerseal.public.reports.v3080",
   "answerseal.public.reports.v3070",
   "answerseal.public.reports.v3060",
@@ -4398,7 +4403,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v215 records Trust Copilot Launch Gate, autonomous guidance, permission console, evidence routing, approval queue, launch gate, buyer proof, source status, owner action, and export decision",
+      audit: "Review Pack v220 records Production Data Bridge, customer proof command, proof packet builder, buyer room activity, pilot outcome loop, data mapping, access boundary, migration check, rollback receipt, and export decision",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7839,7 +7844,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v3.09 Alpha - Trust Copilot Launch Gate",
+      "Pilot phase: AnswerSeal v3.14 Alpha - Production Data Bridge",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
