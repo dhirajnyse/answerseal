@@ -649,11 +649,11 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## Project Files
 
-- `trust-copilot-launch-gate.html` - Trust Copilot Launch Gate for combine copilot guidance, permission rules, evidence routes, and human approvals into one readiness gate for controlled pilot launch
-- `human-approval-queue.html` - Human Approval Queue for turn copilot recommendations into reviewable approval cards with owners, status, decision notes, risk level, and export-ready receipts
-- `evidence-routing-copilot.html` - Evidence Routing Copilot for route buyer questions and answer gaps to the right evidence source, owner, policy lane, freshness check, and proof path
-- `copilot-permission-console.html` - Copilot Permission Console for separate allowed suggestions, blocked automation, required approvals, data boundaries, and escalation paths before the copilot touches real work
-- `autonomous-trust-copilot.html` - Autonomous Trust Copilot for turn verifier, reports, registry, policies, and launch rooms into one governed next-action copilot that suggests the safest owner move without writing on its own
+- `trust-copilot-launch-gate.html` - Trust Copilot Launch Gate combines copilot guidance, permission rules, evidence routes, and human approvals into one readiness gate for controlled pilot launch
+- `human-approval-queue.html` - Human Approval Queue turns copilot recommendations into reviewable approval cards with owners, status, decision notes, risk level, and export-ready receipts
+- `evidence-routing-copilot.html` - Evidence Routing Copilot routes buyer questions and answer gaps to the right evidence source, owner, policy lane, freshness check, and proof path
+- `copilot-permission-console.html` - Copilot Permission Console separates allowed suggestions, blocked automation, required approvals, data boundaries, and escalation paths before the copilot touches real work
+- `autonomous-trust-copilot.html` - Autonomous Trust Copilot turns verifier, reports, registry, policies, and launch rooms into one governed next-action copilot that suggests the safest owner move without writing on its own
 - `index.html` - Landing page, product spine, verifier preview, and private pilot conversion
 - `verify.html` - Standalone AI answer verification screen
 - `report.html` - Shareable sealed report page
