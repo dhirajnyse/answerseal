@@ -1,6 +1,16 @@
-const BUILD_VERSION = "v3.19 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v3190";
+const BUILD_VERSION = "v3.29 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v3290";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v3280",
+  "answerseal.workspace.v3270",
+  "answerseal.workspace.v3260",
+  "answerseal.workspace.v3250",
+  "answerseal.workspace.v3240",
+  "answerseal.workspace.v3230",
+  "answerseal.workspace.v3220",
+  "answerseal.workspace.v3210",
+  "answerseal.workspace.v3200",
+  "answerseal.workspace.v3190",
   "answerseal.workspace.v3180",
   "answerseal.workspace.v3170",
   "answerseal.workspace.v3160",
@@ -6773,7 +6783,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v225 with Public Trust Launch Board, customer launch rehearsal, support handoff, production migration receipt, live pilot control, trust center readiness, public metrics, support posture, launch hold, and export decision sections.`,
+      detail: `Create Review Pack v235 with Trust Operating Cadence Board, enterprise trust expansion, procurement packet studio, executive expansion briefing, renewal loop, weekly cadence, owner decisions, review load, launch holds, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25520,7 +25530,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v225</h1>
+        <h1>AnswerSeal Review Pack v235</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29665,7 +29675,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v225 created with Public Trust Launch Board, customer launch rehearsal, support handoff, production migration receipt, live pilot control, trust center readiness, public metrics, support posture, launch hold, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v235 created with Trust Operating Cadence Board, enterprise trust expansion, procurement packet studio, executive expansion briefing, renewal loop, weekly cadence, owner decisions, review load, launch holds, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29710,7 +29720,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v225 exported.");
+  showToast("Review Pack v235 exported.");
 }
 
 function toCsv(rows) {

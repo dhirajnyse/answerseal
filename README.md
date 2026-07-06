@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v3.19 Alpha
+**Current version:** v3.29 Alpha
 
-**Current phase:** Public Trust Launch Board
+**Current phase:** Trust Operating Cadence Board
 
-**Current release:** v3.19 Alpha - Public Trust Launch Board
+**Current release:** v3.29 Alpha - Trust Operating Cadence Board
 
 ## Brand
 
@@ -27,6 +27,26 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Trust Operating Cadence Board page to give teams a weekly operating cadence for trusted answers, owner decisions, review load, launch holds, renewal proof, and learning loops
+
+- Customer Trust Renewal Loop page to connect post-launch proof and expansion signals into renewal-ready receipts, stale-proof checks, customer questions, risk holds, and next-action routing
+
+- Executive Expansion Briefing Room page to create board-ready expansion narratives with customer proof, revenue confidence, risk boundaries, procurement status, support capacity, and founder decisions
+
+- Procurement Trust Packet Studio page to assemble procurement-ready proof packets from public claims, policies, metrics, security posture, support commitments, legal notes, and approval receipts
+
+- Enterprise Trust Expansion Room page to prepare enterprise expansion from public-launch learning by connecting customer proof, trust-center outcomes, compliance readiness, buyer objections, support capacity, and expansion gates
+
+- Post-Launch Learning Loop page to capture public-launch outcomes, customer questions, support learning, trust-center updates, safe roadmap decisions, and next-proof improvements
+
+- Launch Incident Readiness Desk page to prepare incident owners, response promises, rollback language, customer notices, trust-center holds, and public communication before launch
+
+- Public Launch Metrics Room page to separate customer-safe public metrics from internal pilot data, support load, proof reuse, risk holds, and approval gates
+
+- Customer Evidence Portal page to give customers one buyer-safe portal for proof packets, public metrics, policies, support notes, access status, and follow-up receipts
+
+- Trust Center Publishing Console page to publish approved public claims, source-backed proof, policy notes, security posture, metric permissions, and trust-center sections from one controlled console
 
 - Public Trust Launch Board page to prepare public launch proof with trust center readiness, customer-safe metrics, support posture, risk holds, and announcement gates
 
@@ -669,6 +689,16 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## Project Files
 
+- `trust-operating-cadence-board.html` - Trust Operating Cadence Board helps teams give teams a weekly operating cadence for trusted answers, owner decisions, review load, launch holds, renewal proof, and learning loops
+- `customer-trust-renewal-loop.html` - Customer Trust Renewal Loop helps teams connect post-launch proof and expansion signals into renewal-ready receipts, stale-proof checks, customer questions, risk holds, and next-action routing
+- `executive-expansion-briefing-room.html` - Executive Expansion Briefing Room helps teams create board-ready expansion narratives with customer proof, revenue confidence, risk boundaries, procurement status, support capacity, and founder decisions
+- `procurement-trust-packet-studio.html` - Procurement Trust Packet Studio helps teams assemble procurement-ready proof packets from public claims, policies, metrics, security posture, support commitments, legal notes, and approval receipts
+- `enterprise-trust-expansion-room.html` - Enterprise Trust Expansion Room helps teams prepare enterprise expansion from public-launch learning by connecting customer proof, trust-center outcomes, compliance readiness, buyer objections, support capacity, and expansion gates
+- `post-launch-learning-loop.html` - Post-Launch Learning Loop helps teams capture public-launch outcomes, customer questions, support learning, trust-center updates, safe roadmap decisions, and next-proof improvements
+- `launch-incident-readiness-desk.html` - Launch Incident Readiness Desk helps teams prepare incident owners, response promises, rollback language, customer notices, trust-center holds, and public communication before launch
+- `public-launch-metrics-room.html` - Public Launch Metrics Room helps teams separate customer-safe public metrics from internal pilot data, support load, proof reuse, risk holds, and approval gates
+- `customer-evidence-portal.html` - Customer Evidence Portal helps teams give customers one buyer-safe portal for proof packets, public metrics, policies, support notes, access status, and follow-up receipts
+- `trust-center-publishing-console.html` - Trust Center Publishing Console helps teams publish approved public claims, source-backed proof, policy notes, security posture, metric permissions, and trust-center sections from one controlled console
 - `public-trust-launch-board.html` - Public Trust Launch Board helps teams prepare public launch proof with trust center readiness, customer-safe metrics, support posture, risk holds, and announcement gates
 - `live-pilot-control-room.html` - Live Pilot Control Room helps teams monitor pilot health, proof usage, support load, data movement, buyer confidence, and launch blockers while the pilot is live
 - `production-migration-receipt.html` - Production Migration Receipt helps teams record source mapping, dry-run checks, approval notes, migration owner, rollback path, and first production proof in one receipt
@@ -840,9 +870,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v3.20 Alpha - Trust Center Publishing Console
+## Next Phase: v3.30 Alpha - Trust Center Intelligence Console
 
-The next release should publish a customer-safe trust center path that turns approved proof, public claims, security notes, metrics, support posture, and launch gates into one calm public surface.
+The next release should turn the operating cadence into a trust-center intelligence console that ranks claims, proof gaps, customer questions, and owner actions before work expands.
 
 Planned focus:
 
