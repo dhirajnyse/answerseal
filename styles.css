@@ -15638,17 +15638,21 @@ svg {
 
   .landing-nav nav {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 5px;
     justify-content: start;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: visible;
+    padding-bottom: 0;
+    white-space: normal;
   }
 
   .landing-nav nav a {
+    flex: 1 1 calc(33.333% - 5px);
+    justify-content: center;
     min-height: 36px;
     padding: 0 6px;
     font-size: 0.84rem;
+    text-align: center;
   }
 
   .hero-verifier {

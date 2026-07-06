@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v3.04 Alpha
+**Current version:** v3.09 Alpha
 
-**Current phase:** Launch Operating Command
+**Current phase:** Trust Copilot Launch Gate
 
-**Current release:** v3.04 Alpha - Launch Operating Command
+**Current release:** v3.09 Alpha - Trust Copilot Launch Gate
 
 ## Brand
 
@@ -27,6 +27,16 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Trust Copilot Launch Gate page to combine copilot guidance, permission rules, evidence routes, and human approvals into one readiness gate for controlled pilot launch
+
+- Human Approval Queue page to turn copilot recommendations into reviewable approval cards with owners, status, decision notes, risk level, and export-ready receipts
+
+- Evidence Routing Copilot page to route buyer questions and answer gaps to the right evidence source, owner, policy lane, freshness check, and proof path
+
+- Copilot Permission Console page to separate allowed suggestions, blocked automation, required approvals, data boundaries, and escalation paths before the copilot touches real work
+
+- Autonomous Trust Copilot page to turn verifier, reports, registry, policies, and launch rooms into one governed next-action copilot that suggests the safest owner move without writing on its own
 
 - Launch Operating Command page to unify operating system readiness, memory, workflows, agents, governance, environments, localization, integrations, and launch decisions
 
@@ -639,6 +649,11 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## Project Files
 
+- `trust-copilot-launch-gate.html` - Trust Copilot Launch Gate for combine copilot guidance, permission rules, evidence routes, and human approvals into one readiness gate for controlled pilot launch
+- `human-approval-queue.html` - Human Approval Queue for turn copilot recommendations into reviewable approval cards with owners, status, decision notes, risk level, and export-ready receipts
+- `evidence-routing-copilot.html` - Evidence Routing Copilot for route buyer questions and answer gaps to the right evidence source, owner, policy lane, freshness check, and proof path
+- `copilot-permission-console.html` - Copilot Permission Console for separate allowed suggestions, blocked automation, required approvals, data boundaries, and escalation paths before the copilot touches real work
+- `autonomous-trust-copilot.html` - Autonomous Trust Copilot for turn verifier, reports, registry, policies, and launch rooms into one governed next-action copilot that suggests the safest owner move without writing on its own
 - `index.html` - Landing page, product spine, verifier preview, and private pilot conversion
 - `verify.html` - Standalone AI answer verification screen
 - `report.html` - Shareable sealed report page
@@ -795,9 +810,9 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v3.05 Alpha - Autonomous Trust Copilot
+## Next Phase: v3.10 Alpha - Customer Proof Command
 
-The next release should keep simplifying AnswerSeal into one calm operating system for verified AI work, governed learning, and organization-wide decision memory.
+The next release should keep simplifying AnswerSeal into one calm operating system for verified AI work, governed learning, and launch decisions.
 
 Planned focus:
 

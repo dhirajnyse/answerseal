@@ -147,9 +147,14 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v3.04 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3040";
+const PUBLIC_BUILD_VERSION = "v3.09 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3090";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v3080",
+  "answerseal.public.reports.v3070",
+  "answerseal.public.reports.v3060",
+  "answerseal.public.reports.v3050",
+  "answerseal.public.reports.v3040",
   "answerseal.public.reports.v3030",
   "answerseal.public.reports.v3020",
   "answerseal.public.reports.v3010",
@@ -4393,7 +4398,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v210 records Category Leadership Command, market leadership, competitive proof, ROI, executive narrative, marketplace, community signals, enterprise readiness, global expansion, board launch, category command, buyer proof, source status, and export decision",
+      audit: "Review Pack v215 records Trust Copilot Launch Gate, autonomous guidance, permission console, evidence routing, approval queue, launch gate, buyer proof, source status, owner action, and export decision",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7834,7 +7839,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v3.04 Alpha - Launch Operating Command",
+      "Pilot phase: AnswerSeal v3.09 Alpha - Trust Copilot Launch Gate",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
