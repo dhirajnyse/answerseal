@@ -147,9 +147,14 @@ const sealedReportSummary = document.querySelector("#sealedReportSummary");
 const copySealedReport = document.querySelector("#copySealedReport");
 const shareSealedReport = document.querySelector("#shareSealedReport");
 
-const PUBLIC_BUILD_VERSION = "v3.29 Alpha";
-const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3290";
+const PUBLIC_BUILD_VERSION = "v3.34 Alpha";
+const PUBLIC_REPORT_STORAGE_KEY = "answerseal.public.reports.v3340";
 const PUBLIC_LEGACY_REPORT_STORAGE_KEYS = [
+  "answerseal.public.reports.v3330",
+  "answerseal.public.reports.v3320",
+  "answerseal.public.reports.v3310",
+  "answerseal.public.reports.v3300",
+  "answerseal.public.reports.v3290",
   "answerseal.public.reports.v3280",
   "answerseal.public.reports.v3270",
   "answerseal.public.reports.v3260",
@@ -4418,7 +4423,7 @@ function buildProductionWorkspaceItems() {
       access: "Buyer-safe packet",
       gate: "Ready",
       rule: "Every customer handoff needs score, source trail, risk flags, improved answer, and a clear next owner action.",
-      audit: "Review Pack v235 records Trust Operating Cadence Board, enterprise trust expansion, procurement packet studio, executive expansion briefing, renewal loop, weekly cadence, owner decisions, review load, launch holds, and export decision",
+      audit: "Review Pack v240 records Customer Trust Health Score, trust center intelligence, enterprise evidence API, procurement questionnaire import, renewal risk warnings, customer health scoring, proof freshness, usage context, support learning, and export decision",
       receipt: "review_pack_v103_security_compliance",
       href: "reports.html",
       action: "Open reports",
@@ -7859,7 +7864,7 @@ if (pilotForm) {
       `Company: ${company}`,
       `Questionnaire pain: ${pain}`,
       "",
-      "Pilot phase: AnswerSeal v3.29 Alpha - Trust Operating Cadence Board",
+      "Pilot phase: AnswerSeal v3.34 Alpha - Customer Trust Health Score",
     ].join("\n");
 
     const mailto = `mailto:dhirajnyse@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

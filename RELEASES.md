@@ -1,5 +1,161 @@
 # AnswerSeal Release Notes
 
+## v3.34 Alpha - Customer Trust Health Score
+
+Phase: Customer Trust Health Score
+
+Changes made:
+- Added `customer-trust-health-score.html` as Customer Trust Health Score to summarize answer quality, proof freshness, usage, support learning, renewal readiness, and trust-center posture into one calm score.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v240.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.35 Alpha - Trust Intelligence Automation Lab.
+
+Files changed:
+- index.html
+- versions.html
+- customer-trust-health-score.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+- existing `*.html` room pages for current-build badge/footer/System-link normalization
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.34 Alpha" "Customer Trust Health Score" "customer-trust-health-score" --current`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.33 Alpha - Renewal Risk Early Warning Desk
+
+Phase: Renewal Risk Early Warning Desk
+
+Changes made:
+- Added `renewal-risk-early-warning-desk.html` as Renewal Risk Early Warning Desk to spot stale proof, unanswered buyer questions, support pressure, and renewal risk before the account surprises the team.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v239.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.34 Alpha - Customer Trust Health Score.
+
+Files changed:
+- index.html
+- versions.html
+- renewal-risk-early-warning-desk.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.33 Alpha" "Renewal Risk Early Warning Desk" "renewal-risk-early-warning-desk"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.32 Alpha - Procurement Questionnaire Importer
+
+Phase: Procurement Questionnaire Importer
+
+Changes made:
+- Added `procurement-questionnaire-importer.html` as Procurement Questionnaire Importer to pull procurement and security questionnaire asks into AnswerSeal with source matching and owner routing.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v238.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.33 Alpha - Renewal Risk Early Warning Desk.
+
+Files changed:
+- index.html
+- versions.html
+- procurement-questionnaire-importer.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.32 Alpha" "Procurement Questionnaire Importer" "procurement-questionnaire-importer"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.31 Alpha - Enterprise Evidence API Room
+
+Phase: Enterprise Evidence API Room
+
+Changes made:
+- Added `enterprise-evidence-api-room.html` as Enterprise Evidence API Room to define a safe API surface for proof packets, reports, registry rows, and buyer-safe evidence retrieval.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v237.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.32 Alpha - Procurement Questionnaire Importer.
+
+Files changed:
+- index.html
+- versions.html
+- enterprise-evidence-api-room.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.31 Alpha" "Enterprise Evidence API Room" "enterprise-evidence-api-room"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
+## v3.30 Alpha - Trust Center Intelligence Console
+
+Phase: Trust Center Intelligence Console
+
+Changes made:
+- Added `trust-center-intelligence-console.html` as Trust Center Intelligence Console to turn published trust-center sections into freshness, claim, metric, and approval intelligence.
+- Updated landing, build phases, README, changelog, release notes, runtime build identity, storage keys, and Review Pack v236.
+- Preserved the source-first verifier, report, registry, pricing, pilot, and demo surfaces.
+- Moved the next build toward v3.31 Alpha - Enterprise Evidence API Room.
+
+Files changed:
+- index.html
+- versions.html
+- trust-center-intelligence-console.html
+- README.md
+- RELEASES.md
+- CHANGELOG.md
+- app.js
+- landing.js
+
+Checks run:
+- `node --check app.js`
+- `node --check landing.js`
+- `node --check scripts/check-answerseal-release.mjs`
+- `node --check scripts/static-preview-server.mjs`
+- `node scripts/check-answerseal-release.mjs "v3.30 Alpha" "Trust Center Intelligence Console" "trust-center-intelligence-console"`
+
+Known risks:
+- The new room is static product scaffolding until backend workflow events and authenticated workspace data are wired.
+- Local storage migration preserves prior demo memory, but production storage needs a real migration plan before launch.
+
 ## v3.29 Alpha - Trust Operating Cadence Board
 
 Phase: Trust Operating Cadence Board

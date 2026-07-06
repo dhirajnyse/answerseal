@@ -1,6 +1,11 @@
-const BUILD_VERSION = "v3.29 Alpha";
-const STORAGE_KEY = "answerseal.workspace.v3290";
+const BUILD_VERSION = "v3.34 Alpha";
+const STORAGE_KEY = "answerseal.workspace.v3340";
 const LEGACY_STORAGE_KEYS = [
+  "answerseal.workspace.v3330",
+  "answerseal.workspace.v3320",
+  "answerseal.workspace.v3310",
+  "answerseal.workspace.v3300",
+  "answerseal.workspace.v3290",
   "answerseal.workspace.v3280",
   "answerseal.workspace.v3270",
   "answerseal.workspace.v3260",
@@ -6783,7 +6788,7 @@ function commandCatalog() {
       id: "export-review-pack",
       scope: "Export",
       title: "Export Review Pack",
-      detail: `Create Review Pack v235 with Trust Operating Cadence Board, enterprise trust expansion, procurement packet studio, executive expansion briefing, renewal loop, weekly cadence, owner decisions, review load, launch holds, and export decision sections.`,
+      detail: `Create Review Pack v240 with Customer Trust Health Score, trust center intelligence, enterprise evidence API, procurement questionnaire import, renewal risk warnings, customer health scoring, proof freshness, usage context, support learning, and export decision sections.`,
       signal: `${approvedCount} approved`,
       cta: "Export Pack",
       reason: "The Review Pack is the buyer-ready handoff once proof is attached.",
@@ -25530,7 +25535,7 @@ function exportReviewPack() {
         </style>
       </head>
       <body>
-        <h1>AnswerSeal Review Pack v235</h1>
+        <h1>AnswerSeal Review Pack v240</h1>
         <p>Exported ${escapeHtml(formatDate(new Date()))}</p>
         <h2>Private Workspace</h2>
         <p>${escapeHtml(workspaceAccount.company)} | ${escapeHtml(workspaceAccount.workspaceId)} | ${escapeHtml(workspaceAccount.plan)}</p>
@@ -29675,7 +29680,7 @@ function exportReviewPack() {
   `;
 
   downloadBlob("answerseal-review-pack.doc", html, "application/msword");
-  addAudit("Review pack exported", "Review Pack v235 created with Trust Operating Cadence Board, enterprise trust expansion, procurement packet studio, executive expansion briefing, renewal loop, weekly cadence, owner decisions, review load, launch holds, and export decision sections.");
+  addAudit("Review pack exported", "Review Pack v240 created with Customer Trust Health Score, trust center intelligence, enterprise evidence API, procurement questionnaire import, renewal risk warnings, customer health scoring, proof freshness, usage context, support learning, and export decision sections.");
   renderAudit();
   renderAccess();
   renderDataRoom();
@@ -29720,7 +29725,7 @@ function exportReviewPack() {
   renderFollowUps();
   renderConnectors();
   renderAnalytics();
-  showToast("Review Pack v235 exported.");
+  showToast("Review Pack v240 exported.");
 }
 
 function toCsv(rows) {

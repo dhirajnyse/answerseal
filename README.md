@@ -4,11 +4,11 @@
 
 AnswerSeal is the trust layer for AI-generated work. It helps teams verify and certify AI-generated answers before they trust, share, or act on them. The current MVP starts with one clear action: paste an AI answer, attach optional proof, run the verifier, review risk flags, and generate a shareable sealed report.
 
-**Current version:** v3.29 Alpha
+**Current version:** v3.34 Alpha
 
-**Current phase:** Trust Operating Cadence Board
+**Current phase:** Customer Trust Health Score
 
-**Current release:** v3.29 Alpha - Trust Operating Cadence Board
+**Current release:** v3.34 Alpha - Customer Trust Health Score
 
 ## Brand
 
@@ -27,6 +27,16 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 > Every answer must be tied to a source before it leaves the team.
 
 ## MVP Features
+
+- Trust Center Intelligence Console page to turn published trust-center sections into freshness, claim, metric, and approval intelligence
+
+- Enterprise Evidence API Room page to define a safe API surface for proof packets, reports, registry rows, and buyer-safe evidence retrieval
+
+- Procurement Questionnaire Importer page to pull procurement and security questionnaire asks into AnswerSeal with source matching and owner routing
+
+- Renewal Risk Early Warning Desk page to spot stale proof, unanswered buyer questions, support pressure, and renewal risk before the account surprises the team
+
+- Customer Trust Health Score page to summarize answer quality, proof freshness, usage, support learning, renewal readiness, and trust-center posture into one calm score
 
 - Trust Operating Cadence Board page to give teams a weekly operating cadence for trusted answers, owner decisions, review load, launch holds, renewal proof, and learning loops
 
@@ -689,6 +699,11 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## Project Files
 
+- `trust-center-intelligence-console.html` - Trust Center Intelligence Console helps teams turn published trust-center sections into freshness, claim, metric, and approval intelligence
+- `enterprise-evidence-api-room.html` - Enterprise Evidence API Room helps teams define a safe API surface for proof packets, reports, registry rows, and buyer-safe evidence retrieval
+- `procurement-questionnaire-importer.html` - Procurement Questionnaire Importer helps teams pull procurement and security questionnaire asks into AnswerSeal with source matching and owner routing
+- `renewal-risk-early-warning-desk.html` - Renewal Risk Early Warning Desk helps teams spot stale proof, unanswered buyer questions, support pressure, and renewal risk before the account surprises the team
+- `customer-trust-health-score.html` - Customer Trust Health Score helps teams summarize answer quality, proof freshness, usage, support learning, renewal readiness, and trust-center posture into one calm score
 - `trust-operating-cadence-board.html` - Trust Operating Cadence Board helps teams run a weekly operating cadence for trusted answers, owner decisions, review load, launch holds, renewal proof, and learning loops
 - `customer-trust-renewal-loop.html` - Customer Trust Renewal Loop helps teams connect post-launch proof and expansion signals into renewal-ready receipts, stale-proof checks, customer questions, risk holds, and next-action routing
 - `executive-expansion-briefing-room.html` - Executive Expansion Briefing Room helps teams create board-ready expansion narratives with customer proof, revenue confidence, risk boundaries, procurement status, support capacity, and founder decisions
@@ -870,13 +885,6 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 Open `index.html` in a browser for the landing page, or `demo.html` for the working product demo. No dependency install or build step is required.
 
-## Next Phase: v3.30 Alpha - Trust Center Intelligence Console
+## Next Phase: v3.35 Alpha - Trust Intelligence Automation Lab
 
-The next release should turn the operating cadence into a trust-center intelligence console that ranks claims, proof gaps, customer questions, and owner actions before work expands.
-
-Planned focus:
-
-- Keep the interface calm and simple.
-- Make trusted work easier to operate across teams.
-- Preserve tenant control, consent, and approval.
-- Make the next action visible before more automation ships.
+Build the next trust intelligence automation layer after the customer health score is stable.
