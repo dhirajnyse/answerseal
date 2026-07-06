@@ -689,7 +689,7 @@ Businesses pay for trust, verification, governance, compliance, audit logs, hall
 
 ## Project Files
 
-- `trust-operating-cadence-board.html` - Trust Operating Cadence Board helps teams give teams a weekly operating cadence for trusted answers, owner decisions, review load, launch holds, renewal proof, and learning loops
+- `trust-operating-cadence-board.html` - Trust Operating Cadence Board helps teams run a weekly operating cadence for trusted answers, owner decisions, review load, launch holds, renewal proof, and learning loops
 - `customer-trust-renewal-loop.html` - Customer Trust Renewal Loop helps teams connect post-launch proof and expansion signals into renewal-ready receipts, stale-proof checks, customer questions, risk holds, and next-action routing
 - `executive-expansion-briefing-room.html` - Executive Expansion Briefing Room helps teams create board-ready expansion narratives with customer proof, revenue confidence, risk boundaries, procurement status, support capacity, and founder decisions
 - `procurement-trust-packet-studio.html` - Procurement Trust Packet Studio helps teams assemble procurement-ready proof packets from public claims, policies, metrics, security posture, support commitments, legal notes, and approval receipts
